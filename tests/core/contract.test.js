@@ -1,0 +1,96 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { validateItem, validateSolution } from '../../src/core/contract.js';
+import { buildMcq } from '../../src/core/options.js';
+import { makeRng } from '../../src/core/rng.js';
+
+const base = {
+  id: 'bto:demo:1', section: 'bto', family: 'demo', difficulty: 1,
+  prompt: { text: 'Two dice. P(sum = 12)?' },
+  solution: {
+    ask: 'We want P(sum = 12).',
+    steps: [{ say: '36 equally likely pairs', math: '6 × 6 = 36', why: 'each die has 6 faces' }, { say: 'Only (6,6) works', math: 'P = 1/36', why: 'max face is 6' }],
+    fast: 'One cell of 36: 1/36.',
+    check: 'Sum 12 is as rare as sum 2: one ordered pair each.',
+    picture: { diagram: 'grid', spec: { rows: 6, cols: 6, highlight: [[5, 5]], count: 1 }, caption: 'The single cell (6, 6).' },
+    rule: 'one pair out of 36', anchor: 'counting equally likely outcomes',
+  },
+  hints: ['How many ordered pairs are there?', 'Which pairs sum to 12?'],
+};
+
+test('buildMcq returns 5 sorted, distinct options with misconceptions on wrong ones', () => {
+  const r = makeRng(3);
+  const m = buildMcq(r, {
+    correct: 1 / 36,
+    distractors: [
+      { value: 1 / 21, misconception: 'Counted unordered pairs as equally likely' },
+      { value: 1 / 6, misconception: 'Used one die instead of two' },
+      { value: 2 / 36, misconception: 'Counted (6,6) twice' },
+      { value: 1 / 36, misconception: 'duplicate of correct, must be dropped' },
+      { value: 1 / 11, misconception: 'Treated the 11 sums as equally likely' },
+    ],
+    format: (v) => v.toFixed(3),
+  });
+  assert.equal(m.options.length, 5);
+  const labels = m.options.map((o) => o.label);
+  assert.equal(new Set(labels).size, 5);
+  const vals = m.options.map((o) => o.value);
+  assert.deepEqual(vals, [...vals].sort((a, b) => a - b));
+  assert.equal(m.options[m.answerIndex].misconception, null);
+  m.options.forEach((o, i) => { if (i !== m.answerIndex) assert.ok(o.misconception.length > 5); });
+  assert.ok(!labels.includes('duplicate'));
+});
+
+test('validateItem accepts a good mcq and flags a broken one', () => {
+  const r = makeRng(1);
+  const m = buildMcq(r, { correct: 0.5, distractors: [0.25, 0.75, 0.1, 0.9, 0.6].map((v) => ({ value: v, misconception: 'some specific error' })), format: (v) => v.toFixed(2) });
+  const item = { ...base, kind: 'mcq', ...m };
+  assert.deepEqual(validateItem(item), []);
+  const bad = { ...item, hints: [] };
+  assert.ok(validateItem(bad).some((e) => e.includes('hints')));
+});
+
+test('validateItem checks rank margins and order', () => {
+  const item = { ...base, kind: 'rank', statements: [{ text: 'a', p: 0.2 }, { text: 'b', p: 0.5 }, { text: 'c', p: 0.3 }], answerOrder: [1, 2, 0] };
+  assert.deepEqual(validateItem(item), []);
+  const tooClose = { ...item, statements: [{ text: 'a', p: 0.30 }, { text: 'b', p: 0.5 }, { text: 'c', p: 0.305 }], answerOrder: [1, 2, 0] };
+  assert.ok(validateItem(tooClose).some((e) => e.includes('margin')));
+  const wrongOrder = { ...item, answerOrder: [0, 1, 2] };
+  assert.ok(validateItem(wrongOrder).some((e) => e.includes('answerOrder')));
+});
+
+test('validateItem checks interval truth and orderbook best trade', () => {
+  assert.deepEqual(validateItem({ ...base, kind: 'interval', truth: 12.5 }), []);
+  assert.ok(validateItem({ ...base, kind: 'interval', truth: -1 }).length);
+  const board = { products: ['A', 'B'], instruments: [
+    { id: 'A', legs: [1, 0], bid: 10, ask: 11 }, { id: 'B', legs: [0, 1], bid: 20, ask: 21 }, { id: 'AB', legs: [1, 1], bid: 33, ask: 34 }] };
+  const ok = { ...base, kind: 'orderbook', board, best: { trades: [{ id: 'A', side: 'buy' }, { id: 'B', side: 'buy' }, { id: 'AB', side: 'sell' }], profit: 1 } };
+  assert.deepEqual(validateItem(ok), []);
+  const lie = { ...ok, best: { ...ok.best, profit: 5 } };
+  assert.ok(validateItem(lie).some((e) => e.includes('profit')));
+});
+
+test('validateItem: mcq option count is 5 by default and item.optionCount when set (80-in-8 uses 4)', () => {
+  const ds = [0.25, 0.75, 0.1, 0.9].map((v) => ({ value: v, misconception: 'some specific error' }));
+  const five = { ...base, kind: 'mcq', ...buildMcq(makeRng(7), { correct: 0.5, distractors: ds, format: (v) => v.toFixed(2) }) };
+  assert.deepEqual(validateItem(five), []);
+  assert.ok(validateItem({ ...five, optionCount: 4 }).some((e) => e.includes('exactly 4 options')));
+  const four = { ...base, kind: 'mcq', section: 'mm', optionCount: 4, ...buildMcq(makeRng(7), { correct: 0.5, distractors: ds, format: (v) => v.toFixed(2), count: 4 }) };
+  assert.equal(four.options.length, 4);
+  assert.deepEqual(validateItem(four), []);
+  const { optionCount, ...noCount } = four;
+  assert.equal(optionCount, 4);
+  assert.ok(validateItem(noCount).some((e) => e.includes('exactly 5 options')));
+});
+
+test('validateSolution: ask, fast, check, a picture (or an explicit null) and math on some step', () => {
+  const s = base.solution;
+  assert.deepEqual(validateSolution(s), []);
+  assert.deepEqual(validateSolution({ ...s, picture: null }), [], 'null is allowed by the contract; tests/core/solutions.test.js limits it to a named list');
+  for (const k of ['ask', 'fast', 'check']) assert.ok(validateSolution({ ...s, [k]: '' }).some((e) => e.includes(k)), `${k} required`);
+  const { picture, ...noPicture } = s;
+  assert.ok(picture && validateSolution(noPicture).some((e) => e.includes('picture')));
+  assert.ok(validateSolution({ ...s, picture: { diagram: 'grid', spec: {} } }).some((e) => e.includes('caption')));
+  assert.ok(validateSolution({ ...s, steps: s.steps.map(({ math, ...st }) => st) }).some((e) => e.includes('math')));
+  assert.ok(validateItem({ ...base, kind: 'interval', truth: 3, solution: { ...s, fast: '' } }).some((e) => e.includes('fast')), 'validateItem enforces the solution fields');
+});
