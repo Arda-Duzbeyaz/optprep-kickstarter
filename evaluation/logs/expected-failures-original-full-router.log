@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: finishing on the last displayed question is a completed session
+
+false !== true
+
+    at file:///workspace/scratch/4bc66287a502/optprep-transfer/tools/transfer-route-smoke.mjs:68:9 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

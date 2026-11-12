@@ -1,0 +1,15 @@
+mm: 560 items, 8 families
+bto: 500 items, 32 families
+nl: 520 items, 30 families
+ll: 510 items, 15 families
+iv: 504 items, 14 families
+ob: 500 items, 8 families
+skyscraper 300, numberbox 300, figure 5, balloon 2
+bto: 500 structural checks, 184/500 independently checked numerically, 0 failed, 0 warnings
+iv: 504 structural checks, 165/504 independently checked numerically, 0 failed, 0 warnings
+ll: 510 structural checks, 94/510 independently checked numerically, 0 failed, 0 warnings
+mm: 560 structural checks, 0/560 independently checked numerically, 0 failed, 0 warnings
+nl: 520 structural checks, 495/520 independently checked numerically, 0 failed, 11 warnings
+ob: 500 structural checks, 500/500 independently checked numerically, 0 failed, 0 warnings
+zapn: skyscraper 300 checked / 0 mismatches, numberbox 300 checked / 0 mismatches, figure 5 checked / 0 mismatches, balloon 2 checked / 0 mismatches
+passed_checks=True; complete_numerical_coverage=False

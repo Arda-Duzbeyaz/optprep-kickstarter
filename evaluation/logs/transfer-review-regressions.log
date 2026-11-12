@@ -1,0 +1,12 @@
+PASS review restores and locks the submitted MCQ
+PASS additional-family review has no broken ordinary-practice link
+PASS ranking review shows probabilities and retains the submitted order
+PASS interval review restores bounds and disables its controls
+PASS orderbook review restores the submitted position and locks controls
+PASS answers changed after the item deadline do not replace the last valid answer
+PASS the overall deadline is enforced before submitting or showing another item
+PASS a late skip cannot erase an answer already committed before timeout
+PASS keyboard answers after the deadline are ignored
+PASS finishing on the last displayed question records a complete session
+PASS saving an unchanged fresh battery picker preserves the active Kickstarter preset
+11/11 focused interface regressions passed

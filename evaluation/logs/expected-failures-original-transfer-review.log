@@ -1,0 +1,41 @@
+FAIL review restores and locks the submitted MCQ: Expected values to be strictly equal:
+
+5 !== 0
+
+FAIL additional-family review has no broken ordinary-practice link: The expression evaluated to a falsy value:
+
+  assert.ok(![...root.querySelectorAll('a')].some(a=>a.getAttribute('href')===`#/run/bto/practice/${mcq.family}`))
+
+FAIL ranking review shows probabilities and retains the submitted order: Expected values to be strictly equal:
+
+0 !== 3
+
+FAIL interval review restores bounds and disables its controls: Expected values to be strictly equal:
+
+0 !== 21.6
+
+FAIL orderbook review restores the submitted position and locks controls: The input did not match the regular expression /Net:/. Input:
+
+''
+
+FAIL answers changed after the item deadline do not replace the last valid answer: Expected values to be strictly equal:
+
+1 !== -1
+
+FAIL the overall deadline is enforced before submitting or showing another item: The input did not match the regular expression /Transfer Challenge: review/. Input:
+
+'Transfer ChallengeTransfer training · Question 2 of 2Total 0:00 · Question 1:30The table gives complete group sizes and pass counts. Each statement specifies its own random selection procedure. Rank the probabilities from most to least likely.Group sizes and observed passesGroupPeoplePassedA6045B15071Top = most likely. Drag rows, use Up/Down, or press 1-3 then the arrow keys.1Choose A with probability 2/3, otherwise B, then a person uniformly from that group. That person passed.UpDown2Select one person uniformly from everyone in the table. That person passed.UpDown3Select one person uniformly from everyone in the table. That person is in group A and passed.UpDownSubmit and nextSkipFinish session'
+
+FAIL a late skip cannot erase an answer already committed before timeout: Expected values to be strictly equal:
+
+0 !== -1
+
+FAIL keyboard answers after the deadline are ignored: Expected values to be strictly equal:
+
+1 !== -1
+
+FAIL finishing on the last displayed question records a complete session: Expected values to be strictly equal:
+
+false !== true
+
+0/10 focused interface regressions passed

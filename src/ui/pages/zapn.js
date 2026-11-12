@@ -1,0 +1,78 @@
+import { h, mount } from '../dom.js';
+import { activePreset } from '../../../config/presets.js';
+import { GAMES, GAME_BY_ID } from '../../zapn/index.js';
+import { ZAPN_TARGETS } from '../../../config/sections.js';
+import { zapnMeets, zapnReadiness } from '../../core/readiness.js';
+import { makeRng } from '../../core/rng.js';
+
+const fmtVal = (metric, v) => (v == null ? '—' : metric === 'accuracy' || metric === 'ratio' ? `${(v * 100).toFixed(0)}%` : `${Math.round(v * 100) / 100}`);
+
+function best(runs, target) {
+  const vals = runs.filter((r) => r.metric === target.metric).map((r) => r.value);
+  if (!vals.length) return null;
+  return target.metric.endsWith('Over') ? Math.min(...vals) : Math.max(...vals);
+}
+
+export function zapnHub(root, { store }) {
+  const games = GAMES.filter((g) => activePreset().zapn.includes(g.id));
+  mount(root,
+    h('h1', {}, 'Zap-N games'),
+    h('p', { class: 'lede' }, 'Short games that test speed, memory and planning. Each has a coach, a practice mode and an exam mode.'),
+    activePreset().note ? h('p', { class: 'muted small-note' }, activePreset().note) : null,
+    h('ul', { class: 'task-list' }, games.map((g) => {
+      const target = ZAPN_TARGETS[g.id];
+      const runs = store.zapnRuns(g.id);
+      const r = zapnReadiness(runs, target);
+      const top = best(runs, target);
+      return h('li', {}, h('a', { class: 'task-row', href: g.pending ? '#/zapn' : `#/zapn/${g.id}/practice` },
+        h('span', { class: 'task-name' }, g.title, h('span', { class: 'task-blurb' }, g.skill || '')),
+        r.ready ? h('span', { class: 'stamp stamp-mastered' }, 'Ready') : null,
+        h('span', { class: 'task-progress num' }, top == null ? 'not played' : `best ${fmtVal(target.metric, top)}`)));
+    })));
+}
+
+export function zapnGame(root, { store, id, mode = 'practice' }) {
+  const g = GAME_BY_ID[id];
+  if (!g || g.pending) return mount(root, h('h1', {}, g ? g.title : 'Unknown game'), h('p', { class: 'muted' }, 'This game is still being built.'));
+  const target = ZAPN_TARGETS[id];
+  const c = g.coach || {};
+  const stage = h('div', {});
+  const resultBox = h('div', {});
+  let unmount = null;
+  // Coach opens by default only until the game has been played once, so the stage is visible first after that.
+  const coach = h('details', { class: 'panel', open: mode === 'practice' && !store.zapnRuns(id).length },
+    h('summary', {}, h('strong', {}, 'How it works and how to play it well')),
+    c.purpose ? h('p', {}, c.purpose) : null,
+    g.spec ? h('p', { class: 'muted' }, g.spec) : null,
+    c.howItWorks?.length ? h('ul', {}, c.howItWorks.map((x) => h('li', {}, x))) : null,
+    c.scoring ? h('p', {}, h('strong', {}, 'Scoring. '), c.scoring) : null,
+    c.strategy?.length ? h('ol', { class: 'steps' }, c.strategy.map((s, i) => h('li', {}, h('span', { class: 'n' }, String(i + 1)), h('div', {}, s.say), h('div', { class: 'why' }, s.why)))) : null,
+    c.rule ? h('div', { class: 'rule' }, c.rule) : null);
+
+  function start() {
+    resultBox.replaceChildren();
+    unmount?.();
+    unmount = g.view.mount(stage, {
+      rng: makeRng(`${id}:${Date.now()}`), mode,
+      onFinish: (result) => {
+        store.recordZapn(id, { mode, ...result });
+        const ok = zapnMeets(result, target);
+        const r = zapnReadiness(store.zapnRuns(id), target);
+        resultBox.replaceChildren(h('div', { class: `feedback ${ok ? 'ok' : 'no'}` },
+          h('strong', {}, `${result.metric}: ${fmtVal(result.metric, result.value)}. `),
+          ok ? 'At target. ' : `Target: ${target.label}. `,
+          mode === 'exam' ? (r.ready ? 'Ready: three exam runs in a row at target.' : `Readiness streak ${r.streak}/${r.needed}.`) : 'Practice runs do not count toward readiness.',
+          result.detail ? h('div', { class: 'muted' }, typeof result.detail === 'string' ? result.detail : JSON.stringify(result.detail)) : null),
+        h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn primary', type: 'button', onclick: start }, 'Play again'), h('a', { class: 'btn', href: '#/zapn' }, 'All games')));
+      },
+    });
+  }
+
+  mount(root,
+    h('p', { class: 'muted' }, h('a', { href: '#/zapn' }, 'Zap-N'), ` / ${g.title} / ${mode === 'exam' ? 'Exam' : 'Practice'}`),
+    h('h1', {}, g.title),
+    h('p', { class: 'muted' }, g.skill),
+    coach, h('div', { style: { height: '16px' } }), stage, resultBox);
+  start();
+  return () => unmount?.();
+}

@@ -1,0 +1,93 @@
+{
+  "edition": "1.0.3-transfer.3",
+  "date": "2026-11-12",
+  "method": "Manual browser UI interactions and real rendered screenshot inspection; not a simulated DOM run",
+  "browser": "Provided desktop Chrome",
+  "viewport": {
+    "width": 1348,
+    "height": 936
+  },
+  "flow_version": "1.0.3-transfer.2",
+  "preset_fix_reloaded_and_checked": "1.0.3-transfer.3",
+  "timed_attempt": {
+    "displayed": 2,
+    "completed": false,
+    "correct": 2,
+    "real_per_item_expiry_observed": true,
+    "first_choice": 0.429,
+    "first_question": "3 red, 4 blue; replacement; first drawn red; probability both red",
+    "second_position_cash": 1,
+    "second_position_flat": true
+  },
+  "untimed_attempt": {
+    "displayed": 15,
+    "completed": true,
+    "regular_correct": 9,
+    "regular_total": 12,
+    "deliberately_incorrect_questions": [
+      4,
+      5
+    ],
+    "deliberately_skipped_questions": [
+      8
+    ],
+    "interval_inputs": [
+      [
+        45,
+        55
+      ],
+      [
+        25,
+        40
+      ],
+      [
+        79,
+        81
+      ]
+    ],
+    "displayed_interval_scores": [
+      0.818,
+      0.625,
+      0.975
+    ],
+    "displayed_interval_mean": 0.806,
+    "purpose": "Exercise controls and feedback; not a training-effectiveness score"
+  },
+  "observed_checks": [
+    "Training-only label and hidden method names before review",
+    "MCQ mouse and letter-key selection",
+    "Ranking button and number/arrow-key movement",
+    "Interval lower/upper entry",
+    "Orderbook buy/sell, removal and Clear",
+    "Correct/incorrect choice colour and disabled review controls",
+    "Ranking submitted order and probabilities revealed",
+    "Interval bounds and orderbook position restored",
+    "Current Transfer sidebar link returns to landing",
+    "Both session histories survive reload",
+    "Ordinary wrong-answer log remains empty",
+    "Light screens and dark landing/history readable; original theme restored",
+    "After correction, default picker and unchanged Save retain Kickstarter"
+  ],
+  "horizontal_overflow": {
+    "landing": false,
+    "long_interval_grid": false
+  },
+  "limitations": [
+    "One desktop viewport and one browser",
+    "Phone/touch and other browsers not exercised",
+    "Full 20-minute real-time timeout not waited out; deterministic DOM checks cover total deadline",
+    "Not Optiver difficulty calibration"
+  ],
+  "existing_timing_discrepancies": {
+    "ll": "15x90 seconds, no explicit 25-minute total cap",
+    "iv": "18x45 seconds, no explicit 15-minute total cap",
+    "ob": "8-minute cap retained; supplied invitation says about 15 minutes"
+  },
+  "timing_changes_made": false,
+  "preset_bug": {
+    "before": "No saved preset: active Kickstarter but radio Everything; unchanged Save switches battery",
+    "after": "Picker uses configured DEFAULT_PRESET; browser reload and unchanged Save retain Kickstarter",
+    "regression_before": "10/11 focused cases pass",
+    "regression_after": "11/11 focused cases pass"
+  }
+}

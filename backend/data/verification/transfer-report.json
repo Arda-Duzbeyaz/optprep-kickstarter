@@ -1,0 +1,68 @@
+{
+ "schemaVersion": 2,
+ "sections": {
+  "bto": {
+   "stats": {
+    "items": 700,
+    "structural_checked": 700,
+    "numerically_checked": 700,
+    "python_recomputed": 700,
+    "numerically_unchecked": 0
+   },
+   "complete_numerical_coverage": true,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "information-protocols": {
+     "numerically_checked": 300,
+     "items": 300
+    },
+    "shared-source": {
+     "numerically_checked": 400,
+     "items": 400
+    }
+   }
+  },
+  "iv": {
+   "stats": {
+    "items": 300,
+    "structural_checked": 300,
+    "numerically_checked": 300,
+    "python_recomputed": 300,
+    "numerically_unchecked": 0
+   },
+   "complete_numerical_coverage": true,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "rates-weights": {
+     "numerically_checked": 300,
+     "items": 300
+    }
+   }
+  },
+  "ll": {
+   "stats": {
+    "items": 300,
+    "structural_checked": 300,
+    "numerically_checked": 300,
+    "python_recomputed": 300,
+    "numerically_unchecked": 0
+   },
+   "complete_numerical_coverage": true,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "selection-weights": {
+     "numerically_checked": 300,
+     "items": 300
+    }
+   }
+  }
+ },
+ "engine": true,
+ "scope": "Structural checks for every item; independent numerical checks only where coverage is reported.",
+ "seconds": 0.16,
+ "complete_numerical_coverage": true,
+ "ok": true
+}

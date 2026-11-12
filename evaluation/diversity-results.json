@@ -1,0 +1,2745 @@
+{
+  "schemaVersion": 1,
+  "seedPolicy": "Deterministic literal prefixes in tools/diversity-audit.mjs",
+  "meaning": "Visible repetition and known branch/presentation diagnostics, not semantic novelty or real-test calibration.",
+  "existingFamilies": [
+    {
+      "section": "bto",
+      "family": "two-dice-sum",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 37,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "bto/two-dice-sum/base"
+      ],
+      "answerPositions": {
+        "1": 10,
+        "2": 46,
+        "3": 17,
+        "4": 7
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "die-repeats",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 28,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "bto/die-repeats/kind=allSame",
+        "bto/die-repeats/kind=someRepeat",
+        "bto/die-repeats/kind=allDiff",
+        "bto/die-repeats/kind=noAdjacent"
+      ],
+      "answerPositions": {
+        "0": 5,
+        "1": 23,
+        "2": 17,
+        "3": 24,
+        "4": 11
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "dice-order-stats",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 19,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "bto/dice-order-stats/kind=beats",
+        "bto/dice-order-stats/kind=min",
+        "bto/dice-order-stats/kind=max",
+        "bto/dice-order-stats/kind=diff",
+        "bto/dice-order-stats/kind=doubles",
+        "bto/dice-order-stats/kind=maxAtLeast"
+      ],
+      "answerPositions": {
+        "0": 6,
+        "1": 40,
+        "2": 22,
+        "3": 11,
+        "4": 1
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "three-dice",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 17,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "bto/three-dice/kind=pair",
+        "bto/three-dice/kind=sum",
+        "bto/three-dice/kind=product",
+        "bto/three-dice/kind=allDiff",
+        "bto/three-dice/kind=max",
+        "bto/three-dice/kind=triple"
+      ],
+      "answerPositions": {
+        "1": 9,
+        "2": 34,
+        "3": 25,
+        "4": 12
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "at-least-one",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 28,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "bto/at-least-one/variant=six",
+        "bto/at-least-one/variant=trades",
+        "bto/at-least-one/variant=lottery",
+        "bto/at-least-one/variant=demere"
+      ],
+      "answerPositions": {
+        "1": 1,
+        "2": 31,
+        "3": 40,
+        "4": 8
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "first-success",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 24,
+      "recordedBranchSignatures": 5,
+      "branches": [
+        "bto/first-success/variant=onK",
+        "bto/first-success/variant=duel",
+        "bto/first-success/variant=evenThrow",
+        "bto/first-success/variant=moreThanK",
+        "bto/first-success/variant=coinOnK"
+      ],
+      "answerPositions": {
+        "0": 2,
+        "1": 21,
+        "2": 36,
+        "3": 5,
+        "4": 16
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "conditional-dice",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 29,
+      "recordedBranchSignatures": 9,
+      "branches": [
+        "bto/conditional-dice/older=true",
+        "bto/conditional-dice/cond=sumIn|event=atLeastOne",
+        "bto/conditional-dice/cond=sumParity|event=bothParity",
+        "bto/conditional-dice/cond=sumAtLeast|event=atLeastOne",
+        "bto/conditional-dice/cond=different|event=sumIn",
+        "bto/conditional-dice/cond=firstParity|event=sumAtLeast",
+        "bto/conditional-dice/cond=atLeastOne|event=sumIn",
+        "bto/conditional-dice/cond=atLeastOne|event=both",
+        "bto/conditional-dice/older=false"
+      ],
+      "answerPositions": {
+        "1": 21,
+        "2": 37,
+        "3": 8,
+        "4": 14
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "card-symmetry",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 44,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "bto/card-symmetry/kind=discardAce",
+        "bto/card-symmetry/kind=aceFirstOfSuit",
+        "bto/card-symmetry/kind=discardRed",
+        "bto/card-symmetry/kind=heartBottom",
+        "bto/card-symmetry/kind=sameSuit",
+        "bto/card-symmetry/kind=aceBeforeKing"
+      ],
+      "answerPositions": {
+        "1": 10,
+        "2": 40,
+        "3": 21,
+        "4": 9
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "card-draws",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 20,
+      "recordedBranchSignatures": 9,
+      "branches": [
+        "bto/card-draws/kind=pair",
+        "bto/card-draws/kind=atLeastAce",
+        "bto/card-draws/kind=atLeastHeart",
+        "bto/card-draws/kind=sameSuit",
+        "bto/card-draws/kind=allRed",
+        "bto/card-draws/kind=twoAces",
+        "bto/card-draws/kind=allDiffRanks",
+        "bto/card-draws/kind=flush",
+        "bto/card-draws/kind=sameColour"
+      ],
+      "answerPositions": {
+        "0": 6,
+        "1": 22,
+        "2": 27,
+        "3": 19,
+        "4": 6
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "urn-draws",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 71,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "bto/urn-draws/atLeast=false",
+        "bto/urn-draws/atLeast=true"
+      ],
+      "answerPositions": {
+        "1": 22,
+        "2": 29,
+        "3": 20,
+        "4": 9
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "coin-sequences",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 41,
+      "recordedBranchSignatures": 5,
+      "branches": [
+        "bto/coin-sequences/kind=allSame",
+        "bto/coin-sequences/kind=exactlyK",
+        "bto/coin-sequences/kind=run",
+        "bto/coin-sequences/kind=moreHeads",
+        "bto/coin-sequences/kind=noHH"
+      ],
+      "answerPositions": {
+        "1": 29,
+        "2": 31,
+        "3": 20
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "race-to-k",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 26,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "bto/race-to-k/mode=full",
+        "bto/race-to-k/mode=win"
+      ],
+      "answerPositions": {
+        "0": 1,
+        "1": 5,
+        "2": 45,
+        "3": 9,
+        "4": 20
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "pattern-waiting",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 29,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "bto/pattern-waiting/mode=wait",
+        "bto/pattern-waiting/mode=race"
+      ],
+      "answerPositions": {
+        "1": 22,
+        "2": 43,
+        "3": 8,
+        "4": 7
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "bayes-test",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 67,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "bto/bayes-test/variant=pos",
+        "bto/bayes-test/variant=twoPos",
+        "bto/bayes-test/variant=negative"
+      ],
+      "answerPositions": {
+        "0": 3,
+        "1": 11,
+        "2": 29,
+        "3": 25,
+        "4": 12
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "bayes-boxes",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 60,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "bto/bayes-boxes/kind=cards",
+        "bto/bayes-boxes/kind=coins",
+        "bto/bayes-boxes/kind=boxes"
+      ],
+      "answerPositions": {
+        "0": 1,
+        "1": 1,
+        "2": 9,
+        "3": 53,
+        "4": 16
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "monty-hall",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 22,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "bto/monty-hall/variant=stay",
+        "bto/monty-hall/variant=random",
+        "bto/monty-hall/variant=switch"
+      ],
+      "answerPositions": {
+        "0": 6,
+        "1": 16,
+        "2": 25,
+        "3": 33
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "pigeonhole",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 58,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "bto/pigeonhole/kind=coinsSure",
+        "bto/pigeonhole/kind=socksMaybe",
+        "bto/pigeonhole/kind=socksSure",
+        "bto/pigeonhole/kind=pairsSum",
+        "bto/pigeonhole/kind=pairsSumMaybe",
+        "bto/pigeonhole/kind=coinsSmall"
+      ],
+      "answerPositions": {
+        "1": 6,
+        "2": 14,
+        "3": 6,
+        "4": 54
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "birthday",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 27,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "bto/birthday/mode=any",
+        "bto/birthday/mode=mine"
+      ],
+      "answerPositions": {
+        "1": 7,
+        "2": 31,
+        "3": 16,
+        "4": 26
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "derangements",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 43,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "bto/derangements/kind=none",
+        "bto/derangements/kind=exactlyK",
+        "bto/derangements/kind=atLeastOne",
+        "bto/derangements/kind=nMinusOne"
+      ],
+      "answerPositions": {
+        "0": 14,
+        "1": 9,
+        "2": 49,
+        "3": 8
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "expected-waiting",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 31,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "bto/expected-waiting/kind=first",
+        "bto/expected-waiting/kind=doubleSix",
+        "bto/expected-waiting/kind=repeat",
+        "bto/expected-waiting/kind=twoFaces",
+        "bto/expected-waiting/kind=bothSides",
+        "bto/expected-waiting/kind=headRun"
+      ],
+      "answerPositions": {
+        "1": 1,
+        "2": 32,
+        "3": 45,
+        "4": 2
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "coupon-collector",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 26,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "bto/coupon-collector/base"
+      ],
+      "answerPositions": {
+        "1": 6,
+        "2": 65,
+        "3": 9
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "linearity",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 39,
+      "recordedBranchSignatures": 7,
+      "branches": [
+        "bto/linearity/kind=runs",
+        "bto/linearity/kind=empty",
+        "bto/linearity/kind=distinct",
+        "bto/linearity/kind=fixed",
+        "bto/linearity/kind=hh",
+        "bto/linearity/kind=adjacent",
+        "bto/linearity/kind=records"
+      ],
+      "answerPositions": {
+        "1": 14,
+        "2": 48,
+        "3": 17,
+        "4": 1
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "expected-extremes",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 29,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "bto/expected-extremes/minOf=true|mode=dice",
+        "bto/expected-extremes/mode=uniform",
+        "bto/expected-extremes/minOf=false|mode=dice"
+      ],
+      "answerPositions": {
+        "0": 2,
+        "1": 16,
+        "2": 15,
+        "3": 45,
+        "4": 2
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "dice-duel",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 18,
+      "recordedBranchSignatures": 5,
+      "branches": [
+        "bto/dice-duel/A.type=die|B.type=die|reroll=false",
+        "bto/dice-duel/A.type=custom|B.type=custom|reroll=false",
+        "bto/dice-duel/A.type=max2|B.type=die|reroll=false",
+        "bto/dice-duel/A.type=die|B.type=die|reroll=true",
+        "bto/dice-duel/A.type=sum2|B.type=sum2|reroll=false"
+      ],
+      "answerPositions": {
+        "1": 2,
+        "2": 47,
+        "3": 20,
+        "4": 11
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "dice-games-ev",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 20,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "bto/dice-games-ev/kind=square",
+        "bto/dice-games-ev/kind=reroll",
+        "bto/dice-games-ev/kind=threeRolls",
+        "bto/dice-games-ev/kind=product",
+        "bto/dice-games-ev/kind=absDiff",
+        "bto/dice-games-ev/kind=evenOdd"
+      ],
+      "answerPositions": {
+        "1": 7,
+        "2": 62,
+        "3": 10,
+        "4": 1
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "card-stopping",
+      "levels": [
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 26,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "bto/card-stopping/base"
+      ],
+      "answerPositions": {
+        "2": 33,
+        "3": 47
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "running-sum",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 40,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "bto/running-sum/mode=hit",
+        "bto/running-sum/mode=pass"
+      ],
+      "answerPositions": {
+        "1": 8,
+        "2": 49,
+        "3": 21,
+        "4": 2
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "random-walk-line",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 55,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "bto/random-walk-line/kind=parity",
+        "bto/random-walk-line/kind=below",
+        "bto/random-walk-line/kind=returnZero",
+        "bto/random-walk-line/kind=endAt",
+        "bto/random-walk-line/kind=everReach",
+        "bto/random-walk-line/kind=neverReturn"
+      ],
+      "answerPositions": {
+        "0": 19,
+        "1": 12,
+        "2": 28,
+        "3": 21
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "polygon-walk",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 43,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "bto/polygon-walk/kind=hit",
+        "bto/polygon-walk/kind=last",
+        "bto/polygon-walk/kind=meet",
+        "bto/polygon-walk/kind=return"
+      ],
+      "answerPositions": {
+        "1": 4,
+        "2": 60,
+        "3": 10,
+        "4": 6
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "gamblers-ruin",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "bto/gamblers-ruin/mode=fairP",
+        "bto/gamblers-ruin/mode=fairE",
+        "bto/gamblers-ruin/mode=biased"
+      ],
+      "answerPositions": {
+        "0": 1,
+        "1": 12,
+        "2": 28,
+        "3": 13,
+        "4": 26
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "clt-estimates",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 39,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "bto/clt-estimates/kind=coinTail",
+        "bto/clt-estimates/kind=coinBand",
+        "bto/clt-estimates/kind=diceTail"
+      ],
+      "answerPositions": {
+        "0": 54,
+        "1": 15,
+        "4": 11
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "bto",
+      "family": "uniform-geometry",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 24,
+      "recordedBranchSignatures": 7,
+      "branches": [
+        "bto/uniform-geometry/kind=disc",
+        "bto/uniform-geometry/kind=triangle",
+        "bto/uniform-geometry/kind=semicircle",
+        "bto/uniform-geometry/kind=sum",
+        "bto/uniform-geometry/kind=meet",
+        "bto/uniform-geometry/kind=ratio",
+        "bto/uniform-geometry/kind=product"
+      ],
+      "answerPositions": {
+        "0": 6,
+        "1": 22,
+        "2": 25,
+        "3": 18,
+        "4": 9
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "arithmetic",
+      "levels": [
+        1
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/arithmetic/next-term"
+      ],
+      "answerPositions": {
+        "1": 41,
+        "2": 20,
+        "3": 19
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "geometric",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 51,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/geometric/missing-term",
+        "nl/geometric/next-term"
+      ],
+      "answerPositions": {
+        "0": 10,
+        "1": 13,
+        "2": 6,
+        "3": 42,
+        "4": 9
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "second-diff",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 78,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/second-diff/next-term",
+        "nl/second-diff/missing-term"
+      ],
+      "answerPositions": {
+        "1": 17,
+        "2": 61,
+        "3": 2
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "add-index",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 74,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/add-index/next-term",
+        "nl/add-index/missing-term"
+      ],
+      "answerPositions": {
+        "1": 14,
+        "2": 65,
+        "3": 1
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "squares-plus",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 74,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/squares-plus/missing-term",
+        "nl/squares-plus/next-term"
+      ],
+      "answerPositions": {
+        "1": 47,
+        "2": 4,
+        "3": 29
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "triangular",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 48,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/triangular/next-term",
+        "nl/triangular/missing-term"
+      ],
+      "answerPositions": {
+        "1": 66,
+        "2": 14
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "diff-geometric",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 73,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/diff-geometric/next-term"
+      ],
+      "answerPositions": {
+        "0": 1,
+        "1": 17,
+        "2": 42,
+        "3": 13,
+        "4": 7
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "affine-recurrence",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 77,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/affine-recurrence/next-term"
+      ],
+      "answerPositions": {
+        "0": 10,
+        "1": 16,
+        "2": 20,
+        "3": 31,
+        "4": 3
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "fibonacci-like",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 66,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/fibonacci-like/next-term",
+        "nl/fibonacci-like/missing-term"
+      ],
+      "answerPositions": {
+        "1": 2,
+        "2": 43,
+        "3": 35
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "multiply-index",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 31,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/multiply-index/next-term"
+      ],
+      "answerPositions": {
+        "1": 4,
+        "2": 15,
+        "3": 61
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "interleaved",
+      "levels": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 8,
+      "branches": [
+        "nl/interleaved/coeffs.strands.[]k=arith|next-term|strands=arith>arith",
+        "nl/interleaved/coeffs.strands.[]k=arith|coeffs.strands.[]k=geo|next-term|strands=arith>geo",
+        "nl/interleaved/coeffs.strands.[]k=geo|coeffs.strands.[]k=quad|next-term|strands=quad>geo",
+        "nl/interleaved/coeffs.strands.[]k=arith|coeffs.strands.[]k=fib|next-term|strands=fib>arith",
+        "nl/interleaved/coeffs.strands.[]k=arith|coeffs.strands.[]k=quad|next-term|strands=quad>arith",
+        "nl/interleaved/coeffs.strands.[]k=fib|coeffs.strands.[]k=geo|next-term|strands=fib>geo",
+        "nl/interleaved/coeffs.strands.[]k=arith|coeffs.strands.[]k=geo|next-term|strands=geo>arith",
+        "nl/interleaved/coeffs.strands.[]k=arith|missing-term|strands=arith>arith"
+      ],
+      "answerPositions": {
+        "0": 25,
+        "1": 11,
+        "2": 7,
+        "3": 22,
+        "4": 15
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "alternating-ops",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 74,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "nl/alternating-ops/next-term|operations=mul>add",
+        "nl/alternating-ops/next-term|operations=add>mul",
+        "nl/alternating-ops/next-term|operations=mul>sub",
+        "nl/alternating-ops/next-term|operations=sub>mul"
+      ],
+      "answerPositions": {
+        "0": 32,
+        "1": 2,
+        "3": 36,
+        "4": 10
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "cubes-plus",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 69,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/cubes-plus/next-term"
+      ],
+      "answerPositions": {
+        "2": 39,
+        "3": 41
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "pronic",
+      "levels": [
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 34,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/pronic/next-term"
+      ],
+      "answerPositions": {
+        "1": 19,
+        "2": 61
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "primes",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 27,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/primes/next-term"
+      ],
+      "answerPositions": {
+        "0": 11,
+        "1": 21,
+        "2": 31,
+        "3": 17
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "powers-offset",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 58,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/powers-offset/next-term"
+      ],
+      "answerPositions": {
+        "2": 34,
+        "3": 46
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "decimals",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 48,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/decimals/coeffs.k=quad|next-term",
+        "nl/decimals/coeffs.k=geo|next-term"
+      ],
+      "answerPositions": {
+        "2": 59,
+        "3": 21
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "alternating-signs",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 62,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "nl/alternating-signs/coeffs.k=sq|next-term",
+        "nl/alternating-signs/coeffs.k=aff|next-term",
+        "nl/alternating-signs/coeffs.k=lin|next-term"
+      ],
+      "answerPositions": {
+        "1": 22,
+        "3": 32,
+        "4": 26
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "third-diff",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 78,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/third-diff/next-term"
+      ],
+      "answerPositions": {
+        "1": 18,
+        "2": 3,
+        "3": 59
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "tribonacci",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 72,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/tribonacci/next-term"
+      ],
+      "answerPositions": {
+        "3": 80
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "weighted-two-term",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 66,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/weighted-two-term/next-term"
+      ],
+      "answerPositions": {
+        "2": 20,
+        "3": 23,
+        "4": 37
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "product-recurrence",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 66,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/product-recurrence/next-term"
+      ],
+      "answerPositions": {
+        "0": 24,
+        "1": 7,
+        "2": 11,
+        "3": 38
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "prime-gaps",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 54,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/prime-gaps/next-term"
+      ],
+      "answerPositions": {
+        "1": 16,
+        "2": 64
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "sum-previous",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 79,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/sum-previous/next-term"
+      ],
+      "answerPositions": {
+        "0": 3,
+        "1": 33,
+        "2": 2,
+        "3": 42
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "digit-sum",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 64,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/digit-sum/next-term"
+      ],
+      "answerPositions": {
+        "0": 6,
+        "1": 23,
+        "2": 31,
+        "3": 20
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "fractions",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 48,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/fractions/next-term"
+      ],
+      "answerPositions": {
+        "1": 41,
+        "2": 30,
+        "3": 3,
+        "4": 6
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "fibonacci-squares",
+      "levels": [
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 43,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "nl/fibonacci-squares/coeffs.k=prod|next-term",
+        "nl/fibonacci-squares/coeffs.k=sq|next-term"
+      ],
+      "answerPositions": {
+        "2": 16,
+        "3": 32,
+        "4": 32
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "reverse-digits",
+      "levels": [
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 65,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/reverse-digits/next-term"
+      ],
+      "answerPositions": {
+        "2": 8,
+        "3": 59,
+        "4": 13
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "square-minus",
+      "levels": [
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 47,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "nl/square-minus/next-term"
+      ],
+      "answerPositions": {
+        "2": 39,
+        "4": 41
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "nl",
+      "family": "mixed-combo",
+      "levels": [
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 67,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "nl/mixed-combo/coeffs.v=plusIndex|next-term",
+        "nl/mixed-combo/coeffs.v=altConst|next-term",
+        "nl/mixed-combo/coeffs.v=indexMul|next-term",
+        "nl/mixed-combo/coeffs.v=minusIndex|next-term"
+      ],
+      "answerPositions": {
+        "0": 2,
+        "1": 15,
+        "2": 25,
+        "3": 2,
+        "4": 36
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "conjunction",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 14,
+      "branches": [
+        "ll/conjunction/queries=A,AB,AorB",
+        "ll/conjunction/queries=A,AB,BgA",
+        "ll/conjunction/queries=AB,B,neither",
+        "ll/conjunction/queries=A,AB,B",
+        "ll/conjunction/queries=AB,BgA,neither",
+        "ll/conjunction/queries=A,B,BgA",
+        "ll/conjunction/queries=AorB,B,neither",
+        "ll/conjunction/queries=B,BgA,neither",
+        "ll/conjunction/queries=AorB,BgA,neither",
+        "ll/conjunction/queries=AB,B,BgA",
+        "ll/conjunction/queries=AB,AorB,BgA",
+        "ll/conjunction/queries=AorB,B,BgA",
+        "ll/conjunction/queries=AB,AorB,B",
+        "ll/conjunction/queries=AB,AorB,neither"
+      ],
+      "answerPositions": {
+        "2,1,0": 10,
+        "0,1,2": 13,
+        "2,0,1": 21,
+        "0,2,1": 10,
+        "1,0,2": 11,
+        "1,2,0": 15
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "score-table",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 37,
+      "branches": [
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=ge|statements.[]cond.t=gt",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=ge|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=ge|statements.[]cond.t=lt",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=both|statements.[]cond.t=gt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=ge|statements.[]cond.t=gt",
+        "ll/score-table/statements.[]cond.t=either|statements.[]cond.t=ge",
+        "ll/score-table/statements.[]cond.t=either|statements.[]cond.t=ge|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=either|statements.[]cond.t=gt",
+        "ll/score-table/statements.[]cond.t=ge|statements.[]cond.t=gt|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=ge",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=either|statements.[]cond.t=ge|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=both|statements.[]cond.t=ge|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=either|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=either|statements.[]cond.t=ge|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=either|statements.[]cond.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=ge|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=either|statements.[]cond.t=ge|statements.[]cond.t=gt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=ge|statements.[]cond.t=gt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=ge|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=ge|statements.[]cond.t=lt",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=ge|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=both|statements.[]cond.t=either|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=either|statements.[]cond.t=ge|statements.[]cond.t=lt",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=both|statements.[]cond.t=gt",
+        "ll/score-table/statements.[]cond.t=ge|statements.[]cond.t=gt|statements.[]cond.t=lt",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=gt|statements.[]cond.t=lt",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=gt|statements.[]cond.t=lt",
+        "ll/score-table/statements.[]cond.t=ge|statements.[]cond.t=gt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=either|statements.[]cond.t=gt|statements.[]cond.t=lt",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=gt|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=either|statements.[]cond.t=ge",
+        "ll/score-table/statements.[]cond.t=both|statements.[]cond.t=ge|statements.[]cond.t=gt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=gt|statements.[]cond.t=lt|statements.[]given.t=ge",
+        "ll/score-table/statements.[]cond.t=either|statements.[]cond.t=ge|statements.[]cond.t=gt",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=ge|statements.[]cond.t=gt",
+        "ll/score-table/statements.[]cond.t=avg|statements.[]cond.t=both|statements.[]cond.t=either"
+      ],
+      "answerPositions": {
+        "1,2,0": 11,
+        "0,1,2": 19,
+        "1,0,2": 6,
+        "2,0,1": 12,
+        "0,2,1": 21,
+        "2,1,0": 11
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "football",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 34,
+      "branches": [
+        "ll/football/statements.[]t=btts|statements.[]t=cleanSheetHome|statements.[]t=draw",
+        "ll/football/statements.[]t=draw|statements.[]t=homeWin|statements.[]t=teamScored",
+        "ll/football/statements.[]t=awayWin|statements.[]t=btts|statements.[]t=goalsGe",
+        "ll/football/statements.[]t=draw|statements.[]t=homeWin|statements.[]t=teamWin",
+        "ll/football/statements.[]t=awayWin|statements.[]t=btts|statements.[]t=homeWin",
+        "ll/football/statements.[]t=btts|statements.[]t=goalsGe|statements.[]t=teamScored",
+        "ll/football/statements.[]t=btts|statements.[]t=cleanSheetHome|statements.[]t=homeWin",
+        "ll/football/statements.[]t=cleanSheetHome|statements.[]t=draw|statements.[]t=homeWin",
+        "ll/football/statements.[]t=btts|statements.[]t=draw|statements.[]t=teamScored",
+        "ll/football/statements.[]t=btts|statements.[]t=goalsGe|statements.[]t=teamWin",
+        "ll/football/statements.[]t=btts|statements.[]t=homeWin|statements.[]t=teamScored",
+        "ll/football/statements.[]t=awayWin|statements.[]t=cleanSheetHome|statements.[]t=goalsGe",
+        "ll/football/statements.[]t=awayWin|statements.[]t=btts|statements.[]t=cleanSheetHome",
+        "ll/football/statements.[]t=goalsGe|statements.[]t=homeWin|statements.[]t=teamWin",
+        "ll/football/statements.[]t=btts|statements.[]t=draw|statements.[]t=homeWin",
+        "ll/football/statements.[]t=cleanSheetHome|statements.[]t=goalsGe|statements.[]t=homeWin",
+        "ll/football/statements.[]t=awayWin|statements.[]t=cleanSheetHome|statements.[]t=draw",
+        "ll/football/statements.[]t=btts|statements.[]t=goalsGe|statements.[]t=homeWin",
+        "ll/football/statements.[]t=btts|statements.[]t=homeWin|statements.[]t=teamWin",
+        "ll/football/statements.[]t=btts|statements.[]t=draw|statements.[]t=goalsGe",
+        "ll/football/statements.[]t=goalsGe|statements.[]t=teamScored|statements.[]t=teamWin",
+        "ll/football/statements.[]t=draw|statements.[]t=goalsGe|statements.[]t=homeWin",
+        "ll/football/statements.[]t=btts|statements.[]t=draw|statements.[]t=teamWin",
+        "ll/football/statements.[]t=awayWin|statements.[]t=btts|statements.[]t=draw",
+        "ll/football/statements.[]t=draw|statements.[]t=goalsGe|statements.[]t=teamWin",
+        "ll/football/statements.[]t=draw|statements.[]t=goalsGe|statements.[]t=teamScored",
+        "ll/football/statements.[]t=awayWin|statements.[]t=draw|statements.[]t=goalsGe",
+        "ll/football/statements.[]t=homeWin|statements.[]t=teamScored|statements.[]t=teamWin",
+        "ll/football/statements.[]t=goalsGe|statements.[]t=homeWin|statements.[]t=teamScored",
+        "ll/football/statements.[]t=cleanSheetHome|statements.[]t=draw|statements.[]t=goalsGe",
+        "ll/football/statements.[]t=btts|statements.[]t=cleanSheetHome|statements.[]t=goalsGe",
+        "ll/football/statements.[]t=draw|statements.[]t=teamScored|statements.[]t=teamWin",
+        "ll/football/statements.[]t=awayWin|statements.[]t=cleanSheetHome|statements.[]t=homeWin",
+        "ll/football/statements.[]t=btts|statements.[]t=teamScored|statements.[]t=teamWin"
+      ],
+      "answerPositions": {
+        "0,2,1": 15,
+        "0,1,2": 14,
+        "1,0,2": 11,
+        "2,0,1": 13,
+        "1,2,0": 18,
+        "2,1,0": 9
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "survey-bar",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "ll/survey-bar/statements.[]key=joint|statements.[]key=marg|statements.[]key=marg2",
+        "ll/survey-bar/statements.[]key=joint|statements.[]key=kGivenG|statements.[]key=marg",
+        "ll/survey-bar/statements.[]key=gGivenK|statements.[]key=joint|statements.[]key=kGivenG"
+      ],
+      "answerPositions": {
+        "2,0,1": 13,
+        "2,1,0": 21,
+        "0,2,1": 12,
+        "1,2,0": 11,
+        "0,1,2": 14,
+        "1,0,2": 9
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "fund-returns",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 23,
+      "branches": [
+        "ll/fund-returns/statements.[]t=gt|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=bothNeg|statements.[]t=gt|statements.[]t=persist",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=bothNeg|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=bothNeg|statements.[]t=gt|statements.[]t=lt",
+        "ll/fund-returns/statements.[]t=gt|statements.[]t=lt|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=lt|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=gt|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=bothNeg|statements.[]t=lt|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=bothNeg|statements.[]t=gt",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=bothNeg|statements.[]t=persist",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=lt|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=bothNeg|statements.[]t=persist|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=gt|statements.[]t=lt",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=gt|statements.[]t=persist",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=persist|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=gt|statements.[]t=persist|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=bothNeg|statements.[]t=lt",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=bothNeg|statements.[]t=lt|statements.[]t=persist",
+        "ll/fund-returns/statements.[]t=bothNeg|statements.[]t=gt|statements.[]t=pos",
+        "ll/fund-returns/statements.[]t=beat|statements.[]t=lt|statements.[]t=persist",
+        "ll/fund-returns/statements.[]t=gt|statements.[]t=lt|statements.[]t=persist",
+        "ll/fund-returns/statements.[]t=lt|statements.[]t=persist|statements.[]t=pos"
+      ],
+      "answerPositions": {
+        "1,0,2": 15,
+        "2,0,1": 14,
+        "1,2,0": 17,
+        "0,2,1": 8,
+        "2,1,0": 14,
+        "0,1,2": 12
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "histogram-bins",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 11,
+      "branches": [
+        "ll/histogram-bins/statements.[]t=between|statements.[]t=gt",
+        "ll/histogram-bins/statements.[]t=gt|statements.[]t=lt",
+        "ll/histogram-bins/statements.[]t=between|statements.[]t=lt",
+        "ll/histogram-bins/statements.[]t=between|statements.[]t=cond|statements.[]t=lt",
+        "ll/histogram-bins/statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/histogram-bins/statements.[]t=cond|statements.[]t=gt",
+        "ll/histogram-bins/statements.[]t=cond|statements.[]t=lt",
+        "ll/histogram-bins/statements.[]t=between|statements.[]t=cond|statements.[]t=gt",
+        "ll/histogram-bins/statements.[]t=cond|statements.[]t=gt|statements.[]t=lt",
+        "ll/histogram-bins/statements.[]t=gt",
+        "ll/histogram-bins/statements.[]t=lt"
+      ],
+      "answerPositions": {
+        "2,0,1": 6,
+        "0,2,1": 17,
+        "0,1,2": 21,
+        "1,0,2": 13,
+        "2,1,0": 13,
+        "1,2,0": 10
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "scatter-regions",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 18,
+      "branches": [
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=xGt|statements.[]cond.t=xLt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=both|statements.[]cond.t=yGt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=xGt|statements.[]cond.t=yGt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=xGt|statements.[]cond.t=xLt|statements.[]cond.t=yGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=xGt|statements.[]cond.t=yGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=both|statements.[]cond.t=xLt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=both|statements.[]cond.t=xLt|statements.[]cond.t=yGt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=both|statements.[]cond.t=yGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=xLt|statements.[]cond.t=yGt",
+        "ll/scatter-regions/statements.[]cond.t=both|statements.[]cond.t=xLt|statements.[]cond.t=yGt",
+        "ll/scatter-regions/statements.[]cond.t=both|statements.[]cond.t=xGt|statements.[]cond.t=xLt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=xGt|statements.[]cond.t=xLt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=both|statements.[]cond.t=xGt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=xGt|statements.[]cond.t=xLt|statements.[]cond.t=yGt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=both|statements.[]cond.t=xLt",
+        "ll/scatter-regions/statements.[]cond.t=both|statements.[]cond.t=xGt|statements.[]cond.t=yGt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=both|statements.[]cond.t=xGt|statements.[]cond.t=xLt|statements.[]given.t=xGt",
+        "ll/scatter-regions/statements.[]cond.t=above|statements.[]cond.t=xLt|statements.[]cond.t=yGt|statements.[]given.t=xGt"
+      ],
+      "answerPositions": {
+        "1,2,0": 14,
+        "2,0,1": 14,
+        "2,1,0": 16,
+        "1,0,2": 12,
+        "0,2,1": 13,
+        "0,1,2": 11
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "density-curves",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 42,
+      "branches": [
+        "ll/density-curves/curves.[]kind=skew|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=skew|curves.[]kind=tri|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|curves.[]kind=uniform|statements.[]t=between|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=skew|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=skew|curves.[]kind=uniform|statements.[]t=between|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=tri|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=skew|curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=skew|statements.[]t=between",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=tri|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=skew|curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=uniform|statements.[]t=between",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|curves.[]kind=tri|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=uniform|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=skew|statements.[]t=between|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|statements.[]t=between|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=between|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|curves.[]kind=tri|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=tri|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=skew|curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=uniform|statements.[]t=between|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=uniform|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|curves.[]kind=uniform|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=tri|statements.[]t=between|statements.[]t=gt",
+        "ll/density-curves/curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=skew|curves.[]kind=uniform|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=uniform|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=uniform|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=skew|curves.[]kind=tri|statements.[]t=between|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=skew|curves.[]kind=tri|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=tri|statements.[]t=between|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=tri|curves.[]kind=uniform|statements.[]t=gt|statements.[]t=lt",
+        "ll/density-curves/curves.[]kind=normal|curves.[]kind=tri|statements.[]t=gt|statements.[]t=lt"
+      ],
+      "answerPositions": {
+        "2,0,1": 13,
+        "0,2,1": 15,
+        "2,1,0": 12,
+        "1,2,0": 11,
+        "1,0,2": 14,
+        "0,1,2": 15
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "markov-graph",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "ll/markov-graph/mode=nstep",
+        "ll/markov-graph/mode=stationary",
+        "ll/markov-graph/mode=trap"
+      ],
+      "answerPositions": {
+        "2,1,0": 10,
+        "0,2,1": 15,
+        "2,0,1": 16,
+        "1,0,2": 20,
+        "1,2,0": 9,
+        "0,1,2": 10
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "dice-events",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 79,
+      "recordedBranchSignatures": 33,
+      "branches": [
+        "ll/dice-events/events.[]key=maxIs|events.[]key=sumEq|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=firstSix|events.[]key=sumGe|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=sixInN|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=double|events.[]key=maxIs|events.[]key=noSix",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=doubleSix|events.[]key=firstSix",
+        "ll/dice-events/events.[]key=doubleSix|events.[]key=kSixes|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=double|events.[]key=maxIs|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=doubleSix|events.[]key=sixInN",
+        "ll/dice-events/events.[]key=double|events.[]key=maxIs|events.[]key=sixInN",
+        "ll/dice-events/events.[]key=doubleSix|events.[]key=sixInN|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=sixInN|events.[]key=sumEq|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=firstSix|events.[]key=sixInN",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=kSixes|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=maxIs|events.[]key=noSix|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=doubleSix|events.[]key=firstSix|events.[]key=sixInN",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=kSixes|events.[]key=sixInN",
+        "ll/dice-events/events.[]key=maxIs|events.[]key=sixInN|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=doubleSix|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=kSixes|events.[]key=sixInN|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=double|events.[]key=noSix|events.[]key=sumEq",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=doubleSix|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=double|events.[]key=maxIs|events.[]key=sumEq",
+        "ll/dice-events/events.[]key=doubleSix|events.[]key=firstSix|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=noSix|events.[]key=sixInN|events.[]key=sumEq",
+        "ll/dice-events/events.[]key=doubleSix|events.[]key=firstSix|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=doubleSix|events.[]key=kSixes|events.[]key=sixInN",
+        "ll/dice-events/events.[]key=maxIs|events.[]key=sixInN|events.[]key=sumEq",
+        "ll/dice-events/events.[]key=allDiff|events.[]key=sumGe|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=double|events.[]key=sixInN|events.[]key=sumEq",
+        "ll/dice-events/events.[]key=doubleSix|events.[]key=sumGe|events.[]key=threeSum",
+        "ll/dice-events/events.[]key=noSix|events.[]key=sixInN|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=double|events.[]key=noSix|events.[]key=sumGe",
+        "ll/dice-events/events.[]key=double|events.[]key=noSix|events.[]key=sixInN"
+      ],
+      "answerPositions": {
+        "1,0,2": 11,
+        "0,1,2": 21,
+        "2,0,1": 11,
+        "1,2,0": 12,
+        "2,1,0": 14,
+        "0,2,1": 11
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "card-events",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 65,
+      "recordedBranchSignatures": 43,
+      "branches": [
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=oneAceTwo|events.[]key=twoRed",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=aceSpadesTop|events.[]key=heartInHand",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=pair|events.[]key=topRed",
+        "ll/card-events/events.[]key=diffColour|events.[]key=oneAceTwo|events.[]key=pair",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=flushFive|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=oneAceTwo|events.[]key=pair|events.[]key=twoRed",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=diffColour|events.[]key=flushFive",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=flushFive|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=oneAceTwo|events.[]key=topRed",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=noAceBridge|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=diffColour|events.[]key=flushFive|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=heartInHand|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=diffColour|events.[]key=pair|events.[]key=twoRed",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=flushFive|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=diffColour|events.[]key=oneAceTwo|events.[]key=twoRed",
+        "ll/card-events/events.[]key=heartInHand|events.[]key=noAceBridge|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=diffColour|events.[]key=oneAceTwo|events.[]key=sameSuit",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=aceSpadesTop|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=diffColour|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=pair|events.[]key=twoRed",
+        "ll/card-events/events.[]key=flushFive|events.[]key=noAceBridge|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=diffColour|events.[]key=twoRed",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=diffColour|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=oneAceTwo|events.[]key=topRed|events.[]key=twoRed",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=diffColour|events.[]key=pair",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=noAceBridge|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=heartInHand|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=oneAceTwo|events.[]key=pair",
+        "ll/card-events/events.[]key=flushFive|events.[]key=heartInHand|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=oneAceTwo|events.[]key=sameSuit|events.[]key=topRed",
+        "ll/card-events/events.[]key=diffColour|events.[]key=flushFive|events.[]key=heartInHand",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=aceSpadesTop|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=flushFive|events.[]key=heartInHand",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=pair|events.[]key=sameSuit",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=flushFive|events.[]key=heartInHand",
+        "ll/card-events/events.[]key=pair|events.[]key=sameSuit|events.[]key=topRed",
+        "ll/card-events/events.[]key=oneAceTwo|events.[]key=pair|events.[]key=topRed",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=flushFive|events.[]key=pairOrBetter",
+        "ll/card-events/events.[]key=aceInHand|events.[]key=aceSpadesTop|events.[]key=flushFive",
+        "ll/card-events/events.[]key=diffColour|events.[]key=pair|events.[]key=sameSuit",
+        "ll/card-events/events.[]key=diffColour|events.[]key=heartInHand|events.[]key=noAceBridge",
+        "ll/card-events/events.[]key=aceSpadesTop|events.[]key=diffColour|events.[]key=flushFive",
+        "ll/card-events/events.[]key=flushFive|events.[]key=heartInHand|events.[]key=noAceBridge"
+      ],
+      "answerPositions": {
+        "2,1,0": 11,
+        "1,0,2": 13,
+        "1,2,0": 7,
+        "0,1,2": 13,
+        "2,0,1": 14,
+        "0,2,1": 22
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "coin-patterns",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 15,
+      "branches": [
+        "ll/coin-patterns/events.[]key=alternate|events.[]key=exactly|events.[]key=firstHead",
+        "ll/coin-patterns/events.[]key=hasHH|events.[]key=hasHT|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=hasHHH|events.[]key=hasHT|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=exactly|events.[]key=firstHead|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=alternate|events.[]key=exactly|events.[]key=hasHH",
+        "ll/coin-patterns/events.[]key=alternate|events.[]key=exactly|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=exactly|events.[]key=hasHT|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=hasHH|events.[]key=hasHHH|events.[]key=hasHT",
+        "ll/coin-patterns/events.[]key=alternate|events.[]key=firstHead|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=hasHH|events.[]key=hasHHH|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=exactly|events.[]key=hasHH|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=alternate|events.[]key=hasHT|events.[]key=moreHeads",
+        "ll/coin-patterns/events.[]key=exactly|events.[]key=hasHH|events.[]key=hasHT",
+        "ll/coin-patterns/events.[]key=alternate|events.[]key=hasHH|events.[]key=hasHT",
+        "ll/coin-patterns/events.[]key=alternate|events.[]key=exactly|events.[]key=hasHT"
+      ],
+      "answerPositions": {
+        "1,2,0": 14,
+        "0,1,2": 21,
+        "1,0,2": 9,
+        "0,2,1": 10,
+        "2,0,1": 14,
+        "2,1,0": 12
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "collisions",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 78,
+      "recordedBranchSignatures": 13,
+      "branches": [
+        "ll/collisions/events.[]key=diceRepeat|events.[]key=month|events.[]key=weekday",
+        "ll/collisions/events.[]key=birthdayAny|events.[]key=diceRepeat|events.[]key=month",
+        "ll/collisions/events.[]key=diceRepeat|events.[]key=pinClash|events.[]key=weekday",
+        "ll/collisions/events.[]key=birthdayAny|events.[]key=birthdayYou|events.[]key=pinClash",
+        "ll/collisions/events.[]key=diceRepeat|events.[]key=month|events.[]key=pinClash",
+        "ll/collisions/events.[]key=month|events.[]key=pinClash|events.[]key=weekday",
+        "ll/collisions/events.[]key=birthdayYou|events.[]key=diceRepeat|events.[]key=pinClash",
+        "ll/collisions/events.[]key=birthdayAny|events.[]key=diceRepeat|events.[]key=pinClash",
+        "ll/collisions/events.[]key=birthdayAny|events.[]key=month|events.[]key=pinClash",
+        "ll/collisions/events.[]key=birthdayYou|events.[]key=month|events.[]key=pinClash",
+        "ll/collisions/events.[]key=birthdayAny|events.[]key=birthdayYou|events.[]key=month",
+        "ll/collisions/events.[]key=birthdayAny|events.[]key=birthdayYou|events.[]key=diceRepeat",
+        "ll/collisions/events.[]key=birthdayYou|events.[]key=diceRepeat|events.[]key=month"
+      ],
+      "answerPositions": {
+        "0,1,2": 15,
+        "2,1,0": 16,
+        "1,0,2": 15,
+        "0,2,1": 9,
+        "1,2,0": 13,
+        "2,0,1": 12
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "large-numbers",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 74,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "ll/large-numbers/events.[]key=atLeast|events.[]key=exactHalf|events.[]key=within",
+        "ll/large-numbers/events.[]key=atLeast|events.[]key=hospital|events.[]key=within",
+        "ll/large-numbers/events.[]key=exactHalf|events.[]key=hospital|events.[]key=within",
+        "ll/large-numbers/events.[]key=atLeast|events.[]key=exactHalf|events.[]key=hospital"
+      ],
+      "answerPositions": {
+        "2,1,0": 15,
+        "0,2,1": 16,
+        "1,2,0": 17,
+        "0,1,2": 10,
+        "1,0,2": 10,
+        "2,0,1": 12
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ll",
+      "family": "impossible-bounds",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 48,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "ll/impossible-bounds/scenario=cards",
+        "ll/impossible-bounds/scenario=freeThrow",
+        "ll/impossible-bounds/scenario=coins",
+        "ll/impossible-bounds/scenario=dice"
+      ],
+      "answerPositions": {
+        "2,0,1": 8,
+        "0,2,1": 14,
+        "0,1,2": 16,
+        "1,0,2": 17,
+        "1,2,0": 14,
+        "2,1,0": 11
+      },
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "prob-exact",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 55,
+      "recordedBranchSignatures": 13,
+      "branches": [
+        "iv/prob-exact/scenario=sumAtLeast",
+        "iv/prob-exact/scenario=duel",
+        "iv/prob-exact/scenario=stick",
+        "iv/prob-exact/scenario=cards",
+        "iv/prob-exact/scenario=sum3",
+        "iv/prob-exact/scenario=sumEq",
+        "iv/prob-exact/scenario=anySix",
+        "iv/prob-exact/scenario=duelUneven",
+        "iv/prob-exact/scenario=exactHeads",
+        "iv/prob-exact/scenario=primeSum",
+        "iv/prob-exact/scenario=maxAtMost",
+        "iv/prob-exact/scenario=allDifferent",
+        "iv/prob-exact/scenario=anyHead"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "prob-estimate",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 54,
+      "recordedBranchSignatures": 5,
+      "branches": [
+        "iv/prob-estimate/scenario=birthday",
+        "iv/prob-estimate/scenario=binomTail",
+        "iv/prob-estimate/scenario=sixes",
+        "iv/prob-estimate/scenario=sumDice",
+        "iv/prob-estimate/scenario=derange"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "expected-dice",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 45,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "iv/expected-dice/scenario=sumN",
+        "iv/expected-dice/scenario=max2",
+        "iv/expected-dice/scenario=distinct",
+        "iv/expected-dice/scenario=product",
+        "iv/expected-dice/scenario=reroll",
+        "iv/expected-dice/scenario=absDiff"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "coupon",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 53,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "iv/coupon/scenario=uniform",
+        "iv/coupon/scenario=weighted"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "waiting-time",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 23,
+      "recordedBranchSignatures": 11,
+      "branches": [
+        "iv/waiting-time/pattern-shape=00|scenario=pattern",
+        "iv/waiting-time/pattern-shape=0101|scenario=pattern",
+        "iv/waiting-time/pattern-shape=0123|scenario=pattern",
+        "iv/waiting-time/pattern-shape=001|scenario=pattern",
+        "iv/waiting-time/pattern-shape=000|scenario=pattern",
+        "iv/waiting-time/pattern-shape=01|scenario=pattern",
+        "iv/waiting-time/pattern-shape=0000|scenario=pattern",
+        "iv/waiting-time/pattern-shape=010|scenario=pattern",
+        "iv/waiting-time/pattern-shape=011|scenario=pattern",
+        "iv/waiting-time/pattern-shape=0100|scenario=pattern",
+        "iv/waiting-time/pattern-shape=0011|scenario=pattern"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "dots-count",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "iv/dots-count/scenario=grid-fill",
+        "iv/dots-count/scenario=coins",
+        "iv/dots-count/scenario=shape-count"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "dice-grid",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "iv/dice-grid/scenario=count-face",
+        "iv/dice-grid/scenario=total-pips"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "path-length",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "iv/path-length/scenario=polyline"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "percentile",
+      "levels": [
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "iv/percentile/scenario=above",
+        "iv/percentile/scenario=pct",
+        "iv/percentile/scenario=median",
+        "iv/percentile/scenario=mean"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "series",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "iv/series/model.kind=linear|scenario=linear",
+        "iv/series/model.kind=exp|scenario=exp",
+        "iv/series/model.kind=seasonal|scenario=seasonal"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "mental-product",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 3,
+      "branches": [
+        "iv/mental-product/scenario=product2",
+        "iv/mental-product/scenario=product3",
+        "iv/mental-product/scenario=product-quotient"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "powers-roots",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 72,
+      "recordedBranchSignatures": 7,
+      "branches": [
+        "iv/powers-roots/scenario=sqrt",
+        "iv/powers-roots/scenario=ln",
+        "iv/powers-roots/scenario=bigpow",
+        "iv/powers-roots/scenario=pow2",
+        "iv/powers-roots/scenario=compound",
+        "iv/powers-roots/scenario=exp",
+        "iv/powers-roots/scenario=cbrt"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "combinatorics",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 44,
+      "recordedBranchSignatures": 4,
+      "branches": [
+        "iv/combinatorics/scenario=grid",
+        "iv/combinatorics/scenario=word",
+        "iv/combinatorics/scenario=hearts",
+        "iv/combinatorics/scenario=choose"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "iv",
+      "family": "fermi",
+      "levels": [
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 6,
+      "branches": [
+        "iv/fermi/scenario=orders",
+        "iv/fermi/scenario=notional",
+        "iv/fermi/scenario=messages",
+        "iv/fermi/scenario=latency",
+        "iv/fermi/scenario=storage",
+        "iv/fermi/scenario=ticks"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "crossed",
+      "levels": [
+        1,
+        2
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "ob/crossed/structure=crossed-venues"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "bundle-rich",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "ob/bundle-rich/structure=bundle-rich"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "bundle-cheap",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "ob/bundle-cheap/structure=bundle-cheap"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "weighted",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "ob/weighted/structure=weighted-bundle-cheap",
+        "ob/weighted/structure=weighted-bundle-rich"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "spread",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "ob/spread/structure=spread-cheap",
+        "ob/spread/structure=spread-rich"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "chain",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "ob/chain/structure=chain-3",
+        "ob/chain/structure=chain-4"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "decoy",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 1,
+      "branches": [
+        "ob/decoy/structure=decoy-plus-bundle"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    },
+    {
+      "section": "ob",
+      "family": "hidden",
+      "levels": [
+        4,
+        5
+      ],
+      "samples": 80,
+      "exactDistinct": 80,
+      "recordedBranchSignatures": 2,
+      "branches": [
+        "ob/hidden/structure=bundle-vs-bundle",
+        "ob/hidden/structure=spread-vs-spreads"
+      ],
+      "answerPositions": {},
+      "warning": "Conservative parameter-branch proxies, not conceptual difficulty measurements."
+    }
+  ],
+  "addedFamilies": [
+    {
+      "family": "information-protocols",
+      "checked": 3000,
+      "exactDistinct": 457,
+      "authoredStructures": [
+        "bto/information-protocols/no-replace:any-red",
+        "bto/information-protocols/no-replace:first-red",
+        "bto/information-protocols/no-replace:noisy-red",
+        "bto/information-protocols/no-replace:random-red",
+        "bto/information-protocols/replace:any-red",
+        "bto/information-protocols/replace:first-red",
+        "bto/information-protocols/replace:noisy-red",
+        "bto/information-protocols/replace:random-red"
+      ],
+      "operations": [
+        "conditioning",
+        "dependent-sampling",
+        "independence",
+        "observation-error",
+        "observation-selection",
+        "total-probability"
+      ],
+      "rankAnswerOrders": {}
+    },
+    {
+      "family": "shared-source",
+      "checked": 4000,
+      "exactDistinct": 2446,
+      "authoredStructures": [
+        "bto/shared-source/fresh:all:count",
+        "bto/shared-source/fresh:count:count",
+        "bto/shared-source/fresh:next:mixed-history",
+        "bto/shared-source/fresh:next:red-history",
+        "bto/shared-source/shared:all:count",
+        "bto/shared-source/shared:count:count",
+        "bto/shared-source/shared:next:mixed-history",
+        "bto/shared-source/shared:next:red-history",
+        "bto/shared-source/shared:source:mixed-history",
+        "bto/shared-source/shared:source:red-history"
+      ],
+      "operations": [
+        "bayes",
+        "counting",
+        "independence",
+        "mixture-dependence",
+        "posterior-prediction",
+        "total-probability"
+      ],
+      "rankAnswerOrders": {}
+    },
+    {
+      "family": "selection-weights",
+      "checked": 3000,
+      "exactDistinct": 2987,
+      "authoredStructures": [
+        "ll/selection-weights/population",
+        "ll/selection-weights/repeated:equal",
+        "ll/selection-weights/repeated:joint",
+        "ll/selection-weights/repeated:pooled",
+        "ll/selection-weights/repeated:posterior",
+        "ll/selection-weights/repeated:weighted",
+        "ll/selection-weights/weighted"
+      ],
+      "operations": [
+        "independence",
+        "joint-event",
+        "mixture-dependence",
+        "reverse-conditioning",
+        "total-probability",
+        "weighted-average"
+      ],
+      "rankAnswerOrders": {
+        "0,2,1": 487,
+        "1,0,2": 497,
+        "2,0,1": 492,
+        "2,1,0": 484,
+        "1,2,0": 515,
+        "0,1,2": 525
+      }
+    },
+    {
+      "family": "rates-weights",
+      "checked": 3000,
+      "exactDistinct": 1102,
+      "authoredStructures": [
+        "iv/rates-weights/compound-change",
+        "iv/rates-weights/dilute",
+        "iv/rates-weights/equal-distance",
+        "iv/rates-weights/equal-time",
+        "iv/rates-weights/mixture",
+        "iv/rates-weights/reverse-percent",
+        "iv/rates-weights/unequal-distance",
+        "iv/rates-weights/work-together"
+      ],
+      "operations": [
+        "addition",
+        "changing-base",
+        "conservation",
+        "equal-distance-weighting",
+        "equal-time-weighting",
+        "inverse-proportion",
+        "multiplication",
+        "rate",
+        "reciprocal",
+        "solve-equation",
+        "unequal-distance-weighting",
+        "weighted-average"
+      ],
+      "rankAnswerOrders": {}
+    }
+  ],
+  "transferSample": {
+    "sessions": 10,
+    "questions": 150,
+    "exactRepeats": 0,
+    "newRecordedStructures": 123,
+    "familiarRecordedStructures": 27,
+    "familyCounts": {
+      "bto/information-protocols": 10,
+      "ob/chain": 5,
+      "ll/selection-weights": 10,
+      "ob/crossed": 3,
+      "bto/shared-source": 10,
+      "ll/markov-graph": 1,
+      "iv/rates-weights": 10,
+      "nl/square-minus": 1,
+      "bto/at-least-one": 1,
+      "iv/coupon": 2,
+      "nl/fractions": 1,
+      "ll/football": 2,
+      "iv/fermi": 2,
+      "ob/weighted": 5,
+      "nl/product-recurrence": 1,
+      "iv/waiting-time": 2,
+      "nl/primes": 1,
+      "ob/hidden": 2,
+      "ll/fund-returns": 3,
+      "ob/bundle-rich": 3,
+      "nl/sum-previous": 1,
+      "bto/dice-duel": 1,
+      "iv/combinatorics": 2,
+      "nl/cubes-plus": 1,
+      "ll/coin-patterns": 1,
+      "ob/bundle-cheap": 7,
+      "ll/scatter-regions": 3,
+      "nl/interleaved": 2,
+      "nl/geometric": 1,
+      "ob/decoy": 2,
+      "nl/powers-offset": 1,
+      "iv/expected-dice": 1,
+      "ll/dice-events": 4,
+      "bto/dice-order-stats": 1,
+      "ob/spread": 3,
+      "iv/prob-estimate": 2,
+      "bto/card-draws": 1,
+      "iv/mental-product": 2,
+      "nl/second-diff": 1,
+      "nl/triangular": 1,
+      "nl/tribonacci": 1,
+      "iv/percentile": 1,
+      "nl/digit-sum": 1,
+      "iv/path-length": 1,
+      "nl/alternating-signs": 1,
+      "nl/prime-gaps": 1,
+      "ll/conjunction": 2,
+      "bto/pigeonhole": 1,
+      "ll/histogram-bins": 1,
+      "nl/weighted-two-term": 1,
+      "bto/polygon-walk": 1,
+      "nl/diff-geometric": 1,
+      "nl/alternating-ops": 2,
+      "iv/powers-roots": 1,
+      "nl/decimals": 1,
+      "nl/add-index": 1,
+      "nl/squares-plus": 1,
+      "bto/random-walk-line": 1,
+      "iv/dice-grid": 1,
+      "ll/card-events": 2,
+      "nl/affine-recurrence": 1,
+      "bto/monty-hall": 2,
+      "nl/fibonacci-like": 2,
+      "ll/score-table": 1,
+      "iv/prob-exact": 2,
+      "nl/arithmetic": 1,
+      "bto/two-dice-sum": 1,
+      "nl/multiply-index": 1,
+      "nl/mixed-combo": 1,
+      "nl/third-diff": 1,
+      "iv/series": 1
+    },
+    "mcqPositions": {
+      "0": 11,
+      "1": 9,
+      "2": 22,
+      "3": 8,
+      "4": 10
+    },
+    "rankOrders": {
+      "2,1,0": 6,
+      "0,1,2": 2,
+      "0,2,1": 9,
+      "2,0,1": 5,
+      "1,0,2": 2,
+      "1,2,0": 6
+    },
+    "maxSameSectionStreak": 3
+  },
+  "previousVersionMocks": [
+    {
+      "section": "bto",
+      "questions": 200,
+      "identicalItemObjects": true,
+      "exactRepeats": 0,
+      "repeatedBranchSignatures": 110,
+      "distinctBranchSignatures": 90
+    },
+    {
+      "section": "nl",
+      "questions": 260,
+      "identicalItemObjects": true,
+      "exactRepeats": 0,
+      "repeatedBranchSignatures": 211,
+      "distinctBranchSignatures": 49
+    },
+    {
+      "section": "ll",
+      "questions": 150,
+      "identicalItemObjects": true,
+      "exactRepeats": 0,
+      "repeatedBranchSignatures": 50,
+      "distinctBranchSignatures": 100
+    },
+    {
+      "section": "iv",
+      "questions": 180,
+      "identicalItemObjects": true,
+      "exactRepeats": 0,
+      "repeatedBranchSignatures": 119,
+      "distinctBranchSignatures": 61
+    },
+    {
+      "section": "ob",
+      "questions": 200,
+      "identicalItemObjects": true,
+      "exactRepeats": 0,
+      "repeatedBranchSignatures": 182,
+      "distinctBranchSignatures": 18
+    }
+  ]
+}

@@ -1,0 +1,596 @@
+{
+ "schemaVersion": 2,
+ "sections": {
+  "bto": {
+   "stats": {
+    "items": 500,
+    "structural_checked": 500,
+    "numerically_checked": 184,
+    "monte_carlo": 184,
+    "numerically_unchecked": 316
+   },
+   "complete_numerical_coverage": false,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "two-dice-sum": {
+     "numerically_checked": 17,
+     "items": 17
+    },
+    "die-repeats": {
+     "numerically_checked": 7,
+     "items": 15
+    },
+    "dice-order-stats": {
+     "items": 16
+    },
+    "three-dice": {
+     "items": 14
+    },
+    "at-least-one": {
+     "numerically_checked": 8,
+     "items": 19
+    },
+    "first-success": {
+     "numerically_checked": 4,
+     "items": 15
+    },
+    "conditional-dice": {
+     "numerically_checked": 1,
+     "items": 17
+    },
+    "card-symmetry": {
+     "numerically_checked": 6,
+     "items": 14
+    },
+    "card-draws": {
+     "numerically_checked": 1,
+     "items": 19
+    },
+    "coin-sequences": {
+     "numerically_checked": 6,
+     "items": 17
+    },
+    "race-to-k": {
+     "items": 14
+    },
+    "pattern-waiting": {
+     "numerically_checked": 14,
+     "items": 18
+    },
+    "bayes-test": {
+     "numerically_checked": 10,
+     "items": 14
+    },
+    "bayes-boxes": {
+     "items": 18
+    },
+    "monty-hall": {
+     "numerically_checked": 11,
+     "items": 14
+    },
+    "pigeonhole": {
+     "items": 18
+    },
+    "birthday": {
+     "numerically_checked": 12,
+     "items": 14
+    },
+    "derangements": {
+     "numerically_checked": 11,
+     "items": 17
+    },
+    "coupon-collector": {
+     "numerically_checked": 11,
+     "items": 16
+    },
+    "linearity": {
+     "numerically_checked": 3,
+     "items": 16
+    },
+    "expected-extremes": {
+     "numerically_checked": 9,
+     "items": 16
+    },
+    "dice-duel": {
+     "numerically_checked": 4,
+     "items": 13
+    },
+    "dice-games-ev": {
+     "items": 17
+    },
+    "card-stopping": {
+     "items": 13
+    },
+    "running-sum": {
+     "numerically_checked": 9,
+     "items": 16
+    },
+    "random-walk-line": {
+     "items": 14
+    },
+    "polygon-walk": {
+     "numerically_checked": 7,
+     "items": 18
+    },
+    "clt-estimates": {
+     "numerically_checked": 10,
+     "items": 16
+    },
+    "uniform-geometry": {
+     "numerically_checked": 5,
+     "items": 14
+    },
+    "urn-draws": {
+     "numerically_checked": 13,
+     "items": 13
+    },
+    "expected-waiting": {
+     "items": 14
+    },
+    "gamblers-ruin": {
+     "numerically_checked": 5,
+     "items": 14
+    }
+   }
+  },
+  "iv": {
+   "stats": {
+    "items": 504,
+    "structural_checked": 504,
+    "numerically_checked": 165,
+    "python_recomputed": 152,
+    "monte_carlo": 13,
+    "numerically_unchecked": 339
+   },
+   "complete_numerical_coverage": false,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "prob-exact": {
+     "numerically_checked": 4,
+     "items": 53
+    },
+    "prob-estimate": {
+     "numerically_checked": 14,
+     "items": 46
+    },
+    "expected-dice": {
+     "numerically_checked": 20,
+     "items": 48
+    },
+    "coupon": {
+     "numerically_checked": 47,
+     "items": 47
+    },
+    "waiting-time": {
+     "numerically_checked": 13,
+     "items": 39
+    },
+    "dots-count": {
+     "numerically_checked": 1,
+     "items": 5
+    },
+    "dice-grid": {
+     "numerically_checked": 6,
+     "items": 7
+    },
+    "path-length": {
+     "numerically_checked": 7,
+     "items": 7
+    },
+    "percentile": {
+     "numerically_checked": 1,
+     "items": 42
+    },
+    "mental-product": {
+     "numerically_checked": 15,
+     "items": 44
+    },
+    "powers-roots": {
+     "numerically_checked": 7,
+     "items": 44
+    },
+    "combinatorics": {
+     "numerically_checked": 9,
+     "items": 43
+    },
+    "fermi": {
+     "numerically_checked": 6,
+     "items": 36
+    },
+    "series": {
+     "numerically_checked": 15,
+     "items": 43
+    }
+   }
+  },
+  "ll": {
+   "stats": {
+    "items": 510,
+    "structural_checked": 510,
+    "numerically_checked": 94,
+    "python_recomputed": 94,
+    "numerically_unchecked": 416
+   },
+   "complete_numerical_coverage": false,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "conjunction": {
+     "numerically_checked": 62,
+     "items": 64
+    },
+    "score-table": {
+     "numerically_checked": 5,
+     "items": 8
+    },
+    "football": {
+     "items": 7
+    },
+    "survey-bar": {
+     "items": 7
+    },
+    "fund-returns": {
+     "numerically_checked": 20,
+     "items": 23
+    },
+    "histogram-bins": {
+     "items": 59
+    },
+    "scatter-regions": {
+     "items": 4
+    },
+    "density-curves": {
+     "items": 6
+    },
+    "markov-graph": {
+     "numerically_checked": 7,
+     "items": 7
+    },
+    "dice-events": {
+     "items": 58
+    },
+    "card-events": {
+     "items": 56
+    },
+    "coin-patterns": {
+     "items": 58
+    },
+    "collisions": {
+     "items": 56
+    },
+    "large-numbers": {
+     "items": 64
+    },
+    "impossible-bounds": {
+     "items": 32
+    },
+    "bayes-boxes": {
+     "items": 1
+    }
+   }
+  },
+  "mm": {
+   "stats": {
+    "items": 560,
+    "structural_checked": 560,
+    "numerically_checked": 0,
+    "numerically_unchecked": 560
+   },
+   "complete_numerical_coverage": false,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "mm-addsub": {
+     "items": 70
+    },
+    "mm-multiply": {
+     "items": 70
+    },
+    "mm-divide": {
+     "items": 70
+    },
+    "mm-decimals": {
+     "items": 70
+    },
+    "mm-fractions": {
+     "items": 70
+    },
+    "mm-percent": {
+     "items": 70
+    },
+    "mm-missing": {
+     "items": 70
+    },
+    "mm-mixed": {
+     "items": 70
+    }
+   }
+  },
+  "nl": {
+   "stats": {
+    "items": 520,
+    "structural_checked": 520,
+    "numerically_checked": 495,
+    "sequence_checked": 506,
+    "sequence_skipped": 14,
+    "warnings": 11,
+    "numerically_unchecked": 25
+   },
+   "complete_numerical_coverage": false,
+   "failures": [],
+   "warnings": [
+    {
+     "id": "nl:interleaved:lib:nl:interleaved:3",
+     "family": "interleaved",
+     "warnings": [
+      "rule library does not explain the answer (interleaved)"
+     ]
+    },
+    {
+     "id": "nl:interleaved:lib:nl:interleaved:7",
+     "family": "interleaved",
+     "warnings": [
+      "rule library does not explain the answer (interleaved)"
+     ]
+    },
+    {
+     "id": "nl:fractions:lib:nl:fractions:8",
+     "family": "fractions",
+     "warnings": [
+      "rule library does not explain the answer (fractions)"
+     ]
+    },
+    {
+     "id": "nl:fibonacci-squares:lib:nl:fibonacci-squares:10",
+     "family": "fibonacci-squares",
+     "warnings": [
+      "rule library does not explain the answer (fibonacci-squares)"
+     ]
+    },
+    {
+     "id": "nl:bank:33",
+     "family": "fibonacci-squares",
+     "warnings": [
+      "rule library does not explain the answer (fibonacci-squares)"
+     ]
+    },
+    {
+     "id": "nl:interleaved:lib:nl:interleaved:11",
+     "family": "interleaved",
+     "warnings": [
+      "rule library does not explain the answer (interleaved)"
+     ]
+    },
+    {
+     "id": "nl:bank:38",
+     "family": "fractions",
+     "warnings": [
+      "rule library does not explain the answer (fractions)"
+     ]
+    },
+    {
+     "id": "nl:fractions:lib:nl:fractions:14",
+     "family": "fractions",
+     "warnings": [
+      "rule library does not explain the answer (fractions)"
+     ]
+    },
+    {
+     "id": "nl:interleaved:lib:nl:interleaved:15",
+     "family": "interleaved",
+     "warnings": [
+      "rule library does not explain the answer (interleaved)"
+     ]
+    },
+    {
+     "id": "nl:primes:lib:nl:primes:27",
+     "family": "primes",
+     "warnings": [
+      "rule library does not explain the answer (primes)"
+     ]
+    },
+    {
+     "id": "nl:bank:48",
+     "family": "fractions",
+     "warnings": [
+      "rule library does not explain the answer (fractions)"
+     ]
+    }
+   ],
+   "families": {
+    "arithmetic": {
+     "numerically_checked": 20,
+     "items": 20
+    },
+    "geometric": {
+     "numerically_checked": 17,
+     "items": 21
+    },
+    "second-diff": {
+     "numerically_checked": 19,
+     "items": 20
+    },
+    "add-index": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "squares-plus": {
+     "numerically_checked": 17,
+     "items": 20
+    },
+    "triangular": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "diff-geometric": {
+     "numerically_checked": 20,
+     "items": 20
+    },
+    "affine-recurrence": {
+     "numerically_checked": 21,
+     "items": 21
+    },
+    "fibonacci-like": {
+     "items": 19,
+     "numerically_checked": 16
+    },
+    "interleaved": {
+     "numerically_checked": 13,
+     "items": 20
+    },
+    "alternating-ops": {
+     "numerically_checked": 20,
+     "items": 20
+    },
+    "cubes-plus": {
+     "numerically_checked": 19,
+     "items": 19
+    },
+    "pronic": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "primes": {
+     "numerically_checked": 17,
+     "items": 18
+    },
+    "powers-offset": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "decimals": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "alternating-signs": {
+     "numerically_checked": 17,
+     "items": 17
+    },
+    "third-diff": {
+     "numerically_checked": 19,
+     "items": 19
+    },
+    "weighted-two-term": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "product-recurrence": {
+     "numerically_checked": 19,
+     "items": 19
+    },
+    "prime-gaps": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "sum-previous": {
+     "numerically_checked": 17,
+     "items": 17
+    },
+    "digit-sum": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "fractions": {
+     "numerically_checked": 16,
+     "items": 20
+    },
+    "fibonacci-squares": {
+     "numerically_checked": 16,
+     "items": 18
+    },
+    "reverse-digits": {
+     "numerically_checked": 18,
+     "items": 18
+    },
+    "square-minus": {
+     "numerically_checked": 19,
+     "items": 19
+    },
+    "multiply-index": {
+     "numerically_checked": 4,
+     "items": 4
+    },
+    "tribonacci": {
+     "numerically_checked": 2,
+     "items": 2
+    },
+    "mixed-combo": {
+     "numerically_checked": 5,
+     "items": 5
+    }
+   }
+  },
+  "ob": {
+   "stats": {
+    "items": 500,
+    "structural_checked": 500,
+    "numerically_checked": 500,
+    "orderbook_solved": 500,
+    "numerically_unchecked": 0
+   },
+   "complete_numerical_coverage": true,
+   "failures": [],
+   "warnings": [],
+   "families": {
+    "crossed": {
+     "numerically_checked": 69,
+     "items": 69
+    },
+    "bundle-rich": {
+     "numerically_checked": 58,
+     "items": 58
+    },
+    "bundle-cheap": {
+     "numerically_checked": 70,
+     "items": 70
+    },
+    "weighted": {
+     "numerically_checked": 58,
+     "items": 58
+    },
+    "spread": {
+     "numerically_checked": 68,
+     "items": 68
+    },
+    "chain": {
+     "numerically_checked": 56,
+     "items": 56
+    },
+    "decoy": {
+     "numerically_checked": 68,
+     "items": 68
+    },
+    "hidden": {
+     "numerically_checked": 53,
+     "items": 53
+    }
+   }
+  }
+ },
+ "engine": true,
+ "scope": "Structural checks for every item; independent numerical checks only where coverage is reported.",
+ "seconds": 1.41,
+ "complete_numerical_coverage": false,
+ "ok": true,
+ "zapn": {
+  "skyscraper": {
+   "checked": 300,
+   "mismatches": []
+  },
+  "numberbox": {
+   "checked": 300,
+   "mismatches": []
+  },
+  "figure": {
+   "checked": 5,
+   "mismatches": []
+  },
+  "balloon": {
+   "checked": 2,
+   "mismatches": []
+  },
+  "ok": true
+ }
+}

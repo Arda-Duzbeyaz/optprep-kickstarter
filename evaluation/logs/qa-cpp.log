@@ -1,0 +1,73 @@
+Test project /workspace/scratch/4bc66287a502/optprep-transfer/engine/build
+      Start  1: Json.RoundTripsNestedValues
+ 1/34 Test  #1: Json.RoundTripsNestedValues .....................................   Passed    0.01 sec
+      Start  2: Json.RejectsMalformedInput
+ 2/34 Test  #2: Json.RejectsMalformedInput ......................................   Passed    0.00 sec
+      Start  3: Json.IntegersDumpWithoutDecimals
+ 3/34 Test  #3: Json.IntegersDumpWithoutDecimals ................................   Passed    0.01 sec
+      Start  4: Rational.NormalisesAndComputesExactly
+ 4/34 Test  #4: Rational.NormalisesAndComputesExactly ...........................   Passed    0.01 sec
+      Start  5: Rational.ThrowsOnDivisionByZeroAndOverflow
+ 5/34 Test  #5: Rational.ThrowsOnDivisionByZeroAndOverflow ......................   Passed    0.01 sec
+      Start  6: MonteCarlo.DiceAndCardsMatchClosedForms
+ 6/34 Test  #6: MonteCarlo.DiceAndCardsMatchClosedForms .........................   Passed    0.05 sec
+      Start  7: MonteCarlo.ExpectationsMatchClosedForms
+ 7/34 Test  #7: MonteCarlo.ExpectationsMatchClosedForms .........................   Passed    0.17 sec
+      Start  8: MonteCarlo.ClassicProbabilities
+ 8/34 Test  #8: MonteCarlo.ClassicProbabilities .................................   Passed    0.15 sec
+      Start  9: MonteCarlo.ExtendedModels
+ 9/34 Test  #9: MonteCarlo.ExtendedModels .......................................   Passed    0.08 sec
+      Start 10: MonteCarlo.DetectsAWrongAnswer
+10/34 Test #10: MonteCarlo.DetectsAWrongAnswer ..................................   Passed    0.02 sec
+      Start 11: MonteCarlo.IsDeterministicPerSeedAndThreadCount
+11/34 Test #11: MonteCarlo.IsDeterministicPerSeedAndThreadCount .................   Passed    0.01 sec
+      Start 12: Orderbook.FindsBundleArbitrage
+12/34 Test #12: Orderbook.FindsBundleArbitrage ..................................   Passed    0.00 sec
+      Start 13: Orderbook.ReportsNoArbitrageOnFairBoard
+13/34 Test #13: Orderbook.ReportsNoArbitrageOnFairBoard .........................   Passed    0.00 sec
+      Start 14: Orderbook.WeightedBundleNeedsTwoUnits
+14/34 Test #14: Orderbook.WeightedBundleNeedsTwoUnits ...........................   Passed    0.00 sec
+      Start 15: Orderbook.BranchAndBoundMatchesExhaustiveSearchOnRandomBoards
+15/34 Test #15: Orderbook.BranchAndBoundMatchesExhaustiveSearchOnRandomBoards ...   Passed    0.78 sec
+      Start 16: Orderbook.IndecomposableModeReturnsOnePackage
+16/34 Test #16: Orderbook.IndecomposableModeReturnsOnePackage ...................   Passed    0.01 sec
+      Start 17: NumberBox.SolvesClassicTwentyFours
+17/34 Test #17: NumberBox.SolvesClassicTwentyFours ..............................   Passed    0.01 sec
+      Start 18: NumberBox.KnowsUnsolvableSets
+18/34 Test #18: NumberBox.KnowsUnsolvableSets ...................................   Passed    0.00 sec
+      Start 19: NumberBox.ReachableIntegersIncludeKnownValues
+19/34 Test #19: NumberBox.ReachableIntegersIncludeKnownValues ...................   Passed    0.00 sec
+      Start 20: NumberBox.EvaluatorIsExact
+20/34 Test #20: NumberBox.EvaluatorIsExact ......................................   Passed    0.00 sec
+      Start 21: Tower.BfsFindsShortestSolution
+21/34 Test #21: Tower.BfsFindsShortestSolution ..................................   Passed    0.00 sec
+      Start 22: Tower.GeneratedLevelsHaveExactlyTheStatedOptimum
+22/34 Test #22: Tower.GeneratedLevelsHaveExactlyTheStatedOptimum ................   Passed    0.01 sec
+      Start 23: Tower.RejectsOverfullTowers
+23/34 Test #23: Tower.RejectsOverfullTowers .....................................   Passed    0.02 sec
+      Start 24: Figure.FormulaMatchesDynamicProgramming
+24/34 Test #24: Figure.FormulaMatchesDynamicProgramming .........................   Passed    0.01 sec
+      Start 25: Figure.SingleProperty
+25/34 Test #25: Figure.SingleProperty ...........................................   Passed    0.00 sec
+      Start 26: Figure.ParallelTestingBeatsOneAtATime
+26/34 Test #26: Figure.ParallelTestingBeatsOneAtATime ...........................   Passed    0.01 sec
+      Start 27: Balloon.RoundOneOptimumIsHalfThePopRange
+27/34 Test #27: Balloon.RoundOneOptimumIsHalfThePopRange ........................   Passed    0.04 sec
+      Start 28: Balloon.BankPenaltyMakesLaterBalloonsMoreCautious
+28/34 Test #28: Balloon.BankPenaltyMakesLaterBalloonsMoreCautious ...............   Passed    0.05 sec
+      Start 29: Sequence.RecognisesCoreRules
+29/34 Test #29: Sequence.RecognisesCoreRules ....................................   Passed    0.00 sec
+      Start 30: Sequence.RecognisesExtendedRules
+30/34 Test #30: Sequence.RecognisesExtendedRules ................................   Passed    0.01 sec
+      Start 31: Sequence.ShortSequencesStillPredict
+31/34 Test #31: Sequence.ShortSequencesStillPredict .............................   Passed    0.01 sec
+      Start 32: Sequence.ConvertsDecimals
+32/34 Test #32: Sequence.ConvertsDecimals .......................................   Passed    0.01 sec
+      Start 33: Commands.RoundTripThroughJson
+33/34 Test #33: Commands.RoundTripThroughJson ...................................   Passed    0.01 sec
+      Start 34: Commands.ErrorsComeBackAsJson
+34/34 Test #34: Commands.ErrorsComeBackAsJson ...................................   Passed    0.01 sec
+
+100% tests passed out of 34
+
+Total Test time (real) =   1.54 sec

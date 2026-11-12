@@ -1,0 +1,49 @@
+✔ only this machine counts as a backend host (1.120346ms)
+✔ a hosted copy never probes for the backend (1.084414ms)
+✔ a local copy probes with relative URLs (0.5506ms)
+✖ backend startup cannot replace transfer-only local progress (2.147974ms)
+✖ backend startup cannot erase displayed-only freshness history (1.032721ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 3
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 183.925134
+
+✖ failing tests:
+
+test at tests/ui/sync.test.js:27:1
+✖ backend startup cannot replace transfer-only local progress (2.147974ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4bc66287a502/optprep-transfer/tests/ui/sync.test.js:34:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/ui/sync.test.js:38:1
+✖ backend startup cannot erase displayed-only freshness history (1.032721ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/4bc66287a502/optprep-transfer/tests/ui/sync.test.js:43:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
