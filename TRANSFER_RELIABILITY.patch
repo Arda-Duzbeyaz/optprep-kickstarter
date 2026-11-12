@@ -1,0 +1,2202 @@
+diff --git a/BUILD_INFO.json b/BUILD_INFO.json
+index 4968fdf..8832224 100644
+--- a/BUILD_INFO.json
++++ b/BUILD_INFO.json
+@@ -1,18 +1,26 @@
+ {
+-  "edition": "1.0.3-transfer.1",
++  "edition": "1.0.3-transfer.3",
+   "previous_edition": "1.0.2-kickstarter.1",
+   "previous_revision": "6b840e45a3b4145b06f76dec8e216d68799099fc",
+   "upstream_base": "a68720e74e7e1b5a82526b02db539d943f0f1364",
+   "restored_archive_sha256": "9e30970b01a65ab319928a68cb219a54095194efe393b0207d53e21fff6255dc",
+   "source_revision_file": "SOURCE_REVISION.txt",
+-  "javascript_passed": 772,
++  "javascript_passed": 777,
+   "python_passed": 36,
+   "cpp_passed": 34,
+-  "unit_test_total": 842,
++  "unit_test_total": 847,
+   "additional_js_cases": 13000,
+   "additional_python_cases": 1300,
+-  "dom_integration": "passed: previous fixes and transfer",
++  "dom_integration": "passed: earlier fixes, transfer smoke, 11 focused regressions and full-app router",
+   "ordinary_mock_questions_unchanged": 990,
+-  "browser_visual_qa": "not performed",
+-  "local_http_smoke": "passed: launcher and five HTTP 200 responses"
++  "browser_visual_qa": "passed: desktop Chrome at 1348x936; timed expiry, 15-question untimed flow, review, themes and reload",
++  "local_http_smoke": "passed: launcher and five HTTP 200 responses",
++  "focused_dom_regressions_passed": 11,
++  "full_router_integration": "passed: 15-question run, migration, controls, deadlines, review, history and cleanup",
++  "reliability_patch_from": "1.0.3-transfer.1",
++  "reliability_patch_base_revision": "e4591faa8617edf3ec872b1917a46702aa70bf05",
++  "visual_patch_from": "1.0.3-transfer.2",
++  "visual_patch_base_revision": "6f70c9d58ca0c756740007e32ae7186baf886b1f",
++  "mobile_cross_browser_qa": "not performed",
++  "visual_evidence_file": "evaluation/visual-browser-results.json"
+ }
+diff --git a/README.md b/README.md
+index 7bbf136..b9a66c0 100644
+--- a/README.md
++++ b/README.md
+@@ -1,6 +1,6 @@
+ # OptPrep — mathematical transfer edition
+ 
+-**Version:** `1.0.3-transfer.1` · **Prepared:** 12 November 2026
++**Version:** `1.0.3-transfer.3` · **Prepared:** 12 November 2026
+ **Based on:** the previously fixed `1.0.2-kickstarter.1` release, original revision `6b840e45a3b4145b06f76dec8e216d68799099fc`
+ **Original project:** [Coflazo/optprep](https://github.com/Coflazo/optprep) · **License:** MIT
+ 
+@@ -100,6 +100,19 @@ The most recent 200 transfer sessions are retained separately. Save/reload and b
+ 
+ All prior repairs remain: the BTO total clock, preset-specific mocks, varied hard Markov questions, corrected fund-return teaching, meaningful interval mastery, exact freshness and honest verification coverage.
+ 
++## Reliability fixes after deeper testing
++
++The follow-up test pass reproduced defects beyond the first smoke test. This patch:
++
++- Restores the submitted answer in the live session review, locks its controls and reveals ranking probabilities and MCQ grades.
++- Removes unsupported ordinary-practice links from the additional families' solutions while retaining valid actions for existing families.
++- Enforces both deadlines on submission, skip and keyboard input, including when animation frames are delayed. Late changes cannot replace the last response entered within time.
++- Prevents backend startup from replacing transfer-only progress or displayed-question history with an older server snapshot.
++- Makes the current Transfer sidebar link return from review to the landing page, and marks a session complete when Finish is pressed on its last question.
++- Keeps the battery picker aligned with the active default: a fresh browser now selects Kickstarter instead of silently switching to Everything when Save is pressed.
++
++The full app entry point and router were exercised through a 15-question run in the DOM harness. A subsequent desktop Chrome pass checked an actual timed attempt, a full untimed attempt, all response layouts, review, light/dark themes and history after reload. See [TRANSFER_TEST_REPORT.md](TRANSFER_TEST_REPORT.md) for findings and scope. Mobile and other browsers remain untested.
++
+ ## Mathematical verification
+ 
+ Independent checks use different formulations where practical:
+@@ -123,10 +136,10 @@ The saved starting ZIP was verified against SHA-256 `9e30970b01a65ab319928a68cb2
+ 
+ | Unit/regression suite | Previous fixed edition | This edition |
+ |---|---:|---:|
+-| JavaScript | 747 passed | **772 passed** |
++| JavaScript | 747 passed | **777 passed** |
+ | Python, engine available | 27 passed | **36 passed** |
+ | C++ | 34 passed | **34 passed** |
+-| Total | 808 | **842 passed** |
++| Total | 808 | **847 passed** |
+ 
+ Additional evaluations are case sweeps and integration checks, not extra unit-test counts:
+ 
+@@ -141,6 +154,9 @@ Additional evaluations are case sweeps and integration checks, not extra unit-te
+ | Original library pipeline | 3,094 structural checks; zero failures; 11 existing NumberLogic warnings |
+ | Zap-N pipeline | 607 puzzle/model cases; zero mismatches |
+ | DOM integration | Both the earlier checks and the new transfer checks passed |
++| Follow-up interface regressions | 11/11 passed, covering review, late input, completion and default preset selection |
++| Full-app DOM route check | 15-question run, navigation, migration, storage and cleanup passed |
++| Desktop Chrome visual pass | Timed expiry, all 15 untimed questions, four response types, review, themes and reload passed at 1348 × 936 |
+ | Local launcher and HTTP | App started successfully; five app/module URLs returned HTTP 200 |
+ 
+ The new families expose **33 authored branch signatures**: eight observation, ten source, seven selection and eight rate signatures. This is not 33 new concepts. The 123/27 split is a recorded-exposure diagnostic from a particular sampler and initially empty history, not an empirical percentage of conceptually unfamiliar questions.
+@@ -149,7 +165,7 @@ The original library still has partial independent numerical coverage: **1,438 o
+ 
+ Ordinary mocks retained zero exact repeats in the sampled sets, while branch signatures still recurred. Raw histograms are included; a small sample showing every answer position does not establish perfect statistical uniformity.
+ 
+-DOM integration exercises actual MCQ, rank, interval and orderbook controls, hidden solutions, complete/partial runs, both clocks, extra time, displayed-only history, cleanup, preset preservation and isolated progress. Full browser visual QA was not performed.
++DOM integration exercises actual MCQ, rank, interval and orderbook controls, hidden solutions, complete/partial runs, both clocks, extra time, displayed-only history, cleanup, preset preservation and isolated progress. Desktop visual inspection now supplements those checks; it covers one Chrome viewport and does not establish mobile or cross-browser compatibility.
+ 
+ ## Reproduce validation
+ 
+@@ -200,6 +216,8 @@ The optional DOM checks require a temporary development dependency:
+ npm install --no-save jsdom
+ node tools/ui-smoke.mjs
+ node tools/transfer-smoke.mjs
++node tools/transfer-regression.mjs
++node tools/transfer-route-smoke.mjs
+ ```
+ 
+ The app and main JavaScript suite do not require `jsdom`. Compiled engine output, installed development dependencies and exported-library intermediates are regenerable and excluded from the release.
+@@ -225,6 +243,7 @@ The improvements make the app a stronger question engine for transferable reason
+ 
+ - Exact real-test difficulty distributions, item counts, pass marks and many navigation/scoring details remain unverified.
+ - The BTO 25-minute total comes from the invitation. Its retained 20-question count and 90-second item limit remain practice assumptions. The new transfer clocks are training choices.
++- The preserved ordinary preset still differs from the supplied invitation: Orderbooks is configured for 8 minutes rather than 15; Likelihood List and Intervals use retained per-item clocks without the invitation's explicit 25- and 15-minute total clocks. These are practice settings, not verified replicas. See the test report's timing table. This focused visual patch leaves those clocks intact as requested.
+ - Existing difficulty labels, uncertainty models and many game parameters are authored choices.
+ - Templates remain finite. Structural fingerprints cannot certify conceptual novelty.
+ - The original library's independent numerical coverage remains incomplete.
+@@ -236,6 +255,7 @@ The practical objective is better method selection and adaptation under time pre
+ ## Documentation and attribution
+ 
+ - [TRANSFER_CHANGELOG.md](TRANSFER_CHANGELOG.md): every substantive modification and storage behaviour.
++- [TRANSFER_TEST_REPORT.md](TRANSFER_TEST_REPORT.md): deeper testing, reproduced defects and fixes.
+ - [docs/DIVERSITY_AUDIT.md](docs/DIVERSITY_AUDIT.md): source findings, taxonomy and rationale.
+ - [evaluation/](evaluation/): raw measurements, inventory and validation evidence.
+ - [KICKSTARTER_FIXES.md](KICKSTARTER_FIXES.md): previous fixes.
+diff --git a/TRANSFER_CHANGELOG.md b/TRANSFER_CHANGELOG.md
+index 349350f..4499ff8 100644
+--- a/TRANSFER_CHANGELOG.md
++++ b/TRANSFER_CHANGELOG.md
+@@ -1,5 +1,30 @@
+ # Transfer edition changes
+ 
++## Visual follow-up — 1.0.3-transfer.3
++
++- Completed desktop Chrome interaction and screenshot inspection at 1348 × 936: timed expiry, a complete 15-question untimed session, all four response kinds, review, keyboard/ranking/trade controls, light/dark theme, sidebar navigation and history after reload.
++- `src/ui/pages/path.js`: the battery picker now uses `DEFAULT_PRESET` when a save has no preset. Previously it selected Everything while the application was running Kickstarter; unchanged Save could silently switch the battery.
++- `tools/transfer-regression.mjs`: added a default-picker/unchanged-Save regression. It failed before the one-line correction and passes afterwards. Focused interface checks are now 11/11.
++- Full JavaScript/Python/C++ suites rerun: 777 + 36 + 34 = 847 passed; full-router DOM integration passed again.
++- Updated README, test report, release metadata and evidence. Documented retained invitation/preset timing discrepancies explicitly. Assessment clocks, mathematical generators, scoring and save format were not changed.
++- `package.json`, `sw.js`: version/cache tag advanced to release 3.
++
++Mobile and other browsers remain untested. Browser observations are functional/visual evidence, not Optiver difficulty calibration.
++
++## Follow-up reliability patch — 1.0.3-transfer.2
++
++- `src/ui/pages/transfer.js`: restore, lock and grade submitted responses in review; show ranking probabilities; enforce both clocks before input/submission; preserve the last in-time response; count finishing on the final question as complete; hide unsupported solution actions.
++- `src/ui/solution.js`: optional action rendering, retaining the existing default for ordinary practice.
++- `src/core/store.js`, `src/ui/sync.js`: backend adoption uses the full emptiness check, including transfer sessions and displayed-question/structure history.
++- `app.js`: clicking the current Transfer sidebar link reopens its landing page and cleans up the current run.
++- `tests/ui/sync.test.js`, `tests/transfer/reliability.test.js`: regressions for local transfer/exposure preservation, valid server restore and future-save protection.
++- `tools/transfer-regression.mjs`, `tools/transfer-route-smoke.mjs`: additional interface cases and actual-router integration.
++- `README.md`, `TRANSFER_TEST_REPORT.md`, `BUILD_INFO.json`, `evaluation/`: updated evidence and provenance. `package.json` and `sw.js`: patch version/cache update.
++
++The mathematical generators, assessment clocks, scoring and Kickstarter preset were unchanged. Full suite: 777 JavaScript + 36 Python + 34 C++ = 847 passed. The focused DOM regressions and full-router check passed separately. Visual browser QA was attempted but blocked; no browser visual pass is claimed.
++
++## Initial transfer edition — 1.0.3-transfer.1
++
+ Version `1.0.3-transfer.1`, 12 November 2026. Based on the previously delivered `1.0.2-kickstarter.1` ZIP; all previous fixes remain. See [KICKSTARTER_FIXES.md](KICKSTARTER_FIXES.md).
+ 
+ | Area/files | Substantive modification |
+diff --git a/TRANSFER_TEST_REPORT.md b/TRANSFER_TEST_REPORT.md
+new file mode 100644
+index 0000000..3e0c159
+--- /dev/null
++++ b/TRANSFER_TEST_REPORT.md
+@@ -0,0 +1,134 @@
++# OptPrep Transfer Challenge — follow-up test report
++
++Date: 12 November 2026. Tested starting release: `1.0.3-transfer.1`. Current corrected release: **`1.0.3-transfer.3`**; includes the reliability patch and subsequent visual pass.
++
++## Result
++
++The deeper tests found real review, navigation, deadline and progress-retention defects that the original smoke check did not cover. Those defects were reproduced, corrected and checked with regressions. The complete updated unit/regression suites pass: **777 JavaScript, 36 Python and 34 C++ tests — 847 total**.
++
++Desktop Chrome visual testing subsequently succeeded at a **1348 × 936** page viewport. It covered a timed partial attempt, a full 15-question untimed attempt, review, themes, settings and persistence. Mobile and other browsers remain untested.
++
++## Defects reproduced and fixed
++
++| Area | Reproduced behaviour in the first transfer release | Corrected behaviour |
++|---|---|---|
++| MCQ review | Options were unselected and still editable after grading | Submitted choice is restored, correct/wrong options are marked and controls are locked |
++| Ranking review | Submitted order was not restored and probabilities remained hidden | Submitted order and probabilities are displayed with locked controls |
++| Interval and orderbook review | Entered bounds and submitted trades were missing from the review controls | Bounds/trades are restored and the reviewed controls cannot be edited |
++| Additional-family links | “Try a twin” linked to an ordinary family that did not exist | Unsupported ordinary-practice actions are omitted; valid existing-family actions remain |
++| Delayed timer frames | A late click/keyboard change could be accepted before the next timer frame; a late skip could avoid a prior wrong answer | Submission, skip and keyboard handling check both deadlines; grading uses the last response actually entered within time |
++| Overall expiry | With timer frames delayed, submission could display another question despite the total clock reaching zero | Overall expiry ends the session before another item is shown or marked seen |
++| Backend startup | Transfer-only work or exposure-only history could be considered empty and replaced by an older server snapshot | Transfer sessions and viewed-question/structure history prevent automatic replacement; a genuinely empty browser can still restore server progress |
++| Current sidebar link | Clicking Transfer while already on its review route did not return to the landing page | The current link reopens the landing page and cleans up the previous session |
++| Final Finish button | Completing the last displayed item with Finish was labelled partial | A run that reaches and records its last question is marked complete |
++| Default battery picker | With no saved preset, the app ran Kickstarter but Settings selected Everything; pressing Save would switch batteries | The picker uses the same configured default as the active battery; unchanged Save preserves Kickstarter |
++
++These rows describe related manifestations rather than a count of independent root causes. The battery-picker problem was an existing UI defect discovered during visual testing. No incorrect newly generated mathematical answer was found in this pass.
++
++## Interface and integration coverage
++
++The actual views, event handlers, app entry point and router were executed under a DOM implementation. The focused checks cover:
++
++- Review restoration and locking for MCQ, ranking, interval and orderbook responses.
++- Correct/incorrect MCQ highlighting and visible ranking probabilities.
++- Unsupported solution-link removal.
++- Deliberately delayed animation frames, late selection, late skip and late keyboard input.
++- Overall deadline enforcement before showing an additional item.
++- Correct completion status on the final question.
++
++The original ten focused interface cases failed against the corresponding earlier behaviours and pass after correction. A new preset regression reproduced the visual finding: **10/11 before its fix, 11/11 after**. These cases are counted separately from the 847 unit/regression tests.
++
++The full-app route check additionally:
++
++1. Loads the actual `index.html` and `app.js` entry point, using an older save without the new transfer fields.
++2. Selects untimed practice through the page dropdown and confirms that elapsed simulated time does not expire it.
++3. Answers all 15 mixed questions through their actual controls, including keyboard MCQ selection, ranking moves, interval input and orderbook trades.
++4. Confirms no solutions appear during the attempt, and verifies 12/12 non-interval answers plus the expected interval scores.
++5. Confirms ordinary stats, mastery, spaced review and exam runs are unchanged.
++6. Returns using the current Transfer sidebar link and checks saved session history.
++7. Recreates the store from browser storage and verifies backup content.
++8. Starts another session, navigates away, then checks that abandoned handlers/timers cannot affect the next page or silently complete the run.
++9. Confirms the Kickstarter mock still has five mathematical sections and excludes 80-in-8.
++
++The earlier transfer smoke test and previous Kickstarter-fix smoke test also pass. Storage tests cover transfer-only local progress, displayed-only history, valid restore into an empty browser and protection of unknown future-version saves.
++
++## Mathematical and preservation checks
++
++- Full JavaScript suite: **777 passed**, no failures or skips.
++- Python suite with the engine available: **36 passed**, no failures or skips.
++- C++ suite: **34 passed**.
++- Repeated the deterministic diversity/generator evaluation: **13,000** independently checked added-generator cases, zero disagreements.
++- Independently verified the separate **1,300-case** additional-training export in Python: full numerical coverage of that export, zero failures.
++- Compared **990 ordinary mock item objects** with the saved fixed base: unchanged.
++- Compared **176 protected files** with that base, including the ordinary generators, Zap-N engines, scoring, clocks/presets and licence: byte-identical.
++- Ten sampled transfer sessions still contain 150 questions with zero exact repeats; the signature diagnostic remains 123 newly recorded and 27 familiar structures.
++
++The existing mathematical generators, scoring implementation, assessment configurations and licence remain intact. The additional fix in the shared solution component is optional and retains its ordinary-practice default.
++
++## Desktop browser pass
++
++Earlier browser attempts were blocked. On the requested retry, running the local app beside the provided browser resolved the connection, and real browser interaction and screenshot inspection became available. No browser security warning was bypassed.
++
++The full mixed run used `transfer.2`; `transfer.3` then corrected the picker default without changing Transfer's question/session code. The fixed code was reloaded in the browser, and unchanged Save plus retained session history were verified. All automated suites were rerun on `transfer.3`.
++
++| Area | Observed result |
++|---|---|
++| Landing and clocks | Training label, timing selector, 20-minute total and 90-second item clock rendered clearly |
++| Real-time expiry | Selected 0.429 for the replacement/first-red question; the 90-second clock automatically advanced and retained the correct answer |
++| Timed orderbook | Five trades left A/B/C flat and cash +1; Finish produced a partial session with 2/2 correct |
++| Complete untimed run | All 15 questions reached review; included three questions from each mathematical section |
++| Keyboard | MCQ letter selection and ranking number/arrow movement worked |
++| Diagrams | A 200-value grid, mixed-shape grid, scatter plot and solution graphics rendered; a long grid required ordinary vertical scrolling |
++| Orderbook editing | Buying, selling, removing a trade and clearing the position worked |
++| MCQ review | Submitted wrong choice was red, correct choice green, and all options disabled |
++| Ranking review | Submitted order retained; exact probabilities 4/9, 5/12 and 1/4 revealed; move controls disabled |
++| Interval review | Submitted bounds 79 and 81 retained and disabled; truth 80 and score 0.975 displayed |
++| Navigation/persistence | Current Transfer link returned to the landing page; both session records survived reload |
++| Isolation | Deliberate Transfer mistakes did not appear in the ordinary wrong-answer log |
++| Theme | Light question/review screens and the dark landing/history screen were readable; original theme restored afterwards |
++| Preset correction | After the code fix and reload, Kickstarter was selected; clicking unchanged Save retained it and both Transfer records |
++
++The complete run intentionally included an incorrect orderbook, an incorrect probability choice and a skipped question to exercise feedback. Its **9/12 non-interval correct** and interval mean **0.806** were the expected UI-test outcome, not evidence of learning effectiveness or real-test calibration. All nine other non-interval answers were correct; interval inputs were [45, 55], [25, 40] and [79, 81].
++
++No layout overlap or horizontal clipping was found in the inspected desktop views. Width measurements on the landing and long-grid pages showed no document-level horizontal overflow. This was one Chrome viewport: no phone/touch, Safari, Firefox, alternative display scaling or accessibility certification is claimed. The real 20-minute total timeout was not waited out; total-deadline edge cases remain covered by the deterministic DOM regressions.
++
++Browser-control timeouts occurred around a confirmation dialog and a full-page screenshot. The dialog was handled through its visible confirmation, and viewport screenshots were used for the successful checks. Those control failures are separate from the observed application results.
++
++## Preserved timing discrepancies
++
++The visual pass also confirmed that preserving a preset is different from validating it against the invitation. The supplied invitation is the evidence for the total times below; counts and per-item limits in the app remain authored/reported practice settings.
++
++| Section | Supplied invitation | Preserved app setting |
++|---|---|---|
++| Beat the Odds | 25 minutes total, limited time per question | 25 minutes total; 20 questions, 90 seconds each |
++| NumberLogic | 25 minutes total | 25 minutes total; 26 questions |
++| Likelihood-list | About 25 minutes total, limited time per question | 15 questions at 90 seconds each; no separate 25-minute total cap |
++| Intervals | About 15 minutes total | 18 questions at 45 seconds each; no separate 15-minute total cap |
++| Orderbooks | About 15 minutes total | 20 questions with an 8-minute total cap |
++
++The new visual patch changes the incorrect picker default, not these clocks. The earlier instruction explicitly requested preservation of the Kickstarter preset and its configured clocks. Ordinary mocks must therefore still be treated as practice formats, with the invitation controlling the actual assessment schedule. This is a confirmed configuration limitation, not an unknown about what the invitation says.
++
++## Reproduce
++
++From the application folder:
++
++```sh
++npm test
++npm install --no-save jsdom
++node tools/ui-smoke.mjs
++node tools/transfer-smoke.mjs
++node tools/transfer-regression.mjs
++node tools/transfer-route-smoke.mjs
++```
++
++Optional engine/backend checks, with their development tools installed:
++
++```sh
++cmake -S engine -B engine/build
++cmake --build engine/build
++ctest --test-dir engine/build --output-on-failure
++cd backend
++uv run pytest -q
++```
++
++The complete source, new checks and test logs are included in the updated ZIP. The log index distinguishes current passing results from intentionally retained failures against the earlier build. Existing saves remain compatible; keep a Settings backup when moving to a different browser origin or folder/port configuration.
+diff --git a/app.js b/app.js
+index 544f232..8075a03 100644
+--- a/app.js
++++ b/app.js
+@@ -88,7 +88,13 @@ function renderNav(hash) {
+   const due = dueLessons(store).length;
+   const open = openBeliefs(store).length;
+   const here = (href) => hash === href || (href !== '#/' && hash.startsWith(`${href}/`));
+-  const link = (href, label, extra = null, ico = null, on = here(href)) => h('a', { href, 'aria-current': on ? 'page' : null }, ico ? icon(ico, { size: 18 }) : null, h('span', {}, label), extra);
++  const link = (href, label, extra = null, ico = null, on = here(href)) => h('a', { href, 'aria-current': on ? 'page' : null,
++    // The challenge and its review share a route. Clicking its current sidebar
++    // link must still leave the session and return to the challenge landing page.
++    onclick: href === '#/transfer' ? (event) => {
++      if (location.hash === href && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) { event.preventDefault(); route(); }
++    } : undefined,
++  }, ico ? icon(ico, { size: 18 }) : null, h('span', {}, label), extra);
+   const studyOwn = /^#\/study\/(mistakes|week)/.test(hash);
+   const tasks = presetSections(activePreset());
+   mount(nav,
+diff --git a/backend/data/verification/transfer-report.json b/backend/data/verification/transfer-report.json
+index c22c9f5..d683159 100644
+--- a/backend/data/verification/transfer-report.json
++++ b/backend/data/verification/transfer-report.json
+@@ -62,7 +62,7 @@
+  },
+  "engine": true,
+  "scope": "Structural checks for every item; independent numerical checks only where coverage is reported.",
+- "seconds": 0.19,
++ "seconds": 0.16,
+  "complete_numerical_coverage": true,
+  "ok": true
+ }
+\ No newline at end of file
+diff --git a/evaluation/http-smoke.json b/evaluation/http-smoke.json
+index 76ecd06..687bbc7 100644
+--- a/evaluation/http-smoke.json
++++ b/evaluation/http-smoke.json
+@@ -1,27 +1,31 @@
+-[
+-  {
+-    "path": "/",
+-    "status": 200,
+-    "bytes": 2607
+-  },
+-  {
+-    "path": "/app.js",
+-    "status": 200,
+-    "bytes": 12411
+-  },
+-  {
+-    "path": "/src/ui/pages/transfer.js",
+-    "status": 200,
+-    "bytes": 9154
+-  },
+-  {
+-    "path": "/src/transfer/draw.js",
+-    "status": 200,
+-    "bytes": 3528
+-  },
+-  {
+-    "path": "/src/transfer/families/shared-source.js",
+-    "status": 200,
+-    "bytes": 7508
+-  }
+-]
++{
++  "launcher": "OptPrep is running at http://127.0.0.1:8787 (Ctrl+C to stop)",
++  "version": "1.0.3-transfer.3",
++  "responses": [
++    {
++      "path": "/",
++      "status": 200,
++      "bytes": 2607
++    },
++    {
++      "path": "/app.js",
++      "status": 200,
++      "bytes": 12811
++    },
++    {
++      "path": "/src/ui/pages/transfer.js",
++      "status": 200,
++      "bytes": 10258
++    },
++    {
++      "path": "/src/ui/pages/path.js",
++      "status": 200,
++      "bytes": 5720
++    },
++    {
++      "path": "/config/presets.js",
++      "status": 200,
++      "bytes": 6032
++    }
++  ]
++}
+diff --git a/evaluation/logs/README.md b/evaluation/logs/README.md
+new file mode 100644
+index 0000000..444f8f5
+--- /dev/null
++++ b/evaluation/logs/README.md
+@@ -0,0 +1,19 @@
++# Test log index
++
++The current visual follow-up patch is `1.0.3-transfer.3`.
++
++| Current-build evidence | Scope |
++|---|---|
++| `qa-javascript.log` | Complete JavaScript suite: 777 passed |
++| `qa-python.log` | Complete Python suite: 36 passed |
++| `qa-cpp.log` | Complete C++ suite: 34 passed |
++| `transfer-review-regressions.log` | Eleven focused interface cases: all passed |
++| `transfer-full-router.log` | Full app entry/router and 15-question session: passed |
++| `transfer-original-dom.log` | Earlier Transfer smoke check rerun: passed |
++| `previous-fixes-dom.log` | Previous Kickstarter fix checks rerun: passed |
++| `qa-diversity.log` | Generator sweep, branch diagnostics and unchanged ordinary mocks |
++| `qa-independent-transfer.log` | Independent Python verification of 1,300 exported additions |
++
++Files beginning `expected-failures-original-` deliberately retain failing checks against the earlier release. They demonstrate the defects before the fixes; they are not failures of this patched build. Other logs retain the initial Transfer release evidence.
++
++These scripts use a DOM harness. A separate desktop Chrome visual pass subsequently succeeded; observations are recorded in `../visual-browser-results.json` and the root `TRANSFER_TEST_REPORT.md`. Mobile and other browsers remain untested.
+diff --git a/evaluation/logs/expected-failures-original-full-router.log b/evaluation/logs/expected-failures-original-full-router.log
+new file mode 100644
+index 0000000..a416d68
+--- /dev/null
++++ b/evaluation/logs/expected-failures-original-full-router.log
+@@ -0,0 +1,18 @@
++node:internal/modules/run_main:107
++    triggerUncaughtException(
++    ^
++
++AssertionError [ERR_ASSERTION]: finishing on the last displayed question is a completed session
++
++false !== true
++
++    at file:///workspace/scratch/4bc66287a502/optprep-transfer/tools/transfer-route-smoke.mjs:68:9 {
++  generatedMessage: false,
++  code: 'ERR_ASSERTION',
++  actual: false,
++  expected: true,
++  operator: 'strictEqual',
++  diff: 'simple'
++}
++
++Node.js v24.22.1
+diff --git a/evaluation/logs/expected-failures-original-preset.log b/evaluation/logs/expected-failures-original-preset.log
+new file mode 100644
+index 0000000..a1d1317
+--- /dev/null
++++ b/evaluation/logs/expected-failures-original-preset.log
+@@ -0,0 +1,17 @@
++PASS review restores and locks the submitted MCQ
++PASS additional-family review has no broken ordinary-practice link
++PASS ranking review shows probabilities and retains the submitted order
++PASS interval review restores bounds and disables its controls
++PASS orderbook review restores the submitted position and locks controls
++PASS answers changed after the item deadline do not replace the last valid answer
++PASS the overall deadline is enforced before submitting or showing another item
++PASS a late skip cannot erase an answer already committed before timeout
++PASS keyboard answers after the deadline are ignored
++PASS finishing on the last displayed question records a complete session
++FAIL saving an unchanged fresh battery picker preserves the active Kickstarter preset: Save must not silently switch a new browser to Everything
+++ actual - expected
++
+++ 'full'
++- 'kickstarter'
++
++10/11 focused interface regressions passed
+diff --git a/evaluation/logs/expected-failures-original-sync.log b/evaluation/logs/expected-failures-original-sync.log
+new file mode 100644
+index 0000000..8c00e38
+--- /dev/null
++++ b/evaluation/logs/expected-failures-original-sync.log
+@@ -0,0 +1,49 @@
++✔ only this machine counts as a backend host (1.120346ms)
++✔ a hosted copy never probes for the backend (1.084414ms)
++✔ a local copy probes with relative URLs (0.5506ms)
++✖ backend startup cannot replace transfer-only local progress (2.147974ms)
++✖ backend startup cannot erase displayed-only freshness history (1.032721ms)
++ℹ tests 5
++ℹ suites 0
++ℹ pass 3
++ℹ fail 2
++ℹ cancelled 0
++ℹ skipped 0
++ℹ todo 0
++ℹ duration_ms 183.925134
++
++✖ failing tests:
++
++test at tests/ui/sync.test.js:27:1
++✖ backend startup cannot replace transfer-only local progress (2.147974ms)
++  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++  
++  0 !== 1
++  
++      at TestContext.<anonymous> (file:///workspace/scratch/4bc66287a502/optprep-transfer/tests/ui/sync.test.js:34:10)
++      at async Test.run (node:internal/test_runner/test:1409:7)
++      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
++    generatedMessage: true,
++    code: 'ERR_ASSERTION',
++    actual: 0,
++    expected: 1,
++    operator: 'strictEqual',
++    diff: 'simple'
++  }
++
++test at tests/ui/sync.test.js:38:1
++✖ backend startup cannot erase displayed-only freshness history (1.032721ms)
++  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++  
++  0 !== 1
++  
++      at TestContext.<anonymous> (file:///workspace/scratch/4bc66287a502/optprep-transfer/tests/ui/sync.test.js:43:10)
++      at async Test.run (node:internal/test_runner/test:1409:7)
++      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
++    generatedMessage: true,
++    code: 'ERR_ASSERTION',
++    actual: 0,
++    expected: 1,
++    operator: 'strictEqual',
++    diff: 'simple'
++  }
+diff --git a/evaluation/logs/expected-failures-original-transfer-review.log b/evaluation/logs/expected-failures-original-transfer-review.log
+new file mode 100644
+index 0000000..5513a78
+--- /dev/null
++++ b/evaluation/logs/expected-failures-original-transfer-review.log
+@@ -0,0 +1,41 @@
++FAIL review restores and locks the submitted MCQ: Expected values to be strictly equal:
++
++5 !== 0
++
++FAIL additional-family review has no broken ordinary-practice link: The expression evaluated to a falsy value:
++
++  assert.ok(![...root.querySelectorAll('a')].some(a=>a.getAttribute('href')===`#/run/bto/practice/${mcq.family}`))
++
++FAIL ranking review shows probabilities and retains the submitted order: Expected values to be strictly equal:
++
++0 !== 3
++
++FAIL interval review restores bounds and disables its controls: Expected values to be strictly equal:
++
++0 !== 21.6
++
++FAIL orderbook review restores the submitted position and locks controls: The input did not match the regular expression /Net:/. Input:
++
++''
++
++FAIL answers changed after the item deadline do not replace the last valid answer: Expected values to be strictly equal:
++
++1 !== -1
++
++FAIL the overall deadline is enforced before submitting or showing another item: The input did not match the regular expression /Transfer Challenge: review/. Input:
++
++'Transfer ChallengeTransfer training · Question 2 of 2Total 0:00 · Question 1:30The table gives complete group sizes and pass counts. Each statement specifies its own random selection procedure. Rank the probabilities from most to least likely.Group sizes and observed passesGroupPeoplePassedA6045B15071Top = most likely. Drag rows, use Up/Down, or press 1-3 then the arrow keys.1Choose A with probability 2/3, otherwise B, then a person uniformly from that group. That person passed.UpDown2Select one person uniformly from everyone in the table. That person passed.UpDown3Select one person uniformly from everyone in the table. That person is in group A and passed.UpDownSubmit and nextSkipFinish session'
++
++FAIL a late skip cannot erase an answer already committed before timeout: Expected values to be strictly equal:
++
++0 !== -1
++
++FAIL keyboard answers after the deadline are ignored: Expected values to be strictly equal:
++
++1 !== -1
++
++FAIL finishing on the last displayed question records a complete session: Expected values to be strictly equal:
++
++false !== true
++
++0/10 focused interface regressions passed
+diff --git a/evaluation/logs/previous-fixes-dom.log b/evaluation/logs/previous-fixes-dom.log
+new file mode 100644
+index 0000000..e0d5a2e
+--- /dev/null
++++ b/evaluation/logs/previous-fixes-dom.log
+@@ -0,0 +1 @@
++DOM integration passed: both clocks, Kickstarter mock selection, interval coverage/mastery, repeat exclusion.
+diff --git a/evaluation/logs/qa-cpp.log b/evaluation/logs/qa-cpp.log
+new file mode 100644
+index 0000000..0cb6555
+--- /dev/null
++++ b/evaluation/logs/qa-cpp.log
+@@ -0,0 +1,73 @@
++Test project /workspace/scratch/4bc66287a502/optprep-transfer/engine/build
++      Start  1: Json.RoundTripsNestedValues
++ 1/34 Test  #1: Json.RoundTripsNestedValues .....................................   Passed    0.01 sec
++      Start  2: Json.RejectsMalformedInput
++ 2/34 Test  #2: Json.RejectsMalformedInput ......................................   Passed    0.00 sec
++      Start  3: Json.IntegersDumpWithoutDecimals
++ 3/34 Test  #3: Json.IntegersDumpWithoutDecimals ................................   Passed    0.01 sec
++      Start  4: Rational.NormalisesAndComputesExactly
++ 4/34 Test  #4: Rational.NormalisesAndComputesExactly ...........................   Passed    0.01 sec
++      Start  5: Rational.ThrowsOnDivisionByZeroAndOverflow
++ 5/34 Test  #5: Rational.ThrowsOnDivisionByZeroAndOverflow ......................   Passed    0.01 sec
++      Start  6: MonteCarlo.DiceAndCardsMatchClosedForms
++ 6/34 Test  #6: MonteCarlo.DiceAndCardsMatchClosedForms .........................   Passed    0.05 sec
++      Start  7: MonteCarlo.ExpectationsMatchClosedForms
++ 7/34 Test  #7: MonteCarlo.ExpectationsMatchClosedForms .........................   Passed    0.17 sec
++      Start  8: MonteCarlo.ClassicProbabilities
++ 8/34 Test  #8: MonteCarlo.ClassicProbabilities .................................   Passed    0.15 sec
++      Start  9: MonteCarlo.ExtendedModels
++ 9/34 Test  #9: MonteCarlo.ExtendedModels .......................................   Passed    0.08 sec
++      Start 10: MonteCarlo.DetectsAWrongAnswer
++10/34 Test #10: MonteCarlo.DetectsAWrongAnswer ..................................   Passed    0.02 sec
++      Start 11: MonteCarlo.IsDeterministicPerSeedAndThreadCount
++11/34 Test #11: MonteCarlo.IsDeterministicPerSeedAndThreadCount .................   Passed    0.01 sec
++      Start 12: Orderbook.FindsBundleArbitrage
++12/34 Test #12: Orderbook.FindsBundleArbitrage ..................................   Passed    0.00 sec
++      Start 13: Orderbook.ReportsNoArbitrageOnFairBoard
++13/34 Test #13: Orderbook.ReportsNoArbitrageOnFairBoard .........................   Passed    0.00 sec
++      Start 14: Orderbook.WeightedBundleNeedsTwoUnits
++14/34 Test #14: Orderbook.WeightedBundleNeedsTwoUnits ...........................   Passed    0.00 sec
++      Start 15: Orderbook.BranchAndBoundMatchesExhaustiveSearchOnRandomBoards
++15/34 Test #15: Orderbook.BranchAndBoundMatchesExhaustiveSearchOnRandomBoards ...   Passed    0.78 sec
++      Start 16: Orderbook.IndecomposableModeReturnsOnePackage
++16/34 Test #16: Orderbook.IndecomposableModeReturnsOnePackage ...................   Passed    0.01 sec
++      Start 17: NumberBox.SolvesClassicTwentyFours
++17/34 Test #17: NumberBox.SolvesClassicTwentyFours ..............................   Passed    0.01 sec
++      Start 18: NumberBox.KnowsUnsolvableSets
++18/34 Test #18: NumberBox.KnowsUnsolvableSets ...................................   Passed    0.00 sec
++      Start 19: NumberBox.ReachableIntegersIncludeKnownValues
++19/34 Test #19: NumberBox.ReachableIntegersIncludeKnownValues ...................   Passed    0.00 sec
++      Start 20: NumberBox.EvaluatorIsExact
++20/34 Test #20: NumberBox.EvaluatorIsExact ......................................   Passed    0.00 sec
++      Start 21: Tower.BfsFindsShortestSolution
++21/34 Test #21: Tower.BfsFindsShortestSolution ..................................   Passed    0.00 sec
++      Start 22: Tower.GeneratedLevelsHaveExactlyTheStatedOptimum
++22/34 Test #22: Tower.GeneratedLevelsHaveExactlyTheStatedOptimum ................   Passed    0.01 sec
++      Start 23: Tower.RejectsOverfullTowers
++23/34 Test #23: Tower.RejectsOverfullTowers .....................................   Passed    0.02 sec
++      Start 24: Figure.FormulaMatchesDynamicProgramming
++24/34 Test #24: Figure.FormulaMatchesDynamicProgramming .........................   Passed    0.01 sec
++      Start 25: Figure.SingleProperty
++25/34 Test #25: Figure.SingleProperty ...........................................   Passed    0.00 sec
++      Start 26: Figure.ParallelTestingBeatsOneAtATime
++26/34 Test #26: Figure.ParallelTestingBeatsOneAtATime ...........................   Passed    0.01 sec
++      Start 27: Balloon.RoundOneOptimumIsHalfThePopRange
++27/34 Test #27: Balloon.RoundOneOptimumIsHalfThePopRange ........................   Passed    0.04 sec
++      Start 28: Balloon.BankPenaltyMakesLaterBalloonsMoreCautious
++28/34 Test #28: Balloon.BankPenaltyMakesLaterBalloonsMoreCautious ...............   Passed    0.05 sec
++      Start 29: Sequence.RecognisesCoreRules
++29/34 Test #29: Sequence.RecognisesCoreRules ....................................   Passed    0.00 sec
++      Start 30: Sequence.RecognisesExtendedRules
++30/34 Test #30: Sequence.RecognisesExtendedRules ................................   Passed    0.01 sec
++      Start 31: Sequence.ShortSequencesStillPredict
++31/34 Test #31: Sequence.ShortSequencesStillPredict .............................   Passed    0.01 sec
++      Start 32: Sequence.ConvertsDecimals
++32/34 Test #32: Sequence.ConvertsDecimals .......................................   Passed    0.01 sec
++      Start 33: Commands.RoundTripThroughJson
++33/34 Test #33: Commands.RoundTripThroughJson ...................................   Passed    0.01 sec
++      Start 34: Commands.ErrorsComeBackAsJson
++34/34 Test #34: Commands.ErrorsComeBackAsJson ...................................   Passed    0.01 sec
++
++100% tests passed out of 34
++
++Total Test time (real) =   1.54 sec
+diff --git a/evaluation/logs/qa-diversity.log b/evaluation/logs/qa-diversity.log
+new file mode 100644
+index 0000000..b6ef787
+--- /dev/null
++++ b/evaluation/logs/qa-diversity.log
+@@ -0,0 +1,148 @@
++{
++  "existingFamilies": 99,
++  "newChecks": 13000,
++  "newStructureCounts": {
++    "information-protocols": 8,
++    "shared-source": 10,
++    "selection-weights": 7,
++    "rates-weights": 8
++  },
++  "transferSample": {
++    "sessions": 10,
++    "questions": 150,
++    "exactRepeats": 0,
++    "newRecordedStructures": 123,
++    "familiarRecordedStructures": 27,
++    "familyCounts": {
++      "bto/information-protocols": 10,
++      "ob/chain": 5,
++      "ll/selection-weights": 10,
++      "ob/crossed": 3,
++      "bto/shared-source": 10,
++      "ll/markov-graph": 1,
++      "iv/rates-weights": 10,
++      "nl/square-minus": 1,
++      "bto/at-least-one": 1,
++      "iv/coupon": 2,
++      "nl/fractions": 1,
++      "ll/football": 2,
++      "iv/fermi": 2,
++      "ob/weighted": 5,
++      "nl/product-recurrence": 1,
++      "iv/waiting-time": 2,
++      "nl/primes": 1,
++      "ob/hidden": 2,
++      "ll/fund-returns": 3,
++      "ob/bundle-rich": 3,
++      "nl/sum-previous": 1,
++      "bto/dice-duel": 1,
++      "iv/combinatorics": 2,
++      "nl/cubes-plus": 1,
++      "ll/coin-patterns": 1,
++      "ob/bundle-cheap": 7,
++      "ll/scatter-regions": 3,
++      "nl/interleaved": 2,
++      "nl/geometric": 1,
++      "ob/decoy": 2,
++      "nl/powers-offset": 1,
++      "iv/expected-dice": 1,
++      "ll/dice-events": 4,
++      "bto/dice-order-stats": 1,
++      "ob/spread": 3,
++      "iv/prob-estimate": 2,
++      "bto/card-draws": 1,
++      "iv/mental-product": 2,
++      "nl/second-diff": 1,
++      "nl/triangular": 1,
++      "nl/tribonacci": 1,
++      "iv/percentile": 1,
++      "nl/digit-sum": 1,
++      "iv/path-length": 1,
++      "nl/alternating-signs": 1,
++      "nl/prime-gaps": 1,
++      "ll/conjunction": 2,
++      "bto/pigeonhole": 1,
++      "ll/histogram-bins": 1,
++      "nl/weighted-two-term": 1,
++      "bto/polygon-walk": 1,
++      "nl/diff-geometric": 1,
++      "nl/alternating-ops": 2,
++      "iv/powers-roots": 1,
++      "nl/decimals": 1,
++      "nl/add-index": 1,
++      "nl/squares-plus": 1,
++      "bto/random-walk-line": 1,
++      "iv/dice-grid": 1,
++      "ll/card-events": 2,
++      "nl/affine-recurrence": 1,
++      "bto/monty-hall": 2,
++      "nl/fibonacci-like": 2,
++      "ll/score-table": 1,
++      "iv/prob-exact": 2,
++      "nl/arithmetic": 1,
++      "bto/two-dice-sum": 1,
++      "nl/multiply-index": 1,
++      "nl/mixed-combo": 1,
++      "nl/third-diff": 1,
++      "iv/series": 1
++    },
++    "mcqPositions": {
++      "0": 11,
++      "1": 9,
++      "2": 22,
++      "3": 8,
++      "4": 10
++    },
++    "rankOrders": {
++      "2,1,0": 6,
++      "0,1,2": 2,
++      "0,2,1": 9,
++      "2,0,1": 5,
++      "1,0,2": 2,
++      "1,2,0": 6
++    },
++    "maxSameSectionStreak": 3
++  },
++  "previousVersionMocks": [
++    {
++      "section": "bto",
++      "questions": 200,
++      "identicalItemObjects": true,
++      "exactRepeats": 0,
++      "repeatedBranchSignatures": 110,
++      "distinctBranchSignatures": 90
++    },
++    {
++      "section": "nl",
++      "questions": 260,
++      "identicalItemObjects": true,
++      "exactRepeats": 0,
++      "repeatedBranchSignatures": 211,
++      "distinctBranchSignatures": 49
++    },
++    {
++      "section": "ll",
++      "questions": 150,
++      "identicalItemObjects": true,
++      "exactRepeats": 0,
++      "repeatedBranchSignatures": 50,
++      "distinctBranchSignatures": 100
++    },
++    {
++      "section": "iv",
++      "questions": 180,
++      "identicalItemObjects": true,
++      "exactRepeats": 0,
++      "repeatedBranchSignatures": 119,
++      "distinctBranchSignatures": 61
++    },
++    {
++      "section": "ob",
++      "questions": 200,
++      "identicalItemObjects": true,
++      "exactRepeats": 0,
++      "repeatedBranchSignatures": 182,
++      "distinctBranchSignatures": 18
++    }
++  ]
++}
+diff --git a/evaluation/logs/qa-independent-transfer.log b/evaluation/logs/qa-independent-transfer.log
+new file mode 100644
+index 0000000..eee74ab
+--- /dev/null
++++ b/evaluation/logs/qa-independent-transfer.log
+@@ -0,0 +1,4 @@
++bto: 700 items, 0 failed, 0 warnings, MC 0, sequence 0, orderbook 0
++iv: 300 items, 0 failed, 0 warnings, MC 0, sequence 0, orderbook 0
++ll: 300 items, 0 failed, 0 warnings, MC 0, sequence 0, orderbook 0
++ok=True in 0.16 s
+diff --git a/evaluation/logs/qa-javascript.log b/evaluation/logs/qa-javascript.log
+new file mode 100644
+index 0000000..0a929be
+--- /dev/null
++++ b/evaluation/logs/qa-javascript.log
+@@ -0,0 +1,785 @@
++✔ mcq: +1 correct, -1 wrong, 0 skip (1.881572ms)
++✔ rank: exact order only, no partial credit (1.132266ms)
++✔ interval: L/U when truth inside inclusive, else 0; L=0 scores 0 (0.474216ms)
++✔ orderbook: flat position with positive profit is correct (2.607573ms)
++✔ decide: push, pull, none and conflict (0.942543ms)
++✔ pack and unpack round-trip, plain and encrypted (489.95652ms)
++✔ two devices: first pushes, an empty second pulls, a changed pair asks (1266.995324ms)
++✔ factorial and binomials (4.323379ms)
++✔ derangements (1.552232ms)
++✔ buildMcq returns 5 sorted, distinct options with misconceptions on wrong ones (1.873039ms)
++✔ validateItem accepts a good mcq and flags a broken one (0.547896ms)
++✔ validateItem checks rank margins and order (0.298435ms)
++✔ validateItem checks interval truth and orderbook best trade (0.319767ms)
++✔ validateItem: mcq option count is 5 by default and item.optionCount when set (80-in-8 uses 4) (0.589929ms)
++✔ validateSolution: ask, fast, check, a picture (or an explicit null) and math on some step (0.271665ms)
++✔ nearestLevel picks the closest supported level (0.600364ms)
++✔ drawItem honours family and difficulty (4.041289ms)
++✔ examItems is deterministic per seed, ramps difficulty, has unique prompts and mixes the bank (2.829954ms)
++✔ examScore follows each section scoring rule (0.280077ms)
++✔ Kickstarter enforces an outer 25-minute BTO cap alongside the item clock (1.283842ms)
++✔ a 30-minute or unstamped BTO run cannot count under a 25-minute cap (0.315089ms)
++✔ wide covering intervals earn their score without claiming mastery (1.493034ms)
++✔ old interval mastery is reassessed while answers, lessons, other mastery and XP survive (0.956104ms)
++✔ fresh exam and adaptive draws avoid questions actually seen in earlier sessions (2.241458ms)
++✔ visible question history persists and shuffling ranking answers does not make a question fresh (1.333967ms)
++✔ the fund explanation stays valid when the volatile fund is positive more often (2.006478ms)
++✔ mm: library has at least 500 distinct valid questions (224.726606ms)
++✔ bto: library has at least 500 distinct valid questions (284.663405ms)
++✔ nl: library has at least 500 distinct valid questions (329.325572ms)
++✔ ll: library has at least 500 distinct valid questions (387.973816ms)
++✔ iv: library has at least 500 distinct valid questions (366.146501ms)
++✔ ob: library has at least 500 distinct valid questions (89.265377ms)
++✔ library is deterministic, unique, sized, and includes the bank (37.496321ms)
++✔ sets partition the library in exam-sized chunks (4.159595ms)
++✔ solveLinear solves a 2x2 system exactly (0.957546ms)
++✔ random walk on a hexagon: expected return time is 6 (0.988952ms)
++✔ stationary distribution of a two-state chain (0.293057ms)
++✔ gambler ruin absorption probability (0.382239ms)
++✔ bands follow the lowest difficulty a family offers (1.590989ms)
++✔ exactly one current row in every state of progress (1.373826ms)
++✔ the current row is the first unfinished one, later units are marked later (2.75984ms)
++✔ a fully mastered path points at the exam checkpoint (0.347067ms)
++✔ next step prefers a due review, then the first unfinished section (0.374287ms)
++✔ real sections build a valid roadmap (0.519012ms)
++✔ applying a preset sets clocks; switching back restores the base format (2.206817ms)
++✔ unknown or missing presets fall back to the Kickstarter battery (0.190243ms)
++✔ custom keeps only real sections and games (0.276122ms)
++✔ preset section lists only name tasks that exist (0.359185ms)
++✔ readiness never counts a run under a looser clock (0.196813ms)
++✔ migrate keeps every v1 key and value (3.007889ms)
++✔ migrate is idempotent and rejects unknown saves (0.726062ms)
++✔ store migrates v1 once, writes v2, leaves v1 byte-for-byte (0.882335ms)
++✔ store never overwrites a save it cannot read (0.623278ms)
++✔ store compacts and flags a full quota instead of losing progress silently (0.970094ms)
++✔ recordAnswer feeds trend, mastery, xp and the mistake log (1.266626ms)
++✔ trend decays with a 7-day half-life (0.19476ms)
++✔ wilson lower bound is cautious with little data (0.205376ms)
++✔ weak patterns: needs evidence, at most two per family, top five (3.94112ms)
++✔ active time: idle, hidden and non-session ticks earn nothing (0.316962ms)
++✔ streak: today pending never breaks it, gaps do, DST is calendar-safe (0.486254ms)
++✔ freezes cover missed days only while they last (0.40933ms)
++✔ xp rules (0.140619ms)
++✔ levels: three clean in a row per level, exam pace for level 5 (0.212407ms)
++✔ mistake log: repeats bump the count, cap holds (1.957195ms)
++✔ every section rebuilds a missed question from its id (40.84345ms)
++✔ blank state has every v2 field (0.277022ms)
++✔ normalises sign and gcd (0.963024ms)
++✔ arithmetic is exact (0.359496ms)
++✔ toNumber and from (0.199417ms)
++✔ division by zero throws (0.287238ms)
++✔ same seed gives the same stream (1.131075ms)
++✔ string seeds work and differ from each other (0.286186ms)
++✔ int is inclusive and in range (1.00728ms)
++✔ shuffle is a permutation and pick returns a member (0.856625ms)
++✔ fork gives an independent reproducible child (0.19528ms)
++✔ mm/mm-addsub: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (103.358778ms)
++✔ mm/mm-multiply: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (61.33205ms)
++✔ mm/mm-divide: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (42.304191ms)
++✔ mm/mm-decimals: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (59.656744ms)
++✔ mm/mm-fractions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (45.732974ms)
++✔ mm/mm-percent: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (53.621837ms)
++✔ mm/mm-missing: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.321312ms)
++✔ mm/mm-mixed: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (23.554299ms)
++✔ mm: every bank item carries the full solution (0.309802ms)
++✔ bto/two-dice-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (17.177703ms)
++✔ bto/die-repeats: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.12582ms)
++✔ bto/dice-order-stats: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.301885ms)
++✔ bto/three-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.771826ms)
++✔ bto/at-least-one: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (31.426652ms)
++✔ bto/first-success: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (36.714461ms)
++✔ bto/conditional-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.104474ms)
++✔ bto/card-symmetry: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.370957ms)
++✔ bto/card-draws: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.589294ms)
++✔ bto/urn-draws: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.138222ms)
++✔ bto/coin-sequences: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.533889ms)
++✔ bto/race-to-k: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.830619ms)
++✔ bto/pattern-waiting: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.914148ms)
++✔ bto/bayes-test: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.324227ms)
++✔ bto/bayes-boxes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.766248ms)
++✔ bto/monty-hall: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (4.345132ms)
++✔ bto/pigeonhole: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.570535ms)
++✔ bto/birthday: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (20.731198ms)
++✔ bto/derangements: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.429264ms)
++✔ bto/expected-waiting: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.489223ms)
++✔ bto/coupon-collector: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.285691ms)
++✔ bto/linearity: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.867739ms)
++✔ bto/expected-extremes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.917192ms)
++✔ bto/dice-duel: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.84919ms)
++✔ bto/dice-games-ev: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.502613ms)
++✔ bto/card-stopping: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.623078ms)
++✔ bto/running-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (59.604708ms)
++✔ bto/random-walk-line: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.114295ms)
++✔ bto/polygon-walk: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.232631ms)
++✔ bto/gamblers-ruin: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.536421ms)
++✔ bto/clt-estimates: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (35.381329ms)
++✔ bto/uniform-geometry: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.153051ms)
++✔ bto: every bank item carries the full solution (4.433894ms)
++✔ nl/arithmetic: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (20.619672ms)
++✔ nl/geometric: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (48.96443ms)
++✔ nl/second-diff: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.114136ms)
++✔ nl/add-index: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (34.90607ms)
++✔ nl/squares-plus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (44.642744ms)
++✔ nl/triangular: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.798716ms)
++✔ nl/diff-geometric: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.084409ms)
++✔ nl/affine-recurrence: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.645159ms)
++✔ nl/fibonacci-like: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.069115ms)
++✔ nl/multiply-index: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.369333ms)
++✔ nl/interleaved: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.280863ms)
++✔ nl/alternating-ops: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.00484ms)
++✔ nl/cubes-plus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.285519ms)
++✔ nl/pronic: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.86982ms)
++✔ nl/primes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.432409ms)
++✔ nl/powers-offset: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.646848ms)
++✔ nl/decimals: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.195866ms)
++✔ nl/alternating-signs: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.630738ms)
++✔ nl/third-diff: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (21.608436ms)
++✔ nl/tribonacci: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.649661ms)
++✔ nl/weighted-two-term: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (23.204873ms)
++✔ nl/product-recurrence: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.391066ms)
++✔ nl/prime-gaps: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.833937ms)
++✔ nl/sum-previous: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.066219ms)
++✔ nl/digit-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.046253ms)
++✔ nl/fractions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.138705ms)
++✔ nl/fibonacci-squares: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.89543ms)
++✔ nl/reverse-digits: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.489581ms)
++✔ nl/square-minus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.026516ms)
++✔ nl/mixed-combo: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.193845ms)
++✔ nl: every bank item carries the full solution (3.455467ms)
++✔ ll/conjunction: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (16.255491ms)
++✔ ll/score-table: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.440689ms)
++✔ ll/football: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.72136ms)
++✔ ll/survey-bar: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.781991ms)
++✔ ll/fund-returns: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.438627ms)
++✔ ll/histogram-bins: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.797715ms)
++✔ ll/scatter-regions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (17.996305ms)
++✔ ll/density-curves: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (82.308544ms)
++✔ ll/markov-graph: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (18.429629ms)
++✔ ll/dice-events: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.882601ms)
++✔ ll/card-events: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.870384ms)
++✔ ll/coin-patterns: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.931871ms)
++✔ ll/collisions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.894074ms)
++✔ ll/large-numbers: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.528961ms)
++✔ ll/impossible-bounds: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.462636ms)
++✔ ll: every bank item carries the full solution (1.682927ms)
++✔ iv/prob-exact: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.601199ms)
++✔ iv/prob-estimate: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (26.479371ms)
++✔ iv/expected-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.653862ms)
++✔ iv/coupon: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (63.69523ms)
++✔ iv/waiting-time: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (4.976362ms)
++✔ iv/dots-count: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (25.495404ms)
++✔ iv/dice-grid: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.557477ms)
++✔ iv/path-length: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.000326ms)
++✔ iv/percentile: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.657615ms)
++✔ iv/series: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (41.326223ms)
++✔ iv/mental-product: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.437199ms)
++✔ iv/powers-roots: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.723956ms)
++✔ iv/combinatorics: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.177198ms)
++✔ iv/fermi: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (3.700171ms)
++✔ iv: every bank item carries the full solution (1.445413ms)
++✔ ob/crossed: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.617054ms)
++✔ ob/bundle-rich: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.650483ms)
++✔ ob/bundle-cheap: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.634749ms)
++✔ ob/weighted: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.418458ms)
++✔ ob/spread: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.678593ms)
++✔ ob/chain: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.848367ms)
++✔ ob/decoy: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.470353ms)
++✔ ob/hidden: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (18.808816ms)
++✔ ob: every bank item carries the full solution (1.350391ms)
++✔ the no-picture list names real families and gives a reason (0.340297ms)
++✔ store records answers and runs, and round-trips through export/import (9.878311ms)
++✔ store survives a broken backend (0.396741ms)
++✔ SRS: a miss comes back soon, repeated hits push it out (0.29516ms)
++✔ adaptive weights favour weak and unseen families (10.996808ms)
++✔ readiness: last 3 exams must all meet the target (0.487356ms)
++✔ countdown uses an injectable clock (0.252126ms)
++✔ zapn targets: lower is better for *Over metrics, higher otherwise (0.334287ms)
++✔ countdown restarts from full time (0.147129ms)
++✔ caret exponents print as superscripts; grouped or mixed exponents stay as written (3.950312ms)
++✔ a count of one takes the singular; algebra, decimals and larger counts stay as written (0.878458ms)
++✔ app files map to their path; folders map to index.html (1.155ms)
++✔ private folders are refused however they are spelled (0.291824ms)
++✔ dot segments, traversal and odd encodings are refused (0.335199ms)
++✔ Host header must name this server (0.178055ms)
++✔ mk coach: each round gets one or two plain sentences (22.935146ms)
++✔ mk coach: says whether the mid was on fair value (2.757647ms)
++✔ mk coach: says when the spread was narrow for the uncertainty (1.024435ms)
++✔ mk coach: names adverse selection and what it implies (2.077495ms)
++✔ mk coach: the session summary picks the single most costly habit (160.083446ms)
++✔ mk coach: the summary reports trades, expected value and P&L in plain words (7.53397ms)
++✔ mk coach: number formats and every piece of game copy follow the copy rules (0.305024ms)
++✔ mk: fair values are exact and match an independent formula (14.921621ms)
++✔ mk: the other trader's expectations are exact and average back to fair value (1.30214ms)
++✔ mk: the other trader buys above your ask, sells below your bid, otherwise passes (14.247269ms)
++✔ mk: P&L sign conventions (you buy at your bid when it sells to you) (0.508156ms)
++✔ mk: expected value of a quote matches a brute-force sum over every outcome and hedge (106.86568ms)
++✔ mk: a centred full-width market earns on average, a tight one loses, an off-centre one earns less (0.87962ms)
++✔ mk: prices parse exactly, with two decimals at most (3.468646ms)
++✔ mk: the spread cap and the other quote rules are enforced (1.605792ms)
++✔ mk: a session is always 8 rounds, each quantity twice (189.849795ms)
++✔ mk: same seed, same rounds and results; different seeds differ (7.969809ms)
++✔ mk: session totals equal the sum of the rounds, exactly (26.833141ms)
++✔ bto/two-dice-sum: metadata and lesson (3.523608ms)
++✔ bto/two-dice-sum: 120 seeds satisfy the item contract (21.968706ms)
++✔ bto/two-dice-sum: independent verifier agrees on 40 seeds (6.011283ms)
++✔ bto/die-repeats: metadata and lesson (0.227169ms)
++✔ bto/die-repeats: 120 seeds satisfy the item contract (28.383025ms)
++✔ bto/die-repeats: independent verifier agrees on 40 seeds (46.336526ms)
++✔ bto/dice-order-stats: metadata and lesson (0.933239ms)
++✔ bto/dice-order-stats: 120 seeds satisfy the item contract (13.401429ms)
++✔ bto/dice-order-stats: independent verifier agrees on 40 seeds (3.429507ms)
++✔ bto/three-dice: metadata and lesson (0.285986ms)
++✔ bto/three-dice: 120 seeds satisfy the item contract (8.56156ms)
++✔ bto/three-dice: independent verifier agrees on 40 seeds (10.698939ms)
++✔ bto/at-least-one: metadata and lesson (0.159778ms)
++✔ bto/at-least-one: 120 seeds satisfy the item contract (19.161616ms)
++✔ bto/at-least-one: independent verifier agrees on 40 seeds (15.032804ms)
++✔ bto/first-success: metadata and lesson (0.469519ms)
++✔ bto/first-success: 120 seeds satisfy the item contract (9.208072ms)
++✔ bto/first-success: independent verifier agrees on 40 seeds (4.656585ms)
++✔ bto/conditional-dice: metadata and lesson (0.132708ms)
++✔ bto/conditional-dice: 120 seeds satisfy the item contract (12.471864ms)
++✔ bto/conditional-dice: independent verifier agrees on 40 seeds (6.872655ms)
++✔ bto/card-symmetry: metadata and lesson (0.146738ms)
++✔ bto/card-symmetry: 120 seeds satisfy the item contract (5.178863ms)
++✔ bto/card-symmetry: independent verifier agrees on 40 seeds (2.96095ms)
++✔ bto/card-draws: metadata and lesson (0.304864ms)
++✔ bto/card-draws: 120 seeds satisfy the item contract (6.868829ms)
++✔ bto/card-draws: independent verifier agrees on 40 seeds (10.360549ms)
++✔ bto/urn-draws: metadata and lesson (0.118126ms)
++✔ bto/urn-draws: 120 seeds satisfy the item contract (17.212895ms)
++✔ bto/urn-draws: independent verifier agrees on 40 seeds (3.09526ms)
++✔ bto/coin-sequences: metadata and lesson (0.113639ms)
++✔ bto/coin-sequences: 120 seeds satisfy the item contract (18.302477ms)
++✔ bto/coin-sequences: independent verifier agrees on 40 seeds (11.860274ms)
++✔ bto/race-to-k: metadata and lesson (0.211565ms)
++✔ bto/race-to-k: 120 seeds satisfy the item contract (7.524244ms)
++✔ bto/race-to-k: independent verifier agrees on 40 seeds (2.835683ms)
++✔ bto/pattern-waiting: metadata and lesson (0.08077ms)
++✔ bto/pattern-waiting: 120 seeds satisfy the item contract (6.409927ms)
++✔ bto/pattern-waiting: independent verifier agrees on 40 seeds (4.499972ms)
++✔ bto/bayes-test: metadata and lesson (0.088051ms)
++✔ bto/bayes-test: 120 seeds satisfy the item contract (8.651765ms)
++✔ bto/bayes-test: independent verifier agrees on 40 seeds (2.870755ms)
++✔ bto/bayes-boxes: metadata and lesson (0.127951ms)
++✔ bto/bayes-boxes: 120 seeds satisfy the item contract (8.00415ms)
++✔ bto/bayes-boxes: independent verifier agrees on 40 seeds (1.843776ms)
++✔ bto/monty-hall: metadata and lesson (0.099879ms)
++✔ bto/monty-hall: 120 seeds satisfy the item contract (4.284581ms)
++✔ bto/monty-hall: independent verifier agrees on 40 seeds (3.958676ms)
++✔ bto/pigeonhole: metadata and lesson (0.085327ms)
++✔ bto/pigeonhole: 120 seeds satisfy the item contract (14.525102ms)
++✔ bto/pigeonhole: independent verifier agrees on 40 seeds (9.981916ms)
++✔ bto/birthday: metadata and lesson (0.074ms)
++✔ bto/birthday: 120 seeds satisfy the item contract (16.377671ms)
++✔ bto/birthday: independent verifier agrees on 40 seeds (4.16292ms)
++✔ bto/derangements: metadata and lesson (0.202983ms)
++✔ bto/derangements: 120 seeds satisfy the item contract (10.310004ms)
++✔ bto/derangements: independent verifier agrees on 40 seeds (16.026437ms)
++✔ bto/expected-waiting: metadata and lesson (0.131536ms)
++✔ bto/expected-waiting: 120 seeds satisfy the item contract (7.866286ms)
++✔ bto/expected-waiting: independent verifier agrees on 40 seeds (2.756985ms)
++✔ bto/coupon-collector: metadata and lesson (0.14137ms)
++✔ bto/coupon-collector: 120 seeds satisfy the item contract (8.775509ms)
++✔ bto/coupon-collector: independent verifier agrees on 40 seeds (4.819748ms)
++✔ bto/linearity: metadata and lesson (0.522268ms)
++✔ bto/linearity: 120 seeds satisfy the item contract (6.465619ms)
++✔ bto/linearity: independent verifier agrees on 40 seeds (19.476286ms)
++✔ bto/expected-extremes: metadata and lesson (0.11408ms)
++✔ bto/expected-extremes: 120 seeds satisfy the item contract (16.416267ms)
++✔ bto/expected-extremes: independent verifier agrees on 40 seeds (8.419158ms)
++✔ bto/dice-duel: metadata and lesson (0.115432ms)
++✔ bto/dice-duel: 120 seeds satisfy the item contract (12.558894ms)
++✔ bto/dice-duel: independent verifier agrees on 40 seeds (4.70039ms)
++✔ bto/dice-games-ev: metadata and lesson (0.117735ms)
++✔ bto/dice-games-ev: 120 seeds satisfy the item contract (12.517553ms)
++✔ bto/dice-games-ev: independent verifier agrees on 40 seeds (30.446072ms)
++✔ bto/card-stopping: metadata and lesson (0.19476ms)
++✔ bto/card-stopping: 120 seeds satisfy the item contract (12.406656ms)
++✔ bto/card-stopping: independent verifier agrees on 40 seeds (3.576386ms)
++✔ bto/running-sum: metadata and lesson (0.099138ms)
++✔ bto/running-sum: 120 seeds satisfy the item contract (96.300637ms)
++✔ bto/running-sum: independent verifier agrees on 40 seeds (38.742789ms)
++✔ bto/random-walk-line: metadata and lesson (0.12116ms)
++✔ bto/random-walk-line: 120 seeds satisfy the item contract (9.618394ms)
++✔ bto/random-walk-line: independent verifier agrees on 40 seeds (2.827441ms)
++✔ bto/polygon-walk: metadata and lesson (0.062893ms)
++✔ bto/polygon-walk: 120 seeds satisfy the item contract (4.93554ms)
++✔ bto/polygon-walk: independent verifier agrees on 40 seeds (6.088703ms)
++✔ bto/gamblers-ruin: metadata and lesson (0.105947ms)
++✔ bto/gamblers-ruin: 120 seeds satisfy the item contract (7.159161ms)
++✔ bto/gamblers-ruin: independent verifier agrees on 40 seeds (10.261322ms)
++✔ bto/clt-estimates: metadata and lesson (0.121481ms)
++✔ bto/clt-estimates: 120 seeds satisfy the item contract (24.457924ms)
++✔ bto/clt-estimates: independent verifier agrees on 40 seeds (21.232514ms)
++✔ bto/uniform-geometry: metadata and lesson (0.150374ms)
++✔ bto/uniform-geometry: 120 seeds satisfy the item contract (9.416977ms)
++✔ bto/uniform-geometry: independent verifier agrees on 40 seeds (69.509629ms)
++✔ bto: at least 500 distinct generated items (849.038119ms)
++✔ bto: curated bank has at least 45 valid sourced items (0.58409ms)
++✔ bto: at least 30 families spanning difficulty 1..5 (0.145848ms)
++✔ bto: every family contributes at least 15 distinct items over 400 seeds (665.455012ms)
++✔ bto: every item carries plain-JSON params naming its family (49.63508ms)
++✔ bto: the keyed option is the unique closest value to the exact answer (59.296348ms)
++✔ bto: famous reported items keep their known answers (0.506725ms)
++✔ iv/prob-exact: metadata and lesson (1.943404ms)
++✔ iv/prob-exact: 120 seeds satisfy the item contract (8.263727ms)
++✔ iv/prob-exact: independent verifier agrees on 40 seeds (12.242913ms)
++✔ iv/prob-estimate: metadata and lesson (0.241529ms)
++✔ iv/prob-estimate: 120 seeds satisfy the item contract (26.281579ms)
++✔ iv/prob-estimate: independent verifier agrees on 40 seeds (5.676603ms)
++✔ iv/expected-dice: metadata and lesson (0.254459ms)
++✔ iv/expected-dice: 120 seeds satisfy the item contract (4.412392ms)
++✔ iv/expected-dice: independent verifier agrees on 40 seeds (12.697881ms)
++✔ iv/coupon: metadata and lesson (0.338054ms)
++✔ iv/coupon: 120 seeds satisfy the item contract (70.718587ms)
++✔ iv/coupon: independent verifier agrees on 40 seeds (25.687375ms)
++✔ iv/waiting-time: metadata and lesson (0.164204ms)
++✔ iv/waiting-time: 120 seeds satisfy the item contract (14.574134ms)
++✔ iv/waiting-time: independent verifier agrees on 40 seeds (14.367437ms)
++✔ iv/dots-count: metadata and lesson (1.867602ms)
++✔ iv/dots-count: 120 seeds satisfy the item contract (38.349823ms)
++✔ iv/dots-count: independent verifier agrees on 40 seeds (13.180389ms)
++✔ iv/dice-grid: metadata and lesson (0.193138ms)
++✔ iv/dice-grid: 120 seeds satisfy the item contract (41.033429ms)
++✔ iv/dice-grid: independent verifier agrees on 40 seeds (5.904674ms)
++✔ iv/path-length: metadata and lesson (0.325294ms)
++✔ iv/path-length: 120 seeds satisfy the item contract (9.449994ms)
++✔ iv/path-length: independent verifier agrees on 40 seeds (3.888491ms)
++✔ iv/percentile: metadata and lesson (0.125137ms)
++✔ iv/percentile: 120 seeds satisfy the item contract (61.073533ms)
++✔ iv/percentile: independent verifier agrees on 40 seeds (21.808489ms)
++✔ iv/series: metadata and lesson (0.156223ms)
++✔ iv/series: 120 seeds satisfy the item contract (63.606826ms)
++✔ iv/series: independent verifier agrees on 40 seeds (13.52948ms)
++✔ iv/mental-product: metadata and lesson (0.276912ms)
++✔ iv/mental-product: 120 seeds satisfy the item contract (5.812035ms)
++✔ iv/mental-product: independent verifier agrees on 40 seeds (0.934121ms)
++✔ iv/powers-roots: metadata and lesson (0.104095ms)
++✔ iv/powers-roots: 120 seeds satisfy the item contract (16.17496ms)
++✔ iv/powers-roots: independent verifier agrees on 40 seeds (2.298733ms)
++✔ iv/combinatorics: metadata and lesson (0.099628ms)
++✔ iv/combinatorics: 120 seeds satisfy the item contract (2.658099ms)
++✔ iv/combinatorics: independent verifier agrees on 40 seeds (2.492482ms)
++✔ iv/fermi: metadata and lesson (0.12732ms)
++✔ iv/fermi: 120 seeds satisfy the item contract (5.106645ms)
++✔ iv/fermi: independent verifier agrees on 40 seeds (1.827071ms)
++✔ iv: at least 500 distinct generated items (750.32842ms)
++✔ iv: curated bank has at least 45 valid sourced items (0.685611ms)
++✔ iv: every family contributes at least 15 distinct items over 400 seeds (290.069714ms)
++✔ iv: items carry unit, coach and JSON params; a spot-on zero-width answer to an exact item scores 1 (19.17485ms)
++✔ iv visuals: specs reproduce the truth (9.150559ms)
++✔ iv bank: every truth is recomputed independently (45.82879ms)
++✔ optimal: exact belief gives zero width and score 1 (0.217374ms)
++✔ optimal: wider belief gives a wider optimum and a lower score (1.512302ms)
++✔ optimal: the interval leans high because lower/upper rewards higher intervals (1.043304ms)
++✔ optimal: lognormal optimum satisfies the first-order condition φ(z)/s = 2Φ(z) − 1 (2.349399ms)
++✔ optimal: no nearby interval beats the optimum, and Monte Carlo agrees with expectedScore (3.922512ms)
++✔ visual renderers: pure SVG with role=img, viewBox, CSS-variable colours and no answer in the label (21.473483ms)
++✔ ll/conjunction: metadata and lesson (2.88077ms)
++✔ ll/conjunction: 120 seeds satisfy the item contract (34.597674ms)
++✔ ll/conjunction: independent verifier agrees on 40 seeds (2.513313ms)
++✔ ll/score-table: metadata and lesson (0.226777ms)
++✔ ll/score-table: 120 seeds satisfy the item contract (17.965897ms)
++✔ ll/score-table: independent verifier agrees on 40 seeds (5.824724ms)
++✔ ll/football: metadata and lesson (0.20826ms)
++✔ ll/football: 120 seeds satisfy the item contract (15.179587ms)
++✔ ll/football: independent verifier agrees on 40 seeds (8.584655ms)
++✔ ll/survey-bar: metadata and lesson (0.368469ms)
++✔ ll/survey-bar: 120 seeds satisfy the item contract (7.35957ms)
++✔ ll/survey-bar: independent verifier agrees on 40 seeds (4.248908ms)
++✔ ll/fund-returns: metadata and lesson (0.159898ms)
++✔ ll/fund-returns: 120 seeds satisfy the item contract (15.482316ms)
++✔ ll/fund-returns: independent verifier agrees on 40 seeds (2.509948ms)
++✔ ll/histogram-bins: metadata and lesson (0.364463ms)
++✔ ll/histogram-bins: 120 seeds satisfy the item contract (9.922918ms)
++✔ ll/histogram-bins: independent verifier agrees on 40 seeds (1.293166ms)
++✔ ll/scatter-regions: metadata and lesson (11.849556ms)
++✔ ll/scatter-regions: 120 seeds satisfy the item contract (12.839462ms)
++✔ ll/scatter-regions: independent verifier agrees on 40 seeds (4.519ms)
++✔ ll/density-curves: metadata and lesson (0.12734ms)
++✔ ll/density-curves: 120 seeds satisfy the item contract (70.113607ms)
++✔ ll/density-curves: independent verifier agrees on 40 seeds (43.354626ms)
++✔ ll/markov-graph: metadata and lesson (0.123423ms)
++✔ ll/markov-graph: 120 seeds satisfy the item contract (16.852259ms)
++✔ ll/markov-graph: independent verifier agrees on 40 seeds (39.136142ms)
++✔ ll/dice-events: metadata and lesson (0.095492ms)
++✔ ll/dice-events: 120 seeds satisfy the item contract (22.383585ms)
++✔ ll/dice-events: independent verifier agrees on 40 seeds (6.309396ms)
++✔ ll/card-events: metadata and lesson (0.204575ms)
++✔ ll/card-events: 120 seeds satisfy the item contract (5.624577ms)
++✔ ll/card-events: independent verifier agrees on 40 seeds (8.157249ms)
++✔ ll/coin-patterns: metadata and lesson (0.211024ms)
++✔ ll/coin-patterns: 120 seeds satisfy the item contract (15.897324ms)
++✔ ll/coin-patterns: independent verifier agrees on 40 seeds (14.302961ms)
++✔ ll/collisions: metadata and lesson (0.146689ms)
++✔ ll/collisions: 120 seeds satisfy the item contract (40.931136ms)
++✔ ll/collisions: independent verifier agrees on 40 seeds (6.21099ms)
++✔ ll/large-numbers: metadata and lesson (0.244575ms)
++✔ ll/large-numbers: 120 seeds satisfy the item contract (12.705184ms)
++✔ ll/large-numbers: independent verifier agrees on 40 seeds (10.79611ms)
++✔ ll/impossible-bounds: metadata and lesson (0.167039ms)
++✔ ll/impossible-bounds: 120 seeds satisfy the item contract (5.719148ms)
++✔ ll/impossible-bounds: independent verifier agrees on 40 seeds (7.566049ms)
++✔ ll: at least 500 distinct generated items (559.954325ms)
++✔ ll: curated bank has at least 45 valid sourced items (0.912229ms)
++✔ ll: at least 15 families; every one contributes at least 15 distinct items over 400 seeds (509.617329ms)
++✔ ll: every item carries plain-JSON params naming its family; margins hold with room (26.713067ms)
++✔ ll: hard Markov questions vary statement order and chain structure (38.98094ms)
++✔ ll: impossible and certain statements are exactly 0 and 1 (1.736616ms)
++✔ ll: scatter points avoid gridlines and the diagonal, so region counts are unambiguous (2.074701ms)
++✔ ll: every visual spec renders to an accessible SVG with finite coordinates and token colours only (93.373556ms)
++✔ ll: bank table params (scope and hit rows) reproduce every statement probability (15.913674ms)
++✔ mm/mm-addsub: metadata and lesson (1.625551ms)
++✔ mm/mm-addsub: 120 seeds satisfy the item contract (29.863444ms)
++✔ mm/mm-addsub: independent verifier agrees on 40 seeds (7.397507ms)
++✔ mm/mm-multiply: metadata and lesson (0.108141ms)
++✔ mm/mm-multiply: 120 seeds satisfy the item contract (23.200331ms)
++✔ mm/mm-multiply: independent verifier agrees on 40 seeds (21.926804ms)
++✔ mm/mm-divide: metadata and lesson (5.932877ms)
++✔ mm/mm-divide: 120 seeds satisfy the item contract (35.695417ms)
++✔ mm/mm-divide: independent verifier agrees on 40 seeds (9.818014ms)
++✔ mm/mm-decimals: metadata and lesson (0.299075ms)
++✔ mm/mm-decimals: 120 seeds satisfy the item contract (45.156087ms)
++✔ mm/mm-decimals: independent verifier agrees on 40 seeds (21.078084ms)
++✔ mm/mm-fractions: metadata and lesson (0.16098ms)
++✔ mm/mm-fractions: 120 seeds satisfy the item contract (21.810697ms)
++✔ mm/mm-fractions: independent verifier agrees on 40 seeds (8.272942ms)
++✔ mm/mm-percent: metadata and lesson (0.171455ms)
++✔ mm/mm-percent: 120 seeds satisfy the item contract (51.261971ms)
++✔ mm/mm-percent: independent verifier agrees on 40 seeds (11.935648ms)
++✔ mm/mm-missing: metadata and lesson (0.116143ms)
++✔ mm/mm-missing: 120 seeds satisfy the item contract (27.4332ms)
++✔ mm/mm-missing: independent verifier agrees on 40 seeds (13.044454ms)
++✔ mm/mm-mixed: metadata and lesson (0.389951ms)
++✔ mm/mm-mixed: 120 seeds satisfy the item contract (48.042642ms)
++✔ mm/mm-mixed: independent verifier agrees on 40 seeds (8.497968ms)
++✔ mm: at least 560 distinct generated items (565.811247ms)
++✔ mm: eight families with unique mm- ids across every section (0.433055ms)
++✔ mm: exactly 4 options, distinct labels and values, a named false belief on every wrong one (74.2757ms)
++✔ mm: the answer label parses back to the exact value, and all four options share one form and size (89.025899ms)
++✔ mm: every solution has ask, steps, an exam-speed path and a sanity check (37.874793ms)
++✔ mm: a twin keeps the variant and changes the numbers (19.364853ms)
++✔ mm: the answer position is spread over all four slots (365.741333ms)
++✔ mm: the closest-to-the-others option is the answer no more often than chance (2,000 seeds per family) (1754.602572ms)
++✔ mm: the verifier rejects an item keyed to a wrong option (15.159459ms)
++✔ mm: the prompt parser follows the order of operations, fractions and percent (0.819821ms)
++✔ mm: division notation swaps ÷ for : only when the setting asks for it (0.224204ms)
++✔ mm: the library fills seven 80-question sets with distinct prompts (75.999767ms)
++✔ mm: config replicates the reported 80-in-8 format (0.421178ms)
++✔ nl/arithmetic: metadata and lesson (2.169571ms)
++✔ nl/arithmetic: 120 seeds satisfy the item contract (64.679644ms)
++✔ nl/arithmetic: independent verifier agrees on 40 seeds (34.906225ms)
++✔ nl/geometric: metadata and lesson (0.195742ms)
++✔ nl/geometric: 120 seeds satisfy the item contract (76.650746ms)
++✔ nl/geometric: independent verifier agrees on 40 seeds (21.81573ms)
++✔ nl/second-diff: metadata and lesson (0.109954ms)
++✔ nl/second-diff: 120 seeds satisfy the item contract (70.504501ms)
++✔ nl/second-diff: independent verifier agrees on 40 seeds (32.323895ms)
++✔ nl/add-index: metadata and lesson (0.317453ms)
++✔ nl/add-index: 120 seeds satisfy the item contract (43.595303ms)
++✔ nl/add-index: independent verifier agrees on 40 seeds (13.56946ms)
++✔ nl/squares-plus: metadata and lesson (0.143785ms)
++✔ nl/squares-plus: 120 seeds satisfy the item contract (42.8142ms)
++✔ nl/squares-plus: independent verifier agrees on 40 seeds (30.263086ms)
++✔ nl/triangular: metadata and lesson (0.18123ms)
++✔ nl/triangular: 120 seeds satisfy the item contract (14.549244ms)
++✔ nl/triangular: independent verifier agrees on 40 seeds (10.811039ms)
++✔ nl/diff-geometric: metadata and lesson (0.172187ms)
++✔ nl/diff-geometric: 120 seeds satisfy the item contract (17.00641ms)
++✔ nl/diff-geometric: independent verifier agrees on 40 seeds (9.042769ms)
++✔ nl/affine-recurrence: metadata and lesson (0.16115ms)
++✔ nl/affine-recurrence: 120 seeds satisfy the item contract (22.042842ms)
++✔ nl/affine-recurrence: independent verifier agrees on 40 seeds (7.196448ms)
++✔ nl/fibonacci-like: metadata and lesson (0.646182ms)
++✔ nl/fibonacci-like: 120 seeds satisfy the item contract (32.135947ms)
++✔ nl/fibonacci-like: independent verifier agrees on 40 seeds (10.664833ms)
++✔ nl/multiply-index: metadata and lesson (0.097295ms)
++✔ nl/multiply-index: 120 seeds satisfy the item contract (10.967976ms)
++✔ nl/multiply-index: independent verifier agrees on 40 seeds (4.526773ms)
++✔ nl/interleaved: metadata and lesson (0.145707ms)
++✔ nl/interleaved: 120 seeds satisfy the item contract (14.485205ms)
++✔ nl/interleaved: independent verifier agrees on 40 seeds (14.489641ms)
++✔ nl/alternating-ops: metadata and lesson (0.2285ms)
++✔ nl/alternating-ops: 120 seeds satisfy the item contract (14.907865ms)
++✔ nl/alternating-ops: independent verifier agrees on 40 seeds (22.449116ms)
++✔ nl/cubes-plus: metadata and lesson (0.121491ms)
++✔ nl/cubes-plus: 120 seeds satisfy the item contract (20.696857ms)
++✔ nl/cubes-plus: independent verifier agrees on 40 seeds (5.695263ms)
++✔ nl/pronic: metadata and lesson (0.089664ms)
++✔ nl/pronic: 120 seeds satisfy the item contract (10.489833ms)
++✔ nl/pronic: independent verifier agrees on 40 seeds (4.925025ms)
++✔ nl/primes: metadata and lesson (0.12099ms)
++✔ nl/primes: 120 seeds satisfy the item contract (23.112145ms)
++✔ nl/primes: independent verifier agrees on 40 seeds (23.865636ms)
++✔ nl/powers-offset: metadata and lesson (0.099809ms)
++✔ nl/powers-offset: 120 seeds satisfy the item contract (10.015608ms)
++✔ nl/powers-offset: independent verifier agrees on 40 seeds (4.357531ms)
++✔ nl/decimals: metadata and lesson (0.098147ms)
++✔ nl/decimals: 120 seeds satisfy the item contract (14.425715ms)
++✔ nl/decimals: independent verifier agrees on 40 seeds (5.473242ms)
++✔ nl/alternating-signs: metadata and lesson (0.093209ms)
++✔ nl/alternating-signs: 120 seeds satisfy the item contract (13.097238ms)
++✔ nl/alternating-signs: independent verifier agrees on 40 seeds (7.414164ms)
++✔ nl/third-diff: metadata and lesson (0.142442ms)
++✔ nl/third-diff: 120 seeds satisfy the item contract (14.054303ms)
++✔ nl/third-diff: independent verifier agrees on 40 seeds (7.738656ms)
++✔ nl/tribonacci: metadata and lesson (0.105067ms)
++✔ nl/tribonacci: 120 seeds satisfy the item contract (13.375433ms)
++✔ nl/tribonacci: independent verifier agrees on 40 seeds (11.335815ms)
++✔ nl/weighted-two-term: metadata and lesson (0.115201ms)
++✔ nl/weighted-two-term: 120 seeds satisfy the item contract (16.395921ms)
++✔ nl/weighted-two-term: independent verifier agrees on 40 seeds (4.604959ms)
++✔ nl/product-recurrence: metadata and lesson (0.12794ms)
++✔ nl/product-recurrence: 120 seeds satisfy the item contract (11.194895ms)
++✔ nl/product-recurrence: independent verifier agrees on 40 seeds (9.569764ms)
++✔ nl/prime-gaps: metadata and lesson (0.110094ms)
++✔ nl/prime-gaps: 120 seeds satisfy the item contract (11.826324ms)
++✔ nl/prime-gaps: independent verifier agrees on 40 seeds (9.073515ms)
++✔ nl/sum-previous: metadata and lesson (0.161681ms)
++✔ nl/sum-previous: 120 seeds satisfy the item contract (13.177167ms)
++✔ nl/sum-previous: independent verifier agrees on 40 seeds (4.528735ms)
++✔ nl/digit-sum: metadata and lesson (0.173038ms)
++✔ nl/digit-sum: 120 seeds satisfy the item contract (12.821456ms)
++✔ nl/digit-sum: independent verifier agrees on 40 seeds (4.761662ms)
++✔ nl/fractions: metadata and lesson (0.149483ms)
++✔ nl/fractions: 120 seeds satisfy the item contract (13.52817ms)
++✔ nl/fractions: independent verifier agrees on 40 seeds (4.21635ms)
++✔ nl/fibonacci-squares: metadata and lesson (0.108933ms)
++✔ nl/fibonacci-squares: 120 seeds satisfy the item contract (15.316813ms)
++✔ nl/fibonacci-squares: independent verifier agrees on 40 seeds (5.449927ms)
++✔ nl/reverse-digits: metadata and lesson (0.128692ms)
++✔ nl/reverse-digits: 120 seeds satisfy the item contract (12.6819ms)
++✔ nl/reverse-digits: independent verifier agrees on 40 seeds (4.106587ms)
++✔ nl/square-minus: metadata and lesson (0.103575ms)
++✔ nl/square-minus: 120 seeds satisfy the item contract (7.348866ms)
++✔ nl/square-minus: independent verifier agrees on 40 seeds (4.002421ms)
++✔ nl/mixed-combo: metadata and lesson (0.061612ms)
++✔ nl/mixed-combo: 120 seeds satisfy the item contract (9.401572ms)
++✔ nl/mixed-combo: independent verifier agrees on 40 seeds (2.899599ms)
++✔ nl: at least 500 distinct generated items (993.99184ms)
++✔ nl: curated bank has at least 45 valid sourced items (1.062583ms)
++✔ nl: every family contributes at least 15 distinct items over 400 seeds (1102.740758ms)
++✔ nl: ~30 families cover difficulties 1..5 (0.830126ms)
++✔ nl: the true rule reproduces every shown term, and misconceptions are specific (83.213793ms)
++✔ nl solver: finds the reported example and rejects ambiguity (0.501317ms)
++✔ nl: missing-term items have exactly one option that completes a rule (34.862506ms)
++✔ nl bank: every curated item has a unique rule-consistent answer (5.851946ms)
++✔ nl/digit-sum: difficulty 4 always generates (313.783223ms)
++✔ ob/crossed: metadata and lesson (0.873681ms)
++✔ ob/crossed: 120 seeds satisfy the item contract (16.067282ms)
++✔ ob/crossed: independent verifier agrees on 40 seeds (32.716329ms)
++✔ ob/bundle-rich: metadata and lesson (0.197074ms)
++✔ ob/bundle-rich: 120 seeds satisfy the item contract (7.225683ms)
++✔ ob/bundle-rich: independent verifier agrees on 40 seeds (26.345791ms)
++✔ ob/bundle-cheap: metadata and lesson (0.272827ms)
++✔ ob/bundle-cheap: 120 seeds satisfy the item contract (8.408294ms)
++✔ ob/bundle-cheap: independent verifier agrees on 40 seeds (31.496352ms)
++✔ ob/weighted: metadata and lesson (0.276572ms)
++✔ ob/weighted: 120 seeds satisfy the item contract (5.301707ms)
++✔ ob/weighted: independent verifier agrees on 40 seeds (11.651454ms)
++✔ ob/spread: metadata and lesson (0.178826ms)
++✔ ob/spread: 120 seeds satisfy the item contract (10.580509ms)
++✔ ob/spread: independent verifier agrees on 40 seeds (38.113718ms)
++✔ ob/chain: metadata and lesson (0.256673ms)
++✔ ob/chain: 120 seeds satisfy the item contract (16.788405ms)
++✔ ob/chain: independent verifier agrees on 40 seeds (51.643431ms)
++✔ ob/decoy: metadata and lesson (0.088472ms)
++✔ ob/decoy: 120 seeds satisfy the item contract (15.73377ms)
++✔ ob/decoy: independent verifier agrees on 40 seeds (107.237164ms)
++✔ ob/hidden: metadata and lesson (0.079107ms)
++✔ ob/hidden: 120 seeds satisfy the item contract (6.511639ms)
++✔ ob/hidden: independent verifier agrees on 40 seeds (47.063068ms)
++✔ ob: at least 500 distinct generated items (128.582117ms)
++✔ ob: curated bank has at least 45 valid sourced items (0.717228ms)
++✔ ob: every family contributes at least 15 distinct boards over 400 seeds (184.277401ms)
++✔ ob: best equals the solver result, is accepted by the checker, and prices sit on 0.5 ticks (14.074975ms)
++✔ ob bank: the written trades are flat, indecomposable and as profitable as the exhaustive best (60.633614ms)
++✔ ob solver: small known boards (0.632211ms)
++✔ ob solver: decomposable positions are recognised (0.142913ms)
++✔ ob solver: agrees with the brute force on random boards (15.949426ms)
++✔ the lesson catalog matches the lesson content (2.243892ms)
++✔ the family catalog matches the question families (0.546033ms)
++✔ catalog links agree with the content for every family lesson (0.571391ms)
++✔ grading for every question type (20.637808ms)
++✔ generator questions resolve per seed (1.743767ms)
++✔ number checks accept typed fractions (1.581456ms)
++✔ number checks accept the typographic minus sign (0.306857ms)
++✔ choice options are arranged fairly: shuffled, numeric sorted, traps follow (9.983411ms)
++✔ choice validation still catches duplicates and bad indexes alongside the length cue (0.356111ms)
++✔ quotes like "100.5 / 101.5" are shuffled, not sorted as fractions (0.405294ms)
++✔ study/assessment: book, tree and lessons validate (5.124022ms)
++✔ study/assessment: diagrams, checks and live examples (1.941852ms)
++✔ study/prob: book, tree and lessons validate (1.91312ms)
++✔ study/prob: diagrams, checks and live examples (41.033668ms)
++✔ study/mm: book, tree and lessons validate (1.663238ms)
++✔ study/mm: diagrams, checks and live examples (177.59522ms)
++✔ study/bto: book, tree and lessons validate (3.919077ms)
++✔ study/bto: diagrams, checks and live examples (582.980654ms)
++✔ study/ll: book, tree and lessons validate (3.047229ms)
++✔ study/ll: diagrams, checks and live examples (234.820133ms)
++✔ study/nl: book, tree and lessons validate (4.220116ms)
++✔ study/nl: diagrams, checks and live examples (492.391303ms)
++✔ study/iv: book, tree and lessons validate (2.330952ms)
++✔ study/iv: diagrams, checks and live examples (291.017885ms)
++✔ study/ob: book, tree and lessons validate (1.132887ms)
++✔ study/ob: diagrams, checks and live examples (84.360902ms)
++✔ study/zapn: book, tree and lessons validate (1.595887ms)
++✔ study/zapn: diagrams, checks and live examples (202.909644ms)
++✔ study coverage: every question family and every Zap-N game has a lesson (1.288569ms)
++✔ tree: branches sum to 1 and marked total is exact (1.747103ms)
++✔ grid: counts and ranges (0.213608ms)
++✔ venn: regions add to total (6.771657ms)
++✔ numberline, cycle, unitsquare, plot (4.271252ms)
++✔ ladder: exact differences and ratios (0.4432ms)
++✔ flow: reachable, acyclic (0.226278ms)
++✔ orderbook diagrams: book, bundle, ledger arithmetic (0.474827ms)
++✔ reused visuals and unknown types (0.172747ms)
++✔ week stats: last 7 days against the 7 before (2.889594ms)
++✔ the reading: plain rules from the numbers (1.06081ms)
++✔ a goal says how to study, not only what (0.485143ms)
++✔ goal check comes back a week after setting or the last check (0.172527ms)
++✔ next up: review > re-test > resume > start > done (0.380197ms)
++✔ relative time (0.09409ms)
++✔ tokenizes bold, italics, code, fractions, sup and sub (1.310892ms)
++✔ never turns text into markup it did not ask for (0.15467ms)
++✔ unclosed markers stay literal (0.101121ms)
++✔ read, master with 3/3 clean, come back for review, drop on a miss (2.149972ms)
++✔ interleave: no type twice in a row when avoidable (615.876908ms)
++✔ units: a missed unit is weak until its next first attempt is right (0.544301ms)
++✔ exam pace, scaffolds and the belief log (1.320867ms)
++✔ a complete family lesson validates (10.00381ms)
++✔ missing or reordered sections, too few diagrams, wrong tryit are caught (9.278329ms)
++✔ every teaching unit needs 1-3 micro-checks; steps each need their own (0.515237ms)
++✔ thinkaloud and variation are required and validated (0.528538ms)
++✔ challenge attempts must each be answered by exactly one derivation step (0.488458ms)
++✔ unit rule passes: one idea (text plus its diagram, formula or callout), then a check (0.197054ms)
++✔ unit rule fails: a second text, diagram or callout before a check starts a new unchecked unit (0.351994ms)
++✔ unit rule fails: more than 3 blocks in one unit, even of different types (0.112437ms)
++✔ unit rule fails: a unit that ends its section unchecked, also before a non-teaching block (0.132518ms)
++✔ unit rule: find-the-error, steps, recognition and transfer blocks close a unit (0.20786ms)
++✔ unit rule exceptions: only the last unit of "why" and "rule" may go unchecked (0.169422ms)
++✔ spiralBlocks: plain check blocks only, not mastery (1.534475ms)
++✔ no spiral before any answer, after an odd count, or right after a spiral (0.334438ms)
++✔ after the second new check: the earlier one, never the one just answered (0.228921ms)
++✔ a missed check comes first, earliest miss first (0.1942ms)
++✔ a miss repaired on recall stops counting as missed (0.128831ms)
++✔ a miss that stays wrong on recall keeps priority (0.113709ms)
++✔ blocks never re-asked come before blocks already re-asked (0.123254ms)
++✔ expanding gap is exact for a single re-asked block (0.184575ms)
++✔ mastery checks and unknown blocks are never re-asked (0.113069ms)
++✔ a custom cadence: every third new check (0.175291ms)
++✔ deterministic: same log, same answer (0.118647ms)
++✔ spiralQuestion prefers a generator, else the first question (0.160049ms)
++✔ bto/information-protocols: metadata and lesson (7.358229ms)
++✔ bto/information-protocols: 240 seeds satisfy the item contract (29.717734ms)
++✔ bto/information-protocols: independent verifier agrees on 120 seeds (6.396587ms)
++✔ bto/shared-source: metadata and lesson (0.165617ms)
++✔ bto/shared-source: 240 seeds satisfy the item contract (24.793098ms)
++✔ bto/shared-source: independent verifier agrees on 120 seeds (9.355926ms)
++✔ ll/selection-weights: metadata and lesson (0.185447ms)
++✔ ll/selection-weights: 240 seeds satisfy the item contract (13.124278ms)
++✔ ll/selection-weights: independent verifier agrees on 120 seeds (39.928782ms)
++✔ iv/rates-weights: metadata and lesson (0.264854ms)
++✔ iv/rates-weights: 240 seeds satisfy the item contract (28.451047ms)
++✔ iv/rates-weights: independent verifier agrees on 120 seeds (10.793756ms)
++✔ all supported structural branches have valid solutions and independently checked answers (43.84861ms)
++✔ distinct numeric questions are not counted as distinct structures (38.669517ms)
++✔ random and first reports agree while existence reports change the answer (3.971906ms)
++✔ history affects a fixed source but not a fresh source; corrupted keys are rejected (5.95484ms)
++✔ shared-group comparisons vary answer positions and the third comparator position (4.136001ms)
++✔ equal time and equal distance require different answers with identical speeds (2.133397ms)
++✔ difficulty changes reasoning relationships rather than just number size (5.802482ms)
++✔ backend startup never replaces transfer-only local progress with an older server snapshot (2.17481ms)
++✔ a genuinely empty browser can still restore server-side transfer progress (0.415909ms)
++✔ attempting transfer practice cannot overwrite a save from an unknown future version (0.234369ms)
++✔ fifteen mixed questions preserve preset and select distinct families per section (34.430963ms)
++✔ cross-session selection avoids exact repetition and honestly reports familiar structures (122.86409ms)
++✔ MCQ shuffling preserves answers and uses all five positions (2.528236ms)
++✔ branch signatures ignore numbers and wording while preserving important operation changes (0.604209ms)
++✔ old progress imports intact and transfer results survive reload without changing ordinary progress (8.712317ms)
++✔ summary separates intervals, new structures, familiar structures and review (0.291985ms)
++✔ every product row is sourced, priced and covers each task with a known value (14.019441ms)
++✔ the chart lists every product, cheapest first, in both themes (7.64674ms)
++✔ light theme meets WCAG AA (1.215541ms)
++✔ dark theme meets WCAG AA (0.558101ms)
++✔ the system dark block repeats the dark theme exactly (1.582487ms)
++✔ system follows the OS, explicit choices win (0.167099ms)
++✔ every module reachable from app.js exists (42.912456ms)
++✔ only this machine counts as a backend host (0.679872ms)
++✔ a hosted copy never probes for the backend (0.619402ms)
++✔ a local copy probes with relative URLs (0.226978ms)
++✔ backend startup cannot replace transfer-only local progress (0.755255ms)
++✔ backend startup cannot erase displayed-only freshness history (0.485623ms)
++✔ balloon: index exports the game contract and the configured metric (37.724348ms)
++✔ balloon: round format matches the reported spec (1.016764ms)
++✔ balloon: round 1 optimum equals a brute-force scan over thresholds (0.267989ms)
++✔ balloon: bank-penalty DP matches brute-force expectimax on small rounds (3.024876ms)
++✔ balloon: round 2 policy shrinks as the bank grows (numbers quoted by the coach) (0.602067ms)
++✔ balloon: same seed and same actions give the same result (1.153688ms)
++✔ balloon: scoring rules for cash, pop and the round-2 bank penalty (0.35594ms)
++✔ balloon: playing the optimal policy scores ratio 1; timid play scores less (8.252312ms)
++✔ balloon: pop points differ across seeds and cover 1..20 evenly (0.853462ms)
++✔ codecompare: index exports the game contract and the configured metric (2.3905ms)
++✔ codecompare: 30 rounds, allowance 5 s down to 3 s, length 7 up to 10 (0.700103ms)
++✔ codecompare: exactly one identical option; distractors differ by 1-2 edits and from each other (11.040254ms)
++✔ codecompare: scoring and timeouts (1.49062ms)
++✔ codecompare: an answer after the deadline is a timeout, not a hit (0.325204ms)
++✔ codecompare: same seed gives the same rounds (2.760752ms)
++✔ codecompare: at least 300 distinct rounds across seeds (2.999998ms)
++✔ figureitout: index exports the game contract and the configured metric (0.926731ms)
++✔ figureitout: 5 rounds with growing property counts, values within PROPS (0.547475ms)
++✔ figureitout: closed-form optimum equals exhaustive search over all adaptive strategies (15.758983ms)
++✔ figureitout: solver optimum is no worse than any tested strategy (10.479869ms)
++✔ figureitout: guessesOver is about 0 for perfect play and larger for one-at-a-time (31.248904ms)
++✔ figureitout: invalid guesses are ignored; same seed gives the same hidden figures (0.251735ms)
++✔ figureitout: at least 300 distinct hidden figures across seeds (0.437252ms)
++✔ numberbox: index exports the game contract and the configured metric (34.720324ms)
++✔ numberbox: solver finds known answers including a fractional intermediate (4.852848ms)
++✔ numberbox: subset DP reaches exactly the values of a brute-force tree enumeration (242.781376ms)
++✔ numberbox: parser handles precedence, brackets, symbols and rejects bad input (1.259747ms)
++✔ numberbox: 10 rounds, every round solvable and the shown solution evaluates exactly to the target (85.808096ms)
++✔ numberbox: scoring counts solved rounds; wrong submits and skips are tracked (10.757151ms)
++✔ numberbox: at least 300 distinct solvable puzzles, each with a verified solution (210.74252ms)
++✔ numberbox: same seed gives the same rounds (17.410733ms)
++✔ pincode: index exports the game contract and the configured metric (1.147409ms)
++✔ pincode: transforms for the three modes (0.780192ms)
++✔ pincode: two correct advance, two wrong end the mode; span is the forward length (1.143483ms)
++✔ pincode: a correct-wrong-correct sequence still advances (two correct at the length) (0.327187ms)
++✔ pincode: digits typed while the code is visible are ignored; backspace edits (0.224214ms)
++✔ pincode: same seed gives the same codes (1.516379ms)
++✔ pincode: at least 300 distinct codes across seeds (2.204223ms)
++✔ shapeshift: index exports the game contract and the configured metric (1.169091ms)
++✔ shapeshift: 60 rounds, balanced shapes, positions inside the stage (1.016964ms)
++✔ shapeshift: scoring counts correct keys, misses and reaction time (2.693011ms)
++✔ shapeshift: a flash is visible for flashMs, a press before onset is early (0.20156ms)
++✔ shapeshift: same seed and same timestamps give the same result (1.649667ms)
++✔ shapeshift: at least 300 distinct trials across seeds (1.851277ms)
++✔ skyscraper: index exports the game contract and the configured metric (52.341701ms)
++✔ skyscraper: BFS optimum on small known cases (0.661145ms)
++✔ skyscraper: optimalPath replays legally to the target in the optimal count (12.066764ms)
++✔ skyscraper: 10 levels, every generated level solvable at exactly the reported optimum (828.929863ms)
++✔ skyscraper: same seed gives the same levels (35.935604ms)
++✔ skyscraper: optimal play scores 0 moves over; a detour adds exactly 2 (189.880673ms)
++✔ skyscraper: illegal moves are rejected and not counted (24.799157ms)
++✔ skyscraper: at least 300 distinct solvable levels with a verified optimum (212.573797ms)
++✔ stockmaster: index exports the game contract and the configured metric (4.019306ms)
++✔ stockmaster: 2-minute schedule, non-overlapping per slot, zones inside the dial, speeds ramp up (1.813411ms)
++✔ stockmaster: perfect timing scores 1; misses and early clicks lower it (6.930192ms)
++✔ stockmaster: needle position and single outcome per gauge (0.361088ms)
++✔ stockmaster: same seed and click times give the same result (3.683356ms)
++✔ stockmaster: needle schedules differ across seeds (2.897025ms)
++✔ theswitch: index exports the game contract and the configured metric (1.901342ms)
++✔ theswitch: 35 rounds, 17 switches, answers match the active task (8.919616ms)
++✔ theswitch: accuracy, switch cost and the equal-weight score (0.828524ms)
++✔ theswitch: no answer within the deadline is a wrong timeout (0.236222ms)
++✔ theswitch: same seed and timestamps give the same result (1.341198ms)
++✔ theswitch: at least 300 distinct trials across seeds (8.883501ms)
++ℹ tests 777
++ℹ suites 0
++ℹ pass 777
++ℹ fail 0
++ℹ cancelled 0
++ℹ skipped 0
++ℹ todo 0
++ℹ duration_ms 5836.644526
+diff --git a/evaluation/logs/qa-python.log b/evaluation/logs/qa-python.log
+new file mode 100644
+index 0000000..ca417b4
+--- /dev/null
++++ b/evaluation/logs/qa-python.log
+@@ -0,0 +1,2 @@
++....................................                                     [100%]
++36 passed in 3.14s
+diff --git a/evaluation/logs/transfer-full-router.log b/evaluation/logs/transfer-full-router.log
+new file mode 100644
+index 0000000..2baae5b
+--- /dev/null
++++ b/evaluation/logs/transfer-full-router.log
+@@ -0,0 +1 @@
++Full-router DOM passed: delivered entry point, old-save migration, timing dropdown, all answer controls, keyboard repeat, complete result, history/reload, cleanup and Kickstarter mock.
+diff --git a/evaluation/logs/transfer-original-dom.log b/evaluation/logs/transfer-original-dom.log
+new file mode 100644
+index 0000000..0f20808
+--- /dev/null
++++ b/evaluation/logs/transfer-original-dom.log
+@@ -0,0 +1 @@
++Transfer DOM passed: all response kinds, hidden methods, isolated results, preset, both clocks, extra time, displayed-only history and cleanup.
+diff --git a/evaluation/logs/transfer-review-regressions.log b/evaluation/logs/transfer-review-regressions.log
+new file mode 100644
+index 0000000..c4e8e7c
+--- /dev/null
++++ b/evaluation/logs/transfer-review-regressions.log
+@@ -0,0 +1,12 @@
++PASS review restores and locks the submitted MCQ
++PASS additional-family review has no broken ordinary-practice link
++PASS ranking review shows probabilities and retains the submitted order
++PASS interval review restores bounds and disables its controls
++PASS orderbook review restores the submitted position and locks controls
++PASS answers changed after the item deadline do not replace the last valid answer
++PASS the overall deadline is enforced before submitting or showing another item
++PASS a late skip cannot erase an answer already committed before timeout
++PASS keyboard answers after the deadline are ignored
++PASS finishing on the last displayed question records a complete session
++PASS saving an unchanged fresh battery picker preserves the active Kickstarter preset
++11/11 focused interface regressions passed
+diff --git a/evaluation/validation.json b/evaluation/validation.json
+index bb241e1..64eed65 100644
+--- a/evaluation/validation.json
++++ b/evaluation/validation.json
+@@ -1,16 +1,24 @@
+ {
+-  "edition": "1.0.3-transfer.1",
++  "edition": "1.0.3-transfer.3",
+   "date": "2026-11-12",
+   "baseline_js_passed": 747,
+-  "javascript_passed": 772,
++  "javascript_passed": 777,
+   "python_passed": 36,
+   "cpp_passed": 34,
+-  "unit_test_total": 842,
++  "unit_test_total": 847,
+   "additional_js_cases": 13000,
+   "additional_python_cases": 1300,
+-  "dom_integration": "passed: previous fixes and transfer",
++  "dom_integration": "passed: earlier fixes, transfer smoke, 11 focused regressions and full-app router",
+   "ordinary_mock_questions_unchanged": 990,
+   "protected_files_compared": 176,
+-  "browser_visual_qa": "not performed",
+-  "local_http_smoke": "passed: launcher and five HTTP 200 responses"
++  "browser_visual_qa": "passed: desktop Chrome at 1348x936; timed expiry, 15-question untimed flow, review, themes and reload",
++  "local_http_smoke": "passed: launcher and five HTTP 200 responses",
++  "focused_dom_regressions_passed": 11,
++  "full_router_integration": "passed: 15-question run, migration, controls, deadlines, review, history and cleanup",
++  "reliability_patch_from": "1.0.3-transfer.1",
++  "reliability_patch_base_revision": "e4591faa8617edf3ec872b1917a46702aa70bf05",
++  "visual_patch_from": "1.0.3-transfer.2",
++  "visual_patch_base_revision": "6f70c9d58ca0c756740007e32ae7186baf886b1f",
++  "mobile_cross_browser_qa": "not performed",
++  "visual_evidence_file": "evaluation/visual-browser-results.json"
+ }
+diff --git a/evaluation/visual-browser-results.json b/evaluation/visual-browser-results.json
+new file mode 100644
+index 0000000..40dfc73
+--- /dev/null
++++ b/evaluation/visual-browser-results.json
+@@ -0,0 +1,93 @@
++{
++  "edition": "1.0.3-transfer.3",
++  "date": "2026-11-12",
++  "method": "Manual browser UI interactions and real rendered screenshot inspection; not a simulated DOM run",
++  "browser": "Provided desktop Chrome",
++  "viewport": {
++    "width": 1348,
++    "height": 936
++  },
++  "flow_version": "1.0.3-transfer.2",
++  "preset_fix_reloaded_and_checked": "1.0.3-transfer.3",
++  "timed_attempt": {
++    "displayed": 2,
++    "completed": false,
++    "correct": 2,
++    "real_per_item_expiry_observed": true,
++    "first_choice": 0.429,
++    "first_question": "3 red, 4 blue; replacement; first drawn red; probability both red",
++    "second_position_cash": 1,
++    "second_position_flat": true
++  },
++  "untimed_attempt": {
++    "displayed": 15,
++    "completed": true,
++    "regular_correct": 9,
++    "regular_total": 12,
++    "deliberately_incorrect_questions": [
++      4,
++      5
++    ],
++    "deliberately_skipped_questions": [
++      8
++    ],
++    "interval_inputs": [
++      [
++        45,
++        55
++      ],
++      [
++        25,
++        40
++      ],
++      [
++        79,
++        81
++      ]
++    ],
++    "displayed_interval_scores": [
++      0.818,
++      0.625,
++      0.975
++    ],
++    "displayed_interval_mean": 0.806,
++    "purpose": "Exercise controls and feedback; not a training-effectiveness score"
++  },
++  "observed_checks": [
++    "Training-only label and hidden method names before review",
++    "MCQ mouse and letter-key selection",
++    "Ranking button and number/arrow-key movement",
++    "Interval lower/upper entry",
++    "Orderbook buy/sell, removal and Clear",
++    "Correct/incorrect choice colour and disabled review controls",
++    "Ranking submitted order and probabilities revealed",
++    "Interval bounds and orderbook position restored",
++    "Current Transfer sidebar link returns to landing",
++    "Both session histories survive reload",
++    "Ordinary wrong-answer log remains empty",
++    "Light screens and dark landing/history readable; original theme restored",
++    "After correction, default picker and unchanged Save retain Kickstarter"
++  ],
++  "horizontal_overflow": {
++    "landing": false,
++    "long_interval_grid": false
++  },
++  "limitations": [
++    "One desktop viewport and one browser",
++    "Phone/touch and other browsers not exercised",
++    "Full 20-minute real-time timeout not waited out; deterministic DOM checks cover total deadline",
++    "Not Optiver difficulty calibration"
++  ],
++  "existing_timing_discrepancies": {
++    "ll": "15x90 seconds, no explicit 25-minute total cap",
++    "iv": "18x45 seconds, no explicit 15-minute total cap",
++    "ob": "8-minute cap retained; supplied invitation says about 15 minutes"
++  },
++  "timing_changes_made": false,
++  "preset_bug": {
++    "before": "No saved preset: active Kickstarter but radio Everything; unchanged Save switches battery",
++    "after": "Picker uses configured DEFAULT_PRESET; browser reload and unchanged Save retain Kickstarter",
++    "regression_before": "10/11 focused cases pass",
++    "regression_after": "11/11 focused cases pass"
++  }
++}
+diff --git a/package.json b/package.json
+index 4857ae1..ae44887 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "optprep",
+-  "version": "1.0.3-transfer.1",
++  "version": "1.0.3-transfer.3",
+   "description": "Offline practice app for the Optiver online assessment: Beat the Odds, NumberLogic, Likelihood List, Intervals, Orderbooks and Zap-N. Not affiliated with Optiver.",
+   "keywords": [
+     "optiver",
+diff --git a/src/core/store.js b/src/core/store.js
+index 8e03525..8c9f7e1 100644
+--- a/src/core/store.js
++++ b/src/core/store.js
+@@ -82,8 +82,9 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
+     get storageFull() { return storageFull; },
+     get bytes() { return bytes; },
+     get migratedFrom() { return migratedFrom; },
+-    // Nothing worth keeping yet: no answers, exams, lessons or games.
+-    isEmpty() { return !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length; },
++    // Displayed-question history also matters: backend adoption must not erase
++    // exposure tracking just because no ordinary answer has been submitted yet.
++    isEmpty() { return !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
+     save,
+     // One answer from any mode. Updates stats, the recency trend, the skill level, XP and
+     // the mistake log, then saves once.
+diff --git a/src/ui/pages/path.js b/src/ui/pages/path.js
+index bd6ac41..45bf91f 100644
+--- a/src/ui/pages/path.js
++++ b/src/ui/pages/path.js
+@@ -2,7 +2,7 @@
+ // candidate's battery. First launch asks which battery they will sit.
+ import { h, mount } from '../dom.js';
+ import { SECTIONS } from '../../../config/sections.js';
+-import { PRESETS, activatePreset, activePreset, presetSections } from '../../../config/presets.js';
++import { PRESETS, DEFAULT_PRESET, activatePreset, activePreset, presetSections } from '../../../config/presets.js';
+ import { FAMILIES, GAMES } from '../../sections/catalog.js';
+ import { roadmap, nextStep } from '../../core/path.js';
+ import { readiness } from '../../core/readiness.js';
+@@ -11,7 +11,7 @@ import { icon } from '../icons.js';
+ import { sectionMap } from './section-map.js';
+ 
+ export function presetPicker(store, { onDone, compact = false } = {}) {
+-  let picked = store.settings().preset?.id || 'full';
++  let picked = store.settings().preset?.id || DEFAULT_PRESET;
+   const options = Object.values(PRESETS).map((p) => ({ value: p.id, label: p.title, hint: p.who }));
+   return h('div', { class: 'preset-picker' },
+     choice({ legend: 'Battery', hideLegend: true, options, value: picked, onChange: (v) => { picked = v; } }),
+diff --git a/src/ui/pages/transfer.js b/src/ui/pages/transfer.js
+index 3be73c1..f7028ea 100644
+--- a/src/ui/pages/transfer.js
++++ b/src/ui/pages/transfer.js
+@@ -38,38 +38,56 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
+   function show() {
+     if (index >= rows.length) return finish(true);
+     const row = rows[index]; displayed.add(index); store.rememberQuestion(row.item);
+-    const body = itemBody(row.item, { preview: false, notation: store.settings().divNotation, keys: store.settings().answerKeys !== false });
+-    current = { body, started: performance.now() };
++    const shownIndex = index;
+     perItem = timed ? makeCountdown(TRANSFER_TIMING.perItemSeconds * 1000 * extra) : null;
++    const body = itemBody(row.item, { preview: false, notation: store.settings().divNotation, keys: store.settings().answerKeys !== false,
++      onChange: () => {
++        // Keep the last response actually entered within both deadlines. A
++        // throttled animation frame must not allow later input to replace it.
++        if (!finished && index === shownIndex && current && (!timed || !examClockStatus(total, perItem).expired)) current.response = body.view.response();
++      } });
++    current = { body, started: performance.now(), response: body.view.response() };
+     mount(root, h('h1', { class: 'visually-hidden' }, 'Transfer Challenge'), h('div', { class: 'panel exam' },
+       h('div', { class: 'qhead' }, h('span', {}, `Transfer training · Question ${index + 1} of ${rows.length}`), timed ? h('span', {}, 'Total ', timer, ' · Question ', itemTimer) : h('span', {}, 'Untimed')),
+       row.repeat ? h('p', { class: 'muted' }, 'Review item: this question was recorded before and is reported separately.') : null,
+       body.el, h('div', { class: 'row' },
+         h('button', { class: 'btn primary', type: 'button', onclick: () => advance() }, 'Submit and next'),
+         h('button', { class: 'btn', type: 'button', onclick: () => advance(true) }, 'Skip'),
+-        h('button', { class: 'btn', type: 'button', onclick: () => { if (confirm('Finish this training session? The current answer will be saved. Unreached questions will not be marked as seen.')) { saveCurrent(); finish(false); } } }, 'Finish session'))));
++        h('button', { class: 'btn', type: 'button', onclick: () => {
++          if (finished || settleExpiry()) return;
++          if (confirm('Finish this training session? The current answer will be saved. Unreached questions will not be marked as seen.')) { saveCurrent(); finish(records.filter(Boolean).length === rows.length); }
++        } }, 'Finish session'))));
+     setRail(index / rows.length, `Transfer question ${index + 1} of ${rows.length}`);
+     paint(timer, total?.remaining() || 0); paint(itemTimer, perItem?.remaining() || 0); root.querySelector('.prompt')?.focus();
+   }
+   function saveCurrent(skip = false) {
+     if (!current || records[index]) return;
+-    const row = rows[index], response = skip ? { skip: true } : current.body.view.response() || { skip: true };
++    const row = rows[index], response = skip ? { skip: true } : current.response || { skip: true };
+     const result = checkItem(row.item, response); responses[index] = response;
+     records[index] = { section: row.item.section, family: row.item.family, difficulty: row.item.difficulty, key: row.key, structure: row.structure,
+       repeat: row.repeat, newStructure: row.newStructure, correct: result.correct, score: result.score, skipped: !!result.skipped,
+       ms: Math.round(performance.now() - current.started), prompt: row.item.prompt.text };
+   }
+-  function advance(skip = false) { if (finished) return; saveCurrent(skip); index++; show(); }
++  function advance(skip = false) { if (finished || settleExpiry()) return; saveCurrent(skip); index++; show(); }
++  function settleExpiry() {
++    if (!timed || finished) return false;
++    const expired = examClockStatus(total, perItem).expired;
++    if (!expired) return false;
++    saveCurrent();
++    if (expired === 'total') finish(records.filter(Boolean).length === rows.length);
++    else { index++; show(); }
++    return true;
++  }
+   function onKey(event) {
+     if (finished || !current) return;
++    if (settleExpiry()) { event.preventDefault(); return; }
+     current.body.view.keyHandler?.(event);
+     if (event.key === 'Enter' && !event.repeat && !event.target.closest?.('button') && rows[index].item.kind !== 'orderbook') { event.preventDefault(); advance(); }
+   }
+   function tick() {
+     if (finished) return;
+-    const status = examClockStatus(total, perItem); paint(timer, total.remaining()); paint(itemTimer, perItem.remaining());
+-    if (status.expired === 'total') { saveCurrent(); return finish(false); }
+-    if (status.expired === 'item') advance();
++    paint(timer, total.remaining()); paint(itemTimer, perItem.remaining());
++    settleExpiry();
+     if (!finished) frame = requestAnimationFrame(tick);
+   }
+   function finish(completed) {
+@@ -86,8 +104,13 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
+       ...rows.flatMap((row, i) => {
+         if (!displayed.has(i)) return [];
+         const result = checkItem(row.item, responses[i] || { skip: true });
++        const question = itemBody(row.item, { preview: false, keys: false, notation: store.settings().divNotation });
++        question.view.setResponse?.(responses[i]);
++        question.view.lock?.();
++        question.view.reveal?.(result, responses[i]);
++        const supportedPractice = SECTION_MODULES[row.item.section]?.families.some((f) => f.id === row.item.family);
+         return [h('details', { class: 'panel' }, h('summary', {}, `Question ${i + 1} · ${row.item.section.toUpperCase()} · ${row.item.family} · ${result.skipped ? 'skipped' : row.item.kind === 'interval' ? `score ${result.score.toFixed(3)}` : result.correct ? 'correct' : 'incorrect'}`),
+-          itemBody(row.item, { preview: false, keys: false }).el, feedbackBanner(row.item, result, responses[i] || { skip: true }), solutionPanel(row.item, { stepwise: false }))];
++          question.el, feedbackBanner(row.item, result, responses[i] || { skip: true }), solutionPanel(row.item, { stepwise: false, actions: supportedPractice }))];
+       }), h('a', { class: 'btn primary', href: '#/' }, 'Back to Today'));
+     setRail(1, 'Transfer session finished');
+   }
+diff --git a/src/ui/solution.js b/src/ui/solution.js
+index 63cac15..218d817 100644
+--- a/src/ui/solution.js
++++ b/src/ui/solution.js
+@@ -46,7 +46,7 @@ export function feedbackBanner(item, result, response) {
+ // The worked solution, in reading order: what is asked, the picture, the steps (one at a
+ // time, each with its arithmetic in a mono line), the exam-speed path, the sanity check,
+ // the rule, then two ways on: the family's lesson and a fresh twin question.
+-export function solutionPanel(item, { stepwise = true } = {}) {
++export function solutionPanel(item, { stepwise = true, actions = true } = {}) {
+   const sol = item.solution;
+   const steps = sol.steps;
+   let shown = stepwise ? 1 : steps.length;
+@@ -73,7 +73,7 @@ export function solutionPanel(item, { stepwise = true } = {}) {
+   }
+   render();
+   return h('section', { class: 'solution' }, h('h3', {}, 'Solution'), ask, picture, list, h('div', { class: 'row' }, more, all),
+-    best, fast, check, anchor, rule, solutionActions(item));
++    best, fast, check, anchor, rule, actions ? solutionActions(item) : null);
+ }
+ 
+ function pictureFigure(p) {
+diff --git a/src/ui/sync.js b/src/ui/sync.js
+index 6b22511..0d5c48a 100644
+--- a/src/ui/sync.js
++++ b/src/ui/sync.js
+@@ -37,7 +37,7 @@ export function createSync(fetchImpl = (...a) => fetch(...a), host = globalThis.
+       } catch { online = false; }
+       if (!online) return false;
+       // A browser with no local progress picks up the server snapshot (switching browsers).
+-      const empty = !store.state.runs.length && !Object.keys(store.stats()).length;
++      const empty = typeof store.isEmpty === 'function' ? store.isEmpty() : !store.state.runs.length && !Object.keys(store.stats()).length;
+       if (empty) {
+         try {
+           const s = await (await fetchImpl('api/state')).json();
+diff --git a/sw.js b/sw.js
+index e9b8e0a..76e553c 100644
+--- a/sw.js
++++ b/sw.js
+@@ -4,7 +4,7 @@
+ // whose activate deletes every cache and calls self.registration.unregister(), and
+ // which has no fetch handler, installed clients recover on their next visit.
+ const BUILD = '__BUILD__';
+-const CACHE = `optprep-${BUILD.startsWith('__') ? 'transfer-training-1' : BUILD}`;
++const CACHE = `optprep-${BUILD.startsWith('__') ? 'transfer-training-3' : BUILD}`;
+ // The Pages workflow fills FILES with every module and asset the app can load, so an installed
+ // copy works offline on every page, including the ones that load on demand.
+ const FILES = [/*FILES*/];
+diff --git a/tests/transfer/reliability.test.js b/tests/transfer/reliability.test.js
+new file mode 100644
+index 0000000..cf6d68f
+--- /dev/null
++++ b/tests/transfer/reliability.test.js
+@@ -0,0 +1,46 @@
++import { test } from 'node:test';
++import assert from 'node:assert/strict';
++import { fileURLToPath, pathToFileURL } from 'node:url';
++import { resolve } from 'node:path';
++const root = process.env.OPTPREP_QA_ROOT || fileURLToPath(new URL('../../', import.meta.url));
++const load = (p) => import(pathToFileURL(resolve(root, p)).href);
++const { makeStore, memoryBackend, KEY } = await load('src/core/store.js');
++const { blankV2 } = await load('src/core/migrate.js');
++const { createSync } = await load('src/ui/sync.js');
++const { transferSummary } = await load('src/transfer/draw.js');
++const fetchServer = (state, calls) => async (url) => {
++  calls.push(url);
++  return { ok: true, json: async () => url === 'api/health' ? { ok: true } : { state } };
++};
++
++test('backend startup never replaces transfer-only local progress with an older server snapshot', async () => {
++  const store = makeStore(memoryBackend());
++  store.setSetting('preset', { id: 'kickstarter' });
++  store.recordTransferRun({ seed: 'local-progress', summary: transferSummary([]), items: [] });
++  const server = blankV2(); server.settings.preset = { id: 'trader' };
++  const calls = [], sync = createSync(fetchServer(server, calls), 'localhost');
++  assert.equal(await sync.start(store), true);
++  assert.equal(store.transferRuns().length, 1, 'completed transfer work must survive backend detection');
++  assert.equal(store.transferRuns()[0].seed, 'local-progress');
++  assert.equal(store.settings().preset.id, 'kickstarter');
++  assert.deepEqual(calls, ['api/health'], 'existing progress must not be treated as a new browser');
++});
++
++test('a genuinely empty browser can still restore server-side transfer progress', async () => {
++  const serverStore = makeStore(memoryBackend());
++  serverStore.recordTransferRun({ seed: 'server-progress', summary: transferSummary([]), items: [] });
++  const empty = makeStore(memoryBackend()), calls = [];
++  const sync = createSync(fetchServer(serverStore.state, calls), 'localhost');
++  assert.equal(await sync.start(empty), true);
++  assert.equal(empty.transferRuns()[0].seed, 'server-progress');
++  assert.deepEqual(calls, ['api/health', 'api/state']);
++});
++
++test('attempting transfer practice cannot overwrite a save from an unknown future version', () => {
++  const backend = memoryBackend(), future = JSON.stringify({ ...blankV2(), version: 999, futureData: 'keep this' });
++  backend.setItem(KEY, future);
++  const store = makeStore(backend);
++  assert.equal(store.readOnly, true);
++  store.recordTransferRun({ summary: transferSummary([]), items: [] });
++  assert.equal(backend.getItem(KEY), future);
++});
+diff --git a/tests/ui/sync.test.js b/tests/ui/sync.test.js
+index 7fed945..082f250 100644
+--- a/tests/ui/sync.test.js
++++ b/tests/ui/sync.test.js
+@@ -1,6 +1,7 @@
+ import { test } from 'node:test';
+ import assert from 'node:assert/strict';
+ import { createSync, isLocalHost } from '../../src/ui/sync.js';
++import { makeStore, memoryBackend } from '../../src/core/store.js';
+ 
+ test('only this machine counts as a backend host', () => {
+   for (const h of ['127.0.0.1', 'localhost', 'LOCALHOST', '[::1]', '::1']) assert.equal(isLocalHost(h), true, h);
+@@ -22,3 +23,22 @@ test('a local copy probes with relative URLs', async () => {
+   assert.deepEqual(calls, ['api/health']);
+   assert.equal(sync.online, true);
+ });
++
++test('backend startup cannot replace transfer-only local progress', async () => {
++  const calls=[];
++  const local=makeStore(memoryBackend());
++  local.recordTransferRun({timed:false,summary:{all:{}},items:[]});
++  const remote=makeStore(memoryBackend()).state;
++  const sync=createSync(async(url)=>{calls.push(url);return {ok:true,json:async()=>url==='api/health'?{ok:true}:{state:remote}};},'localhost');
++  await sync.start(local);
++  assert.equal(local.transferRuns().length,1);
++  assert.deepEqual(calls,['api/health']);
++});
++
++test('backend startup cannot erase displayed-only freshness history', async () => {
++  const local=makeStore(memoryBackend());
++  local.rememberQuestion({section:'bto',family:'example',prompt:{text:'Seen before any answer'}});
++  const sync=createSync(async(url)=>({ok:true,json:async()=>url==='api/health'?{ok:true}:{state:makeStore(memoryBackend()).state}}),'localhost');
++  await sync.start(local);
++  assert.equal(local.recentQuestionKeys('bto').size,1);
++});
+diff --git a/tools/transfer-regression.mjs b/tools/transfer-regression.mjs
+new file mode 100644
+index 0000000..d2c46d2
+--- /dev/null
++++ b/tools/transfer-regression.mjs
+@@ -0,0 +1,44 @@
++// Focused interface regressions beyond the original smoke check.
++// Optional development dependency: npm install --no-save jsdom
++import assert from 'node:assert/strict';
++import { createRequire } from 'node:module';
++const require = createRequire(import.meta.url), { JSDOM } = require(process.env.OPTPREP_TEST_JSDOM || 'jsdom');
++const dom = new JSDOM('<main id="view"></main><div id="live"></div>', { url: 'http://localhost/#/transfer' });
++for (const name of ['window','document','Node','HTMLElement','Element','localStorage']) Object.defineProperty(globalThis,name,{value:dom.window[name],configurable:true});
++globalThis.matchMedia=()=>({matches:true}); dom.window.matchMedia=globalThis.matchMedia; globalThis.confirm=()=>true;
++let now=0,frame=0;const frames=new Map();
++Object.defineProperty(globalThis,'performance',{value:{now:()=>now},configurable:true});
++globalThis.requestAnimationFrame=(fn)=>{frames.set(++frame,fn);return frame;};globalThis.cancelAnimationFrame=(id)=>frames.delete(id);
++const {runTransfer}=await import('../src/ui/pages/transfer.js');
++const {makeStore,memoryBackend}=await import('../src/core/store.js');
++const {EXTRA_FAMILIES}=await import('../src/transfer/index.js');
++const {SECTION_MODULES}=await import('../src/sections/index.js');
++const {makeRng}=await import('../src/core/rng.js');
++const {questionKey}=await import('../src/core/questions.js');
++const {structureKey}=await import('../src/transfer/profile.js');
++const {presetPicker}=await import('../src/ui/pages/path.js');
++const {activatePreset,activePreset,presetSections}=await import('../config/presets.js');
++const root=document.getElementById('view'),button=(label)=>[...root.querySelectorAll('button')].find(b=>b.textContent===label);
++const generate=(id,difficulty=3)=>EXTRA_FAMILIES.find(f=>f.id===id).generate(makeRng(`regression:${id}`),{difficulty});
++const rows=(items)=>items.map(item=>({item,key:questionKey(item),structure:structureKey(item),repeat:false,newStructure:true,extended:!!item.transfer}));
++let stop=()=>{};
++function start(items,timed=false){stop();const store=makeStore(memoryBackend());stop=runTransfer(root,{store,timed,items:rows(items),seed:'regression'});return store;}
++const mcq=generate('information-protocols'),rank=generate('selection-weights'),interval=generate('rates-weights');
++const wrong=(mcq.answerIndex+1)%5;
++function reviewMcq(){start([mcq]);root.querySelectorAll('.option')[wrong].click();button('Submit and next').click();}
++const tests=[
++ ['review restores and locks the submitted MCQ',()=>{reviewMcq();assert.equal(root.querySelectorAll('.option:not(:disabled)').length,0);assert.equal(root.querySelector('.option[aria-checked="true"] .val').textContent,mcq.options[wrong].label);assert.equal(root.querySelectorAll('.option.is-correct').length,1);assert.equal(root.querySelectorAll('.option.is-wrong').length,1);} ],
++ ['additional-family review has no broken ordinary-practice link',()=>{reviewMcq();assert.ok(![...root.querySelectorAll('a')].some(a=>a.getAttribute('href')===`#/run/bto/practice/${mcq.family}`));}],
++ ['ranking review shows probabilities and retains the submitted order',()=>{start([rank]);const expected=[...root.querySelectorAll('.rank-row')].map(r=>Number(r.dataset.si));button('Submit and next').click();assert.deepEqual([...root.querySelectorAll('.rank-row')].map(r=>Number(r.dataset.si)),expected);assert.equal(root.querySelectorAll('.rank-p:not([hidden])').length,3);assert.equal(root.querySelectorAll('.rank-move button:not(:disabled)').length,0);}],
++ ['interval review restores bounds and disables its controls',()=>{start([interval]);const values=[interval.truth*.9,interval.truth*1.1];root.querySelectorAll('input').forEach((el,i)=>{el.value=values[i];el.dispatchEvent(new dom.window.Event('input',{bubbles:true}));});button('Submit and next').click();const fields=root.querySelectorAll('input');assert.equal(Number(fields[0].value),values[0]);assert.equal(Number(fields[1].value),values[1]);assert.ok([...fields].every(el=>el.disabled));}],
++ ['orderbook review restores the submitted position and locks controls',()=>{const item=SECTION_MODULES.ob.families.find(f=>f.id==='hidden').generate(makeRng('regression:board'),{difficulty:4});start([item]);for(const t of item.best.trades){const i=item.board.instruments.findIndex(x=>x.id===t.id);root.querySelectorAll('.ob-table tbody tr')[i].querySelector(`.ob-${t.side}`).click();}button('Submit and next').click();assert.match(root.querySelector('.ob-net').textContent,/Net:/);assert.equal(root.querySelectorAll('.ob button:not(:disabled)').length,0);}],
++ ['answers changed after the item deadline do not replace the last valid answer',()=>{const store=start([mcq,rank],true);root.querySelectorAll('.option')[wrong].click();now+=91000;root.querySelectorAll('.option')[mcq.answerIndex].click();button('Submit and next').click();button('Finish session').click();assert.equal(store.transferRuns()[0].items[0].score,-1);}],
++ ['the overall deadline is enforced before submitting or showing another item',()=>{const store=start([mcq,rank],true);root.querySelectorAll('.option')[wrong].click();now+=1200001;button('Submit and next').click();assert.match(root.textContent,/Transfer Challenge: review/);assert.equal(store.transferRuns()[0].items.length,1);assert.equal([...store.recentQuestionKeys('bto')].length,1);}],
++ ['a late skip cannot erase an answer already committed before timeout',()=>{const store=start([mcq,rank],true);root.querySelectorAll('.option')[wrong].click();now+=91000;button('Skip').click();button('Finish session').click();assert.equal(store.transferRuns()[0].items[0].score,-1);assert.equal(store.transferRuns()[0].items[0].skipped,false);}],
++ ['keyboard answers after the deadline are ignored',()=>{const store=start([mcq,rank],true);root.querySelectorAll('.option')[wrong].click();now+=91000;document.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'ABCDE'[mcq.answerIndex],bubbles:true,cancelable:true}));button('Finish session').click();assert.equal(store.transferRuns()[0].items[0].score,-1);}],
++ ['finishing on the last displayed question records a complete session',()=>{const store=start([mcq]);root.querySelectorAll('.option')[mcq.answerIndex].click();button('Finish session').click();assert.equal(store.transferRuns()[0].completed,true);}],
++ ['saving an unchanged fresh battery picker preserves the active Kickstarter preset',()=>{const store=makeStore(memoryBackend());activatePreset(store.settings().preset);const before=activePreset().id;root.replaceChildren(presetPicker(store,{compact:true}));button('Save').click();assert.equal(activePreset().id,before,'Save must not silently switch a new browser to Everything');assert.equal(store.settings().preset.id,'kickstarter');assert.equal(root.querySelector('input[value="kickstarter"]').checked,true);assert.ok(!presetSections(activePreset()).includes('mm'));}],
++];
++let failures=0;
++for(const [name,fn] of tests){try{fn();console.log(`PASS ${name}`);}catch(e){failures++;console.log(`FAIL ${name}: ${e.message}`);}finally{stop();}}
++dom.window.close();console.log(`${tests.length-failures}/${tests.length} focused interface regressions passed`);if(failures)process.exitCode=1;
+diff --git a/tools/transfer-route-smoke.mjs b/tools/transfer-route-smoke.mjs
+new file mode 100644
+index 0000000..af1bf19
+--- /dev/null
++++ b/tools/transfer-route-smoke.mjs
+@@ -0,0 +1,91 @@
++// Exercise the real app router, page controls and browser storage in a DOM.
++// Optional development dependency: npm install --no-save jsdom
++import assert from 'node:assert/strict';
++import { readFileSync } from 'node:fs';
++import { createRequire } from 'node:module';
++import { fileURLToPath, pathToFileURL } from 'node:url';
++import { resolve } from 'node:path';
++const require = createRequire(import.meta.url), { JSDOM } = require(process.env.OPTPREP_TEST_JSDOM || 'jsdom');
++const appRoot = process.env.OPTPREP_QA_ROOT || fileURLToPath(new URL('../', import.meta.url));
++const load = (p) => import(pathToFileURL(resolve(appRoot, p)).href);
++const dom = new JSDOM(readFileSync(resolve(appRoot, 'index.html'), 'utf8'), { url: 'http://localhost/#/transfer' });
++for (const name of ['window','document','Node','HTMLElement','Element','localStorage','location','navigator','Event','CustomEvent','Blob','File']) Object.defineProperty(globalThis,name,{value:dom.window[name],configurable:true});
++globalThis.matchMedia = dom.window.matchMedia = () => ({ matches:true, addEventListener(){} });
++dom.window.scrollTo = () => {};
++globalThis.confirm = () => true;
++globalThis.fetch = async () => ({ ok:false, json:async()=>({ok:false}) }); // no live accounts or backend
++let now = 0, frame = 0; const frames = new Map(), intervals = new Set();
++Object.defineProperty(globalThis,'performance',{value:{now:()=>now},configurable:true});
++globalThis.requestAnimationFrame = (f) => { frames.set(++frame,f); return frame; };
++globalThis.cancelAnimationFrame = (id) => frames.delete(id);
++const originalInterval = globalThis.setInterval;
++globalThis.setInterval = (...args) => { const id=originalInterval(...args); intervals.add(id); return id; };
++const originalDateNow = Date.now, fixedDate = Date.UTC(2026,10,12,12);
++Date.now = () => fixedDate;
++const { blankV2 } = await load('src/core/migrate.js');
++const { makeStore } = await load('src/core/store.js');
++const { transferItems } = await load('src/transfer/draw.js');
++const { SECTION_MODULES } = await load('src/sections/index.js');
++const oldSave = blankV2();
++delete oldSave.recentStructures; delete oldSave.transferRuns;
++oldSave.settings.preset={id:'kickstarter'};
++oldSave.stats['bto:two-dice-sum']={n:2,correct:1,ms:1000};
++localStorage.setItem('optprep:v2',JSON.stringify(oldSave));
++const root = document.getElementById('view');
++const button=(label)=>[...root.querySelectorAll('button')].find(b=>b.textContent===label);
++const snapshot=()=>JSON.parse(localStorage.getItem('optprep:v2'));
++const nextTurn=()=>new Promise(r=>setTimeout(r,10));
++async function until(predicate,label){for(let i=0;i<200;i++){if(predicate())return;await nextTurn();}throw new Error(`Timeout: ${label}; ${root.textContent.slice(0,150)}`);}
++async function route(hash,heading){location.hash=hash;await until(()=>root.querySelector('h1')?.textContent===heading,hash);}
++function advance(ms){now+=ms;const pending=[...frames.values()];frames.clear();pending.forEach(f=>f(now));}
++function key(key,repeat=false){document.activeElement.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key,repeat,bubbles:true,cancelable:true}));}
++function answer(row){const item=row.item;
++ if(item.kind==='mcq'){key(String(item.answerIndex+1));assert.equal(root.querySelectorAll('.option')[item.answerIndex].getAttribute('aria-checked'),'true');}
++ else if(item.kind==='rank'){for(let target=0;target<3;target++){const si=item.answerOrder[target];while([...root.querySelectorAll('.rank-row')].findIndex(r=>Number(r.dataset.si)===si)>target)root.querySelector(`.rank-row[data-si="${si}"] button[aria-label="Move up"]`).click();}}
++ else if(item.kind==='interval'){const inputs=root.querySelectorAll('input');for(const [i,v] of [item.truth*.999,item.truth*1.001].entries()){inputs[i].value=v;inputs[i].dispatchEvent(new Event('input',{bubbles:true}));}}
++ else for(const trade of item.best.trades){const i=item.board.instruments.findIndex(x=>x.id===trade.id);root.querySelectorAll('.ob-table tbody tr')[i].querySelector(`.ob-${trade.side}`).click();}
++}
++try {
++ await load('app.js');
++ await until(()=>root.querySelector('h1')?.textContent==='Transfer Challenge','initial route');
++ assert.ok(document.querySelector('#nav a[href="#/transfer"]'),'sidebar link works');
++ root.querySelector('select').value='untimed';
++ const plan=transferItems(SECTION_MODULES,{seed:fixedDate,questionHistory:oldSave.recentQuestions,structureHistory:{}});
++ button('Start Transfer Challenge').click();
++ advance(1500000);assert.match(root.querySelector('.qhead').textContent,/Question 1 of 15/,'page timing selection really starts untimed');
++ for(let i=0;i<plan.length;i++){
++  assert.equal(root.querySelectorAll('details').length,0,'no solution leaked before review');
++  answer(plan[i]);advance(1000);
++  if(i<14){button('Submit and next').click();const header=root.querySelector('.qhead').textContent;key('Enter',true);assert.equal(root.querySelector('.qhead').textContent,header,'held Enter cannot skip the next question');}
++  else button('Finish session').click();
++ }
++ assert.match(root.textContent,/Transfer Challenge: review/);
++ const completed=snapshot();
++ assert.equal(completed.transferRuns.length,1);
++ assert.equal(completed.transferRuns[0].items.length,15);
++ assert.equal(completed.transferRuns[0].summary.all.regularCorrect,12);
++ assert.ok(completed.transferRuns[0].summary.all.intervalMean>.99);
++ assert.equal(completed.transferRuns[0].completed,true,'finishing on the last displayed question is a completed session');
++ assert.deepEqual(completed.stats,oldSave.stats);
++ assert.deepEqual(completed.mastery,oldSave.mastery);
++ assert.deepEqual(completed.srs,oldSave.srs);
++ assert.equal(completed.runs.length,oldSave.runs.length);
++ document.querySelector('#nav a[href="#/transfer"]').click();
++ await until(()=>root.querySelector('h1')?.textContent==='Transfer Challenge','current Transfer sidebar link');
++ assert.match(root.textContent,/Recent transfer sessions/);
++ assert.match(root.textContent,/12\/12 non-interval questions correct/);
++ const reloaded=makeStore(localStorage);assert.equal(reloaded.transferRuns().length,1);
++ const backup=reloaded.exportJSON();assert.ok(JSON.parse(backup).recentStructures);
++ // Start again, leave, and make sure the abandoned session's handlers are gone.
++ button('Start Transfer Challenge').click();
++ await route('#/s/bto','Beat the Odds');
++ const before=root.textContent;key('Enter');advance(2000000);assert.equal(root.textContent,before);
++ assert.equal(snapshot().transferRuns.length,1,'abandoned run is not silently completed');
++ await route('#/mock','Full mock');assert.equal(root.querySelectorAll('tbody tr').length,5);
++ assert.ok(!root.textContent.includes('80-in-8'));
++ console.log('Full-router DOM passed: delivered entry point, old-save migration, timing dropdown, all answer controls, keyboard repeat, complete result, history/reload, cleanup and Kickstarter mock.');
++} finally {
++ Date.now=originalDateNow;globalThis.setInterval=originalInterval;
++ for(const id of intervals)clearInterval(id);
++ dom.window.close();
++}

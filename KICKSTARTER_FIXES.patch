@@ -1,0 +1,2216 @@
+diff --git a/KICKSTARTER_FIXES.md b/KICKSTARTER_FIXES.md
+new file mode 100644
+index 0000000..1916a01
+--- /dev/null
++++ b/KICKSTARTER_FIXES.md
+@@ -0,0 +1,149 @@
++# Kickstarter fixes edition
++
++Version: 1.0.2-kickstarter.1  
++Prepared: 12 November 2026  
++Upstream: [Coflazo/optprep](https://github.com/Coflazo/optprep)  
++Base commit: a68720e74e7e1b5a82526b02db539d943f0f1364  
++License: MIT; upstream attribution and license retained.
++
++This is a modified preparation copy. It repairs reproducible code and learning defects found in the audit. It does not establish equivalence with Optiver's unpublished question difficulty or scoring.
++
++## Run it
++
++Extract the ZIP. Open a terminal in the extracted project folder and run:
++
++```sh
++npm start
++```
++
++Node.js 20 or newer is required. The app has no runtime npm dependencies, so no installation step is needed. The launcher normally opens http://127.0.0.1:8765. Alternatively, run `python serve.py` with Python 3.10 or newer.
++
++Choose **Career Kickstarter: Trading**. This copy defaults to that preset when no valid preset is supplied. Saved preset selections remain under your control.
++
++To move progress from the original site, export a backup under its Settings and import it under this copy's Settings. They use different browser origins, so progress does not transfer automatically.
++
++## Changes
++
++### Both Beat the Odds clocks apply
++
++The Kickstarter preset now applies a **25-minute overall limit**, following the 2027 invitation, alongside the existing **90-second practice item limit**. Both clocks are visible. Expiring an item advances to the next question; expiring the total ends the section, even when the item still has time remaining.
++
++The count of 20 questions and 90-second item limit remain reported practice assumptions. They were not inferred from the invitation. Other presets keep their own configuration.
++
++Format summaries show both clocks. Old 30-minute or unstamped runs cannot count as evidence under the new 25-minute cap.
++
++### Mocks follow the selected battery
++
++The full mock previously used every section in the global section list. It now follows the active preset. A Kickstarter mock contains BTO, NumberLogic, Likelihood List, Intervals and Orderbooks, with Zap-N still available separately. The standalone 80-in-8 remains available through other presets.
++
++### Hard Markov questions no longer reveal a fixed answer
++
++Difficulty-5 questions now mix general stationary-distribution problems with the incoming-arrow counterexample. Statement order is shuffled. Neither reversing the displayed order nor automatically inverting the incoming-arrow counts solves every hard problem.
++
++The verifier independently recalculates stationary probabilities without requiring a fixed answer order. The fixed curated example remains available as an example and is subject to repeat tracking.
++
++### Fund-return explanations use the observed data
++
++Generated explanations no longer assert that a steady fund must be positive more often or that volatility universally wins extreme-return comparisons. The associated lesson and family catalog were updated too.
++
++The audited counterexample still correctly calculates 75% positive years for one fund and 87.5% for the other, and now explains that ranking from the observations.
++
++### Intervals separates coverage, score and mastery
++
++Containing the true value still earns the configured lower/upper score. For learning progress, an interval must also score **at least 0.70**. This is an authored practice goal, not an Optiver cutoff.
++
++Low-scoring wide intervals no longer advance mastery, count as adaptive success or postpone spaced review as successful answers. Progress → Pace shows coverage and mean score separately.
++
++The original exploit—15 fresh answers using [1, 1000]—still earns 0.001 per answer, but earns no mastery progress. Covering the truth remains visible as coverage rather than being mistaken for a useful score.
++
++Existing answers, exams, lesson progress and XP are preserved. Previously imported Intervals skill levels are reassessed because their old rule did not require a useful score.
++
++### Recent questions are tracked across sessions
++
++Visible question content is fingerprinted without solution data. Ranking statement order is ignored so merely shuffling an old question does not make it fresh. History stores up to 8,000 recent fingerprints per section and is included in backups.
++
++Fresh exam and adaptive selection avoid that history. Only questions actually displayed enter the history. If a finite template cannot produce an unseen item within bounded retries, the question is labelled as review practice. A repeated-question exam keeps its score but does not count toward the fresh-exam practice target.
++
++Tracking starts when using this edition; past exposure cannot be reliably reconstructed from old summary-only saves. Fingerprints use two compact hashes, so deduplication is a practical safeguard rather than a proof of conceptual novelty.
++
++In ten separately seeded mocks per section, this edition produced:
++
++| Section | Items | Exact repeats after first occurrence |
++|---|---:|---:|
++| Beat the Odds | 200 | 0 |
++| NumberLogic | 260 | 0 |
++| Likelihood List | 150 | 0 |
++
++This checks exact visible repetition in a sample. New parameter values within familiar templates still require genuinely unfamiliar practice elsewhere to assess transfer.
++
++### Verification coverage is explicit
++
++The second-language pipeline now distinguishes structural checks, independent numerical checks, skipped sequence queries, unsupported-rule warnings and failures. An empty library cannot report success. A successful run explicitly reports whether numerical coverage is complete.
++
++New independent Python calculations cover supported fund-return, score-table, conjunction and Markov ranking scenarios, including curated statement reordering. These calculations read the table, bar or graph data rather than trusting supplied probabilities.
++
++The re-run exported library produced:
++
++| Section | Structural checks | Independent numerical checks in the Python/C++ pipeline |
++|---|---:|---:|
++| Beat the Odds | 500 | 184 |
++| Intervals | 504 | 165 |
++| Likelihood List | 510 | 94 |
++| 80-in-8 | 560 | 0 |
++| NumberLogic | 520 | 495 |
++| Orderbooks | 500 | 500 |
++
++There were zero failed checks. NumberLogic retains 11 explicit unsupported-rule warnings and 14 skipped missing-term queries. All sections also have JavaScript tests. The zero for 80-in-8 describes this second-language pipeline, not an absence of arithmetic checks in JavaScript.
++
++The report correctly states **complete_numerical_coverage: false**. It does not claim that every exported answer has been independently rederived outside JavaScript.
++
++### Progress claims describe practice performance
++
++The UI uses “Practice target met” and excludes stale-clock, repeated-question and older runs without freshness evidence from the current fresh-exam target. It no longer tells the learner that a real assessment is “safe to open” based on this trainer's target.
++
++## Validation
++
++| Check | Result |
++|---|---:|
++| JavaScript suite | 747 passed |
++| Python suite, with C++ engine available | 27 passed, none skipped |
++| Unchanged C++ engine suite | 34 passed |
++| Total unit/regression tests | 808 passed |
++| DOM integration smoke checks | Passed |
++| Exported library pipeline | 3,094 structural checks; zero failures; explicit coverage gaps and 11 warnings |
++| Patch whitespace validation | Passed |
++
++DOM integration executes the actual views and event handlers. It verifies item expiry with an overall clock active, total expiry while an item still has time, Kickstarter mock contents, Intervals coverage versus mastery, and repeated-exam exclusion. Full browser visual testing was unavailable in the execution environment; this is not a claim of pixel-level browser QA.
++
++Run JavaScript tests:
++
++```sh
++npm test
++```
++
++Build the optional engine and run its tests:
++
++```sh
++cmake -S engine -B engine/build
++cmake --build engine/build
++ctest --test-dir engine/build --output-on-failure
++```
++
++Run the optional Python tests and library verification, with the backend's development environment installed:
++
++```sh
++cd backend
++uv run pytest -q
++uv run python -m oa_backend.pipeline
++```
++
++For the optional DOM smoke check, install jsdom as a temporary development dependency and run `node tools/ui-smoke.mjs`. It is not required to use the application or run the main JavaScript suite.
++
++## Remaining limits
++
++- Real Optiver question difficulty, pass thresholds, exact item counts and several scoring rules remain unvalidated. The 25-minute BTO cap is supported by the invitation; the other detailed format settings are practice assumptions.
++- Zap-N reaction windows, feedback choices and the Balloon hazard model remain explicitly described approximations. Changing them arbitrarily would not establish higher fidelity.
++- Independent numerical coverage is partial. Its remaining gaps are now reported accurately.
++- Recent-question tracking reduces exact repeats; it cannot turn a finite template library into an independently calibrated assessment.
++
++For preparation, use these fixes to support unaided timed attempts, then review the reasoning with ChatGPT. Judge transfer using unfamiliar problems and the actual assessment instructions.
+diff --git a/README.md b/README.md
+index a97cf55..f4925da 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,9 @@
++# OptPrep — Kickstarter fixes edition
++
++Version 1.0.2-kickstarter.1. Based on [Coflazo/optprep](https://github.com/Coflazo/optprep), commit a68720e74e7e1b5a82526b02db539d943f0f1364, under the MIT license.
++
++See [KICKSTARTER_FIXES.md](KICKSTARTER_FIXES.md) for the fixes, evidence, test results and remaining calibration limits.
++
+ <p align="center">
+   <img src="docs/media/demo.gif" alt="OptPrep in 22 seconds: the 80-in-8 clock, an orderbook arbitrage, the skill roadmap filling up, a solution with its state diagram, two Zap-N games, the price comparison and the phone app." width="880">
+ </p>
+@@ -10,7 +16,7 @@
+ </p>
+ 
+ <p align="center"><strong>Free practice for the Optiver online assessment.</strong><br>
+-80-in-8, Beat the Odds, NumberLogic, Likelihood List, Intervals, Orderbooks and Zap-N, on the real clocks, with a lesson for every question type.</p>
++80-in-8, Beat the Odds, NumberLogic, Likelihood List, Intervals, Orderbooks and Zap-N, using reported practice formats, with a lesson for every question type.</p>
+ 
+ <p align="center">
+   <a href="https://coflazo.github.io/optprep/"><img alt="Open OptPrep" src="https://img.shields.io/badge/open-OptPrep-011735?style=flat-square"></a>
+@@ -19,27 +25,27 @@
+   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-011735?style=flat-square"></a>
+ </p>
+ 
+-You get one attempt at the Optiver online assessment every eight months. OptPrep lets you sit it as many times as you like first: the same clocks, the same scoring, fresh questions every time, and a lesson that shows you why each wrong answer looked right.
+-
+-## Start
++You get one attempt at the Optiver online assessment every eight months. OptPrep lets you sit it as many times as you like first: timed practice, worked lessons and recent-question tracking. Formats are practice assumptions except where a current invitation confirms them; practice targets have not been validated against Optiver results.
+ 
+-Open [coflazo.github.io/optprep](https://coflazo.github.io/optprep/) in any browser. You install nothing, and it keeps working offline after the first visit. Your browser's Install button puts it on your dock or home screen.
++## Run this copy
+ 
+-To run it yourself on macOS, Linux or Windows, you need Node 20 or newer:
++1. Extract the archive into a folder.
++2. Open a terminal in that folder.
++3. With Node.js 20 or newer installed, run:
+ 
+ ```bash
+-npx optprep
++npm start
+ ```
+ 
+-Or from the source:
++No npm installation is needed for the app. The local address is normally http://127.0.0.1:8765. The launcher opens the browser automatically; run `node bin/optprep.js --no-open` to keep it manual.
+ 
+-```bash
+-git clone https://github.com/Coflazo/optprep.git
+-cd optprep
+-npm start            # or: python serve.py
+-```
++Alternatively, with Python 3.10 or newer, run `python serve.py`. That starts the optional local backend as well.
++
++Select **Career Kickstarter: Trading**. Its BTO practice has both a 25-minute total cap and a 90-second item cap. The item count and item cap are practice assumptions; the overall 25-minute cap follows the 2027 invitation. Full mocks use only the selected battery.
++
++To move existing progress from the original site, export a backup in its Settings and import it into this copy. Exam history, lessons and XP are preserved. Old Intervals skill levels are reassessed because they did not require useful interval scores. Fresh-question tracking starts with questions viewed in this edition.
+ 
+-Your progress stays on your device. Settings has backup and restore, and optional sync to a private gist in your own GitHub account, encrypted with a passphrase if you add one.
++The upstream site and `npx optprep` run the original release; use the commands above to run these fixes.
+ 
+ ## What you practise
+ 
+@@ -54,7 +60,7 @@ Pick the battery you will sit, and OptPrep matches the tasks and clocks to it.
+ | Task | Exam replica | Scoring |
+ |---|---|---|
+ | 80-in-8 | 80 questions in 8 minutes, tap to answer, no going back | +1 right, −1 wrong |
+-| Beat the Odds | 20 questions, 90 s each | +1, −1, or skip for 0 |
++| Beat the Odds | Kickstarter: 20 practice questions, 90 s each, 25 min overall | +1, −1, or skip for 0 |
+ | NumberLogic | 26 sequences in 25 minutes, skip and return | +1, −1, or skip for 0 |
+ | Likelihood List | 15 sets of three statements, 90 s each | 1 point for the exact order |
+ | Intervals | 18 estimates, 60 s each | lower ÷ upper when the truth is inside |
+@@ -122,19 +128,20 @@ Set a daily goal of five, ten or twenty minutes. Only time spent answering or re
+ 
+ ## Limits
+ 
+-- Optiver publishes no pass lines. The Ready mark means your last three full exams met OptPrep's bar, which sits above the lines candidates report. It lowers your risk. It cannot promise a pass.
++- Practice target met means three fresh full-length runs met this trainer’s own target under the current clocks. Repeated-question runs and older runs without freshness checks are excluded. This is not a calibrated prediction of an Optiver result.
+ - The battery changes between roles and years. Every format number lives in [`config/sections.js`](config/sections.js) and [`config/presets.js`](config/presets.js) with its source. If your online assessment looked different, [open a format report](https://github.com/Coflazo/optprep/issues/new?template=format-report.yml) and the next release will match it.
+ - Zap-Q, the personality questionnaire, has no right answers to practise. Answer it honestly and consistently.
+ - Software engineering, quant developer and quant researcher assessments are different tests. OptPrep does not cover them.
+ 
+ ## How the questions are checked
+ 
+-Every question family has a generator and an independent verifier. A second pipeline re-checks the whole library outside JavaScript:
++Generators have JavaScript checks. The optional Python/C++ pipeline checks the structure of every exported item and independently recalculates only the supported numerical scenarios. Its report distinguishes numerical coverage, skipped checks, warnings and failures:
+ 
+ - Orderbooks: every board re-solved by a C++ branch and bound.
+-- NumberLogic: every sequence searched by a C++ rule library, so no wrong option fits an equally simple rule.
+-- Beat the Odds and Likelihood List: probabilities re-simulated by C++ Monte Carlo.
+-- Intervals: truths recomputed in Python from the drawn figures.
++- NumberLogic: supported next-term items are searched by a C++ rule library; missing-term skips and unsupported-rule warnings are reported separately.
++- Beat the Odds: supported model variants are re-simulated by C++ Monte Carlo.
++- Likelihood List: supported fund-return, score-table, conjunction and Markov scenarios are independently recomputed in Python; other scenarios remain explicitly unchecked by this second-language pipeline.
++- Intervals: supported scenarios are recomputed from their data in Python or simulated in C++; numerical coverage is reported.
+ - Zap-N: optimal play re-solved in C++ for Skyscraper, NumberBox, Figure It Out and Balloon.
+ 
+ ```bash
+diff --git a/backend/data/verification/report.json b/backend/data/verification/report.json
+index c63ba29..939adef 100644
+--- a/backend/data/verification/report.json
++++ b/backend/data/verification/report.json
+@@ -1,17 +1,24 @@
+ {
++ "schemaVersion": 2,
+  "sections": {
+   "bto": {
+    "stats": {
++    "items": 500,
++    "structural_checked": 500,
++    "numerically_checked": 184,
+     "monte_carlo": 184,
+-    "items": 500
++    "numerically_unchecked": 316
+    },
++   "complete_numerical_coverage": false,
+    "failures": [],
+    "warnings": [],
+    "families": {
+     "two-dice-sum": {
++     "numerically_checked": 17,
+      "items": 17
+     },
+     "die-repeats": {
++     "numerically_checked": 7,
+      "items": 15
+     },
+     "dice-order-stats": {
+@@ -21,57 +28,72 @@
+      "items": 14
+     },
+     "at-least-one": {
++     "numerically_checked": 8,
+      "items": 19
+     },
+     "first-success": {
++     "numerically_checked": 4,
+      "items": 15
+     },
+     "conditional-dice": {
++     "numerically_checked": 1,
+      "items": 17
+     },
+     "card-symmetry": {
++     "numerically_checked": 6,
+      "items": 14
+     },
+     "card-draws": {
++     "numerically_checked": 1,
+      "items": 19
+     },
+     "coin-sequences": {
++     "numerically_checked": 6,
+      "items": 17
+     },
+     "race-to-k": {
+      "items": 14
+     },
+     "pattern-waiting": {
++     "numerically_checked": 14,
+      "items": 18
+     },
+     "bayes-test": {
++     "numerically_checked": 10,
+      "items": 14
+     },
+     "bayes-boxes": {
+      "items": 18
+     },
+     "monty-hall": {
++     "numerically_checked": 11,
+      "items": 14
+     },
+     "pigeonhole": {
+      "items": 18
+     },
+     "birthday": {
++     "numerically_checked": 12,
+      "items": 14
+     },
+     "derangements": {
++     "numerically_checked": 11,
+      "items": 17
+     },
+     "coupon-collector": {
++     "numerically_checked": 11,
+      "items": 16
+     },
+     "linearity": {
++     "numerically_checked": 3,
+      "items": 16
+     },
+     "expected-extremes": {
++     "numerically_checked": 9,
+      "items": 16
+     },
+     "dice-duel": {
++     "numerically_checked": 4,
+      "items": 13
+     },
+     "dice-games-ev": {
+@@ -81,95 +103,126 @@
+      "items": 13
+     },
+     "running-sum": {
++     "numerically_checked": 9,
+      "items": 16
+     },
+     "random-walk-line": {
+      "items": 14
+     },
+     "polygon-walk": {
++     "numerically_checked": 7,
+      "items": 18
+     },
+     "clt-estimates": {
++     "numerically_checked": 10,
+      "items": 16
+     },
+     "uniform-geometry": {
++     "numerically_checked": 5,
+      "items": 14
+     },
+     "urn-draws": {
++     "numerically_checked": 13,
+      "items": 13
+     },
+     "expected-waiting": {
+      "items": 14
+     },
+     "gamblers-ruin": {
++     "numerically_checked": 5,
+      "items": 14
+     }
+    }
+   },
+   "iv": {
+    "stats": {
+-    "python_recomputed": 152,
+     "items": 504,
+-    "monte_carlo": 13
++    "structural_checked": 504,
++    "numerically_checked": 165,
++    "python_recomputed": 152,
++    "monte_carlo": 13,
++    "numerically_unchecked": 339
+    },
++   "complete_numerical_coverage": false,
+    "failures": [],
+    "warnings": [],
+    "families": {
+     "prob-exact": {
++     "numerically_checked": 4,
+      "items": 53
+     },
+     "prob-estimate": {
++     "numerically_checked": 14,
+      "items": 46
+     },
+     "expected-dice": {
++     "numerically_checked": 20,
+      "items": 48
+     },
+     "coupon": {
++     "numerically_checked": 47,
+      "items": 47
+     },
+     "waiting-time": {
++     "numerically_checked": 13,
+      "items": 39
+     },
+     "dots-count": {
++     "numerically_checked": 1,
+      "items": 5
+     },
+     "dice-grid": {
++     "numerically_checked": 6,
+      "items": 7
+     },
+     "path-length": {
++     "numerically_checked": 7,
+      "items": 7
+     },
+     "percentile": {
++     "numerically_checked": 1,
+      "items": 42
+     },
+     "mental-product": {
++     "numerically_checked": 15,
+      "items": 44
+     },
+     "powers-roots": {
++     "numerically_checked": 7,
+      "items": 44
+     },
+     "combinatorics": {
++     "numerically_checked": 9,
+      "items": 43
+     },
+     "fermi": {
++     "numerically_checked": 6,
+      "items": 36
+     },
+     "series": {
++     "numerically_checked": 15,
+      "items": 43
+     }
+    }
+   },
+   "ll": {
+    "stats": {
+-    "items": 510
++    "items": 510,
++    "structural_checked": 510,
++    "numerically_checked": 94,
++    "python_recomputed": 94,
++    "numerically_unchecked": 416
+    },
++   "complete_numerical_coverage": false,
+    "failures": [],
+    "warnings": [],
+    "families": {
+     "conjunction": {
+-     "items": 66
++     "numerically_checked": 62,
++     "items": 64
+     },
+     "score-table": {
++     "numerically_checked": 5,
+      "items": 8
+     },
+     "football": {
+@@ -179,10 +232,11 @@
+      "items": 7
+     },
+     "fund-returns": {
++     "numerically_checked": 20,
+      "items": 23
+     },
+     "histogram-bins": {
+-     "items": 58
++     "items": 59
+     },
+     "scatter-regions": {
+      "items": 4
+@@ -191,13 +245,14 @@
+      "items": 6
+     },
+     "markov-graph": {
+-     "items": 8
++     "numerically_checked": 7,
++     "items": 7
+     },
+     "dice-events": {
+      "items": 58
+     },
+     "card-events": {
+-     "items": 55
++     "items": 56
+     },
+     "coin-patterns": {
+      "items": 58
+@@ -206,7 +261,7 @@
+      "items": 56
+     },
+     "large-numbers": {
+-     "items": 63
++     "items": 64
+     },
+     "impossible-bounds": {
+      "items": 32
+@@ -218,8 +273,12 @@
+   },
+   "mm": {
+    "stats": {
+-    "items": 560
++    "items": 560,
++    "structural_checked": 560,
++    "numerically_checked": 0,
++    "numerically_unchecked": 560
+    },
++   "complete_numerical_coverage": false,
+    "failures": [],
+    "warnings": [],
+    "families": {
+@@ -251,10 +310,15 @@
+   },
+   "nl": {
+    "stats": {
+-    "sequence_checked": 520,
+     "items": 520,
+-    "warnings": 11
++    "structural_checked": 520,
++    "numerically_checked": 495,
++    "sequence_checked": 506,
++    "sequence_skipped": 14,
++    "warnings": 11,
++    "numerically_unchecked": 25
+    },
++   "complete_numerical_coverage": false,
+    "failures": [],
+    "warnings": [
+     {
+@@ -337,134 +401,178 @@
+    ],
+    "families": {
+     "arithmetic": {
++     "numerically_checked": 20,
+      "items": 20
+     },
+     "geometric": {
++     "numerically_checked": 17,
+      "items": 21
+     },
+     "second-diff": {
++     "numerically_checked": 19,
+      "items": 20
+     },
+     "add-index": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "squares-plus": {
++     "numerically_checked": 17,
+      "items": 20
+     },
+     "triangular": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "diff-geometric": {
++     "numerically_checked": 20,
+      "items": 20
+     },
+     "affine-recurrence": {
++     "numerically_checked": 21,
+      "items": 21
+     },
+     "fibonacci-like": {
+-     "items": 19
++     "items": 19,
++     "numerically_checked": 16
+     },
+     "interleaved": {
++     "numerically_checked": 13,
+      "items": 20
+     },
+     "alternating-ops": {
++     "numerically_checked": 20,
+      "items": 20
+     },
+     "cubes-plus": {
++     "numerically_checked": 19,
+      "items": 19
+     },
+     "pronic": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "primes": {
++     "numerically_checked": 17,
+      "items": 18
+     },
+     "powers-offset": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "decimals": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "alternating-signs": {
++     "numerically_checked": 17,
+      "items": 17
+     },
+     "third-diff": {
++     "numerically_checked": 19,
+      "items": 19
+     },
+     "weighted-two-term": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "product-recurrence": {
++     "numerically_checked": 19,
+      "items": 19
+     },
+     "prime-gaps": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "sum-previous": {
++     "numerically_checked": 17,
+      "items": 17
+     },
+     "digit-sum": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "fractions": {
++     "numerically_checked": 16,
+      "items": 20
+     },
+     "fibonacci-squares": {
++     "numerically_checked": 16,
+      "items": 18
+     },
+     "reverse-digits": {
++     "numerically_checked": 18,
+      "items": 18
+     },
+     "square-minus": {
++     "numerically_checked": 19,
+      "items": 19
+     },
+     "multiply-index": {
++     "numerically_checked": 4,
+      "items": 4
+     },
+     "tribonacci": {
++     "numerically_checked": 2,
+      "items": 2
+     },
+     "mixed-combo": {
++     "numerically_checked": 5,
+      "items": 5
+     }
+    }
+   },
+   "ob": {
+    "stats": {
++    "items": 500,
++    "structural_checked": 500,
++    "numerically_checked": 500,
+     "orderbook_solved": 500,
+-    "items": 500
++    "numerically_unchecked": 0
+    },
++   "complete_numerical_coverage": true,
+    "failures": [],
+    "warnings": [],
+    "families": {
+     "crossed": {
++     "numerically_checked": 69,
+      "items": 69
+     },
+     "bundle-rich": {
++     "numerically_checked": 58,
+      "items": 58
+     },
+     "bundle-cheap": {
++     "numerically_checked": 70,
+      "items": 70
+     },
+     "weighted": {
++     "numerically_checked": 58,
+      "items": 58
+     },
+     "spread": {
++     "numerically_checked": 68,
+      "items": 68
+     },
+     "chain": {
++     "numerically_checked": 56,
+      "items": 56
+     },
+     "decoy": {
++     "numerically_checked": 68,
+      "items": 68
+     },
+     "hidden": {
++     "numerically_checked": 53,
+      "items": 53
+     }
+    }
+   }
+  },
+  "engine": true,
+- "seconds": 3.74,
++ "scope": "Structural checks for every item; independent numerical checks only where coverage is reported.",
++ "seconds": 1.1,
++ "complete_numerical_coverage": false,
+  "ok": true,
+  "zapn": {
+   "skyscraper": {
+diff --git a/backend/oa_backend/pipeline.py b/backend/oa_backend/pipeline.py
+index 1fb2f92..6a6fb70 100644
+--- a/backend/oa_backend/pipeline.py
++++ b/backend/oa_backend/pipeline.py
+@@ -31,10 +31,12 @@ def main() -> int:
+     out.write_text(json.dumps(report, indent=1), encoding="utf-8")
+     for sec, s in report["sections"].items():
+         st = s["stats"]
+-        print(f"{sec}: {st.get('items', 0)} checked, {st.get('failed', 0)} failed, {st.get('warnings', 0)} warnings")
++        print(f"{sec}: {st.get('structural_checked', 0)} structural checks, "
++              f"{st.get('numerically_checked', 0)}/{st.get('items', 0)} independently checked numerically, "
++              f"{st.get('failed', 0)} failed, {st.get('warnings', 0)} warnings")
+     z = report["zapn"]
+     print("zapn: " + ", ".join(f"{k} {v['checked']} checked / {len(v['mismatches'])} mismatches" for k, v in z.items() if isinstance(v, dict)))
+-    print(f"ok={report['ok']}")
++    print(f"passed_checks={report['ok']}; complete_numerical_coverage={report['complete_numerical_coverage']}")
+     return 0 if report["ok"] else 1
+ 
+ 
+diff --git a/backend/oa_backend/rank_verify.py b/backend/oa_backend/rank_verify.py
+new file mode 100644
+index 0000000..7f66989
+--- /dev/null
++++ b/backend/oa_backend/rank_verify.py
+@@ -0,0 +1,98 @@
++"""Independent probability calculations for supported ranking scenarios.
++
++Read rendered tables, bars and graph edges. Unsupported variants explicitly return
++None; checking the supplied answer order alone is not numerical verification.
++"""
++from __future__ import annotations
++
++from fractions import Fraction
++from typing import Any
++
++
++def _stationary(matrix: list[list[Fraction]]) -> list[float]:
++    n = len(matrix)
++    a = [[matrix[col][row] - int(row == col) for col in range(n)] + [Fraction(0)]
++         for row in range(n - 1)] + [[Fraction(1)] * n + [Fraction(1)]]
++    for col in range(n):
++        pivot = next(row for row in range(col, n) if a[row][col])
++        a[col], a[pivot] = a[pivot], a[col]
++        scale = a[col][col]
++        a[col] = [v / scale for v in a[col]]
++        for row in range(n):
++            if row != col:
++                factor = a[row][col]
++                a[row] = [v - factor * w for v, w in zip(a[row], a[col])]
++    return [float(row[-1]) for row in a]
++
++
++def recompute_rank(item: dict[str, Any]) -> list[float] | None:
++    probabilities = _canonical_probabilities(item)
++    order = (item.get('params') or {}).get('displayOrder')
++    if probabilities is not None and order is not None:
++        return [probabilities[i] for i in order]
++    return probabilities
++
++
++def _canonical_probabilities(item: dict[str, Any]) -> list[float] | None:
++    p = item.get('params') or {}
++    visual = item.get('prompt', {}).get('visual') or {}
++    family = item.get('family')
++    specs = p.get('statements')
++    if family == 'fund-returns' and isinstance(specs, list) and all(isinstance(s, dict) and 't' in s for s in specs):
++        values = [s['values'] for s in visual['series']]
++        first, second = values
++        probabilities = []
++        for spec in specs:
++            row = values[spec.get('f', 1)]
++            kind = spec['t']
++            if kind == 'persist':
++                scope = [i for i in range(1, len(row)) if row[i - 1] > 0]
++                hits = sum(row[i] > 0 for i in scope)
++                probabilities.append(hits / len(scope))
++                continue
++            if kind == 'pos': hits = sum(v > 0 for v in row)
++            elif kind == 'gt': hits = sum(v > spec['v'] for v in row)
++            elif kind == 'lt': hits = sum(v < spec['v'] for v in row)
++            elif kind == 'beat': hits = sum(b > a for a, b in zip(first, second))
++            elif kind == 'bothNeg': hits = sum(a < 0 and b < 0 for a, b in zip(first, second))
++            else: return None
++            probabilities.append(hits / len(first))
++        return probabilities
++    if family == 'score-table' and isinstance(specs, list) and all(isinstance(s, dict) and 'cond' in s for s in specs):
++        rows = [dict(zip(visual['columns'], row)) for row in visual['rows']]
++
++        def matches(c, row):
++            t = c['t']
++            if t == 'ge': return row[c['s']] >= c['v']
++            if t == 'lt': return row[c['s']] < c['v']
++            if t == 'both': return min(row[c['a']], row[c['b']]) >= c['v']
++            if t == 'either': return max(row[c['a']], row[c['b']]) >= c['v']
++            if t == 'gt': return row[c['a']] > row[c['b']]
++            if t == 'avg': return sum(row[s] for s in c['subs']) >= 3 * c['v']
++            raise ValueError('unknown score-table condition')
++
++        probabilities = []
++        for spec in specs:
++            scope = [row for row in rows if not spec.get('given') or matches(spec['given'], row)]
++            probabilities.append(sum(matches(spec['cond'], row) for row in scope) / len(scope))
++        return probabilities
++    if family == 'conjunction' and 'cells' in p and isinstance(specs, list) and all(isinstance(s, str) for s in specs):
++        (both, only_a), (only_b, neither) = p['cells']
++        total = both + only_a + only_b + neither
++        values = {'A': (both + only_a) / total, 'B': (both + only_b) / total,
++                  'AB': both / total, 'AorB': (total - neither) / total,
++                  'BgA': both / (both + only_a), 'neither': neither / total}
++        if all(s in values for s in specs):
++            return [values[s] for s in specs]
++    if family == 'markov-graph' and p.get('targets') and visual.get('edges'):
++        nodes = {node['id']: i for i, node in enumerate(visual['nodes'])}
++        matrix = [[Fraction(0) for _ in nodes] for _ in nodes]
++        for edge in visual['edges']:
++            matrix[nodes[edge['from']]][nodes[edge['to']]] += Fraction(str(edge['p']))
++        if p.get('mode') == 'nstep':
++            start = p['start']
++            return [float(sum(matrix[start][k] * matrix[k][j] for k in range(len(nodes)))) for j in p['targets']]
++        if p.get('mode') in ('stationary', 'trap'):
++            result = _stationary(matrix)
++            return [result[j] for j in p['targets']]
++    return None
+diff --git a/backend/oa_backend/verify.py b/backend/oa_backend/verify.py
+index 00906ea..03a1131 100644
+--- a/backend/oa_backend/verify.py
++++ b/backend/oa_backend/verify.py
+@@ -24,6 +24,7 @@ from pathlib import Path
+ from typing import Any
+ 
+ from .engine import Engine, EngineError, available
++from .rank_verify import recompute_rank
+ 
+ DATA = Path(__file__).resolve().parents[1] / "data"
+ RANK_MARGIN = 0.02
+@@ -150,6 +151,7 @@ def recompute_interval(it: dict[str, Any]) -> float | None:
+ 
+ 
+ def check_structure(it: dict[str, Any]) -> list[str]:
++    it.pop('_recomputed', None)
+     errs: list[str] = []
+     kind = it.get("kind")
+     if kind == "mcq":
+@@ -180,6 +182,14 @@ def check_structure(it: dict[str, Any]) -> list[str]:
+         srt = sorted(ps, reverse=True)
+         if srt[0] - srt[1] < RANK_MARGIN or srt[1] - srt[2] < RANK_MARGIN:
+             errs.append("probabilities closer than the margin")
++        try:
++            independent = recompute_rank(it)
++            if independent is not None:
++                it['_recomputed'] = True
++                if len(independent) != len(ps) or any(abs(a - b) > 1e-7 for a, b in zip(independent, ps)):
++                    errs.append('Python ranking probabilities disagree with the supplied answers')
++        except (KeyError, TypeError, ValueError, ZeroDivisionError, StopIteration) as e:
++            errs.append(f'Python ranking recomputation failed: {e}')
+     elif kind == "interval":
+         if not (isinstance(it.get("truth"), (int, float)) and it["truth"] > 0):
+             errs.append("interval truth must be positive")
+@@ -215,11 +225,17 @@ def check_orderbook_python(it: dict[str, Any]) -> list[str]:
+     return errs
+ 
+ 
+-def check_sequence(engine: Engine, it: dict[str, Any]) -> tuple[list[str], list[str]]:
++def sequence_queryable(it: dict[str, Any]) -> bool:
+     p = it.get("params") or {}
+     shown = p.get("shown")
+-    if not shown or it.get("kind") != "mcq" or (p.get("position") not in (None, len(shown))):
++    return bool(shown) and it.get('kind') == 'mcq' and p.get('position') in (None, len(shown))
++
++
++def check_sequence(engine: Engine, it: dict[str, Any]) -> tuple[list[str], list[str]]:
++    if not sequence_queryable(it):
+         return [], []  # missing-term items are checked structurally only
++    p = it['params']
++    shown = p['shown']
+     terms = [float(Fraction(t)) if isinstance(t, str) else t for t in shown]
+     preds = engine.call({"cmd": "sequence", "terms": terms})["predictions"]
+     ans = it["options"][it["answerIndex"]]["value"]
+@@ -265,29 +281,37 @@ def check_monte_carlo(engine: Engine, it: dict[str, Any], samples: int) -> list[
+ 
+ def verify(library_dir: Path, samples: int = 300_000) -> dict[str, Any]:
+     t0 = time.time()
+-    report: dict[str, Any] = {"sections": {}, "engine": available()}
++    report: dict[str, Any] = {'schemaVersion': 2, 'sections': {}, 'engine': available(),
++                              'scope': 'Structural checks for every item; independent numerical checks only where coverage is reported.'}
+     engine = Engine() if available() else None
+     try:
+         for f in sorted(library_dir.glob("*.json")):
+             lib = json.loads(f.read_text(encoding="utf-8"))
+             sec = lib["section"]
+-            stats: Counter[str] = Counter()
++            stats: Counter[str] = Counter({'items': 0, 'structural_checked': 0, 'numerically_checked': 0})
+             failures: list[dict[str, Any]] = []
+             warnings: list[dict[str, Any]] = []
+             by_family: dict[str, Counter[str]] = defaultdict(Counter)
+             for it in lib["items"]:
+                 errs = check_structure(it)
++                stats['structural_checked'] += 1
++                numerical = bool(it.get('_recomputed'))
+                 warns: list[str] = []
+                 if engine:
+                     try:
+-                        if sec == "nl":
++                        if sec == "nl" and sequence_queryable(it):
+                             e2, w2 = check_sequence(engine, it); errs += e2; warns += w2
+                             stats["sequence_checked"] += 1
++                            numerical = not w2
++                        elif sec == 'nl':
++                            stats['sequence_skipped'] += 1
+                         if it.get("kind") == "orderbook":
+                             errs += check_orderbook_engine(engine, it); stats["orderbook_solved"] += 1
++                            numerical = True
+                         mc = check_monte_carlo(engine, it, samples) if sec in ("bto", "ll") else None
+                         if mc is not None:
+                             errs += mc; stats["monte_carlo"] += 1
++                            numerical = True
+                     except EngineError as e:
+                         errs.append(f"engine error: {e}")
+                 if it.get("_recomputed"):
+@@ -296,9 +320,13 @@ def verify(library_dir: Path, samples: int = 300_000) -> dict[str, Any]:
+                         and all(a == 1 and b == 2 for _, a, b in it["params"].get("letterProbs", [])):
+                     r = engine.call({"cmd": "mc", "model": "pattern_wait", "params": {"pattern": it["params"]["pattern"]}, "samples": samples, "seed": 5, "expected": it["truth"]})
+                     stats["monte_carlo"] += 1
++                    numerical = True
+                     if not r["agrees"]:
+                         errs.append(f"Monte Carlo waiting time {r['mean']:.3f} disagrees with {it['truth']}")
+                 stats["items"] += 1
++                if numerical:
++                    stats['numerically_checked'] += 1
++                    by_family[it['family']]['numerically_checked'] += 1
+                 by_family[it["family"]]["items"] += 1
+                 if errs:
+                     stats["failed"] += 1; by_family[it["family"]]["failed"] += 1
+@@ -306,13 +334,17 @@ def verify(library_dir: Path, samples: int = 300_000) -> dict[str, Any]:
+                 if warns:
+                     stats["warnings"] += 1
+                     warnings.append({"id": it["id"], "family": it["family"], "warnings": warns})
+-            report["sections"][sec] = {"stats": dict(stats), "failures": failures[:50], "warnings": warnings[:50],
++            stats['numerically_unchecked'] = stats['items'] - stats['numerically_checked']
++            report["sections"][sec] = {"stats": dict(stats), 'complete_numerical_coverage': stats['numerically_unchecked'] == 0,
++                                        "failures": failures[:50], "warnings": warnings[:50],
+                                         "families": {k: dict(v) for k, v in by_family.items()}}
+     finally:
+         if engine:
+             engine.close()
+     report["seconds"] = round(time.time() - t0, 2)
+-    report["ok"] = all(s["stats"].get("failed", 0) == 0 for s in report["sections"].values())
++    report['complete_numerical_coverage'] = bool(report['sections']) and all(
++        s['complete_numerical_coverage'] for s in report['sections'].values())
++    report["ok"] = bool(report['sections']) and all(s["stats"].get("failed", 0) == 0 for s in report["sections"].values())
+     return report
+ 
+ 
+diff --git a/backend/tests/test_rank_coverage.py b/backend/tests/test_rank_coverage.py
+new file mode 100644
+index 0000000..23bf17c
+--- /dev/null
++++ b/backend/tests/test_rank_coverage.py
+@@ -0,0 +1,97 @@
++import json
++from copy import deepcopy
++
++import pytest
++
++from oa_backend.rank_verify import recompute_rank
++from oa_backend.verify import check_structure
++from oa_backend import verify as verifier
++
++
++def ranking(family, visual, params, probabilities):
++    return {'id': family, 'family': family, 'kind': 'rank', 'params': params,
++            'prompt': {'visual': visual}, 'statements': [{'p': p} for p in probabilities],
++            'answerOrder': sorted(range(len(probabilities)), key=lambda i: -probabilities[i])}
++
++
++def test_fund_counts_are_independent_of_the_keyed_probabilities():
++    values = [[1, -4, 1, -1, 8, 7, 2, 2], [4, 6, 28, 1, 31, 9, -22, 31]]
++    item = ranking('fund-returns', {'series': [{'values': row} for row in values]},
++                   {'statements': [{'t': 'pos', 'f': 0}, {'t': 'pos', 'f': 1}, {'t': 'lt', 'f': 0, 'v': 0}]},
++                   [0.75, 0.875, 0.25])
++    assert check_structure(item) == []
++    assert item['_recomputed']
++    wrong = deepcopy(item)
++    wrong['statements'][0]['p'] = 0.76  # still sorted correctly, but numerically false
++    assert any('disagree' in error for error in check_structure(wrong))
++
++
++def test_score_table_conditional_uses_its_subgroup_denominator():
++    item = ranking('score-table', {'columns': ['Student', 'M', 'P'],
++                                  'rows': [['A', 80, 90], ['B', 30, 20], ['C', 70, 60]]},
++                   {'statements': [{'cond': {'t': 'ge', 's': 'M', 'v': 50}},
++                                   {'given': {'t': 'ge', 's': 'M', 'v': 50}, 'cond': {'t': 'ge', 's': 'P', 'v': 80}},
++                                   {'cond': {'t': 'both', 'a': 'M', 'b': 'P', 'v': 80}}]},
++                   [2 / 3, 1 / 2, 1 / 3])
++    assert check_structure(item) == []
++
++
++def test_conjunction_probabilities_are_recomputed_from_cells():
++    item = ranking('conjunction', {}, {'cells': [[2, 1], [1, 4]], 'statements': ['A', 'AB', 'AorB']},
++                   [3 / 8, 2 / 8, 4 / 8])
++    assert check_structure(item) == []
++
++
++def test_markov_stationary_distribution_is_solved_from_rendered_edges():
++    edges = [('A', 'A', .5), ('A', 'B', .5), ('B', 'C', 1), ('C', 'A', .25), ('C', 'C', .75)]
++    visual = {'nodes': [{'id': name} for name in ['A', 'B', 'C']],
++              'edges': [{'from': a, 'to': b, 'p': p} for a, b, p in edges]}
++    item = ranking('markov-graph', visual, {'mode': 'stationary', 'targets': [2, 0, 1]}, [4 / 7, 2 / 7, 1 / 7])
++    assert recompute_rank(item) == pytest.approx([4 / 7, 2 / 7, 1 / 7])
++    assert check_structure(item) == []
++
++
++def test_an_unsupported_family_is_not_reported_as_numerically_recomputed():
++    item = ranking('unsupported', {}, {}, [.9, .6, .2])
++    assert check_structure(item) == []
++    assert not item.get('_recomputed')
++
++
++def test_curated_ranking_display_order_is_applied_after_recomputation():
++    item = ranking('conjunction', {}, {'cells': [[2, 1], [1, 4]], 'statements': ['A', 'AB', 'AorB'],
++                                      'displayOrder': [2, 0, 1]}, [4 / 8, 3 / 8, 2 / 8])
++    assert check_structure(item) == []
++
++
++def test_sequence_coverage_counts_actual_queries_and_reports_skips(monkeypatch, tmp_path):
++    calls = []
++
++    class Engine:
++        def call(self, request):
++            calls.append(request)
++            return {'predictions': [{'nextValue': 4, 'complexity': 1}]}
++
++        def close(self):
++            pass
++
++    monkeypatch.setattr(verifier, 'available', lambda: True)
++    monkeypatch.setattr(verifier, 'Engine', Engine)
++    item = {'id': 'next', 'family': 'arithmetic', 'kind': 'mcq',
++            'params': {'shown': [1, 2, 3], 'rule': 'arithmetic'},
++            'answer': {'value': 4}, 'answerIndex': 3,
++            'options': [{'label': str(x), 'value': x, 'misconception': None if x == 4 else 'a slip'} for x in [0, 1, 2, 4, 5]]}
++    missing = deepcopy(item)
++    missing['id'] = 'missing'
++    missing['params']['position'] = 1
++    (tmp_path / 'nl.json').write_text(json.dumps({'section': 'nl', 'items': [item, missing]}))
++    report = verifier.verify(tmp_path)
++    stats = report['sections']['nl']['stats']
++    assert len(calls) == stats['sequence_checked'] == 1
++    assert stats['sequence_skipped'] == 1
++    assert stats['numerically_checked'] == stats['numerically_unchecked'] == 1
++    assert report['ok'] is True
++    assert report['complete_numerical_coverage'] is False
++
++
++def test_empty_library_cannot_claim_success(tmp_path):
++    assert verifier.verify(tmp_path)['ok'] is False
+diff --git a/config/presets.js b/config/presets.js
+index 1033fab..482d9c8 100644
+--- a/config/presets.js
++++ b/config/presets.js
+@@ -10,6 +10,7 @@ export const SOURCES = {
+   overview: { label: 'QuantVault: Optiver online assessment', url: 'https://quantvault.org/optiver-online-assessment.html' },
+   mm: { label: 'QuantVault: Optiver 80-in-8', url: 'https://quantvault.org/optiver-80-in-8.html' },
+   iv: { label: 'QuantVault: Optiver Intervals', url: 'https://quantvault.org/optiver-intervals.html' },
++  ob: { label: 'QuantVault: reported assessment formats', url: 'https://quantvault.org/optiver-online-assessment.html' },
+   ll: { label: 'QuantVault: Likelihood List', url: 'https://quantvault.org/optiver-likelihood-list.html' },
+   zapn: { label: 'QuantVault: Zap-N', url: 'https://quantvault.org/zap-n.html' },
+   atp: { label: 'Aptitude Test Prep: Optiver assessment', url: 'https://aptitude-test-prep.com/employers/trading-assessments/optiver-assessment/' },
+@@ -22,7 +23,10 @@ export const PRESETS = {
+     who: 'Final-year students applying to the five-day Amsterdam programme.',
+     sections: ['bto', 'nl', 'll', 'iv', 'ob', 'zapn'],
+     zapn: ZAPN_ALL,
+-    timing: { iv: { perItemSeconds: 45 }, nl: { navigation: 'free' } },
++    // The overall BTO limit is from the 2027 Kickstarter invitation. The count and
++    // 90-second item limit remain practice assumptions, pending portal instructions.
++    timing: { bto: { totalSeconds: 25 * 60 }, iv: { perItemSeconds: 45 }, nl: { navigation: 'free' } },
++    note: 'BTO has the 25-minute overall limit in the 2027 invitation. Question counts, per-question clocks and scoring remain reported practice formats. Read your portal instructions before sitting the assessment.',
+     sources: ['overview', 'iv', 'ob', 'll'],
+   },
+   trader: {
+@@ -50,7 +54,7 @@ export const PRESETS = {
+   },
+ };
+ 
+-export const DEFAULT_PRESET = 'full';
++export const DEFAULT_PRESET = 'kickstarter';
+ const KNOWN = new Set([...PORTAL_ORDER, 'zapn']);
+ 
+ // A stored preset ({id} for built-ins, a full object for custom) → the battery to train.
+@@ -92,10 +96,12 @@ export function timingOf(exam) {
+ // A run counts toward readiness under the current timing when it had at least as many
+ // questions and no more time per question.
+ export function timingAtLeastAsStrict(run, exam) {
+-  if (!run) return false;
+-  if (!run.timing) return true; // runs from before timing was stamped count under the base format
+-  const per = (t) => (t.perItemSeconds ?? t.totalSeconds / t.count);
+-  return run.timing.count >= exam.count && per(run.timing) <= per(exam) + 1e-9;
++  const t = run?.timing;
++  if (!t || !Number.isFinite(t.count) || t.count < exam.count) return false;
++  if (exam.perItemSeconds && !(t.perItemSeconds > 0 && t.perItemSeconds <= exam.perItemSeconds)) return false;
++  const longestRun = t.totalSeconds || (t.perItemSeconds * t.count);
++  if (exam.totalSeconds && !(longestRun > 0 && longestRun <= exam.totalSeconds)) return false;
++  return true;
+ }
+ 
+ let active = applyPreset(resolvePreset(null));
+diff --git a/package.json b/package.json
+index 20ed1e9..88beb39 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "optprep",
+-  "version": "1.0.1",
++  "version": "1.0.2-kickstarter.1",
+   "description": "Offline practice app for the Optiver online assessment: Beat the Odds, NumberLogic, Likelihood List, Intervals, Orderbooks and Zap-N. Not affiliated with Optiver.",
+   "keywords": [
+     "optiver",
+diff --git a/src/core/check.js b/src/core/check.js
+index 39108d1..d960a1c 100644
+--- a/src/core/check.js
++++ b/src/core/check.js
+@@ -6,6 +6,14 @@
+ 
+ export const netScore = (scores) => scores.reduce((s, x) => s + x, 0);
+ 
++// A trainer goal, not an Optiver cutoff. Containing the truth earns points, but
++// only a useful interval counts as success for mastery, adaptive practice and review.
++export const INTERVAL_MASTERY_SCORE = 0.7;
++export function practiceSuccess(section, result) {
++  return !!result.correct && (section !== 'iv' ||
++    (Number.isFinite(result.score) && result.score >= INTERVAL_MASTERY_SCORE));
++}
++
+ export function intervalScore(lower, upper, truth) {
+   if (!Number.isFinite(lower) || !Number.isFinite(upper)) return 0;
+   if (lower <= 0 || upper <= 0 || lower > upper) return 0;
+diff --git a/src/core/draw.js b/src/core/draw.js
+index ff642ec..b1a2914 100644
+--- a/src/core/draw.js
++++ b/src/core/draw.js
+@@ -2,6 +2,7 @@
+ // unique prompts, deterministic per seed) and adaptive practice.
+ import { makeRng } from './rng.js';
+ import { familyWeights, pickFamily } from './adaptive.js';
++import { questionKey } from './questions.js';
+ 
+ export function nearestLevel(levels, d) {
+   const ls = levels?.length ? levels : [1];
+@@ -19,38 +20,50 @@ export function drawItem(section, rng, { family, difficulty } = {}) {
+ export function examItems(section, cfg, seed) {
+   const rng = makeRng(`exam:${section.id}:${seed}`);
+   const count = cfg.count;
+-  const bankPool = rng.shuffle(section.bank || []);
++  const excluded = new Set(cfg.excludeKeys || []);
++  const bankPool = rng.shuffle(section.bank || []).filter((it) => !excluded.has(questionKey(it)));
+   const nBank = Math.min(bankPool.length, Math.round(count * (cfg.bankRatio ?? 0.2)));
+   const bankSlots = new Set(rng.shuffle([...Array(count).keys()]).slice(0, nBank));
+   const famOrder = [];
+   const out = [];
+   const seen = new Set();
+-  let bankIdx = 0;
+   for (let i = 0; i < count; i++) {
+     const target = cfg.ramp ? 1 + Math.floor((i / count) * 5) : 1 + (i % 5);
+-    if (bankSlots.has(i) && bankIdx < bankPool.length) {
++    if (bankSlots.has(i) && bankPool.length) {
+       // prefer a bank item near the target difficulty
+       bankPool.sort((a, b) => Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target));
+       const it = bankPool.splice(0, 1)[0];
+-      if (!seen.has(it.prompt.text)) { seen.add(it.prompt.text); out.push(it); continue; }
++      const key = questionKey(it);
++      if (!seen.has(key)) { seen.add(key); out.push(it); continue; }
+     }
+     if (!famOrder.length) famOrder.push(...rng.shuffle(section.families));
+     // families that can reach the target difficulty come first
+     famOrder.sort((a, b) => Math.abs(nearestLevel(a.levels, target) - target) - Math.abs(nearestLevel(b.levels, target) - target));
+     const f = famOrder.shift();
+-    let it; let tries = 0;
+-    do { it = drawItem(section, rng, { family: f.id, difficulty: target }); tries++; } while (seen.has(it.prompt.text) && tries < 30);
+-    seen.add(it.prompt.text);
++    let it;
++    for (let tries = 0; tries < 60; tries++) {
++      // If one template is exhausted, try another supported family. Returning a
++      // repeat is a last resort and the runner marks that exam as review practice.
++      it = drawItem(section, rng, { family: tries < 30 ? f.id : undefined, difficulty: target });
++      const key = questionKey(it);
++      if (!seen.has(key) && !excluded.has(key)) break;
++    }
++    seen.add(questionKey(it));
+     out.push(it);
+   }
+   if (cfg.ramp) out.sort((a, b) => a.difficulty - b.difficulty);
+   return out;
+ }
+ 
+-export function practiceItem(section, rng, stats, { family, difficulty } = {}) {
+-  if (family) return drawItem(section, rng, { family, difficulty });
++export function practiceItem(section, rng, stats, { family, difficulty, excludeKeys = [] } = {}) {
++  const excluded = new Set(excludeKeys);
+   const w = familyWeights(section.id, section.families.map((f) => f.id), stats);
+-  return drawItem(section, rng, { family: pickFamily(rng, w), difficulty });
++  let item;
++  for (let tries = 0; tries < 40; tries++) {
++    item = drawItem(section, rng, { family: family || pickFamily(rng, w), difficulty });
++    if (!excluded.has(questionKey(item))) break;
++  }
++  return item;
+ }
+ 
+ export function examScore(sectionId, scores) {
+diff --git a/src/core/migrate.js b/src/core/migrate.js
+index ae1ef92..65e5656 100644
+--- a/src/core/migrate.js
++++ b/src/core/migrate.js
+@@ -8,6 +8,7 @@ export const VERSION = 2;
+ export const blankV2 = () => ({
+   version: VERSION, runs: [], stats: {}, srs: {}, zapn: {}, settings: {}, sets: {}, calibration: [],
+   trend: {}, mastery: {}, activity: { days: {}, xpBase: 0, freezes: 0, frozen: [] }, mistakes: [],
++  recentQuestions: {}, practiceRuleVersion: 1,
+ });
+ 
+ // The exam formats v1 runs were taken under, so readiness can tell a 60 s run from a 45 s one.
+@@ -62,7 +63,17 @@ function shapeOk(raw) {
+ // → { state, from } or null when the input is not a known save.
+ export function migrate(raw, now = Date.now()) {
+   if (kind(raw) !== 'object' || !Array.isArray(raw.runs) || !shapeOk(raw)) return null;
+-  if (raw.version === VERSION) return { state: { ...blankV2(), ...raw }, from: VERSION };
++  if (raw.version === VERSION) {
++    const state = { ...blankV2(), ...raw };
++    if (raw.practiceRuleVersion !== 1) {
++      // Old interval mastery did not require useful scores. Keep answers, exams,
++      // lessons and XP; ask for new evidence only for these skill levels.
++      state.mastery = Object.fromEntries(Object.entries(state.mastery).map(([key, m]) =>
++        [key, key.startsWith('iv:') ? { ...m, lv: 0, run: 0, prun: 0 } : m]));
++      state.practiceRuleVersion = 1;
++    }
++    return { state, from: VERSION };
++  }
+   if (raw.version === 1) return { state: fromV1(raw, now), from: 1 };
+   return null;
+ }
+diff --git a/src/core/questions.js b/src/core/questions.js
+new file mode 100644
+index 0000000..2a73305
+--- /dev/null
++++ b/src/core/questions.js
+@@ -0,0 +1,16 @@
++// Fingerprint visible question content, excluding answers, IDs and solution text.
++// Two independent 32-bit hashes keep a bounded history small. Ranking statement
++// order is ignored: shuffling an old question does not make it new.
++export const QUESTION_HISTORY_LIMIT = 8000;
++
++export function questionKey(item) {
++  const content = JSON.stringify([item.section, item.prompt,
++    item.statements?.map((s) => s.text).sort(), item.board]);
++  let a = 2166136261, b = 5381;
++  for (let i = 0; i < content.length; i++) {
++    const c = content.charCodeAt(i);
++    a = Math.imul(a ^ c, 16777619);
++    b = Math.imul(b, 33) ^ c;
++  }
++  return `${(a >>> 0).toString(16)}:${(b >>> 0).toString(16)}`;
++}
+diff --git a/src/core/readiness.js b/src/core/readiness.js
+index b4af121..5a85f73 100644
+--- a/src/core/readiness.js
++++ b/src/core/readiness.js
+@@ -1,4 +1,5 @@
+ // A section is "ready" when its last N exam runs all meet the target in config.
++import { timingAtLeastAsStrict } from '../../config/presets.js';
+ export function runMeetsTarget(run, target) {
+   switch (target.metric) {
+     case 'net': return run.score >= target.value;
+@@ -8,8 +9,9 @@ export function runMeetsTarget(run, target) {
+   }
+ }
+ 
+-export function readiness(examRuns, target, window = 3) {
+-  const recent = [...examRuns].sort((a, b) => a.finishedAt - b.finishedAt).slice(-window);
++export function readiness(examRuns, target, window = 3, exam) {
++  const recent = examRuns.filter((r) => (!exam || (r.freshnessChecked === true && timingAtLeastAsStrict(r, exam))) &&
++    !r.repeatCount).sort((a, b) => a.finishedAt - b.finishedAt).slice(-window);
+   let streak = 0;
+   for (let i = recent.length - 1; i >= 0 && runMeetsTarget(recent[i], target); i--) streak++;
+   return { ready: recent.length === window && streak === window, streak, needed: window };
+diff --git a/src/core/store.js b/src/core/store.js
+index 6e2ae17..c5698f0 100644
+--- a/src/core/store.js
++++ b/src/core/store.js
+@@ -6,6 +6,8 @@ import { trendStep } from './patterns.js';
+ import { levelStep, xpFor, MAX_FREEZES } from './progression.js';
+ import { upsertMistake } from './mistakes.js';
+ import { dayKey, streak, applyFreezes } from './activity.js';
++import { practiceSuccess } from './check.js';
++import { questionKey, QUESTION_HISTORY_LIMIT } from './questions.js';
+ 
+ export const KEY = 'optprep:v2';
+ export const LEGACY_KEY = 'oa-trainer:v1';
+@@ -84,10 +86,16 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
+     save,
+     // One answer from any mode. Updates stats, the recency trend, the skill level, XP and
+     // the mistake log, then saves once.
+-    recordAnswer(section, family, { correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss } = {}) {
++    recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss } = {}) {
+       const k = `${section}:${family}`;
+       const now = clock();
+       const s = state.stats[k] || { n: 0, correct: 0, ms: 0 };
++      if (section === 'iv' && Number.isFinite(score)) {
++        s.scoreN = (s.scoreN || 0) + 1;
++        s.scoreSum = (s.scoreSum || 0) + score;
++        s.covered = (s.covered || 0) + (covered ? 1 : 0);
++      }
++      correct = practiceSuccess(section, { correct, score });
+       s.n += 1; s.correct += correct ? 1 : 0; s.ms += ms;
+       state.stats[k] = s;
+       state.trend[k] = trendStep(state.trend[k], correct, now);
+@@ -130,6 +138,18 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
+     },
+     sets(section) { return state.sets?.[section] || {}; },
+     stats() { return state.stats; },
++    recentQuestionKeys(section) {
++      const entries = state.recentQuestions?.[section];
++      return new Set(Array.isArray(entries) ? entries.filter((x) => typeof x === 'string') : []);
++    },
++    rememberQuestion(item) {
++      const key = questionKey(item);
++      const entries = this.recentQuestionKeys(item.section);
++      entries.delete(key);
++      entries.add(key);
++      state.recentQuestions[item.section] = [...entries].slice(-QUESTION_HISTORY_LIMIT);
++      save();
++    },
+     trend() { return state.trend; },
+     mastery() { return state.mastery; },
+     mistakes() { return state.mistakes; },
+diff --git a/src/core/timer.js b/src/core/timer.js
+index abf5057..50b8883 100644
+--- a/src/core/timer.js
++++ b/src/core/timer.js
+@@ -1,4 +1,11 @@
+ // Countdown with an injectable clock so exam timing is testable.
++// Both clocks apply when a section has an overall deadline and an item deadline.
++export function examClockStatus(total, item) {
++  const remaining = Math.min(total?.remaining() ?? Infinity, item?.remaining() ?? Infinity);
++  return { remaining: Number.isFinite(remaining) ? remaining : 0,
++    expired: total?.expired() ? 'total' : item?.expired() ? 'item' : null };
++}
++
+ export function makeCountdown(ms, now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now())) {
+   let start = now();
+   let penalty = 0;
+diff --git a/src/sections/catalog.js b/src/sections/catalog.js
+index d1a152a..c6c6a1f 100644
+--- a/src/sections/catalog.js
++++ b/src/sections/catalog.js
+@@ -82,7 +82,7 @@ export const FAMILIES = {
+     {"id":"score-table","title":"Score tables","skill":"Count rows; a stricter condition (AND) can never beat a looser one (OR); conditionals change the denominator","levels":[2,3,4]},
+     {"id":"football","title":"Football results","skill":"Turn a results table into frequencies; team statements use only that team's matches as the denominator","levels":[2,3]},
+     {"id":"survey-bar","title":"Survey bar charts","skill":"Separate P(category), P(group and category), P(category | group) and P(group | category): same counts, different denominators","levels":[2,3,4]},
+-    {"id":"fund-returns","title":"Fund-return histories","skill":"Read frequencies off a bar chart; a volatile fund wins more extremes, a steady fund wins \"positive\" statements","levels":[2,3,4]},
++    {"id":"fund-returns","title":"Fund-return histories","skill":"Count the qualifying years in the stated scope; variance alone cannot determine an empirical frequency","levels":[2,3,4]},
+     {"id":"histogram-bins","title":"Histograms","skill":"Add the bars inside the range and divide by the total; a conditional range divides by the bars in the condition","levels":[2,3]},
+     {"id":"scatter-regions","title":"Scatter plots","skill":"Count points in a region; for \"given\" statements, count inside the conditioning strip only","levels":[2,3,4]},
+     {"id":"density-curves","title":"Density curves","skill":"Probability = area under the curve; compare areas by width × typical height, and use symmetry","levels":[2,3,4]},
+diff --git a/src/sections/ll/families/fund-returns.js b/src/sections/ll/families/fund-returns.js
+index 12ec475..8908bb1 100644
+--- a/src/sections/ll/families/fund-returns.js
++++ b/src/sections/ll/families/fund-returns.js
+@@ -20,7 +20,7 @@ export default {
+   id: ID,
+   section: 'll',
+   title: 'Fund-return histories',
+-  skill: 'Read frequencies off a bar chart; a volatile fund wins more extremes, a steady fund wins "positive" statements',
++  skill: 'Count the qualifying years in the stated scope; variance alone cannot determine an empirical frequency',
+   levels: [2, 3, 4],
+ 
+   generate(rng, { difficulty = 2 } = {}) {
+@@ -54,7 +54,7 @@ export default {
+         visual: { type: 'bar', xLabel: 'Year', yLabel: 'Return (%)', unit: '%', categories: years, series: [{ name: A, values: ra }, { name: B, values: rb }] },
+         statements,
+         intro: [{ say: 'Read each statement as a count of years (bars) out of the years in scope.', why: 'A randomly chosen year makes every year equally likely.' }],
+-        compare: `Order the counted fractions. Pattern check: the volatile fund (${B}) dominates statements about extremes; the steady fund (${A}) dominates "positive" statements.`,
++        compare: `Order the counted fractions for ${A} and ${B}. Positive-return and extreme-return rankings follow these observed years; a volatility label alone cannot settle them.`,
+         rule: 'Frequency = qualifying years / years in scope. Persistence statements use only years after a positive year.',
+         anchor: 'Counting table rows, where each year is a row and the bars are the entries.',
+         hints: ['Which bars does each statement look at?', 'For the "given" statement, list the years that follow a positive year first.', 'Compare fractions, not counts.'],
+@@ -83,16 +83,16 @@ export default {
+   },
+ 
+   lesson: {
+-    purpose: 'Fund-return charts are a reported Likelihood List scenario. They test reading frequencies from bars and the intuition that volatility wins extremes while steadiness wins "positive" events.',
++    purpose: 'Fund-return charts test reading frequencies from bars, with the correct scope for each statement. Volatility alone does not determine which fund is positive more often.',
+     anchor: 'Counting rows of a table, drawn as bars: each year is one equally likely outcome.',
+     steps: [
+       { say: 'Name the scope: all years, or years after a positive year.', why: 'Conditional statements change the denominator.' },
+       { say: 'Count qualifying bars; compare fractions.', why: 'Every year is equally likely.' },
+-      { say: 'Use the pattern to sanity-check: high variance → more very high and very low years.', why: 'Variance spreads outcomes to both tails.' },
++      { say: 'Compare the observed counts, including for positive or extreme returns.', why: 'Means, thresholds and the observed sample all matter; variance alone does not order event probabilities.' },
+     ],
+     predict: { question: 'A steady fund (always 2-8%) and a volatile fund (−20% to +30%): which is more likely to be positive in a random year? To exceed 15%?', answer: 'Positive: the steady fund. Above 15%: the volatile fund.' },
+     edge: 'If a fund was never positive, "given positive the year before" is undefined; items here always have such years.',
+-    rule: 'Count bars in scope. Variance wins tails; a positive mean with low variance wins "positive".',
++    rule: 'Count qualifying bars in scope. Compare conditional fractions with their own denominators. Check the data rather than inferring the answer from volatility.',
+     contrast: 'Unconditional frequency (all years) against persistence (only years after a positive year).',
+   },
+ };
+diff --git a/src/sections/ll/families/markov-graph.js b/src/sections/ll/families/markov-graph.js
+index b45471e..293db50 100644
+--- a/src/sections/ll/families/markov-graph.js
++++ b/src/sections/ll/families/markov-graph.js
+@@ -77,27 +77,30 @@ export default {
+           params: { matrix: ch.P.map((r) => r.map((x) => x.toString())), start: s0, steps: 2, targets: pick, mode: 'nstep' },
+         });
+       }
+-      const trap = difficulty === 5;
++      // Mix general chains with the arrow-count counterexample at level 5.
++      // Even an inverse-arrow-count rule must not solve every hard question.
++      const trap = difficulty === 5 && rng.chance(0.5);
+       const tc = trap ? trapChain(rng) : null;
+       if (trap) { ch.P = tc.P; ch.edges = tc.edges; visual.nodes = LAYOUT[4].map(([x, y], i) => ({ id: LABELS[i], x, y })); visual.edges = tc.edges; }
+       const nn = ch.P.length;
+       const pi = stationary(ch.P);
+       const indeg = [...Array(nn).keys()].map((j) => ch.edges.filter((e) => e.to === LABELS[j] && e.from !== e.to).length);
+-      // Trap: display H, M, L (most incoming arrows first); the long-run order must be the exact reverse.
+-      const pick = trap ? tc.roles : rng.shuffle([...Array(nn).keys()]).slice(0, 3);
++      // Keep the arrow-count misconception, but randomise statement order so a
++      // memorised "reverse the list" shortcut cannot solve every level-5 item.
+       if (trap) {
+-        const p = pick.map((j) => pi[j].toNumber());
++        const p = tc.roles.map((j) => pi[j].toNumber());
+         if (!(p[0] < p[1] && p[1] < p[2])) return null;
+       }
++      const pick = trap ? rng.shuffle(tc.roles) : rng.shuffle([...Array(nn).keys()]).slice(0, 3);
+       return rankItem(ID, rng, difficulty, {
+-        text: `A signal moves between the nodes each second, following an outgoing arrow with the probability shown. After running for a very long time, it is observed at a random moment.${trap ? ' The statements are listed by how many arrows point into each node.' : ''} Rank the statements from most to least likely.`,
++        text: 'A signal moves between the nodes each second, following an outgoing arrow with the probability shown. After running for a very long time, it is observed at a random moment. Rank the statements from most to least likely.',
+         visual,
+         statements: pick.map((j) => ({ text: `The signal is at ${LABELS[j]}${trap ? ` (${indeg[j]} incoming arrow${indeg[j] === 1 ? '' : 's'})` : ''}.`, p: pi[j], how: `Long-run fraction of time at ${LABELS[j]} from the balance equations π = πP.` })),
+         intro: [
+           { say: 'Solve the balance equations: for each node, long-run flow in = long-run flow out.', why: 'In the long run, the probability of being at each node stops changing: π = πP with Σπ = 1.' },
+           ...(trap ? [{ say: 'Ignore how many arrows point in; what matters is how much probability flows along them.', why: 'Many low-probability arrows can carry less flow than one arrow of probability 1.' }] : []),
+         ],
+-        compare: trap ? 'The long-run order is the exact reverse of the arrow-count order shown.' : 'Order the stationary probabilities.',
++        compare: 'Order the stationary probabilities. Incoming-arrow counts alone do not determine the ranking.',
+         rule: 'Long-run frequency = stationary π with π = πP, Σπ = 1. Count probability flow, not arrows.',
+         anchor: 'Flow balance (what comes in must go out), applied to probability moving between nodes.',
+         hints: ['In the long run, the chance of being at each node is constant. Write that as flow in = flow out.', 'Solve for the ratios between nodes, then normalise.', trap ? 'Do not trust the number of incoming arrows.' : 'Compare the three stationary probabilities.'],
+@@ -127,9 +130,7 @@ export default {
+       }
+       ps = d.targets.map((j) => v[j]);
+     }
+-    const r = agreeRank(item, ps, 1e-7);
+-    if (r.ok && d.mode === 'trap') r.ok = JSON.stringify(item.answerOrder) === '[2,1,0]';
+-    return r;
++    return agreeRank(item, ps, 1e-7);
+   },
+ 
+   lesson: {
+diff --git a/src/study/content/ll/fund-returns.js b/src/study/content/ll/fund-returns.js
+index ab804df..450b369 100644
+--- a/src/study/content/ll/fund-returns.js
++++ b/src/study/content/ll/fund-returns.js
+@@ -1,6 +1,6 @@
+ // Likelihood List family: fund-return bar charts. Each year is one equally likely outcome; a
+ // statement counts bars. Thresholds, head-to-head years, "both lost", and persistence (years after a
+-// positive year) are all counts over a named scope. Volatility wins tails, steadiness wins "positive".
++// positive year) are all counts over a named scope. Count the actual sample; variance alone does not order these probabilities.
+ import { S, LL, dp, mc, rank, again } from './compare-without-computing.js';
+ 
+ const neg = (v) => (v < 0 ? `−${-v}` : String(v));
+@@ -54,7 +54,7 @@ export default {
+   objectives: [
+     'Turn threshold, head-to-head and "both lost" statements into counts of years',
+     'Find the scope of a persistence statement (years that follow a positive year) and divide by it',
+-    'Predict from the chart\'s shape which fund wins statements about extremes and which wins "positive"',
++    'Check positive and extreme events against the actual qualifying years rather than inferring them from a volatility label',
+     'Order the three statements with at most one close comparison',
+   ],
+   blocks: [
+@@ -63,7 +63,7 @@ export default {
+       attempts: [
+         { id: 'eyeball', label: 'Judge the bars by eye', approach: 'You ordered the statements from the look of the chart without counting years.', breaksAt: 'Each year is one equally likely outcome: count the bars past the line, one year at a time.' },
+         { id: 'average', label: 'Compare the averages', approach: `You ranked (c) from which fund has the higher average return.`, breaksAt: '"Beat" is decided year by year: compare the two bars of each year, not the averages.' },
+-        { id: 'risky', label: 'Volatile means less likely', approach: `You put every ${B.name} statement low because ${B.name} is the risky fund.`, breaksAt: `Spread fattens both tails: ${B.name} wins statements about extremes, ${A.name} wins "positive".` },
++        { id: 'risky', label: 'Volatile means less likely', approach: `You put every ${B.name} statement low because ${B.name} is the risky fund.`, breaksAt: `Use the displayed counts: neither a risk label nor a mean alone decides these frequencies.` },
+       ] },
+     { type: 'text', text: 'The prompt is a **bar chart of yearly returns** for two funds, one pair of bars per year. A year is picked at random (for "given" statements, from the years that qualify). Statements: a fund was positive, returned more or less than v%, one fund beat the other, both lost money, or a fund was positive **given** it was positive the year before.' },
+     { type: 'check', scope: 'who is picked from', questions: [
+@@ -75,7 +75,7 @@ export default {
+     ] },
+ 
+     S('why'),
+-    { type: 'text', text: 'Fund charts are a reported Likelihood List scenario. They test two things: reading a frequency off bars without losing a year, and the intuition that **volatility wins extremes while steadiness wins "positive"**. The persistence statement adds a denominator trap: its scope is not all years. Both skills transfer straight to risk questions on a trading desk.' },
++    { type: 'text', text: 'Fund charts are a reported Likelihood List scenario. They test two things: reading a frequency off bars without losing a year, and checking event frequencies against the actual data rather than a volatility stereotype. The persistence statement adds a denominator trap: its scope is not all years. Both skills transfer straight to risk questions on a trading desk.' },
+ 
+     S('anchor'),
+     { type: 'text', text: 'You know how to count rows of a table in scope. The one change: each row is a **year**, drawn as a pair of bars. "In a random year, X happened" is (years where X happened) / (years in scope). The chart hides the table, so the only new skill is reading it without losing a year: go left to right and tick.' },
+@@ -120,14 +120,14 @@ export default {
+     { type: 'worked', section: 'll', family: 'fund-returns', difficulty: 4, seed: 'b', fade: 1, intro: 'A persistence or "both lost" statement is mixed in. The counts are given; the ordering is yours.' },
+ 
+     S('predict'),
+-    { type: 'predict', question: 'A steady fund always returns 2% to 8%; a volatile one ranges from −20% to +30%. Which is more likely to be positive in a random year? Which is more likely to exceed 15%?', answer: 'Positive: the steady fund (always). Above 15%: the volatile fund (the steady one never gets there).', explain: 'Spread wins the tails; a positive centre with low spread wins "positive".' },
++    { type: 'predict', question: 'A steady fund always returns 2% to 8%; a volatile one ranges from −20% to +30%. Which is more likely to be positive in a random year? Which is more likely to exceed 15%?', answer: 'Positive: the steady fund (always). Above 15%: the volatile fund (the steady one never gets there).', explain: 'For these stated ranges, compare which outcomes are possible. This conclusion does not follow from volatility alone.' },
+ 
+     S('traps'),
+     { type: 'text', text: 'The traps split into two kinds. Counting slips: a boundary year at exactly the threshold, a year dropped while scanning. Scope slips: the persistence statement divided by every year. The first kind is fixed by counting the short side, the second by writing the scope down before counting.' },
+     { type: 'traps', section: 'll', family: 'fund-returns', extra: [
+       { belief: 'The persistence statement divides by all years.', fix: 'Only years whose previous year was positive are in scope; the first year never is.' },
+       { belief: '"B beat A" is likely because B has the higher average.', fix: 'It is a year-by-year comparison; a volatile fund with a higher average can still lose most head-to-heads.' },
+-      { belief: 'The volatile fund is always the riskier bet for every statement.', fix: 'It wins statements about extremes (both big gains and big losses); the steady fund wins "positive".' },
++      { belief: 'The volatile fund is always the riskier bet for every statement.', fix: 'Either fund can rank higher for a specified event. Count the relevant years and use the correct denominator.' },
+       { belief: '"More than 10%" includes a 10% year.', fix: 'Strict: a year at exactly 10% does not count.' },
+     ] },
+     { type: 'erroneous', problem: `A candidate works out P(${A.name} positive | positive the year before) from the chart. One step is wrong.`, steps: [
+@@ -143,7 +143,7 @@ export default {
+     S('speed'),
+     { type: 'callout', tone: 'speed', text: 'Use the shape before counting. If one statement is about an extreme and another about being positive, the volatile and steady funds usually take one each, and a quick count only confirms it.' },
+     { type: 'check', scope: 'shape before counting', questions: [
+-      { type: 'choice', q: '"Above +15%" and "positive": which fund usually wins each?', options: ['volatile for the extreme, steady for positive', 'steady for the extreme, volatile for positive', 'steady for both, since it never loses much'], answer: 0, traps: { 1: 'the steady fund rarely reaches an extreme year', 2: 'a steady fund misses the big years' }, explain: 'Big swings reach the extremes; small steady returns are positive more often.' },
++      { type: 'choice', q: 'In the typical return profiles shown above, which fund wins "above +15%" and "positive"?', options: ['volatile for the extreme, steady for positive', 'steady for the extreme, volatile for positive', 'steady for both, since it never loses much'], answer: 0, traps: { 1: 'the steady fund rarely reaches an extreme year', 2: 'a steady fund misses the big years' }, explain: 'Big swings reach the extremes; small steady returns are positive more often.' },
+     ] },
+     { type: 'callout', tone: 'speed', text: 'Count the short side: "positive in 8 of 10 years" is faster as "lost in 2". For "beat", scan for the years where the steady fund wins; there are usually few.' },
+     { type: 'check', scope: 'counting the short side', questions: [
+@@ -168,7 +168,7 @@ export default {
+     ] },
+ 
+     S('rule'),
+-    { type: 'callout', tone: 'rule', text: 'Fund chart → years in scope; count bars past the line (strict inequalities); "beat" = year-by-year; persistence divides by years after a positive year. Spread wins extremes, steadiness wins "positive".' },
++    { type: 'callout', tone: 'rule', text: 'Fund chart → years in scope; count bars past the line (strict inequalities); "beat" = year-by-year; persistence divides by years after a positive year. Check every event against the observed sample; variance alone does not establish its ranking.' },
+ 
+     S('contrast'),
+     { type: 'compare', columns: ['Statement', 'Which years count', 'Scope'], rows: [
+diff --git a/src/ui/pages/about.js b/src/ui/pages/about.js
+index b30e868..93117ef 100644
+--- a/src/ui/pages/about.js
++++ b/src/ui/pages/about.js
+@@ -13,8 +13,8 @@ export function aboutPage(root) {
+       h('p', {}, 'OptPrep is an independent personal project. It is not affiliated with, endorsed by, sponsored by or connected to Optiver or any company in the Optiver group, and Optiver has not reviewed it. "Optiver" is a trademark of its owner and appears only to say which assessment OptPrep helps you practise for.'),
+       h('p', {}, 'OptPrep contains no Optiver test content. Every question is generated or written from scratch. Formats come from what candidates have reported in public and can be out of date.')),
+     h('section', { class: 'field' },
+-      h('h2', { class: 'field-label' }, 'No guarantee'),
+-      h('p', {}, 'OptPrep cannot guarantee that you pass any assessment or receive any offer. Optiver publishes no pass marks; "Ready" means your recent exam replicas met OptPrep\'s own bar. The software is free under the MIT license and comes as is, without warranty.')),
++      h('h2', { class: 'field-label' }, 'Practice targets'),
++      h('p', {}, 'This Kickstarter fixes edition builds on Coflazo’s OptPrep. Practice targets measure performance on this question bank, with its configured clocks. Question counts, difficulty and scoring have not been calibrated against Optiver outcomes. The 25-minute BTO cap follows the 2027 invitation; other format details remain reported practice assumptions.')),
+     h('section', { class: 'field' },
+       h('h2', { class: 'field-label' }, 'Privacy'),
+       h('p', {}, 'Your progress stays in this browser on this device. OptPrep has no accounts, cookies, analytics, ads or third-party scripts, and nobody behind OptPrep ever receives your data. If you turn on GitHub sync in Settings, your progress goes to a secret gist in your own GitHub account, encrypted if you set a passphrase.')),
+diff --git a/src/ui/pages/format.js b/src/ui/pages/format.js
+index c95aafd..d02ef2e 100644
+--- a/src/ui/pages/format.js
++++ b/src/ui/pages/format.js
+@@ -1,7 +1,8 @@
+ // One-line description of an exam replica's format.
+ export function formatLine(cfg) {
+   const e = cfg.exam;
+-  const time = e.perItemSeconds ? `${e.perItemSeconds} s each` : `${Math.round(e.totalSeconds / 60)} min total`;
++  const time = [e.perItemSeconds ? `${e.perItemSeconds} s each` : null,
++    e.totalSeconds ? `${Math.round(e.totalSeconds / 60)} min total` : null].filter(Boolean).join(', ');
+   const scoring = { plusMinus: e.allowSkip === false ? '+1 / −1, no skipping' : '+1 / −1 / skip 0', exactOrder: '1 point per exact order', ratio: 'lower ÷ upper if inside', solved: 'boards solved; wrong submit costs time' }[e.scoring];
+   return `${e.count} questions, ${time}, ${scoring}`;
+ }
+diff --git a/src/ui/pages/mock.js b/src/ui/pages/mock.js
+index df6665a..ead1351 100644
+--- a/src/ui/pages/mock.js
++++ b/src/ui/pages/mock.js
+@@ -1,5 +1,6 @@
+ import { h, mount } from '../dom.js';
+-import { SECTIONS, PORTAL_ORDER } from '../../../config/sections.js';
++import { SECTIONS } from '../../../config/sections.js';
++import { activePreset, presetSections } from '../../../config/presets.js';
+ import { SECTION_MODULES } from '../../sections/index.js';
+ import { runExam } from '../runner.js';
+ import { formatLine } from './format.js';
+@@ -7,7 +8,7 @@ import { formatLine } from './format.js';
+ // Full mock: the scored sections in portal order, each on its own clock,
+ // with a pause screen between them (the real tasks are separate portal items).
+ export function mockPage(root, { store }) {
+-  const order = PORTAL_ORDER.filter((id) => id !== 'zapn' && SECTION_MODULES[id].families.length);
++  const order = presetSections(activePreset()).filter((id) => id !== 'zapn' && SECTION_MODULES[id]?.families.length);
+   const results = [];
+   let stop = null;
+   const seed = Date.now();
+@@ -15,7 +16,7 @@ export function mockPage(root, { store }) {
+   function intro() {
+     mount(root,
+       h('h1', {}, 'Full mock'),
+-      h('p', { class: 'muted' }, 'The scored sections back to back, in portal order, each on its own clock. Results count toward readiness like any full exam. Zap-N runs from its own page.'),
++      h('p', { class: 'muted' }, 'The scored sections back to back, in portal order, each on its own clock. Fresh full sections count toward the practice target; repeated questions are review practice. Zap-N runs from its own page.'),
+       h('div', { class: 'panel' }, h('table', {}, h('tbody', {}, order.map((id, i) => h('tr', {}, h('td', { class: 'num' }, String(i + 1)), h('td', {}, SECTIONS[id].title), h('td', { class: 'muted' }, formatLine(SECTIONS[id])))))),
+         h('div', { class: 'row', style: { marginTop: '16px' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => next(0) }, 'Start the mock'))));
+   }
+diff --git a/src/ui/pages/path.js b/src/ui/pages/path.js
+index 38ef3a9..ccf8fcd 100644
+--- a/src/ui/pages/path.js
++++ b/src/ui/pages/path.js
+@@ -6,7 +6,6 @@ import { PRESETS, activatePreset, activePreset, presetSections } from '../../../
+ import { FAMILIES, GAMES } from '../../sections/catalog.js';
+ import { roadmap, nextStep } from '../../core/path.js';
+ import { readiness } from '../../core/readiness.js';
+-import { timingAtLeastAsStrict } from '../../../config/presets.js';
+ import { bubbles, field, choice, setRail } from '../sheet.js';
+ import { icon } from '../icons.js';
+ import { sectionMap } from './section-map.js';
+@@ -30,11 +29,10 @@ function taskRow(store, id, map) {
+       h('span', { class: 'task-progress num' }, `${played} of ${games.length} played`)));
+   }
+   const cfg = SECTIONS[id];
+-  const runs = store.runs(id, 'exam').filter((r) => timingAtLeastAsStrict(r, cfg.exam));
+-  const ready = readiness(runs, cfg.target).ready;
++  const ready = readiness(store.runs(id, 'exam'), cfg.target, 3, cfg.exam).ready;
+   return h('li', {}, h('a', { class: 'task-row', href: `#/s/${id}` },
+     h('span', { class: 'task-name' }, cfg.title),
+-    ready ? h('span', { class: 'stamp stamp-mastered' }, 'Ready') : null,
++    ready ? h('span', { class: 'stamp stamp-mastered' }, 'Practice target met') : null,
+     h('span', { class: 'task-progress num' }, `${map.skillsDone} of ${map.skillsTotal} skills`),
+     map.due ? h('span', { class: 'stamp stamp-needs-review' }, `${map.due} to review`) : null));
+ }
+diff --git a/src/ui/pages/progress.js b/src/ui/pages/progress.js
+index f9f1885..35e9f36 100644
+--- a/src/ui/pages/progress.js
++++ b/src/ui/pages/progress.js
+@@ -79,12 +79,22 @@ function paceTab(store) {
+         h('span', { class: `minutes-bar${mins[i] >= store.goalMin() ? ' is-met' : ''}`, style: { '--h': (mins[i] / peak).toFixed(3) } }),
+         h('span', { class: 'minutes-day num' }, d.slice(8)))),
+       h('span', { class: 'goal-line', style: { '--h': (store.goalMin() / peak).toFixed(3) } }, h('span', {}, `goal ${store.goalMin()} min`))),
+-    h('h3', {}, 'Accuracy and pace by task'),
++    h('h3', {}, 'Practice success and pace by task'),
+     Object.keys(bySec).length ? h('table', { class: 'data' },
+-      h('thead', {}, h('tr', {}, h('th', {}, 'Task'), h('th', { class: 'r' }, 'Answered'), h('th', { class: 'r' }, 'Right'), h('th', { class: 'r' }, 'Average time'))),
++      h('thead', {}, h('tr', {}, h('th', {}, 'Task'), h('th', { class: 'r' }, 'Answered'), h('th', { class: 'r' }, 'Success'), h('th', { class: 'r' }, 'Average time'))),
+       h('tbody', {}, Object.entries(bySec).map(([sid, b]) => h('tr', {},
+         h('td', {}, secTitle(sid)), h('td', { class: 'r num' }, String(b.n)), h('td', { class: 'r num' }, pct(b.c / b.n)), h('td', { class: 'r num' }, b.ms ? `${(b.ms / b.n / 1000).toFixed(1)} s` : '-')))))
+-      : h('p', { class: 'empty' }, 'Answer a few questions and your accuracy and pace show up here.'));
++      : h('p', { class: 'empty' }, 'Answer a few questions and your accuracy and pace show up here.'),
++    ...(() => {
++      const rows = Object.entries(stats).filter(([key, s]) => key.startsWith('iv:') && s.scoreN > 0);
++      const n = rows.reduce((sum, [, s]) => sum + s.scoreN, 0);
++      if (!n) return [];
++      const total = rows.reduce((sum, [, s]) => sum + s.scoreSum, 0);
++      const covered = rows.reduce((sum, [, s]) => sum + s.covered, 0);
++      return [h('h3', {}, 'Intervals: coverage and score'),
++        h('p', { class: 'num' }, `${n} scored answers · coverage ${pct(covered / n)} · mean score ${(total / n).toFixed(3)}`),
++        h('p', { class: 'small-note muted' }, 'These metrics start with scored answers in this edition. Success means meeting the 0.70 practice goal; a wide interval can cover the truth while earning a low score.')];
++    })());
+ }
+ 
+ const TABS = [['patterns', 'Weak patterns', patternsTab], ['mistakes', 'Wrong answers', mistakesTab], ['pace', 'Pace', paceTab]];
+diff --git a/src/ui/pages/section-map.js b/src/ui/pages/section-map.js
+index 74e76b8..068aed7 100644
+--- a/src/ui/pages/section-map.js
++++ b/src/ui/pages/section-map.js
+@@ -15,7 +15,7 @@ function checkpoints(store, id) {
+   return [
+     { id: 'drill', title: 'Drill: 10 questions on the clock', href: `#/run/${id}/drill`, passed: drills.some((r) => r.max && r.score / r.max >= 0.7) },
+     { id: 'set', title: 'Timed set from the library', href: `#/s/${id}/sets`, passed: sets.some((s) => s.mode === 'timed') },
+-    { id: 'exam', title: `Exam replica: ${formatLine(cfg)}`, href: `#/run/${id}/exam`, passed: readiness(store.runs(id, 'exam'), cfg.target).ready },
++    { id: 'exam', title: `Timed practice: ${formatLine(cfg)}`, href: `#/run/${id}/exam`, passed: readiness(store.runs(id, 'exam'), cfg.target, 3, cfg.exam).ready },
+   ];
+ }
+ 
+diff --git a/src/ui/pages/section.js b/src/ui/pages/section.js
+index e6ebde4..7f899d6 100644
+--- a/src/ui/pages/section.js
++++ b/src/ui/pages/section.js
+@@ -3,7 +3,7 @@
+ // single current row. The exam format and question library sit in the header field.
+ import { h, mount } from '../dom.js';
+ import { SECTIONS } from '../../../config/sections.js';
+-import { REPORTED, SOURCES } from '../../../config/presets.js';
++import { REPORTED, SOURCES, activePreset } from '../../../config/presets.js';
+ import { SECTION_MODULES } from '../../sections/index.js';
+ import { srsDue } from '../../core/srs.js';
+ import { buildLibrary, librarySets, setCount } from '../../core/library.js';
+@@ -55,7 +55,9 @@ export function sectionPage(root, { store, id }) {
+       h('p', { class: 'num-ish' }, formatLine(cfg)),
+       h('div', { class: 'row' },
+         h('a', { class: 'btn primary', href: `#/run/${id}/practice` }, 'Practise'),
+-        h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Exam replica')),
++        h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Timed practice')),
++      activePreset().note ? h('p', { class: 'small-note muted' }, activePreset().note) : null,
++      id === 'iv' ? h('p', { class: 'small-note muted' }, 'Skill progress requires a score of at least 0.70 on fresh, unhinted answers. This is a practice goal. Coverage and mean score are tracked separately under Progress → Pace.') : null,
+       h('p', { class: 'quiet-links small-note' },
+         due ? [h('a', { href: `#/run/${id}/mistakes` }, `Review ${due} due`), ' '] : null,
+         cfg.variants.map((v, i) => [h('a', { href: `#/run/${id}/exam/v${i}` }, `Exam: ${v.label}`), ' ']),
+diff --git a/src/ui/runner.js b/src/ui/runner.js
+index 3a16ef2..de08b7b 100644
+--- a/src/ui/runner.js
++++ b/src/ui/runner.js
+@@ -10,11 +10,12 @@ import { rankView } from './kinds/rank.js';
+ import { intervalView } from './kinds/interval.js';
+ import { orderbookView } from './kinds/orderbook.js';
+ import { feedbackBanner, solutionPanel, hintLadder, intervalCoach } from './solution.js';
+-import { checkItem } from '../core/check.js';
++import { checkItem, practiceSuccess } from '../core/check.js';
++import { questionKey } from '../core/questions.js';
+ import { makeRng } from '../core/rng.js';
+ import { practiceItem, examItems, examScore, drawItem } from '../core/draw.js';
+ import { srsRecord, srsDue } from '../core/srs.js';
+-import { makeCountdown } from '../core/timer.js';
++import { makeCountdown, examClockStatus } from '../core/timer.js';
+ import { SECTIONS } from '../../config/sections.js';
+ import { SECTION_MODULES } from '../sections/index.js';
+ import { readiness, runMeetsTarget } from '../core/readiness.js';
+@@ -80,7 +81,8 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
+       if (!dueKeys.length) return null;
+       return drawItem(section, rng, { family: dueKeys[idx % dueKeys.length] });
+     }
+-    return practiceItem(section, rng, store.stats(), { family });
++    return practiceItem(section, rng, store.stats(), { family,
++      excludeKeys: store.recentQuestionKeys?.(sectionId) || [] });
+   }
+ 
+   function show() {
+@@ -88,7 +90,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
+     if (idx >= limit) return summary();
+     const item = nextItem();
+     if (!item) return summary();
+-    current = { item, start: performance.now(), hints: 0 };
++    const fresh = setNumber == null && !(store.recentQuestionKeys?.(sectionId)?.has(questionKey(item)));
++    current = { item, start: performance.now(), hints: 0, fresh };
++    store.rememberQuestion?.(item);
+     if (Number.isFinite(limit)) setRail(idx / limit, `Question ${idx + 1} of ${limit}`);
+     const submitBtn = h('button', { class: 'btn primary', type: 'button', onclick: () => submit() }, 'Submit');
+     const unsureBtn = CALIBRATED.has(sectionId) ? h('button', { class: 'btn ghost', type: 'button', onclick: () => submit({ confidence: 0.6 }) }, 'Submit, not sure') : null;
+@@ -100,6 +104,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
+     // The family name can give the method away (e.g. "cheap bundle: buy it, sell the parts"),
+     // so it is shown only after the answer is in, except when the learner chose the family.
+     const famLabel = h('span', {}, family || mode === 'learn' ? ` · ${familyTitle(section, item.family)}` : '');
++    if (!fresh && setNumber == null) famLabel.textContent += ' · Review question';
+     const head = h('div', { class: 'qhead' },
+       h('span', {}, `${title || cfg.title} · ${modeLabel(mode)}`, famLabel),
+       h('span', {}, Number.isFinite(limit) ? `${idx + 1} / ${limit}` : `#${idx + 1}`, mode === 'drill' ? ' · ' : '', mode === 'drill' ? t : '', paceEl ? ' · ' : '', paceEl));
+@@ -147,10 +152,10 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
+     const result = checkItem(item, response);
+     const ms = performance.now() - current.start;
+     const confidence = opts.confidence ?? (CALIBRATED.has(sectionId) && !response.skip ? 0.9 : undefined);
+-    const correctNoHelp = result.correct && current.hints === 0;
++    const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0;
+     store.recordAnswer(sectionId, item.family, {
+-      correct: correctNoHelp, ms, confidence: response.skip ? undefined : confidence, difficulty: item.difficulty, score: item.kind === 'interval' ? result.score : undefined,
+-      hints: current.hints, mode, fresh: setNumber == null, budgetMs: perItemMs(item),
++      correct: correctNoHelp, covered: result.correct, ms, confidence: response.skip ? undefined : confidence, difficulty: item.difficulty, score: item.kind === 'interval' ? result.score : undefined,
++      hints: current.hints, mode, fresh: current.fresh, budgetMs: perItemMs(item),
+       miss: !result.correct && !response.skip ? mistakeRow(item, response, { mode, ms: Math.round(ms) }) : undefined,
+     });
+     store.srs = srsRecord(store.srs, `${sectionId}:${item.family}`, correctNoHelp);
+@@ -262,7 +267,15 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+   const exam0 = { ...base.exam, ...(variant || {}) };
+   // Extra time (an accessibility setting) stretches the clock; such runs never count toward readiness.
+   const exam = extra > 1 ? { ...exam0, totalSeconds: exam0.totalSeconds && exam0.totalSeconds * extra, perItemSeconds: exam0.perItemSeconds && exam0.perItemSeconds * extra } : exam0;
+-  const items = fixedItems || examItems(section, { count: exam.count, ramp: sectionId === 'nl', bankRatio: 0.2 }, seed);
++  const priorQuestions = store.recentQuestionKeys?.(sectionId) || new Set();
++  const items = fixedItems || examItems(section, { count: exam.count, ramp: sectionId === 'nl', bankRatio: 0.2,
++    excludeKeys: priorQuestions }, seed);
++  const seenInRun = new Set(priorQuestions);
++  const repeatCount = items.reduce((n, item) => {
++    const key = questionKey(item), repeat = seenInRun.has(key);
++    seenInRun.add(key);
++    return n + Number(repeat);
++  }, 0);
+   const responses = items.map(() => null);
+   const obSolved = items.map(() => false);
+   let idx = 0;
+@@ -272,12 +285,15 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+   let perItem = null;
+   let current = null;
+   const t = timerEl();
++  const itemTimer = exam.totalSeconds && exam.perItemSeconds ? timerEl() : null;
++  const timerDisplay = itemTimer ? h('span', { class: 'num' }, 'Total ', t, ' · Question ', itemTimer) : t;
+   // autoAdvance (80-in-8): tapping an option is the answer and the next question appears; no Next
+   // button and no Enter. allowSkip false removes the Skip button. Both default to the old behaviour.
+   const canSkip = exam.allowSkip !== false;
+   const notation = notationOf(store);
+   const spent = items.map(() => 0); // ms on screen per question, summed over revisits
+-  const budgetMs = exam.perItemSeconds ? exam.perItemSeconds * 1000 : (exam.totalSeconds * 1000) / items.length;
++  const budgetMs = Math.min(exam.perItemSeconds || Infinity,
++    exam.totalSeconds ? exam.totalSeconds / items.length : Infinity) * 1000;
+   const leave = () => { if (current?.i != null) { spent[current.i] += performance.now() - current.t; current.i = null; } };
+ 
+   function show() {
+@@ -286,6 +302,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+     if (idx >= items.length) return exam.navigation === 'free' ? endScreen() : finish();
+     setRail(idx / items.length, `Question ${idx + 1} of ${items.length}`);
+     const item = items[idx];
++    store.rememberQuestion?.(item);
+     const tap = exam.autoAdvance && item.kind === 'mcq';
+     let live = false; // restoring a saved answer must not advance
+     const body = itemBody(item, { preview: false, notation, keys: keysOf(store), label: `Question ${idx + 1} of ${items.length}`, onChange: tap ? () => { if (live) { save(); idx++; show(); } } : undefined });
+@@ -308,7 +325,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+       h('span', { style: { flex: 1 } }),
+       h('button', { class: 'btn', type: 'button', onclick: () => { if (confirm('Finish the exam now? Unanswered questions score 0.')) { save(); finish(); } } }, 'Finish exam'));
+     mount(root, h('h1', { class: 'visually-hidden' }, `${base.title}: exam`), h('div', { class: 'panel exam' },
+-      h('div', { class: 'qhead' }, h('span', {}, `${base.title} · Exam${mock ? ' (mock)' : ''} · Question ${idx + 1} of ${items.length}`), t),
++      h('div', { class: 'qhead' }, h('span', {}, `${base.title} · Exam${mock ? ' (mock)' : ''} · Question ${idx + 1} of ${items.length}`), timerDisplay),
+       palette, body.el, note, controls));
+     focusIn(root, '.prompt');
+   }
+@@ -318,7 +335,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+     current = null;
+     const open = items.map((_, i) => i).filter((i) => !responses[i] || responses[i].skip);
+     mount(root, h('div', { class: 'panel exam' },
+-      h('div', { class: 'qhead' }, h('span', {}, `${base.title} · Exam · end of questions`), t),
++      h('div', { class: 'qhead' }, h('span', {}, `${base.title} · Exam · end of questions`), timerDisplay),
+       h('p', {}, open.length ? `${open.length} question(s) skipped or unanswered. Go back to any of them, or finish.` : 'Every question has an answer.'),
+       h('div', { class: 'palette' }, open.map((i) => h('button', { class: 'btn small', type: 'button', onclick: () => { idx = i; show(); } }, String(i + 1)))),
+       h('div', { class: 'row', style: { marginTop: '12px' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => finish() }, 'Finish exam'))));
+@@ -345,10 +362,11 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+ 
+   function tick() {
+     if (finished) return;
+-    const rem = total ? total.remaining() : perItem ? perItem.remaining() : 0;
+-    paintTimer(t, rem);
+-    if (total && total.expired()) { save(); const live = document.getElementById('live'); if (live) live.textContent = 'Time is up. Your exam is finished.'; return finish(); }
+-    if (!total && perItem && perItem.expired()) {
++    const clock = examClockStatus(total, perItem);
++    paintTimer(t, total ? total.remaining() : clock.remaining);
++    if (itemTimer) paintTimer(itemTimer, perItem?.remaining() || 0);
++    if (clock.expired === 'total') { save(); const live = document.getElementById('live'); if (live) live.textContent = 'Time is up. Your exam is finished.'; return finish(); }
++    if (clock.expired === 'item') {
+       // per-item clock ran out: keep whatever is on screen (rank order, a full interval), else skip
+       const r = current.body.view.response();
+       responses[idx] = r || { skip: true };
+@@ -385,24 +403,24 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+           mode: 'exam', fresh: setNumber == null, budgetMs,
+           miss: !results[i].correct && it.kind !== 'orderbook' ? mistakeRow(it, responses[i], { mode: 'exam', ms: Math.round(spent[i]) }) : undefined,
+         });
+-        store.srs = srsRecord(store.srs, `${sectionId}:${it.family}`, results[i].correct);
++        store.srs = srsRecord(store.srs, `${sectionId}:${it.family}`, practiceSuccess(sectionId, results[i]));
+       }
+     });
+-    const run = { section: sectionId, mode: 'exam', mock, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: items.map((it, i) => ({ family: it.family, score: results[i].score, ms: Math.round(spent[i]) })) };
++    const run = { section: sectionId, mode: 'exam', mock, repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: items.map((it, i) => ({ family: it.family, score: results[i].score, ms: Math.round(spent[i]) })) };
+     // Only fresh full-length replicas count toward readiness; numbered sets and
+     // short variants are practice (a set can be memorised on a second attempt).
+-    const official = !variant && setNumber == null && extra === 1;
++    const official = !variant && setNumber == null && extra === 1 && repeatCount === 0;
+     if (setNumber != null) store.recordSet(sectionId, setNumber, { score, max, mode: 'timed' });
+     else if (official) store.recordRun(run);
+     else store.recordRun({ ...run, mode: 'exam-variant' });
+     review(results, score, max, official);
+-    onDone?.({ score, max });
++    onDone?.({ score, max, repeatCount });
+   }
+ 
+   function review(results, score, max, official) {
+     const target = base.target;
+     const meets = runMeetsTarget({ score, max }, target);
+-    const ready = readiness(store.runs(sectionId, 'exam'), target);
++    const ready = readiness(store.runs(sectionId, 'exam'), target, 3, base.exam);
+     const rows = items.map((it, i) => {
+       const detail = h('tr', { hidden: true }, h('td', { colspan: 5 }, h('div', { class: 'review-item' }, itemBody(it, { preview: false, notation }).el, feedbackBanner(it, results[i], responses[i] || { skip: true }), solutionPanel(it, { stepwise: false }))));
+       const toggle = h('button', { class: 'linkish', type: 'button', 'aria-label': `Solution, question ${i + 1}`, 'aria-expanded': 'false', onclick: () => { detail.hidden = !detail.hidden; toggle.textContent = detail.hidden ? 'Solution' : 'Hide'; toggle.setAttribute('aria-expanded', String(!detail.hidden)); } }, 'Solution');
+@@ -424,7 +442,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+       h('div', { class: 'review-head' }, h('div', { class: 'review-title' },
+         h('h1', {}, `${base.title}: result`),
+         h('p', {}, h('span', { class: `badge ${meets ? 'ok' : 'no'}` }, meets ? 'Target met' : 'Below target'), ` Target: ${target.label}.`),
+-        setNumber != null ? h('p', { class: 'muted' }, `Set ${setNumber} is fixed practice: it does not count toward readiness. Fresh full exams do.`) : official ? h('p', { class: 'muted' }, ready.ready ? 'Ready: the last 3 exams all met the target. This section is safe to open.' : `Readiness streak ${ready.streak} of ${ready.needed}. The section turns ready after 3 exams in a row at target.`) : h('p', { class: 'muted' }, 'Short variant: good practice, but only the full-length exam counts toward readiness.')),
++        setNumber != null ? h('p', { class: 'muted' }, `Set ${setNumber} is fixed practice: it does not count toward the fresh-exam target.`) : repeatCount ? h('p', { class: 'muted' }, `${repeatCount} repeated question(s): this run is review practice and does not count toward the fresh-exam target.`) : official ? h('p', { class: 'muted' }, ready.ready ? 'Practice target met: the last 3 eligible exams met this trainer’s target. This is not a prediction of your Optiver result.' : `Practice target streak ${ready.streak} of ${ready.needed}. Three fresh exams under these clocks are required.`) : h('p', { class: 'muted' }, 'Modified or extra-time practice: only fresh, full-length exams under the current clocks count toward the practice target.')),
+         scoreBox),
+       h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, '#'), h('th', {}, 'Family'), h('th', {}, 'Result'), h('th', { style: { textAlign: 'right' } }, 'Points'), h('th', {}, h('span', { class: 'visually-hidden' }, 'Solution')))), h('tbody', {}, rows.flat())),
+       h('div', { class: 'row', style: { marginTop: '16px' } },
+@@ -441,15 +459,16 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
+   if (mock) begin();
+   else {
+     const tapAll = exam.autoAdvance && items.every((it) => it.kind === 'mcq');
+-    const time = exam.totalSeconds ? `${Math.round(exam.totalSeconds / 60 * 10) / 10} minutes for ${items.length} questions` : `${exam.perItemSeconds} seconds per question`;
++    const time = [exam.totalSeconds ? `${Math.round(exam.totalSeconds / 60 * 10) / 10} minutes overall` : null,
++      exam.perItemSeconds ? `${exam.perItemSeconds} seconds per question` : null].filter(Boolean).join('; ');
+     mount(root, h('section', { class: 'field exam-start' },
+-      h('h1', { tabindex: '-1' }, `${base.title}: exam replica`),
++      h('h1', { tabindex: '-1' }, `${base.title}: timed practice`),
+       h('ul', { class: 'steps-plain' },
+-        h('li', {}, time, extra > 1 ? ` (with your extra time ×${extra}; this run will not count toward Ready)` : '', '.'),
++        h('li', {}, time, extra > 1 ? ` (with your extra time ×${extra}; this run will not count toward the practice target)` : '', '.'),
+         tapAll ? h('li', {}, 'Tapping an option is your answer, and the next question appears. There is no going back.') : null,
+         !canSkip ? h('li', {}, 'You cannot skip. A wrong answer costs a point.') : null,
+         keysOf(store) && items.some((it) => it.kind === 'mcq') ? h('li', {}, 'Keys 1 to 4 (or A to D) pick an option.') : null),
+-      h('p', { class: 'muted small-note' }, 'This replica is timed because the real test is. For untimed questions, use ', h('a', { href: `#/run/${sectionId}/practice` }, 'Practice'), '.'),
++      h('p', { class: 'muted small-note' }, 'This practice uses the configured clocks. Counts and scoring are practice assumptions; follow your assessment instructions. For untimed questions, use ', h('a', { href: `#/run/${sectionId}/practice` }, 'Practice'), '.'),
+       h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: begin }, 'Start the clock'))));
+     focusIn(root, 'h1');
+   }
+diff --git a/sw.js b/sw.js
+index 4006e95..cf3c8da 100644
+--- a/sw.js
++++ b/sw.js
+@@ -4,7 +4,7 @@
+ // whose activate deletes every cache and calls self.registration.unregister(), and
+ // which has no fetch handler, installed clients recover on their next visit.
+ const BUILD = '__BUILD__';
+-const CACHE = `optprep-${BUILD.startsWith('__') ? 'dev' : BUILD}`;
++const CACHE = `optprep-${BUILD.startsWith('__') ? 'kickstarter-fixes-1' : BUILD}`;
+ // The Pages workflow fills FILES with every module and asset the app can load, so an installed
+ // copy works offline on every page, including the ones that load on demand.
+ const FILES = [/*FILES*/];
+diff --git a/tests/core/kickstarter-fixes.test.js b/tests/core/kickstarter-fixes.test.js
+new file mode 100644
+index 0000000..132b1a4
+--- /dev/null
++++ b/tests/core/kickstarter-fixes.test.js
+@@ -0,0 +1,120 @@
++import { test } from 'node:test';
++import assert from 'node:assert/strict';
++import { makeCountdown, examClockStatus } from '../../src/core/timer.js';
++import { checkItem } from '../../src/core/check.js';
++import { makeStore, memoryBackend } from '../../src/core/store.js';
++import { blankV2, migrate } from '../../src/core/migrate.js';
++import { makeRng } from '../../src/core/rng.js';
++import { questionKey } from '../../src/core/questions.js';
++import { examItems, practiceItem } from '../../src/core/draw.js';
++import { readiness } from '../../src/core/readiness.js';
++import { SECTIONS } from '../../config/sections.js';
++import { activatePreset, timingAtLeastAsStrict } from '../../config/presets.js';
++import { formatLine } from '../../src/ui/pages/format.js';
++import funds from '../../src/sections/ll/families/fund-returns.js';
++
++test('Kickstarter enforces an outer 25-minute BTO cap alongside the item clock', () => {
++  activatePreset({ id: 'kickstarter' });
++  assert.equal(SECTIONS.bto.exam.totalSeconds, 1500);
++  assert.equal(SECTIONS.bto.exam.perItemSeconds, 90);
++  const line = formatLine(SECTIONS.bto);
++  assert.ok(line.includes('90 s each') && line.includes('25 min total'));
++  let now = 0;
++  const total = makeCountdown(1500000, () => now);
++  let item = makeCountdown(90000, () => now);
++  now = 90000;
++  assert.equal(examClockStatus(total, item).expired, 'item');
++  item = makeCountdown(90000, () => now);
++  assert.equal(examClockStatus(total, item).expired, null);
++  now = 1499000;
++  item = makeCountdown(90000, () => now);
++  assert.equal(examClockStatus(total, item).remaining, 1000);
++  now = 1500000;
++  assert.equal(examClockStatus(total, item).expired, 'total');
++  activatePreset({ id: 'full' });
++});
++
++test('a 30-minute or unstamped BTO run cannot count under a 25-minute cap', () => {
++  const exam = { count: 20, perItemSeconds: 90, totalSeconds: 1500 };
++  const loose = { finishedAt: 1, score: 20, max: 20, timing: { count: 20, perItemSeconds: 90 } };
++  assert.equal(timingAtLeastAsStrict(loose, exam), false);
++  const good = { ...loose, timing: exam, freshnessChecked: true };
++  assert.equal(timingAtLeastAsStrict(good, exam), true);
++  assert.equal(readiness([loose, loose, loose], { metric: 'net', value: 12 }, 3, exam).ready, false);
++  assert.equal(readiness([good, good, good], { metric: 'net', value: 12 }, 3, exam).ready, true);
++  assert.equal(readiness([good, good, { ...good, repeatCount: 1 }], { metric: 'net', value: 12 }, 3, exam).ready, false);
++});
++
++test('wide covering intervals earn their score without claiming mastery', () => {
++  const store = makeStore(memoryBackend());
++  for (let i = 0; i < 15; i++) {
++    const result = checkItem({ kind: 'interval', truth: 30 + i }, { lower: 1, upper: 1000 });
++    assert.equal(result.score, 0.001);
++    assert.equal(result.correct, true, 'coverage is separate from training success');
++    store.recordAnswer('iv', 'dots-count', { ...result, ms: 5000, budgetMs: 45000 });
++  }
++  assert.equal(store.mastery()['iv:dots-count'].lv, 0);
++  const stats = store.stats()['iv:dots-count'];
++  assert.equal(stats.correct, 0);
++  assert.equal(stats.covered, 15);
++  assert.equal(stats.scoreN, 15);
++  assert.ok(Math.abs(stats.scoreSum / stats.scoreN - 0.001) < 1e-12);
++  for (let i = 0; i < 15; i++) store.recordAnswer('iv', 'dots-count', {
++    correct: true, score: 0.8, ms: 5000, budgetMs: 45000,
++  });
++  assert.equal(store.mastery()['iv:dots-count'].lv, 5);
++});
++
++test('old interval mastery is reassessed while answers, lessons, other mastery and XP survive', () => {
++  const old = blankV2();
++  delete old.practiceRuleVersion;
++  old.stats['iv:dots-count'] = { n: 15, correct: 15, ms: 75000 };
++  old.mastery = { 'iv:dots-count': { lv: 5, run: 0, prun: 0 }, 'bto:bayes': { lv: 4 } };
++  old.activity.xpBase = 150;
++  old.study = { lesson: { status: 'mastered' } };
++  const state = migrate(old).state;
++  assert.equal(state.mastery['iv:dots-count'].lv, 0);
++  assert.deepEqual(state.mastery['bto:bayes'], old.mastery['bto:bayes']);
++  assert.deepEqual(state.stats, old.stats);
++  assert.deepEqual(state.study, old.study);
++  assert.equal(state.activity.xpBase, 150);
++  assert.deepEqual(migrate(state).state, state, 'the reassessment runs only once');
++});
++
++const question = (text) => ({ section: 'bto', family: 'toy', difficulty: 1, prompt: { text } });
++const toy = { id: 'bto', bank: [question('bank')], families: [{ id: 'toy', levels: [1],
++  generate: (rng) => question(`new ${rng.int(0, 1e9)}`) }] };
++
++test('fresh exam and adaptive draws avoid questions actually seen in earlier sessions', () => {
++  const cfg = { count: 20, bankRatio: 0.2 };
++  const first = examItems(toy, cfg, 'seed');
++  const excluded = new Set(first.map(questionKey));
++  const second = examItems(toy, { ...cfg, excludeKeys: excluded }, 'seed');
++  assert.ok(second.every((q) => !excluded.has(questionKey(q))));
++  const seen = practiceItem(toy, makeRng('practice'), {});
++  const next = practiceItem(toy, makeRng('practice'), {}, { excludeKeys: [questionKey(seen)] });
++  assert.notEqual(questionKey(next), questionKey(seen));
++});
++
++test('visible question history persists and shuffling ranking answers does not make a question fresh', () => {
++  const backend = memoryBackend();
++  const store = makeStore(backend);
++  const q = { ...question('rank'), kind: 'rank', statements: [{ text: 'A', p: 0.2 }, { text: 'B', p: 0.8 }] };
++  store.rememberQuestion(q);
++  const back = makeStore(backend);
++  const shuffled = { ...q, statements: [...q.statements].reverse(), answerOrder: [1, 0] };
++  assert.equal(questionKey(q), questionKey(shuffled));
++  assert.ok(back.recentQuestionKeys('bto').has(questionKey(shuffled)));
++  const imported = makeStore(memoryBackend());
++  imported.importJSON(back.exportJSON());
++  assert.ok(imported.recentQuestionKeys('bto').has(questionKey(q)));
++});
++
++test('the fund explanation stays valid when the volatile fund is positive more often', () => {
++  const item = funds.generate(makeRng('independent-fund:52'), { difficulty: 2 });
++  const rates = item.params.returns.map((r) => r.filter((x) => x > 0).length / r.length);
++  assert.ok(rates[1] > rates[0], 'this reproduces the audited counterexample');
++  assert.ok(funds.verify(item).ok);
++  assert.ok(item.solution.steps.at(-1).why.includes('observed years'));
++  assert.ok(!item.solution.steps.at(-1).why.includes('dominates'));
++});
+diff --git a/tests/core/presets.test.js b/tests/core/presets.test.js
+index c4dcfc6..9df7514 100644
+--- a/tests/core/presets.test.js
++++ b/tests/core/presets.test.js
+@@ -4,6 +4,7 @@ import { SECTIONS } from '../../config/sections.js';
+ import { PRESETS, resolvePreset, applyPreset, activatePreset, activePreset, presetSections, timingOf, timingAtLeastAsStrict, ZAPN_ALL } from '../../config/presets.js';
+ 
+ test('applying a preset sets clocks; switching back restores the base format', () => {
++  activatePreset({ id: 'full' });
+   const ivBase = { ...SECTIONS.iv.exam };
+   activatePreset({ id: 'kickstarter' });
+   assert.equal(SECTIONS.iv.exam.perItemSeconds, 45);
+@@ -20,9 +21,9 @@ test('applying a preset sets clocks; switching back restores the base format', (
+   assert.equal(activePreset().id, 'full');
+ });
+ 
+-test('unknown or missing presets fall back to the full battery', () => {
+-  assert.equal(resolvePreset(null).id, 'full');
+-  assert.equal(resolvePreset({ id: 'nope' }).id, 'full');
++test('unknown or missing presets fall back to the Kickstarter battery', () => {
++  assert.equal(resolvePreset(null).id, 'kickstarter');
++  assert.equal(resolvePreset({ id: 'nope' }).id, 'kickstarter');
+ });
+ 
+ test('custom keeps only real sections and games', () => {
+@@ -47,5 +48,5 @@ test('readiness never counts a run under a looser clock', () => {
+   assert.equal(timingAtLeastAsStrict({ timing: timingOf(loose) }, strict), false);
+   assert.equal(timingAtLeastAsStrict({ timing: { count: 26, totalSeconds: 1500 } }, { count: 15, totalSeconds: 1500 }), true, '26 in 25 min is tighter per question than 15 in 25 min');
+   assert.equal(timingAtLeastAsStrict({ timing: { count: 10, totalSeconds: 1500 } }, { count: 15, totalSeconds: 1500 }), false, 'a shorter run is not evidence for a longer one');
+-  assert.equal(timingAtLeastAsStrict({}, strict), true, 'unstamped legacy runs count');
++  assert.equal(timingAtLeastAsStrict({}, strict), false, 'unstamped runs cannot prove that the current clocks were met');
+ });
+diff --git a/tests/sections/ll.test.js b/tests/sections/ll.test.js
+index 0ca16cd..492b722 100644
+--- a/tests/sections/ll.test.js
++++ b/tests/sections/ll.test.js
+@@ -34,17 +34,21 @@ test('ll: every item carries plain-JSON params naming its family; margins hold w
+   for (const it of section.bank) assert.deepEqual(JSON.parse(JSON.stringify(it.params)), it.params, `${it.id}: params not plain JSON`);
+ });
+ 
+-test('ll: the Markov trap lists nodes by incoming arrows and the true order is the exact reverse', () => {
++test('ll: hard Markov questions vary statement order and chain structure', () => {
+   const f = fam('markov-graph');
++  const orders = new Set(), modes = new Set();
+   for (let s = 0; s < 60; s++) {
+     const it = f.generate(makeRng(`trap:${s}`), { difficulty: 5 });
+-    assert.deepEqual(it.answerOrder, [2, 1, 0], `seed ${s}`);
++    orders.add(it.answerOrder.join(','));
++    modes.add(it.params.mode);
++    assert.ok(f.verify(it).ok, `seed ${s}: stationary probabilities must agree`);
+     const indeg = it.params.targets.map((j) => it.params.inDegree[j]);
+-    assert.ok(indeg[0] > indeg[1] && indeg[1] > indeg[2], `seed ${s}: in-degrees ${indeg}`);
+     // the displayed arrow counts match the rendered graph
+     const counts = it.params.targets.map((j) => it.prompt.visual.edges.filter((e) => e.to === it.prompt.visual.nodes[j].id && e.from !== e.to).length);
+     assert.deepEqual(counts, indeg);
+   }
++  assert.equal(orders.size, 6, 'all six answer orders appear');
++  assert.ok(modes.has('trap') && modes.has('stationary'), 'the inverse-arrow-count shortcut cannot solve every hard item');
+   const bankTrap = section.bank.find((it) => it.id === 'll-bank-markov-reversal');
+   assert.deepEqual(bankTrap.answerOrder, [2, 1, 0]);
+ });
+diff --git a/tools/ui-smoke.mjs b/tools/ui-smoke.mjs
+new file mode 100644
+index 0000000..7cd1f5c
+--- /dev/null
++++ b/tools/ui-smoke.mjs
+@@ -0,0 +1,87 @@
++// DOM integration checks. Optional development dependency: npm install --no-save jsdom
++// Then: node tools/ui-smoke.mjs. These execute the real views and event handlers;
++// they do not substitute for a visual browser/layout check.
++import assert from 'node:assert/strict';
++import { createRequire } from 'node:module';
++const require = createRequire(import.meta.url);
++const { JSDOM } = require(process.env.OPTPREP_TEST_JSDOM || 'jsdom');
++const dom = new JSDOM('<main id="view"></main><div id="live"></div>', { url: 'http://localhost/' });
++for (const name of ['window', 'document', 'Node', 'HTMLElement', 'Element', 'localStorage']) {
++  Object.defineProperty(globalThis, name, { value: dom.window[name], configurable: true });
++}
++globalThis.matchMedia = () => ({ matches: true });
++dom.window.matchMedia = globalThis.matchMedia;
++globalThis.confirm = () => true;
++let now = 0, nextFrame = 0;
++const frames = new Map();
++Object.defineProperty(globalThis, 'performance', { value: { now: () => now }, configurable: true });
++globalThis.requestAnimationFrame = (fn) => { frames.set(++nextFrame, fn); return nextFrame; };
++globalThis.cancelAnimationFrame = (id) => frames.delete(id);
++function advance(ms) {
++  now += ms;
++  const pending = [...frames.entries()];
++  frames.clear();
++  for (const [, fn] of pending) fn(now);
++}
++
++const { runExam, runFeedbackSession } = await import('../src/ui/runner.js');
++const { makeStore, memoryBackend } = await import('../src/core/store.js');
++const { activatePreset } = await import('../config/presets.js');
++const { mockPage } = await import('../src/ui/pages/mock.js');
++const { progressPage } = await import('../src/ui/pages/progress.js');
++const { examItems } = await import('../src/core/draw.js');
++const { SECTION_MODULES } = await import('../src/sections/index.js');
++const root = document.getElementById('view');
++const button = (text) => [...root.querySelectorAll('button')].find((b) => b.textContent === text);
++const store = makeStore(memoryBackend());
++store.setSetting('preset', { id: 'kickstarter' });
++activatePreset({ id: 'kickstarter' });
++
++let stop = runExam(root, { sectionId: 'bto', store, seed: 'ui-clock' });
++assert.match(root.textContent, /25 minutes overall; 90 seconds per question/);
++button('Start the clock').click();
++assert.match(root.querySelector('.qhead').textContent, /Question 1 of 20/);
++advance(91000);
++assert.match(root.querySelector('.qhead').textContent, /Question 2 of 20/);
++advance(1500000);
++assert.match(root.textContent, /Beat the Odds: result/);
++assert.equal(store.runs('bto', 'exam').length, 1);
++assert.equal(store.recentQuestionKeys('bto').size, 2, 'only displayed questions enter the history');
++stop();
++
++mockPage(root, { store });
++assert.equal(root.querySelectorAll('tbody tr').length, 5);
++assert.ok(!root.textContent.includes('80-in-8'));
++
++const interval = { section: 'iv', family: 'dots-count', kind: 'interval', difficulty: 1,
++  id: 'smoke-interval', prompt: { text: 'Estimate this count.' }, truth: 42,
++  solution: { steps: [{ say: 'Count', why: 'Count the objects', math: '42' }], rule: 'Count', anchor: 'Count' }, hints: [] };
++const intervalStore = makeStore(memoryBackend());
++stop = runFeedbackSession(root, { sectionId: 'iv', mode: 'practice', store: intervalStore, items: [interval] });
++const inputs = root.querySelectorAll('input');
++inputs[0].value = '1'; inputs[0].dispatchEvent(new dom.window.Event('input', { bubbles: true }));
++inputs[1].value = '1000'; inputs[1].dispatchEvent(new dom.window.Event('input', { bubbles: true }));
++advance(5000);
++button('Submit').click();
++const stats = intervalStore.stats()['iv:dots-count'];
++assert.equal(stats.correct, 0);
++assert.equal(stats.covered, 1);
++assert.equal(stats.scoreSum, .001);
++assert.equal(intervalStore.mastery()['iv:dots-count'].lv, 0);
++stop();
++progressPage(root, { store: intervalStore, tab: 'pace' });
++assert.match(root.textContent, /coverage 100%.*mean score 0\.001/);
++
++const repeatedStore = makeStore(memoryBackend());
++const items = examItems(SECTION_MODULES.bto, { count: 20 }, 'ui-repeats');
++items.forEach((it) => repeatedStore.rememberQuestion(it));
++stop = runExam(root, { sectionId: 'bto', store: repeatedStore, items });
++button('Start the clock').click();
++button('Finish exam').click();
++assert.match(root.textContent, /20 repeated question\(s\)/);
++assert.equal(repeatedStore.runs('bto', 'exam').length, 0);
++assert.equal(repeatedStore.runs('bto', 'exam-variant')[0].repeatCount, 20);
++stop();
++await Promise.resolve();
++dom.window.close();
++console.log('DOM integration passed: both clocks, Kickstarter mock selection, interval coverage/mastery, repeat exclusion.');

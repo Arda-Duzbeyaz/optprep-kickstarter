@@ -1,0 +1,2160 @@
+diff --git a/BUILD_INFO.json b/BUILD_INFO.json
+index 738640e..8832224 100644
+--- a/BUILD_INFO.json
++++ b/BUILD_INFO.json
+@@ -1,5 +1,5 @@
+ {
+-  "edition": "1.0.3-transfer.2",
++  "edition": "1.0.3-transfer.3",
+   "previous_edition": "1.0.2-kickstarter.1",
+   "previous_revision": "6b840e45a3b4145b06f76dec8e216d68799099fc",
+   "upstream_base": "a68720e74e7e1b5a82526b02db539d943f0f1364",
+@@ -11,12 +11,16 @@
+   "unit_test_total": 847,
+   "additional_js_cases": 13000,
+   "additional_python_cases": 1300,
+-  "dom_integration": "passed: earlier fixes, transfer smoke, 10 focused regressions and full-app router",
++  "dom_integration": "passed: earlier fixes, transfer smoke, 11 focused regressions and full-app router",
+   "ordinary_mock_questions_unchanged": 990,
+-  "browser_visual_qa": "blocked: headless socket restrictions and connected-browser local-URL policy",
++  "browser_visual_qa": "passed: desktop Chrome at 1348x936; timed expiry, 15-question untimed flow, review, themes and reload",
+   "local_http_smoke": "passed: launcher and five HTTP 200 responses",
+-  "focused_dom_regressions_passed": 10,
++  "focused_dom_regressions_passed": 11,
+   "full_router_integration": "passed: 15-question run, migration, controls, deadlines, review, history and cleanup",
+   "reliability_patch_from": "1.0.3-transfer.1",
+-  "reliability_patch_base_revision": "e4591faa8617edf3ec872b1917a46702aa70bf05"
++  "reliability_patch_base_revision": "e4591faa8617edf3ec872b1917a46702aa70bf05",
++  "visual_patch_from": "1.0.3-transfer.2",
++  "visual_patch_base_revision": "6f70c9d58ca0c756740007e32ae7186baf886b1f",
++  "mobile_cross_browser_qa": "not performed",
++  "visual_evidence_file": "evaluation/visual-browser-results.json"
+ }
+diff --git a/README.md b/README.md
+index dc2b417..b9a66c0 100644
+--- a/README.md
++++ b/README.md
+@@ -1,6 +1,6 @@
+ # OptPrep — mathematical transfer edition
+ 
+-**Version:** `1.0.3-transfer.2` · **Prepared:** 12 November 2026
++**Version:** `1.0.3-transfer.3` · **Prepared:** 12 November 2026
+ **Based on:** the previously fixed `1.0.2-kickstarter.1` release, original revision `6b840e45a3b4145b06f76dec8e216d68799099fc`
+ **Original project:** [Coflazo/optprep](https://github.com/Coflazo/optprep) · **License:** MIT
+ 
+@@ -109,8 +109,9 @@ The follow-up test pass reproduced defects beyond the first smoke test. This pat
+ - Enforces both deadlines on submission, skip and keyboard input, including when animation frames are delayed. Late changes cannot replace the last response entered within time.
+ - Prevents backend startup from replacing transfer-only progress or displayed-question history with an older server snapshot.
+ - Makes the current Transfer sidebar link return from review to the landing page, and marks a session complete when Finish is pressed on its last question.
++- Keeps the battery picker aligned with the active default: a fresh browser now selects Kickstarter instead of silently switching to Everything when Save is pressed.
+ 
+-The full app entry point and router were exercised through a 15-question run in the DOM harness. See [TRANSFER_TEST_REPORT.md](TRANSFER_TEST_REPORT.md) for before/after findings, scope and limitations. Full browser visual testing remains unverified.
++The full app entry point and router were exercised through a 15-question run in the DOM harness. A subsequent desktop Chrome pass checked an actual timed attempt, a full untimed attempt, all response layouts, review, light/dark themes and history after reload. See [TRANSFER_TEST_REPORT.md](TRANSFER_TEST_REPORT.md) for findings and scope. Mobile and other browsers remain untested.
+ 
+ ## Mathematical verification
+ 
+@@ -153,8 +154,9 @@ Additional evaluations are case sweeps and integration checks, not extra unit-te
+ | Original library pipeline | 3,094 structural checks; zero failures; 11 existing NumberLogic warnings |
+ | Zap-N pipeline | 607 puzzle/model cases; zero mismatches |
+ | DOM integration | Both the earlier checks and the new transfer checks passed |
+-| Follow-up interface regressions | 10/10 passed, covering review, late input and completion |
++| Follow-up interface regressions | 11/11 passed, covering review, late input, completion and default preset selection |
+ | Full-app DOM route check | 15-question run, navigation, migration, storage and cleanup passed |
++| Desktop Chrome visual pass | Timed expiry, all 15 untimed questions, four response types, review, themes and reload passed at 1348 × 936 |
+ | Local launcher and HTTP | App started successfully; five app/module URLs returned HTTP 200 |
+ 
+ The new families expose **33 authored branch signatures**: eight observation, ten source, seven selection and eight rate signatures. This is not 33 new concepts. The 123/27 split is a recorded-exposure diagnostic from a particular sampler and initially empty history, not an empirical percentage of conceptually unfamiliar questions.
+@@ -163,7 +165,7 @@ The original library still has partial independent numerical coverage: **1,438 o
+ 
+ Ordinary mocks retained zero exact repeats in the sampled sets, while branch signatures still recurred. Raw histograms are included; a small sample showing every answer position does not establish perfect statistical uniformity.
+ 
+-DOM integration exercises actual MCQ, rank, interval and orderbook controls, hidden solutions, complete/partial runs, both clocks, extra time, displayed-only history, cleanup, preset preservation and isolated progress. Full browser visual QA was not performed.
++DOM integration exercises actual MCQ, rank, interval and orderbook controls, hidden solutions, complete/partial runs, both clocks, extra time, displayed-only history, cleanup, preset preservation and isolated progress. Desktop visual inspection now supplements those checks; it covers one Chrome viewport and does not establish mobile or cross-browser compatibility.
+ 
+ ## Reproduce validation
+ 
+@@ -241,6 +243,7 @@ The improvements make the app a stronger question engine for transferable reason
+ 
+ - Exact real-test difficulty distributions, item counts, pass marks and many navigation/scoring details remain unverified.
+ - The BTO 25-minute total comes from the invitation. Its retained 20-question count and 90-second item limit remain practice assumptions. The new transfer clocks are training choices.
++- The preserved ordinary preset still differs from the supplied invitation: Orderbooks is configured for 8 minutes rather than 15; Likelihood List and Intervals use retained per-item clocks without the invitation's explicit 25- and 15-minute total clocks. These are practice settings, not verified replicas. See the test report's timing table. This focused visual patch leaves those clocks intact as requested.
+ - Existing difficulty labels, uncertainty models and many game parameters are authored choices.
+ - Templates remain finite. Structural fingerprints cannot certify conceptual novelty.
+ - The original library's independent numerical coverage remains incomplete.
+diff --git a/TRANSFER_CHANGELOG.md b/TRANSFER_CHANGELOG.md
+index de4516a..4499ff8 100644
+--- a/TRANSFER_CHANGELOG.md
++++ b/TRANSFER_CHANGELOG.md
+@@ -1,5 +1,16 @@
+ # Transfer edition changes
+ 
++## Visual follow-up — 1.0.3-transfer.3
++
++- Completed desktop Chrome interaction and screenshot inspection at 1348 × 936: timed expiry, a complete 15-question untimed session, all four response kinds, review, keyboard/ranking/trade controls, light/dark theme, sidebar navigation and history after reload.
++- `src/ui/pages/path.js`: the battery picker now uses `DEFAULT_PRESET` when a save has no preset. Previously it selected Everything while the application was running Kickstarter; unchanged Save could silently switch the battery.
++- `tools/transfer-regression.mjs`: added a default-picker/unchanged-Save regression. It failed before the one-line correction and passes afterwards. Focused interface checks are now 11/11.
++- Full JavaScript/Python/C++ suites rerun: 777 + 36 + 34 = 847 passed; full-router DOM integration passed again.
++- Updated README, test report, release metadata and evidence. Documented retained invitation/preset timing discrepancies explicitly. Assessment clocks, mathematical generators, scoring and save format were not changed.
++- `package.json`, `sw.js`: version/cache tag advanced to release 3.
++
++Mobile and other browsers remain untested. Browser observations are functional/visual evidence, not Optiver difficulty calibration.
++
+ ## Follow-up reliability patch — 1.0.3-transfer.2
+ 
+ - `src/ui/pages/transfer.js`: restore, lock and grade submitted responses in review; show ranking probabilities; enforce both clocks before input/submission; preserve the last in-time response; count finishing on the final question as complete; hide unsupported solution actions.
+diff --git a/TRANSFER_TEST_REPORT.md b/TRANSFER_TEST_REPORT.md
+index c1b72bc..3e0c159 100644
+--- a/TRANSFER_TEST_REPORT.md
++++ b/TRANSFER_TEST_REPORT.md
+@@ -1,12 +1,12 @@
+ # OptPrep Transfer Challenge — follow-up test report
+ 
+-Date: 12 November 2026. Tested starting release: `1.0.3-transfer.1`. Corrected release: **`1.0.3-transfer.2`**.
++Date: 12 November 2026. Tested starting release: `1.0.3-transfer.1`. Current corrected release: **`1.0.3-transfer.3`**; includes the reliability patch and subsequent visual pass.
+ 
+ ## Result
+ 
+ The deeper tests found real review, navigation, deadline and progress-retention defects that the original smoke check did not cover. Those defects were reproduced, corrected and checked with regressions. The complete updated unit/regression suites pass: **777 JavaScript, 36 Python and 34 C++ tests — 847 total**.
+ 
+-This is functional and mathematical validation. A full browser visual or mobile-browser pass could not be completed in this environment.
++Desktop Chrome visual testing subsequently succeeded at a **1348 × 936** page viewport. It covered a timed partial attempt, a full 15-question untimed attempt, review, themes, settings and persistence. Mobile and other browsers remain untested.
+ 
+ ## Defects reproduced and fixed
+ 
+@@ -21,8 +21,9 @@ This is functional and mathematical validation. A full browser visual or mobile-
+ | Backend startup | Transfer-only work or exposure-only history could be considered empty and replaced by an older server snapshot | Transfer sessions and viewed-question/structure history prevent automatic replacement; a genuinely empty browser can still restore server progress |
+ | Current sidebar link | Clicking Transfer while already on its review route did not return to the landing page | The current link reopens the landing page and cleans up the previous session |
+ | Final Finish button | Completing the last displayed item with Finish was labelled partial | A run that reaches and records its last question is marked complete |
++| Default battery picker | With no saved preset, the app ran Kickstarter but Settings selected Everything; pressing Save would switch batteries | The picker uses the same configured default as the active battery; unchanged Save preserves Kickstarter |
+ 
+-These rows describe related manifestations rather than a claim of nine independent root causes. No incorrect newly generated mathematical answer was found in this pass.
++These rows describe related manifestations rather than a count of independent root causes. The battery-picker problem was an existing UI defect discovered during visual testing. No incorrect newly generated mathematical answer was found in this pass.
+ 
+ ## Interface and integration coverage
+ 
+@@ -35,7 +36,7 @@ The actual views, event handlers, app entry point and router were executed under
+ - Overall deadline enforcement before showing an additional item.
+ - Correct completion status on the final question.
+ 
+-The ten focused interface cases failed against the corresponding original behaviours and now pass **10/10**. They are counted separately from the 847 unit/regression tests.
++The original ten focused interface cases failed against the corresponding earlier behaviours and pass after correction. A new preset regression reproduced the visual finding: **10/11 before its fix, 11/11 after**. These cases are counted separately from the 847 unit/regression tests.
+ 
+ The full-app route check additionally:
+ 
+@@ -64,11 +65,48 @@ The earlier transfer smoke test and previous Kickstarter-fix smoke test also pas
+ 
+ The existing mathematical generators, scoring implementation, assessment configurations and licence remain intact. The additional fix in the shared solution component is optional and retains its ordinary-practice default.
+ 
+-## Browser-testing limitation
++## Desktop browser pass
+ 
+-A local headless Chromium launch was attempted but failed under the environment's socket restrictions. The connected browser could not complete access to the local app under its URL policy. Browser testing stopped at that restriction.
++Earlier browser attempts were blocked. On the requested retry, running the local app beside the provided browser resolved the connection, and real browser interaction and screenshot inspection became available. No browser security warning was bypassed.
+ 
+-Accordingly, this report claims **DOM functional/integration coverage**, not a completed desktop/mobile visual pass, cross-browser certification or a real Optiver difficulty calibration.
++The full mixed run used `transfer.2`; `transfer.3` then corrected the picker default without changing Transfer's question/session code. The fixed code was reloaded in the browser, and unchanged Save plus retained session history were verified. All automated suites were rerun on `transfer.3`.
++
++| Area | Observed result |
++|---|---|
++| Landing and clocks | Training label, timing selector, 20-minute total and 90-second item clock rendered clearly |
++| Real-time expiry | Selected 0.429 for the replacement/first-red question; the 90-second clock automatically advanced and retained the correct answer |
++| Timed orderbook | Five trades left A/B/C flat and cash +1; Finish produced a partial session with 2/2 correct |
++| Complete untimed run | All 15 questions reached review; included three questions from each mathematical section |
++| Keyboard | MCQ letter selection and ranking number/arrow movement worked |
++| Diagrams | A 200-value grid, mixed-shape grid, scatter plot and solution graphics rendered; a long grid required ordinary vertical scrolling |
++| Orderbook editing | Buying, selling, removing a trade and clearing the position worked |
++| MCQ review | Submitted wrong choice was red, correct choice green, and all options disabled |
++| Ranking review | Submitted order retained; exact probabilities 4/9, 5/12 and 1/4 revealed; move controls disabled |
++| Interval review | Submitted bounds 79 and 81 retained and disabled; truth 80 and score 0.975 displayed |
++| Navigation/persistence | Current Transfer link returned to the landing page; both session records survived reload |
++| Isolation | Deliberate Transfer mistakes did not appear in the ordinary wrong-answer log |
++| Theme | Light question/review screens and the dark landing/history screen were readable; original theme restored afterwards |
++| Preset correction | After the code fix and reload, Kickstarter was selected; clicking unchanged Save retained it and both Transfer records |
++
++The complete run intentionally included an incorrect orderbook, an incorrect probability choice and a skipped question to exercise feedback. Its **9/12 non-interval correct** and interval mean **0.806** were the expected UI-test outcome, not evidence of learning effectiveness or real-test calibration. All nine other non-interval answers were correct; interval inputs were [45, 55], [25, 40] and [79, 81].
++
++No layout overlap or horizontal clipping was found in the inspected desktop views. Width measurements on the landing and long-grid pages showed no document-level horizontal overflow. This was one Chrome viewport: no phone/touch, Safari, Firefox, alternative display scaling or accessibility certification is claimed. The real 20-minute total timeout was not waited out; total-deadline edge cases remain covered by the deterministic DOM regressions.
++
++Browser-control timeouts occurred around a confirmation dialog and a full-page screenshot. The dialog was handled through its visible confirmation, and viewport screenshots were used for the successful checks. Those control failures are separate from the observed application results.
++
++## Preserved timing discrepancies
++
++The visual pass also confirmed that preserving a preset is different from validating it against the invitation. The supplied invitation is the evidence for the total times below; counts and per-item limits in the app remain authored/reported practice settings.
++
++| Section | Supplied invitation | Preserved app setting |
++|---|---|---|
++| Beat the Odds | 25 minutes total, limited time per question | 25 minutes total; 20 questions, 90 seconds each |
++| NumberLogic | 25 minutes total | 25 minutes total; 26 questions |
++| Likelihood-list | About 25 minutes total, limited time per question | 15 questions at 90 seconds each; no separate 25-minute total cap |
++| Intervals | About 15 minutes total | 18 questions at 45 seconds each; no separate 15-minute total cap |
++| Orderbooks | About 15 minutes total | 20 questions with an 8-minute total cap |
++
++The new visual patch changes the incorrect picker default, not these clocks. The earlier instruction explicitly requested preservation of the Kickstarter preset and its configured clocks. Ordinary mocks must therefore still be treated as practice formats, with the invitation controlling the actual assessment schedule. This is a confirmed configuration limitation, not an unknown about what the invitation says.
+ 
+ ## Reproduce
+ 
+diff --git a/evaluation/http-smoke.json b/evaluation/http-smoke.json
+index 4dc6598..687bbc7 100644
+--- a/evaluation/http-smoke.json
++++ b/evaluation/http-smoke.json
+@@ -1,6 +1,6 @@
+ {
+   "launcher": "OptPrep is running at http://127.0.0.1:8787 (Ctrl+C to stop)",
+-  "version": "1.0.3-transfer.2",
++  "version": "1.0.3-transfer.3",
+   "responses": [
+     {
+       "path": "/",
+@@ -18,9 +18,9 @@
+       "bytes": 10258
+     },
+     {
+-      "path": "/src/transfer/draw.js",
++      "path": "/src/ui/pages/path.js",
+       "status": 200,
+-      "bytes": 3528
++      "bytes": 5720
+     },
+     {
+       "path": "/config/presets.js",
+diff --git a/evaluation/logs/README.md b/evaluation/logs/README.md
+index e8000d8..444f8f5 100644
+--- a/evaluation/logs/README.md
++++ b/evaluation/logs/README.md
+@@ -1,13 +1,13 @@
+ # Test log index
+ 
+-The follow-up reliability patch is `1.0.3-transfer.2`.
++The current visual follow-up patch is `1.0.3-transfer.3`.
+ 
+ | Current-build evidence | Scope |
+ |---|---|
+ | `qa-javascript.log` | Complete JavaScript suite: 777 passed |
+ | `qa-python.log` | Complete Python suite: 36 passed |
+ | `qa-cpp.log` | Complete C++ suite: 34 passed |
+-| `transfer-review-regressions.log` | Ten focused interface cases: all passed |
++| `transfer-review-regressions.log` | Eleven focused interface cases: all passed |
+ | `transfer-full-router.log` | Full app entry/router and 15-question session: passed |
+ | `transfer-original-dom.log` | Earlier Transfer smoke check rerun: passed |
+ | `previous-fixes-dom.log` | Previous Kickstarter fix checks rerun: passed |
+@@ -16,4 +16,4 @@ The follow-up reliability patch is `1.0.3-transfer.2`.
+ 
+ Files beginning `expected-failures-original-` deliberately retain failing checks against the earlier release. They demonstrate the defects before the fixes; they are not failures of this patched build. Other logs retain the initial Transfer release evidence.
+ 
+-These scripts use a DOM harness. A visual desktop/mobile browser pass was blocked in this environment and is not claimed. See the root `TRANSFER_TEST_REPORT.md` for scope and reproduction commands.
++These scripts use a DOM harness. A separate desktop Chrome visual pass subsequently succeeded; observations are recorded in `../visual-browser-results.json` and the root `TRANSFER_TEST_REPORT.md`. Mobile and other browsers remain untested.
+diff --git a/evaluation/logs/expected-failures-original-preset.log b/evaluation/logs/expected-failures-original-preset.log
+new file mode 100644
+index 0000000..a1d1317
+--- /dev/null
++++ b/evaluation/logs/expected-failures-original-preset.log
+@@ -0,0 +1,17 @@
++PASS review restores and locks the submitted MCQ
++PASS additional-family review has no broken ordinary-practice link
++PASS ranking review shows probabilities and retains the submitted order
++PASS interval review restores bounds and disables its controls
++PASS orderbook review restores the submitted position and locks controls
++PASS answers changed after the item deadline do not replace the last valid answer
++PASS the overall deadline is enforced before submitting or showing another item
++PASS a late skip cannot erase an answer already committed before timeout
++PASS keyboard answers after the deadline are ignored
++PASS finishing on the last displayed question records a complete session
++FAIL saving an unchanged fresh battery picker preserves the active Kickstarter preset: Save must not silently switch a new browser to Everything
+++ actual - expected
++
+++ 'full'
++- 'kickstarter'
++
++10/11 focused interface regressions passed
+diff --git a/evaluation/logs/qa-cpp.log b/evaluation/logs/qa-cpp.log
+index f3cd499..0cb6555 100644
+--- a/evaluation/logs/qa-cpp.log
++++ b/evaluation/logs/qa-cpp.log
+@@ -1,26 +1,26 @@
+ Test project /workspace/scratch/4bc66287a502/optprep-transfer/engine/build
+       Start  1: Json.RoundTripsNestedValues
+- 1/34 Test  #1: Json.RoundTripsNestedValues .....................................   Passed    0.00 sec
++ 1/34 Test  #1: Json.RoundTripsNestedValues .....................................   Passed    0.01 sec
+       Start  2: Json.RejectsMalformedInput
+  2/34 Test  #2: Json.RejectsMalformedInput ......................................   Passed    0.00 sec
+       Start  3: Json.IntegersDumpWithoutDecimals
+- 3/34 Test  #3: Json.IntegersDumpWithoutDecimals ................................   Passed    0.00 sec
++ 3/34 Test  #3: Json.IntegersDumpWithoutDecimals ................................   Passed    0.01 sec
+       Start  4: Rational.NormalisesAndComputesExactly
+- 4/34 Test  #4: Rational.NormalisesAndComputesExactly ...........................   Passed    0.00 sec
++ 4/34 Test  #4: Rational.NormalisesAndComputesExactly ...........................   Passed    0.01 sec
+       Start  5: Rational.ThrowsOnDivisionByZeroAndOverflow
+- 5/34 Test  #5: Rational.ThrowsOnDivisionByZeroAndOverflow ......................   Passed    0.00 sec
++ 5/34 Test  #5: Rational.ThrowsOnDivisionByZeroAndOverflow ......................   Passed    0.01 sec
+       Start  6: MonteCarlo.DiceAndCardsMatchClosedForms
+- 6/34 Test  #6: MonteCarlo.DiceAndCardsMatchClosedForms .........................   Passed    0.01 sec
++ 6/34 Test  #6: MonteCarlo.DiceAndCardsMatchClosedForms .........................   Passed    0.05 sec
+       Start  7: MonteCarlo.ExpectationsMatchClosedForms
+- 7/34 Test  #7: MonteCarlo.ExpectationsMatchClosedForms .........................   Passed    0.06 sec
++ 7/34 Test  #7: MonteCarlo.ExpectationsMatchClosedForms .........................   Passed    0.17 sec
+       Start  8: MonteCarlo.ClassicProbabilities
+- 8/34 Test  #8: MonteCarlo.ClassicProbabilities .................................   Passed    0.07 sec
++ 8/34 Test  #8: MonteCarlo.ClassicProbabilities .................................   Passed    0.15 sec
+       Start  9: MonteCarlo.ExtendedModels
+- 9/34 Test  #9: MonteCarlo.ExtendedModels .......................................   Passed    0.03 sec
++ 9/34 Test  #9: MonteCarlo.ExtendedModels .......................................   Passed    0.08 sec
+       Start 10: MonteCarlo.DetectsAWrongAnswer
+-10/34 Test #10: MonteCarlo.DetectsAWrongAnswer ..................................   Passed    0.00 sec
++10/34 Test #10: MonteCarlo.DetectsAWrongAnswer ..................................   Passed    0.02 sec
+       Start 11: MonteCarlo.IsDeterministicPerSeedAndThreadCount
+-11/34 Test #11: MonteCarlo.IsDeterministicPerSeedAndThreadCount .................   Passed    0.00 sec
++11/34 Test #11: MonteCarlo.IsDeterministicPerSeedAndThreadCount .................   Passed    0.01 sec
+       Start 12: Orderbook.FindsBundleArbitrage
+ 12/34 Test #12: Orderbook.FindsBundleArbitrage ..................................   Passed    0.00 sec
+       Start 13: Orderbook.ReportsNoArbitrageOnFairBoard
+@@ -28,13 +28,13 @@ Test project /workspace/scratch/4bc66287a502/optprep-transfer/engine/build
+       Start 14: Orderbook.WeightedBundleNeedsTwoUnits
+ 14/34 Test #14: Orderbook.WeightedBundleNeedsTwoUnits ...........................   Passed    0.00 sec
+       Start 15: Orderbook.BranchAndBoundMatchesExhaustiveSearchOnRandomBoards
+-15/34 Test #15: Orderbook.BranchAndBoundMatchesExhaustiveSearchOnRandomBoards ...   Passed    0.35 sec
++15/34 Test #15: Orderbook.BranchAndBoundMatchesExhaustiveSearchOnRandomBoards ...   Passed    0.78 sec
+       Start 16: Orderbook.IndecomposableModeReturnsOnePackage
+ 16/34 Test #16: Orderbook.IndecomposableModeReturnsOnePackage ...................   Passed    0.01 sec
+       Start 17: NumberBox.SolvesClassicTwentyFours
+-17/34 Test #17: NumberBox.SolvesClassicTwentyFours ..............................   Passed    0.00 sec
++17/34 Test #17: NumberBox.SolvesClassicTwentyFours ..............................   Passed    0.01 sec
+       Start 18: NumberBox.KnowsUnsolvableSets
+-18/34 Test #18: NumberBox.KnowsUnsolvableSets ...................................   Passed    0.01 sec
++18/34 Test #18: NumberBox.KnowsUnsolvableSets ...................................   Passed    0.00 sec
+       Start 19: NumberBox.ReachableIntegersIncludeKnownValues
+ 19/34 Test #19: NumberBox.ReachableIntegersIncludeKnownValues ...................   Passed    0.00 sec
+       Start 20: NumberBox.EvaluatorIsExact
+@@ -44,30 +44,30 @@ Test project /workspace/scratch/4bc66287a502/optprep-transfer/engine/build
+       Start 22: Tower.GeneratedLevelsHaveExactlyTheStatedOptimum
+ 22/34 Test #22: Tower.GeneratedLevelsHaveExactlyTheStatedOptimum ................   Passed    0.01 sec
+       Start 23: Tower.RejectsOverfullTowers
+-23/34 Test #23: Tower.RejectsOverfullTowers .....................................   Passed    0.00 sec
++23/34 Test #23: Tower.RejectsOverfullTowers .....................................   Passed    0.02 sec
+       Start 24: Figure.FormulaMatchesDynamicProgramming
+-24/34 Test #24: Figure.FormulaMatchesDynamicProgramming .........................   Passed    0.00 sec
++24/34 Test #24: Figure.FormulaMatchesDynamicProgramming .........................   Passed    0.01 sec
+       Start 25: Figure.SingleProperty
+ 25/34 Test #25: Figure.SingleProperty ...........................................   Passed    0.00 sec
+       Start 26: Figure.ParallelTestingBeatsOneAtATime
+-26/34 Test #26: Figure.ParallelTestingBeatsOneAtATime ...........................   Passed    0.00 sec
++26/34 Test #26: Figure.ParallelTestingBeatsOneAtATime ...........................   Passed    0.01 sec
+       Start 27: Balloon.RoundOneOptimumIsHalfThePopRange
+-27/34 Test #27: Balloon.RoundOneOptimumIsHalfThePopRange ........................   Passed    0.02 sec
++27/34 Test #27: Balloon.RoundOneOptimumIsHalfThePopRange ........................   Passed    0.04 sec
+       Start 28: Balloon.BankPenaltyMakesLaterBalloonsMoreCautious
+-28/34 Test #28: Balloon.BankPenaltyMakesLaterBalloonsMoreCautious ...............   Passed    0.03 sec
++28/34 Test #28: Balloon.BankPenaltyMakesLaterBalloonsMoreCautious ...............   Passed    0.05 sec
+       Start 29: Sequence.RecognisesCoreRules
+ 29/34 Test #29: Sequence.RecognisesCoreRules ....................................   Passed    0.00 sec
+       Start 30: Sequence.RecognisesExtendedRules
+-30/34 Test #30: Sequence.RecognisesExtendedRules ................................   Passed    0.00 sec
++30/34 Test #30: Sequence.RecognisesExtendedRules ................................   Passed    0.01 sec
+       Start 31: Sequence.ShortSequencesStillPredict
+-31/34 Test #31: Sequence.ShortSequencesStillPredict .............................   Passed    0.00 sec
++31/34 Test #31: Sequence.ShortSequencesStillPredict .............................   Passed    0.01 sec
+       Start 32: Sequence.ConvertsDecimals
+-32/34 Test #32: Sequence.ConvertsDecimals .......................................   Passed    0.00 sec
++32/34 Test #32: Sequence.ConvertsDecimals .......................................   Passed    0.01 sec
+       Start 33: Commands.RoundTripThroughJson
+-33/34 Test #33: Commands.RoundTripThroughJson ...................................   Passed    0.00 sec
++33/34 Test #33: Commands.RoundTripThroughJson ...................................   Passed    0.01 sec
+       Start 34: Commands.ErrorsComeBackAsJson
+-34/34 Test #34: Commands.ErrorsComeBackAsJson ...................................   Passed    0.00 sec
++34/34 Test #34: Commands.ErrorsComeBackAsJson ...................................   Passed    0.01 sec
+ 
+ 100% tests passed out of 34
+ 
+-Total Test time (real) =   0.68 sec
++Total Test time (real) =   1.54 sec
+diff --git a/evaluation/logs/qa-javascript.log b/evaluation/logs/qa-javascript.log
+index 65b15b3..0a929be 100644
+--- a/evaluation/logs/qa-javascript.log
++++ b/evaluation/logs/qa-javascript.log
+@@ -1,785 +1,780 @@
+-npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+-
+-> optprep@1.0.3-transfer.1 test
+-> node tools/run-tests.mjs
+-
+-✔ mcq: +1 correct, -1 wrong, 0 skip (1.041122ms)
+-✔ rank: exact order only, no partial credit (0.133809ms)
+-✔ interval: L/U when truth inside inclusive, else 0; L=0 scores 0 (0.16829ms)
+-✔ orderbook: flat position with positive profit is correct (0.280038ms)
+-✔ decide: push, pull, none and conflict (0.932149ms)
+-✔ pack and unpack round-trip, plain and encrypted (444.541164ms)
+-✔ two devices: first pushes, an empty second pulls, a changed pair asks (761.887543ms)
+-✔ factorial and binomials (0.775966ms)
+-✔ derangements (0.762156ms)
+-✔ buildMcq returns 5 sorted, distinct options with misconceptions on wrong ones (4.464484ms)
+-✔ validateItem accepts a good mcq and flags a broken one (0.670048ms)
+-✔ validateItem checks rank margins and order (0.344494ms)
+-✔ validateItem checks interval truth and orderbook best trade (0.411673ms)
+-✔ validateItem: mcq option count is 5 by default and item.optionCount when set (80-in-8 uses 4) (0.435439ms)
+-✔ validateSolution: ask, fast, check, a picture (or an explicit null) and math on some step (0.259817ms)
+-✔ nearestLevel picks the closest supported level (1.451403ms)
+-✔ drawItem honours family and difficulty (0.596119ms)
+-✔ examItems is deterministic per seed, ramps difficulty, has unique prompts and mixes the bank (5.285907ms)
+-✔ examScore follows each section scoring rule (0.186037ms)
+-✔ Kickstarter enforces an outer 25-minute BTO cap alongside the item clock (0.913622ms)
+-✔ a 30-minute or unstamped BTO run cannot count under a 25-minute cap (0.256803ms)
+-✔ wide covering intervals earn their score without claiming mastery (1.815145ms)
+-✔ old interval mastery is reassessed while answers, lessons, other mastery and XP survive (0.752011ms)
+-✔ fresh exam and adaptive draws avoid questions actually seen in earlier sessions (1.738672ms)
+-✔ visible question history persists and shuffling ranking answers does not make a question fresh (0.713694ms)
+-✔ the fund explanation stays valid when the volatile fund is positive more often (1.936025ms)
+-✔ mm: library has at least 500 distinct valid questions (124.600834ms)
+-✔ bto: library has at least 500 distinct valid questions (136.870299ms)
+-✔ nl: library has at least 500 distinct valid questions (136.819433ms)
+-✔ ll: library has at least 500 distinct valid questions (139.699339ms)
+-✔ iv: library has at least 500 distinct valid questions (307.780088ms)
+-✔ ob: library has at least 500 distinct valid questions (99.10328ms)
+-✔ library is deterministic, unique, sized, and includes the bank (16.126568ms)
+-✔ sets partition the library in exam-sized chunks (1.917117ms)
+-✔ solveLinear solves a 2x2 system exactly (1.173278ms)
+-✔ random walk on a hexagon: expected return time is 6 (1.729147ms)
+-✔ stationary distribution of a two-state chain (0.273258ms)
+-✔ gambler ruin absorption probability (0.468097ms)
+-✔ bands follow the lowest difficulty a family offers (1.681155ms)
+-✔ exactly one current row in every state of progress (0.652964ms)
+-✔ the current row is the first unfinished one, later units are marked later (0.272456ms)
+-✔ a fully mastered path points at the exam checkpoint (0.144345ms)
+-✔ next step prefers a due review, then the first unfinished section (0.210404ms)
+-✔ real sections build a valid roadmap (0.565142ms)
+-✔ applying a preset sets clocks; switching back restores the base format (1.647455ms)
+-✔ unknown or missing presets fall back to the Kickstarter battery (0.206618ms)
+-✔ custom keeps only real sections and games (0.272506ms)
+-✔ preset section lists only name tasks that exist (0.426425ms)
+-✔ readiness never counts a run under a looser clock (0.26173ms)
+-✔ migrate keeps every v1 key and value (4.094953ms)
+-✔ migrate is idempotent and rejects unknown saves (0.857879ms)
+-✔ store migrates v1 once, writes v2, leaves v1 byte-for-byte (0.853812ms)
+-✔ store never overwrites a save it cannot read (0.665521ms)
+-✔ store compacts and flags a full quota instead of losing progress silently (1.249472ms)
+-✔ recordAnswer feeds trend, mastery, xp and the mistake log (1.601037ms)
+-✔ trend decays with a 7-day half-life (0.31518ms)
+-✔ wilson lower bound is cautious with little data (0.232086ms)
+-✔ weak patterns: needs evidence, at most two per family, top five (3.928455ms)
+-✔ active time: idle, hidden and non-session ticks earn nothing (0.32872ms)
+-✔ streak: today pending never breaks it, gaps do, DST is calendar-safe (0.519414ms)
+-✔ freezes cover missed days only while they last (0.390962ms)
+-✔ xp rules (0.126409ms)
+-✔ levels: three clean in a row per level, exam pace for level 5 (0.1948ms)
+-✔ mistake log: repeats bump the count, cap holds (2.686324ms)
+-✔ every section rebuilds a missed question from its id (42.818202ms)
+-✔ blank state has every v2 field (0.589248ms)
+-✔ normalises sign and gcd (1.460116ms)
+-✔ arithmetic is exact (0.324944ms)
+-✔ toNumber and from (0.117556ms)
+-✔ division by zero throws (0.300588ms)
+-✔ same seed gives the same stream (0.756347ms)
+-✔ string seeds work and differ from each other (0.177915ms)
+-✔ int is inclusive and in range (0.767293ms)
+-✔ shuffle is a permutation and pick returns a member (0.714705ms)
+-✔ fork gives an independent reproducible child (0.134921ms)
+-✔ mm/mm-addsub: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (49.337698ms)
+-✔ mm/mm-multiply: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (37.149624ms)
+-✔ mm/mm-divide: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (21.750175ms)
+-✔ mm/mm-decimals: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (37.841947ms)
+-✔ mm/mm-fractions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.59898ms)
+-✔ mm/mm-percent: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (33.938859ms)
+-✔ mm/mm-missing: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (20.520713ms)
+-✔ mm/mm-mixed: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.406984ms)
+-✔ mm: every bank item carries the full solution (0.385444ms)
+-✔ bto/two-dice-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (18.996722ms)
+-✔ bto/die-repeats: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.74988ms)
+-✔ bto/dice-order-stats: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.375382ms)
+-✔ bto/three-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.416213ms)
+-✔ bto/at-least-one: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (45.107851ms)
+-✔ bto/first-success: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.700848ms)
+-✔ bto/conditional-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (21.424981ms)
+-✔ bto/card-symmetry: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.50816ms)
+-✔ bto/card-draws: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.224679ms)
+-✔ bto/urn-draws: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.114285ms)
+-✔ bto/coin-sequences: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.852556ms)
+-✔ bto/race-to-k: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.542731ms)
+-✔ bto/pattern-waiting: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.779807ms)
+-✔ bto/bayes-test: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.223789ms)
+-✔ bto/bayes-boxes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.356015ms)
+-✔ bto/monty-hall: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (4.981343ms)
+-✔ bto/pigeonhole: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.261754ms)
+-✔ bto/birthday: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (35.15265ms)
+-✔ bto/derangements: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.719206ms)
+-✔ bto/expected-waiting: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.661463ms)
+-✔ bto/coupon-collector: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.988365ms)
+-✔ bto/linearity: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (16.339492ms)
+-✔ bto/expected-extremes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.362513ms)
+-✔ bto/dice-duel: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.377467ms)
+-✔ bto/dice-games-ev: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.166842ms)
+-✔ bto/card-stopping: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.316125ms)
+-✔ bto/running-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (74.847115ms)
+-✔ bto/random-walk-line: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.514058ms)
+-✔ bto/polygon-walk: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.781959ms)
+-✔ bto/gamblers-ruin: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.830702ms)
+-✔ bto/clt-estimates: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.713772ms)
+-✔ bto/uniform-geometry: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.757284ms)
+-✔ bto: every bank item carries the full solution (1.774965ms)
+-✔ nl/arithmetic: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (28.694636ms)
+-✔ nl/geometric: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.1273ms)
+-✔ nl/second-diff: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.342016ms)
+-✔ nl/add-index: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.361096ms)
+-✔ nl/squares-plus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (26.990906ms)
+-✔ nl/triangular: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.081887ms)
+-✔ nl/diff-geometric: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.667661ms)
+-✔ nl/affine-recurrence: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.491287ms)
+-✔ nl/fibonacci-like: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.402193ms)
+-✔ nl/multiply-index: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.464437ms)
+-✔ nl/interleaved: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (46.546912ms)
+-✔ nl/alternating-ops: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.389749ms)
+-✔ nl/cubes-plus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (26.420571ms)
+-✔ nl/pronic: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.533661ms)
+-✔ nl/primes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (16.371089ms)
+-✔ nl/powers-offset: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (16.036609ms)
+-✔ nl/decimals: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (16.534112ms)
+-✔ nl/alternating-signs: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (31.008214ms)
+-✔ nl/third-diff: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.570715ms)
+-✔ nl/tribonacci: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (23.174378ms)
+-✔ nl/weighted-two-term: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.938926ms)
+-✔ nl/product-recurrence: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.058071ms)
+-✔ nl/prime-gaps: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (35.469658ms)
+-✔ nl/sum-previous: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.94342ms)
+-✔ nl/digit-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.724694ms)
+-✔ nl/fractions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (20.025435ms)
+-✔ nl/fibonacci-squares: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.674007ms)
+-✔ nl/reverse-digits: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.891375ms)
+-✔ nl/square-minus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.737013ms)
+-✔ nl/mixed-combo: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.4889ms)
+-✔ nl: every bank item carries the full solution (2.024848ms)
+-✔ ll/conjunction: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.416623ms)
+-✔ ll/score-table: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.668321ms)
+-✔ ll/football: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.579306ms)
+-✔ ll/survey-bar: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.670867ms)
+-✔ ll/fund-returns: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.526238ms)
+-✔ ll/histogram-bins: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.030027ms)
+-✔ ll/scatter-regions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.489405ms)
+-✔ ll/density-curves: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (57.531457ms)
+-✔ ll/markov-graph: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.23555ms)
+-✔ ll/dice-events: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.116237ms)
+-✔ ll/card-events: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.836238ms)
+-✔ ll/coin-patterns: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.62889ms)
+-✔ ll/collisions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (17.920338ms)
+-✔ ll/large-numbers: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.751815ms)
+-✔ ll/impossible-bounds: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.994454ms)
+-✔ ll: every bank item carries the full solution (1.735157ms)
+-✔ iv/prob-exact: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.403666ms)
+-✔ iv/prob-estimate: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (28.511542ms)
+-✔ iv/expected-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.082314ms)
+-✔ iv/coupon: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (60.244006ms)
+-✔ iv/waiting-time: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.303319ms)
+-✔ iv/dots-count: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (32.156946ms)
+-✔ iv/dice-grid: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (26.472645ms)
+-✔ iv/path-length: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.360871ms)
+-✔ iv/percentile: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.55719ms)
+-✔ iv/series: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (38.64792ms)
+-✔ iv/mental-product: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.439006ms)
+-✔ iv/powers-roots: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (16.289708ms)
+-✔ iv/combinatorics: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.058459ms)
+-✔ iv/fermi: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (4.201531ms)
+-✔ iv: every bank item carries the full solution (1.608427ms)
+-✔ ob/crossed: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.988247ms)
+-✔ ob/bundle-rich: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (21.394365ms)
+-✔ ob/bundle-cheap: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.98316ms)
+-✔ ob/weighted: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.041806ms)
+-✔ ob/spread: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.115586ms)
+-✔ ob/chain: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (26.297693ms)
+-✔ ob/decoy: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.481566ms)
+-✔ ob/hidden: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.772465ms)
+-✔ ob: every bank item carries the full solution (1.600195ms)
+-✔ the no-picture list names real families and gives a reason (0.231415ms)
+-✔ store records answers and runs, and round-trips through export/import (2.980732ms)
+-✔ store survives a broken backend (0.286286ms)
+-✔ SRS: a miss comes back soon, repeated hits push it out (0.290713ms)
+-✔ adaptive weights favour weak and unseen families (6.834416ms)
+-✔ readiness: last 3 exams must all meet the target (0.393767ms)
+-✔ countdown uses an injectable clock (0.236813ms)
+-✔ zapn targets: lower is better for *Over metrics, higher otherwise (1.706413ms)
+-✔ countdown restarts from full time (0.152397ms)
+-✔ caret exponents print as superscripts; grouped or mixed exponents stay as written (1.157415ms)
+-✔ a count of one takes the singular; algebra, decimals and larger counts stay as written (0.569799ms)
+-✔ app files map to their path; folders map to index.html (3.724641ms)
+-✔ private folders are refused however they are spelled (0.215821ms)
+-✔ dot segments, traversal and odd encodings are refused (0.451382ms)
+-✔ Host header must name this server (0.40257ms)
+-✔ mk coach: each round gets one or two plain sentences (19.369016ms)
+-✔ mk coach: says whether the mid was on fair value (6.150166ms)
+-✔ mk coach: says when the spread was narrow for the uncertainty (1.397973ms)
+-✔ mk coach: names adverse selection and what it implies (3.381449ms)
+-✔ mk coach: the session summary picks the single most costly habit (99.9856ms)
+-✔ mk coach: the summary reports trades, expected value and P&L in plain words (1.551873ms)
+-✔ mk coach: number formats and every piece of game copy follow the copy rules (0.307548ms)
+-✔ mk: fair values are exact and match an independent formula (6.528168ms)
+-✔ mk: the other trader's expectations are exact and average back to fair value (1.722908ms)
+-✔ mk: the other trader buys above your ask, sells below your bid, otherwise passes (7.432167ms)
+-✔ mk: P&L sign conventions (you buy at your bid when it sells to you) (0.249703ms)
+-✔ mk: expected value of a quote matches a brute-force sum over every outcome and hedge (67.741215ms)
+-✔ mk: a centred full-width market earns on average, a tight one loses, an off-centre one earns less (0.712482ms)
+-✔ mk: prices parse exactly, with two decimals at most (1.441128ms)
+-✔ mk: the spread cap and the other quote rules are enforced (1.654055ms)
+-✔ mk: a session is always 8 rounds, each quantity twice (83.537347ms)
+-✔ mk: same seed, same rounds and results; different seeds differ (7.924911ms)
+-✔ mk: session totals equal the sum of the rounds, exactly (25.408537ms)
+-✔ bto/two-dice-sum: metadata and lesson (2.327159ms)
+-✔ bto/two-dice-sum: 120 seeds satisfy the item contract (9.915998ms)
+-✔ bto/two-dice-sum: independent verifier agrees on 40 seeds (4.485095ms)
+-✔ bto/die-repeats: metadata and lesson (0.173849ms)
+-✔ bto/die-repeats: 120 seeds satisfy the item contract (9.317296ms)
+-✔ bto/die-repeats: independent verifier agrees on 40 seeds (21.364279ms)
+-✔ bto/dice-order-stats: metadata and lesson (0.159057ms)
+-✔ bto/dice-order-stats: 120 seeds satisfy the item contract (6.575009ms)
+-✔ bto/dice-order-stats: independent verifier agrees on 40 seeds (10.097459ms)
+-✔ bto/three-dice: metadata and lesson (0.257273ms)
+-✔ bto/three-dice: 120 seeds satisfy the item contract (6.373439ms)
+-✔ bto/three-dice: independent verifier agrees on 40 seeds (4.205908ms)
+-✔ bto/at-least-one: metadata and lesson (0.103174ms)
+-✔ bto/at-least-one: 120 seeds satisfy the item contract (14.41982ms)
+-✔ bto/at-least-one: independent verifier agrees on 40 seeds (7.239639ms)
+-✔ bto/first-success: metadata and lesson (0.174279ms)
+-✔ bto/first-success: 120 seeds satisfy the item contract (5.655639ms)
+-✔ bto/first-success: independent verifier agrees on 40 seeds (2.112378ms)
+-✔ bto/conditional-dice: metadata and lesson (0.086329ms)
+-✔ bto/conditional-dice: 120 seeds satisfy the item contract (7.749449ms)
+-✔ bto/conditional-dice: independent verifier agrees on 40 seeds (2.398024ms)
+-✔ bto/card-symmetry: metadata and lesson (0.151486ms)
+-✔ bto/card-symmetry: 120 seeds satisfy the item contract (4.363432ms)
+-✔ bto/card-symmetry: independent verifier agrees on 40 seeds (2.558092ms)
+-✔ bto/card-draws: metadata and lesson (0.112107ms)
+-✔ bto/card-draws: 120 seeds satisfy the item contract (5.950718ms)
+-✔ bto/card-draws: independent verifier agrees on 40 seeds (5.960233ms)
+-✔ bto/urn-draws: metadata and lesson (0.077666ms)
+-✔ bto/urn-draws: 120 seeds satisfy the item contract (6.704942ms)
+-✔ bto/urn-draws: independent verifier agrees on 40 seeds (2.614617ms)
+-✔ bto/coin-sequences: metadata and lesson (0.067401ms)
+-✔ bto/coin-sequences: 120 seeds satisfy the item contract (9.168334ms)
+-✔ bto/coin-sequences: independent verifier agrees on 40 seeds (12.634039ms)
+-✔ bto/race-to-k: metadata and lesson (0.125877ms)
+-✔ bto/race-to-k: 120 seeds satisfy the item contract (7.919783ms)
+-✔ bto/race-to-k: independent verifier agrees on 40 seeds (3.22688ms)
+-✔ bto/pattern-waiting: metadata and lesson (0.092818ms)
+-✔ bto/pattern-waiting: 120 seeds satisfy the item contract (7.11908ms)
+-✔ bto/pattern-waiting: independent verifier agrees on 40 seeds (4.419557ms)
+-✔ bto/bayes-test: metadata and lesson (0.072528ms)
+-✔ bto/bayes-test: 120 seeds satisfy the item contract (8.525997ms)
+-✔ bto/bayes-test: independent verifier agrees on 40 seeds (2.873843ms)
+-✔ bto/bayes-boxes: metadata and lesson (0.13426ms)
+-✔ bto/bayes-boxes: 120 seeds satisfy the item contract (7.294091ms)
+-✔ bto/bayes-boxes: independent verifier agrees on 40 seeds (1.615017ms)
+-✔ bto/monty-hall: metadata and lesson (0.089263ms)
+-✔ bto/monty-hall: 120 seeds satisfy the item contract (4.035013ms)
+-✔ bto/monty-hall: independent verifier agrees on 40 seeds (2.421959ms)
+-✔ bto/pigeonhole: metadata and lesson (0.110345ms)
+-✔ bto/pigeonhole: 120 seeds satisfy the item contract (13.529493ms)
+-✔ bto/pigeonhole: independent verifier agrees on 40 seeds (9.58787ms)
+-✔ bto/birthday: metadata and lesson (0.12127ms)
+-✔ bto/birthday: 120 seeds satisfy the item contract (14.549264ms)
+-✔ bto/birthday: independent verifier agrees on 40 seeds (11.625436ms)
+-✔ bto/derangements: metadata and lesson (0.134961ms)
+-✔ bto/derangements: 120 seeds satisfy the item contract (9.632475ms)
+-✔ bto/derangements: independent verifier agrees on 40 seeds (14.678156ms)
+-✔ bto/expected-waiting: metadata and lesson (0.113268ms)
+-✔ bto/expected-waiting: 120 seeds satisfy the item contract (6.568289ms)
+-✔ bto/expected-waiting: independent verifier agrees on 40 seeds (2.522309ms)
+-✔ bto/coupon-collector: metadata and lesson (0.095883ms)
+-✔ bto/coupon-collector: 120 seeds satisfy the item contract (8.045341ms)
+-✔ bto/coupon-collector: independent verifier agrees on 40 seeds (3.505074ms)
+-✔ bto/linearity: metadata and lesson (0.157194ms)
+-✔ bto/linearity: 120 seeds satisfy the item contract (5.739264ms)
+-✔ bto/linearity: independent verifier agrees on 40 seeds (19.229605ms)
+-✔ bto/expected-extremes: metadata and lesson (0.131876ms)
+-✔ bto/expected-extremes: 120 seeds satisfy the item contract (8.290496ms)
+-✔ bto/expected-extremes: independent verifier agrees on 40 seeds (7.424515ms)
+-✔ bto/dice-duel: metadata and lesson (0.090705ms)
+-✔ bto/dice-duel: 120 seeds satisfy the item contract (23.518626ms)
+-✔ bto/dice-duel: independent verifier agrees on 40 seeds (5.567347ms)
+-✔ bto/dice-games-ev: metadata and lesson (0.146308ms)
+-✔ bto/dice-games-ev: 120 seeds satisfy the item contract (10.397806ms)
+-✔ bto/dice-games-ev: independent verifier agrees on 40 seeds (46.689004ms)
+-✔ bto/card-stopping: metadata and lesson (0.125227ms)
+-✔ bto/card-stopping: 120 seeds satisfy the item contract (34.091238ms)
+-✔ bto/card-stopping: independent verifier agrees on 40 seeds (16.864354ms)
+-✔ bto/running-sum: metadata and lesson (0.105327ms)
+-✔ bto/running-sum: 120 seeds satisfy the item contract (108.204624ms)
+-✔ bto/running-sum: independent verifier agrees on 40 seeds (38.430085ms)
+-✔ bto/random-walk-line: metadata and lesson (0.124386ms)
+-✔ bto/random-walk-line: 120 seeds satisfy the item contract (11.167754ms)
+-✔ bto/random-walk-line: independent verifier agrees on 40 seeds (2.503741ms)
+-✔ bto/polygon-walk: metadata and lesson (0.142813ms)
+-✔ bto/polygon-walk: 120 seeds satisfy the item contract (2.820214ms)
+-✔ bto/polygon-walk: independent verifier agrees on 40 seeds (2.419196ms)
+-✔ bto/gamblers-ruin: metadata and lesson (0.044016ms)
+-✔ bto/gamblers-ruin: 120 seeds satisfy the item contract (15.122609ms)
+-✔ bto/gamblers-ruin: independent verifier agrees on 40 seeds (11.836591ms)
+-✔ bto/clt-estimates: metadata and lesson (0.111316ms)
+-✔ bto/clt-estimates: 120 seeds satisfy the item contract (28.962965ms)
+-✔ bto/clt-estimates: independent verifier agrees on 40 seeds (24.64174ms)
+-✔ bto/uniform-geometry: metadata and lesson (0.182983ms)
+-✔ bto/uniform-geometry: 120 seeds satisfy the item contract (10.881287ms)
+-✔ bto/uniform-geometry: independent verifier agrees on 40 seeds (128.632113ms)
+-✔ bto: at least 500 distinct generated items (915.95947ms)
+-✔ bto: curated bank has at least 45 valid sourced items (1.289141ms)
+-✔ bto: at least 30 families spanning difficulty 1..5 (0.202031ms)
+-✔ bto: every family contributes at least 15 distinct items over 400 seeds (888.548749ms)
+-✔ bto: every item carries plain-JSON params naming its family (62.580022ms)
+-✔ bto: the keyed option is the unique closest value to the exact answer (96.778611ms)
+-✔ bto: famous reported items keep their known answers (0.405495ms)
+-✔ iv/prob-exact: metadata and lesson (1.749608ms)
+-✔ iv/prob-exact: 120 seeds satisfy the item contract (14.888749ms)
+-✔ iv/prob-exact: independent verifier agrees on 40 seeds (11.79012ms)
+-✔ iv/prob-estimate: metadata and lesson (0.185777ms)
+-✔ iv/prob-estimate: 120 seeds satisfy the item contract (43.692194ms)
+-✔ iv/prob-estimate: independent verifier agrees on 40 seeds (5.49548ms)
+-✔ iv/expected-dice: metadata and lesson (0.210284ms)
+-✔ iv/expected-dice: 120 seeds satisfy the item contract (7.836049ms)
+-✔ iv/expected-dice: independent verifier agrees on 40 seeds (16.805165ms)
+-✔ iv/coupon: metadata and lesson (0.61732ms)
+-✔ iv/coupon: 120 seeds satisfy the item contract (48.427115ms)
+-✔ iv/coupon: independent verifier agrees on 40 seeds (38.468778ms)
+-✔ iv/waiting-time: metadata and lesson (0.134781ms)
+-✔ iv/waiting-time: 120 seeds satisfy the item contract (3.840775ms)
+-✔ iv/waiting-time: independent verifier agrees on 40 seeds (2.012008ms)
+-✔ iv/dots-count: metadata and lesson (0.11437ms)
+-✔ iv/dots-count: 120 seeds satisfy the item contract (29.466125ms)
+-✔ iv/dots-count: independent verifier agrees on 40 seeds (6.973464ms)
+-✔ iv/dice-grid: metadata and lesson (0.108962ms)
+-✔ iv/dice-grid: 120 seeds satisfy the item contract (31.934994ms)
+-✔ iv/dice-grid: independent verifier agrees on 40 seeds (4.828546ms)
+-✔ iv/path-length: metadata and lesson (0.145356ms)
+-✔ iv/path-length: 120 seeds satisfy the item contract (6.151589ms)
+-✔ iv/path-length: independent verifier agrees on 40 seeds (3.083025ms)
+-✔ iv/percentile: metadata and lesson (0.080029ms)
+-✔ iv/percentile: 120 seeds satisfy the item contract (42.966335ms)
+-✔ iv/percentile: independent verifier agrees on 40 seeds (18.930994ms)
+-✔ iv/series: metadata and lesson (0.092929ms)
+-✔ iv/series: 120 seeds satisfy the item contract (40.134415ms)
+-✔ iv/series: independent verifier agrees on 40 seeds (10.348052ms)
+-✔ iv/mental-product: metadata and lesson (0.07389ms)
+-✔ iv/mental-product: 120 seeds satisfy the item contract (2.98598ms)
+-✔ iv/mental-product: independent verifier agrees on 40 seeds (1.067291ms)
+-✔ iv/powers-roots: metadata and lesson (0.112277ms)
+-✔ iv/powers-roots: 120 seeds satisfy the item contract (2.954904ms)
+-✔ iv/powers-roots: independent verifier agrees on 40 seeds (1.232998ms)
+-✔ iv/combinatorics: metadata and lesson (0.06045ms)
+-✔ iv/combinatorics: 120 seeds satisfy the item contract (2.061803ms)
+-✔ iv/combinatorics: independent verifier agrees on 40 seeds (2.252517ms)
+-✔ iv/fermi: metadata and lesson (0.051256ms)
+-✔ iv/fermi: 120 seeds satisfy the item contract (3.003937ms)
+-✔ iv/fermi: independent verifier agrees on 40 seeds (0.557561ms)
+-✔ iv: at least 500 distinct generated items (475.156955ms)
+-✔ iv: curated bank has at least 45 valid sourced items (1.253788ms)
+-✔ iv: every family contributes at least 15 distinct items over 400 seeds (331.716322ms)
+-✔ iv: items carry unit, coach and JSON params; a spot-on zero-width answer to an exact item scores 1 (24.32227ms)
+-✔ iv visuals: specs reproduce the truth (7.934005ms)
+-✔ iv bank: every truth is recomputed independently (52.667498ms)
+-✔ optimal: exact belief gives zero width and score 1 (0.232957ms)
+-✔ optimal: wider belief gives a wider optimum and a lower score (1.519945ms)
+-✔ optimal: the interval leans high because lower/upper rewards higher intervals (1.041312ms)
+-✔ optimal: lognormal optimum satisfies the first-order condition φ(z)/s = 2Φ(z) − 1 (2.288962ms)
+-✔ optimal: no nearby interval beats the optimum, and Monte Carlo agrees with expectedScore (5.426347ms)
+-✔ visual renderers: pure SVG with role=img, viewBox, CSS-variable colours and no answer in the label (20.241297ms)
+-✔ ll/conjunction: metadata and lesson (1.390903ms)
+-✔ ll/conjunction: 120 seeds satisfy the item contract (19.409201ms)
+-✔ ll/conjunction: independent verifier agrees on 40 seeds (1.96632ms)
+-✔ ll/score-table: metadata and lesson (0.200469ms)
+-✔ ll/score-table: 120 seeds satisfy the item contract (15.451327ms)
+-✔ ll/score-table: independent verifier agrees on 40 seeds (6.117517ms)
+-✔ ll/football: metadata and lesson (0.204665ms)
+-✔ ll/football: 120 seeds satisfy the item contract (9.203897ms)
+-✔ ll/football: independent verifier agrees on 40 seeds (9.663272ms)
+-✔ ll/survey-bar: metadata and lesson (0.302822ms)
+-✔ ll/survey-bar: 120 seeds satisfy the item contract (8.828858ms)
+-✔ ll/survey-bar: independent verifier agrees on 40 seeds (2.057706ms)
+-✔ ll/fund-returns: metadata and lesson (0.105477ms)
+-✔ ll/fund-returns: 120 seeds satisfy the item contract (9.074775ms)
+-✔ ll/fund-returns: independent verifier agrees on 40 seeds (4.822728ms)
+-✔ ll/histogram-bins: metadata and lesson (0.175591ms)
+-✔ ll/histogram-bins: 120 seeds satisfy the item contract (6.144217ms)
+-✔ ll/histogram-bins: independent verifier agrees on 40 seeds (3.518203ms)
+-✔ ll/scatter-regions: metadata and lesson (0.103304ms)
+-✔ ll/scatter-regions: 120 seeds satisfy the item contract (30.203695ms)
+-✔ ll/scatter-regions: independent verifier agrees on 40 seeds (3.721206ms)
+-✔ ll/density-curves: metadata and lesson (0.071677ms)
+-✔ ll/density-curves: 120 seeds satisfy the item contract (96.663939ms)
+-✔ ll/density-curves: independent verifier agrees on 40 seeds (28.769556ms)
+-✔ ll/markov-graph: metadata and lesson (0.133088ms)
+-✔ ll/markov-graph: 120 seeds satisfy the item contract (22.390951ms)
+-✔ ll/markov-graph: independent verifier agrees on 40 seeds (45.753068ms)
+-✔ ll/dice-events: metadata and lesson (0.072108ms)
+-✔ ll/dice-events: 120 seeds satisfy the item contract (6.477584ms)
+-✔ ll/dice-events: independent verifier agrees on 40 seeds (6.545445ms)
+-✔ ll/card-events: metadata and lesson (0.088351ms)
+-✔ ll/card-events: 120 seeds satisfy the item contract (12.539568ms)
+-✔ ll/card-events: independent verifier agrees on 40 seeds (12.112912ms)
+-✔ ll/coin-patterns: metadata and lesson (0.137965ms)
+-✔ ll/coin-patterns: 120 seeds satisfy the item contract (10.026133ms)
+-✔ ll/coin-patterns: independent verifier agrees on 40 seeds (7.597333ms)
+-✔ ll/collisions: metadata and lesson (0.080711ms)
+-✔ ll/collisions: 120 seeds satisfy the item contract (50.696425ms)
+-✔ ll/collisions: independent verifier agrees on 40 seeds (8.43418ms)
+-✔ ll/large-numbers: metadata and lesson (0.161801ms)
+-✔ ll/large-numbers: 120 seeds satisfy the item contract (16.390207ms)
+-✔ ll/large-numbers: independent verifier agrees on 40 seeds (10.928387ms)
+-✔ ll/impossible-bounds: metadata and lesson (0.485654ms)
+-✔ ll/impossible-bounds: 120 seeds satisfy the item contract (5.535931ms)
+-✔ ll/impossible-bounds: independent verifier agrees on 40 seeds (13.459179ms)
+-✔ ll: at least 500 distinct generated items (768.845208ms)
+-✔ ll: curated bank has at least 45 valid sourced items (0.916185ms)
+-✔ ll: at least 15 families; every one contributes at least 15 distinct items over 400 seeds (558.633281ms)
+-✔ ll: every item carries plain-JSON params naming its family; margins hold with room (45.878552ms)
+-✔ ll: hard Markov questions vary statement order and chain structure (96.16356ms)
+-✔ ll: impossible and certain statements are exactly 0 and 1 (1.818811ms)
+-✔ ll: scatter points avoid gridlines and the diagonal, so region counts are unambiguous (3.829166ms)
+-✔ ll: every visual spec renders to an accessible SVG with finite coordinates and token colours only (64.978746ms)
+-✔ ll: bank table params (scope and hit rows) reproduce every statement probability (0.382801ms)
+-✔ mm/mm-addsub: metadata and lesson (1.716538ms)
+-✔ mm/mm-addsub: 120 seeds satisfy the item contract (31.753885ms)
+-✔ mm/mm-addsub: independent verifier agrees on 40 seeds (10.616943ms)
+-✔ mm/mm-multiply: metadata and lesson (0.233919ms)
+-✔ mm/mm-multiply: 120 seeds satisfy the item contract (35.378296ms)
+-✔ mm/mm-multiply: independent verifier agrees on 40 seeds (10.122295ms)
+-✔ mm/mm-divide: metadata and lesson (0.291054ms)
+-✔ mm/mm-divide: 120 seeds satisfy the item contract (15.773919ms)
+-✔ mm/mm-divide: independent verifier agrees on 40 seeds (4.001724ms)
+-✔ mm/mm-decimals: metadata and lesson (0.618391ms)
+-✔ mm/mm-decimals: 120 seeds satisfy the item contract (30.035003ms)
+-✔ mm/mm-decimals: independent verifier agrees on 40 seeds (8.839054ms)
+-✔ mm/mm-fractions: metadata and lesson (0.22839ms)
+-✔ mm/mm-fractions: 120 seeds satisfy the item contract (13.517977ms)
+-✔ mm/mm-fractions: independent verifier agrees on 40 seeds (17.835496ms)
+-✔ mm/mm-percent: metadata and lesson (0.249782ms)
+-✔ mm/mm-percent: 120 seeds satisfy the item contract (32.392396ms)
+-✔ mm/mm-percent: independent verifier agrees on 40 seeds (7.551655ms)
+-✔ mm/mm-missing: metadata and lesson (0.160379ms)
+-✔ mm/mm-missing: 120 seeds satisfy the item contract (17.39185ms)
+-✔ mm/mm-missing: independent verifier agrees on 40 seeds (6.88437ms)
+-✔ mm/mm-mixed: metadata and lesson (0.112738ms)
+-✔ mm/mm-mixed: 120 seeds satisfy the item contract (19.171702ms)
+-✔ mm/mm-mixed: independent verifier agrees on 40 seeds (2.376061ms)
+-✔ mm: at least 560 distinct generated items (430.006354ms)
+-✔ mm: eight families with unique mm- ids across every section (0.560215ms)
+-✔ mm: exactly 4 options, distinct labels and values, a named false belief on every wrong one (131.454224ms)
+-✔ mm: the answer label parses back to the exact value, and all four options share one form and size (92.978521ms)
+-✔ mm: every solution has ask, steps, an exam-speed path and a sanity check (38.864522ms)
+-✔ mm: a twin keeps the variant and changes the numbers (19.896007ms)
+-✔ mm: the answer position is spread over all four slots (419.516565ms)
+-✔ mm: the closest-to-the-others option is the answer no more often than chance (2,000 seeds per family) (2161.804993ms)
+-✔ mm: the verifier rejects an item keyed to a wrong option (9.526942ms)
+-✔ mm: the prompt parser follows the order of operations, fractions and percent (0.692753ms)
+-✔ mm: division notation swaps ÷ for : only when the setting asks for it (0.159368ms)
+-✔ mm: the library fills seven 80-question sets with distinct prompts (37.459454ms)
+-✔ mm: config replicates the reported 80-in-8 format (0.275831ms)
+-✔ nl/arithmetic: metadata and lesson (1.574637ms)
+-✔ nl/arithmetic: 120 seeds satisfy the item contract (43.305771ms)
+-✔ nl/arithmetic: independent verifier agrees on 40 seeds (19.818766ms)
+-✔ nl/geometric: metadata and lesson (0.179647ms)
+-✔ nl/geometric: 120 seeds satisfy the item contract (39.689272ms)
+-✔ nl/geometric: independent verifier agrees on 40 seeds (10.939985ms)
+-✔ nl/second-diff: metadata and lesson (0.350792ms)
+-✔ nl/second-diff: 120 seeds satisfy the item contract (26.452063ms)
+-✔ nl/second-diff: independent verifier agrees on 40 seeds (29.367067ms)
+-✔ nl/add-index: metadata and lesson (0.32181ms)
+-✔ nl/add-index: 120 seeds satisfy the item contract (26.405324ms)
+-✔ nl/add-index: independent verifier agrees on 40 seeds (10.987195ms)
+-✔ nl/squares-plus: metadata and lesson (0.151375ms)
+-✔ nl/squares-plus: 120 seeds satisfy the item contract (17.710715ms)
+-✔ nl/squares-plus: independent verifier agrees on 40 seeds (7.965552ms)
+-✔ nl/triangular: metadata and lesson (0.390722ms)
+-✔ nl/triangular: 120 seeds satisfy the item contract (33.312939ms)
+-✔ nl/triangular: independent verifier agrees on 40 seeds (5.830069ms)
+-✔ nl/diff-geometric: metadata and lesson (0.187319ms)
+-✔ nl/diff-geometric: 120 seeds satisfy the item contract (20.778838ms)
+-✔ nl/diff-geometric: independent verifier agrees on 40 seeds (4.410594ms)
+-✔ nl/affine-recurrence: metadata and lesson (0.11447ms)
+-✔ nl/affine-recurrence: 120 seeds satisfy the item contract (23.762815ms)
+-✔ nl/affine-recurrence: independent verifier agrees on 40 seeds (7.604152ms)
+-✔ nl/fibonacci-like: metadata and lesson (0.07372ms)
+-✔ nl/fibonacci-like: 120 seeds satisfy the item contract (43.770338ms)
+-✔ nl/fibonacci-like: independent verifier agrees on 40 seeds (9.817682ms)
+-✔ nl/multiply-index: metadata and lesson (0.078076ms)
+-✔ nl/multiply-index: 120 seeds satisfy the item contract (15.88872ms)
+-✔ nl/multiply-index: independent verifier agrees on 40 seeds (4.590232ms)
+-✔ nl/interleaved: metadata and lesson (0.074351ms)
+-✔ nl/interleaved: 120 seeds satisfy the item contract (16.183068ms)
+-✔ nl/interleaved: independent verifier agrees on 40 seeds (14.217941ms)
+-✔ nl/alternating-ops: metadata and lesson (0.320438ms)
+-✔ nl/alternating-ops: 120 seeds satisfy the item contract (32.455321ms)
+-✔ nl/alternating-ops: independent verifier agrees on 40 seeds (5.768527ms)
+-✔ nl/cubes-plus: metadata and lesson (0.143884ms)
+-✔ nl/cubes-plus: 120 seeds satisfy the item contract (12.776241ms)
+-✔ nl/cubes-plus: independent verifier agrees on 40 seeds (7.517224ms)
+-✔ nl/pronic: metadata and lesson (0.104125ms)
+-✔ nl/pronic: 120 seeds satisfy the item contract (9.645325ms)
+-✔ nl/pronic: independent verifier agrees on 40 seeds (4.52214ms)
+-✔ nl/primes: metadata and lesson (0.117325ms)
+-✔ nl/primes: 120 seeds satisfy the item contract (25.616628ms)
+-✔ nl/primes: independent verifier agrees on 40 seeds (5.204216ms)
+-✔ nl/powers-offset: metadata and lesson (0.09406ms)
+-✔ nl/powers-offset: 120 seeds satisfy the item contract (35.036653ms)
+-✔ nl/powers-offset: independent verifier agrees on 40 seeds (11.31974ms)
+-✔ nl/decimals: metadata and lesson (0.137214ms)
+-✔ nl/decimals: 120 seeds satisfy the item contract (16.615863ms)
+-✔ nl/decimals: independent verifier agrees on 40 seeds (7.118379ms)
+-✔ nl/alternating-signs: metadata and lesson (0.157355ms)
+-✔ nl/alternating-signs: 120 seeds satisfy the item contract (42.011602ms)
+-✔ nl/alternating-signs: independent verifier agrees on 40 seeds (15.075538ms)
+-✔ nl/third-diff: metadata and lesson (0.16143ms)
+-✔ nl/third-diff: 120 seeds satisfy the item contract (19.886208ms)
+-✔ nl/third-diff: independent verifier agrees on 40 seeds (9.237347ms)
+-✔ nl/tribonacci: metadata and lesson (0.156974ms)
+-✔ nl/tribonacci: 120 seeds satisfy the item contract (26.460095ms)
+-✔ nl/tribonacci: independent verifier agrees on 40 seeds (7.930199ms)
+-✔ nl/weighted-two-term: metadata and lesson (0.155722ms)
+-✔ nl/weighted-two-term: 120 seeds satisfy the item contract (11.917541ms)
+-✔ nl/weighted-two-term: independent verifier agrees on 40 seeds (13.389335ms)
+-✔ nl/product-recurrence: metadata and lesson (0.418163ms)
+-✔ nl/product-recurrence: 120 seeds satisfy the item contract (11.458568ms)
+-✔ nl/product-recurrence: independent verifier agrees on 40 seeds (5.677742ms)
+-✔ nl/prime-gaps: metadata and lesson (0.111617ms)
+-✔ nl/prime-gaps: 120 seeds satisfy the item contract (58.972906ms)
+-✔ nl/prime-gaps: independent verifier agrees on 40 seeds (3.841706ms)
+-✔ nl/sum-previous: metadata and lesson (0.086099ms)
+-✔ nl/sum-previous: 120 seeds satisfy the item contract (17.230179ms)
+-✔ nl/sum-previous: independent verifier agrees on 40 seeds (7.176295ms)
+-✔ nl/digit-sum: metadata and lesson (0.137926ms)
+-✔ nl/digit-sum: 120 seeds satisfy the item contract (18.724206ms)
+-✔ nl/digit-sum: independent verifier agrees on 40 seeds (5.879072ms)
+-✔ nl/fractions: metadata and lesson (0.129694ms)
+-✔ nl/fractions: 120 seeds satisfy the item contract (17.32469ms)
+-✔ nl/fractions: independent verifier agrees on 40 seeds (4.607516ms)
+-✔ nl/fibonacci-squares: metadata and lesson (0.091977ms)
+-✔ nl/fibonacci-squares: 120 seeds satisfy the item contract (13.218171ms)
+-✔ nl/fibonacci-squares: independent verifier agrees on 40 seeds (4.56937ms)
+-✔ nl/reverse-digits: metadata and lesson (0.172737ms)
+-✔ nl/reverse-digits: 120 seeds satisfy the item contract (13.76874ms)
+-✔ nl/reverse-digits: independent verifier agrees on 40 seeds (3.376642ms)
+-✔ nl/square-minus: metadata and lesson (0.065097ms)
+-✔ nl/square-minus: 120 seeds satisfy the item contract (14.787048ms)
+-✔ nl/square-minus: independent verifier agrees on 40 seeds (3.133139ms)
+-✔ nl/mixed-combo: metadata and lesson (0.142743ms)
+-✔ nl/mixed-combo: 120 seeds satisfy the item contract (14.791254ms)
+-✔ nl/mixed-combo: independent verifier agrees on 40 seeds (4.963728ms)
+-✔ nl: at least 500 distinct generated items (1268.485898ms)
+-✔ nl: curated bank has at least 45 valid sourced items (0.578322ms)
+-✔ nl: every family contributes at least 15 distinct items over 400 seeds (1193.226511ms)
+-✔ nl: ~30 families cover difficulties 1..5 (0.308199ms)
+-✔ nl: the true rule reproduces every shown term, and misconceptions are specific (71.219607ms)
+-✔ nl solver: finds the reported example and rejects ambiguity (0.486094ms)
+-✔ nl: missing-term items have exactly one option that completes a rule (25.899517ms)
+-✔ nl bank: every curated item has a unique rule-consistent answer (3.104536ms)
+-✔ nl/digit-sum: difficulty 4 always generates (282.01087ms)
+-✔ ob/crossed: metadata and lesson (1.403742ms)
+-✔ ob/crossed: 120 seeds satisfy the item contract (22.24986ms)
+-✔ ob/crossed: independent verifier agrees on 40 seeds (50.294507ms)
+-✔ ob/bundle-rich: metadata and lesson (0.222692ms)
+-✔ ob/bundle-rich: 120 seeds satisfy the item contract (14.308695ms)
+-✔ ob/bundle-rich: independent verifier agrees on 40 seeds (53.860061ms)
+-✔ ob/bundle-cheap: metadata and lesson (0.459595ms)
+-✔ ob/bundle-cheap: 120 seeds satisfy the item contract (20.388857ms)
+-✔ ob/bundle-cheap: independent verifier agrees on 40 seeds (29.545013ms)
+-✔ ob/weighted: metadata and lesson (0.286427ms)
+-✔ ob/weighted: 120 seeds satisfy the item contract (7.190577ms)
+-✔ ob/weighted: independent verifier agrees on 40 seeds (12.762951ms)
+-✔ ob/spread: metadata and lesson (0.248941ms)
+-✔ ob/spread: 120 seeds satisfy the item contract (8.952663ms)
+-✔ ob/spread: independent verifier agrees on 40 seeds (41.786262ms)
+-✔ ob/chain: metadata and lesson (0.224254ms)
+-✔ ob/chain: 120 seeds satisfy the item contract (18.519611ms)
+-✔ ob/chain: independent verifier agrees on 40 seeds (69.684735ms)
+-✔ ob/decoy: metadata and lesson (0.181491ms)
+-✔ ob/decoy: 120 seeds satisfy the item contract (25.115241ms)
+-✔ ob/decoy: independent verifier agrees on 40 seeds (143.168953ms)
+-✔ ob/hidden: metadata and lesson (0.12108ms)
+-✔ ob/hidden: 120 seeds satisfy the item contract (10.872434ms)
+-✔ ob/hidden: independent verifier agrees on 40 seeds (65.97379ms)
+-✔ ob: at least 500 distinct generated items (252.501985ms)
+-✔ ob: curated bank has at least 45 valid sourced items (0.89951ms)
+-✔ ob: every family contributes at least 15 distinct boards over 400 seeds (245.365994ms)
+-✔ ob: best equals the solver result, is accepted by the checker, and prices sit on 0.5 ticks (33.520756ms)
+-✔ ob bank: the written trades are flat, indecomposable and as profitable as the exhaustive best (76.824761ms)
+-✔ ob solver: small known boards (0.698161ms)
+-✔ ob solver: decomposable positions are recognised (0.488838ms)
+-✔ ob solver: agrees with the brute force on random boards (22.37875ms)
+-✔ the lesson catalog matches the lesson content (1.370662ms)
+-✔ the family catalog matches the question families (0.901924ms)
+-✔ catalog links agree with the content for every family lesson (0.876436ms)
+-✔ grading for every question type (2.268651ms)
+-✔ generator questions resolve per seed (0.408218ms)
+-✔ number checks accept typed fractions (0.486395ms)
+-✔ number checks accept the typographic minus sign (0.342791ms)
+-✔ choice options are arranged fairly: shuffled, numeric sorted, traps follow (5.62289ms)
+-✔ choice validation still catches duplicates and bad indexes alongside the length cue (0.67101ms)
+-✔ quotes like "100.5 / 101.5" are shuffled, not sorted as fractions (0.46319ms)
+-✔ study/assessment: book, tree and lessons validate (3.218596ms)
+-✔ study/assessment: diagrams, checks and live examples (1.579294ms)
+-✔ study/prob: book, tree and lessons validate (2.030656ms)
+-✔ study/prob: diagrams, checks and live examples (35.088707ms)
+-✔ study/mm: book, tree and lessons validate (2.427598ms)
+-✔ study/mm: diagrams, checks and live examples (252.186112ms)
+-✔ study/bto: book, tree and lessons validate (4.423272ms)
+-✔ study/bto: diagrams, checks and live examples (811.821613ms)
+-✔ study/ll: book, tree and lessons validate (3.16086ms)
+-✔ study/ll: diagrams, checks and live examples (263.770366ms)
+-✔ study/nl: book, tree and lessons validate (6.169885ms)
+-✔ study/nl: diagrams, checks and live examples (476.049065ms)
+-✔ study/iv: book, tree and lessons validate (2.479645ms)
+-✔ study/iv: diagrams, checks and live examples (361.071295ms)
+-✔ study/ob: book, tree and lessons validate (1.306557ms)
+-✔ study/ob: diagrams, checks and live examples (96.276214ms)
+-✔ study/zapn: book, tree and lessons validate (1.985339ms)
+-✔ study/zapn: diagrams, checks and live examples (236.750138ms)
+-✔ study coverage: every question family and every Zap-N game has a lesson (1.188851ms)
+-✔ tree: branches sum to 1 and marked total is exact (6.960193ms)
+-✔ grid: counts and ranges (1.023836ms)
+-✔ venn: regions add to total (0.307058ms)
+-✔ numberline, cycle, unitsquare, plot (3.959731ms)
+-✔ ladder: exact differences and ratios (0.576249ms)
+-✔ flow: reachable, acyclic (0.359596ms)
+-✔ orderbook diagrams: book, bundle, ledger arithmetic (5.283674ms)
+-✔ reused visuals and unknown types (0.391904ms)
+-✔ week stats: last 7 days against the 7 before (1.969055ms)
+-✔ the reading: plain rules from the numbers (1.28163ms)
+-✔ a goal says how to study, not only what (0.726052ms)
+-✔ goal check comes back a week after setting or the last check (0.222953ms)
+-✔ next up: review > re-test > resume > start > done (0.630619ms)
+-✔ relative time (0.169623ms)
+-✔ tokenizes bold, italics, code, fractions, sup and sub (10.200922ms)
+-✔ never turns text into markup it did not ask for (0.283102ms)
+-✔ unclosed markers stay literal (0.205767ms)
+-✔ read, master with 3/3 clean, come back for review, drop on a miss (2.693084ms)
+-✔ interleave: no type twice in a row when avoidable (676.682674ms)
+-✔ units: a missed unit is weak until its next first attempt is right (0.65077ms)
+-✔ exam pace, scaffolds and the belief log (9.264967ms)
+-✔ a complete family lesson validates (3.658452ms)
+-✔ missing or reordered sections, too few diagrams, wrong tryit are caught (3.584121ms)
+-✔ every teaching unit needs 1-3 micro-checks; steps each need their own (0.52338ms)
+-✔ thinkaloud and variation are required and validated (1.788064ms)
+-✔ challenge attempts must each be answered by exactly one derivation step (0.760474ms)
+-✔ unit rule passes: one idea (text plus its diagram, formula or callout), then a check (0.325255ms)
+-✔ unit rule fails: a second text, diagram or callout before a check starts a new unchecked unit (0.306667ms)
+-✔ unit rule fails: more than 3 blocks in one unit, even of different types (0.083825ms)
+-✔ unit rule fails: a unit that ends its section unchecked, also before a non-teaching block (0.293798ms)
+-✔ unit rule: find-the-error, steps, recognition and transfer blocks close a unit (0.239938ms)
+-✔ unit rule exceptions: only the last unit of "why" and "rule" may go unchecked (0.491693ms)
+-✔ spiralBlocks: plain check blocks only, not mastery (1.782156ms)
+-✔ no spiral before any answer, after an odd count, or right after a spiral (0.25452ms)
+-✔ after the second new check: the earlier one, never the one just answered (0.322821ms)
+-✔ a missed check comes first, earliest miss first (0.206999ms)
+-✔ a miss repaired on recall stops counting as missed (0.129373ms)
+-✔ a miss that stays wrong on recall keeps priority (0.124626ms)
+-✔ blocks never re-asked come before blocks already re-asked (0.1882ms)
+-✔ expanding gap is exact for a single re-asked block (0.142693ms)
+-✔ mastery checks and unknown blocks are never re-asked (0.223083ms)
+-✔ a custom cadence: every third new check (0.148962ms)
+-✔ deterministic: same log, same answer (0.087571ms)
+-✔ spiralQuestion prefers a generator, else the first question (0.132598ms)
+-✔ bto/information-protocols: metadata and lesson (1.420316ms)
+-✔ bto/information-protocols: 240 seeds satisfy the item contract (33.786662ms)
+-✔ bto/information-protocols: independent verifier agrees on 120 seeds (7.505836ms)
+-✔ bto/shared-source: metadata and lesson (0.209012ms)
+-✔ bto/shared-source: 240 seeds satisfy the item contract (16.804263ms)
+-✔ bto/shared-source: independent verifier agrees on 120 seeds (10.191559ms)
+-✔ ll/selection-weights: metadata and lesson (0.307448ms)
+-✔ ll/selection-weights: 240 seeds satisfy the item contract (20.866251ms)
+-✔ ll/selection-weights: independent verifier agrees on 120 seeds (38.434658ms)
+-✔ iv/rates-weights: metadata and lesson (0.28841ms)
+-✔ iv/rates-weights: 240 seeds satisfy the item contract (49.220743ms)
+-✔ iv/rates-weights: independent verifier agrees on 120 seeds (2.015373ms)
+-✔ all supported structural branches have valid solutions and independently checked answers (109.917007ms)
+-✔ distinct numeric questions are not counted as distinct structures (48.686245ms)
+-✔ random and first reports agree while existence reports change the answer (2.542229ms)
+-✔ history affects a fixed source but not a fresh source; corrupted keys are rejected (15.220874ms)
+-✔ shared-group comparisons vary answer positions and the third comparator position (8.825772ms)
+-✔ equal time and equal distance require different answers with identical speeds (1.352686ms)
+-✔ difficulty changes reasoning relationships rather than just number size (3.633005ms)
+-✔ backend startup never replaces transfer-only local progress with an older server snapshot (7.549681ms)
+-✔ a genuinely empty browser can still restore server-side transfer progress (0.856075ms)
+-✔ attempting transfer practice cannot overwrite a save from an unknown future version (0.340277ms)
+-✔ fifteen mixed questions preserve preset and select distinct families per section (43.976723ms)
+-✔ cross-session selection avoids exact repetition and honestly reports familiar structures (140.213096ms)
+-✔ MCQ shuffling preserves answers and uses all five positions (1.541127ms)
+-✔ branch signatures ignore numbers and wording while preserving important operation changes (0.327438ms)
+-✔ old progress imports intact and transfer results survive reload without changing ordinary progress (1.985649ms)
+-✔ summary separates intervals, new structures, familiar structures and review (0.238115ms)
+-✔ every product row is sourced, priced and covers each task with a known value (6.072529ms)
+-✔ the chart lists every product, cheapest first, in both themes (1.663049ms)
+-✔ light theme meets WCAG AA (1.876096ms)
+-✔ dark theme meets WCAG AA (4.640446ms)
+-✔ the system dark block repeats the dark theme exactly (0.636349ms)
+-✔ system follows the OS, explicit choices win (1.34182ms)
+-✔ every module reachable from app.js exists (44.094574ms)
+-✔ only this machine counts as a backend host (1.072318ms)
+-✔ a hosted copy never probes for the backend (0.893311ms)
+-✔ a local copy probes with relative URLs (0.319566ms)
+-✔ backend startup cannot replace transfer-only local progress (0.724049ms)
+-✔ backend startup cannot erase displayed-only freshness history (1.507527ms)
+-✔ balloon: index exports the game contract and the configured metric (27.408676ms)
+-✔ balloon: round format matches the reported spec (1.109163ms)
+-✔ balloon: round 1 optimum equals a brute-force scan over thresholds (0.314799ms)
+-✔ balloon: bank-penalty DP matches brute-force expectimax on small rounds (3.229913ms)
+-✔ balloon: round 2 policy shrinks as the bank grows (numbers quoted by the coach) (0.532704ms)
+-✔ balloon: same seed and same actions give the same result (1.158206ms)
+-✔ balloon: scoring rules for cash, pop and the round-2 bank penalty (0.373507ms)
+-✔ balloon: playing the optimal policy scores ratio 1; timid play scores less (7.136445ms)
+-✔ balloon: pop points differ across seeds and cover 1..20 evenly (0.899841ms)
+-✔ codecompare: index exports the game contract and the configured metric (3.459055ms)
+-✔ codecompare: 30 rounds, allowance 5 s down to 3 s, length 7 up to 10 (0.27504ms)
+-✔ codecompare: exactly one identical option; distractors differ by 1-2 edits and from each other (20.143158ms)
+-✔ codecompare: scoring and timeouts (0.905099ms)
+-✔ codecompare: an answer after the deadline is a timeout, not a hit (0.458844ms)
+-✔ codecompare: same seed gives the same rounds (1.836798ms)
+-✔ codecompare: at least 300 distinct rounds across seeds (7.878561ms)
+-✔ figureitout: index exports the game contract and the configured metric (1.945209ms)
+-✔ figureitout: 5 rounds with growing property counts, values within PROPS (2.501538ms)
+-✔ figureitout: closed-form optimum equals exhaustive search over all adaptive strategies (17.464857ms)
+-✔ figureitout: solver optimum is no worse than any tested strategy (15.769571ms)
+-✔ figureitout: guessesOver is about 0 for perfect play and larger for one-at-a-time (43.953483ms)
+-✔ figureitout: invalid guesses are ignored; same seed gives the same hidden figures (0.77851ms)
+-✔ figureitout: at least 300 distinct hidden figures across seeds (1.125027ms)
+-✔ numberbox: index exports the game contract and the configured metric (35.81226ms)
+-✔ numberbox: solver finds known answers including a fractional intermediate (12.37363ms)
+-✔ numberbox: subset DP reaches exactly the values of a brute-force tree enumeration (162.88295ms)
+-✔ numberbox: parser handles precedence, brackets, symbols and rejects bad input (3.326347ms)
+-✔ numberbox: 10 rounds, every round solvable and the shown solution evaluates exactly to the target (133.408049ms)
+-✔ numberbox: scoring counts solved rounds; wrong submits and skips are tracked (8.712925ms)
+-✔ numberbox: at least 300 distinct solvable puzzles, each with a verified solution (271.759757ms)
+-✔ numberbox: same seed gives the same rounds (15.926996ms)
+-✔ pincode: index exports the game contract and the configured metric (1.159188ms)
+-✔ pincode: transforms for the three modes (10.782499ms)
+-✔ pincode: two correct advance, two wrong end the mode; span is the forward length (1.463541ms)
+-✔ pincode: a correct-wrong-correct sequence still advances (two correct at the length) (2.853712ms)
+-✔ pincode: digits typed while the code is visible are ignored; backspace edits (0.230523ms)
+-✔ pincode: same seed gives the same codes (4.6975ms)
+-✔ pincode: at least 300 distinct codes across seeds (3.238035ms)
+-✔ shapeshift: index exports the game contract and the configured metric (1.495639ms)
+-✔ shapeshift: 60 rounds, balanced shapes, positions inside the stage (1.873031ms)
+-✔ shapeshift: scoring counts correct keys, misses and reaction time (10.810481ms)
+-✔ shapeshift: a flash is visible for flashMs, a press before onset is early (0.500866ms)
+-✔ shapeshift: same seed and same timestamps give the same result (1.399015ms)
+-✔ shapeshift: at least 300 distinct trials across seeds (0.998879ms)
+-✔ skyscraper: index exports the game contract and the configured metric (80.343243ms)
+-✔ skyscraper: BFS optimum on small known cases (0.70463ms)
+-✔ skyscraper: optimalPath replays legally to the target in the optimal count (4.713854ms)
+-✔ skyscraper: 10 levels, every generated level solvable at exactly the reported optimum (860.395346ms)
+-✔ skyscraper: same seed gives the same levels (30.860356ms)
+-✔ skyscraper: optimal play scores 0 moves over; a detour adds exactly 2 (188.043491ms)
+-✔ skyscraper: illegal moves are rejected and not counted (19.564737ms)
+-✔ skyscraper: at least 300 distinct solvable levels with a verified optimum (274.327213ms)
+-✔ stockmaster: index exports the game contract and the configured metric (2.218306ms)
+-✔ stockmaster: 2-minute schedule, non-overlapping per slot, zones inside the dial, speeds ramp up (3.062514ms)
+-✔ stockmaster: perfect timing scores 1; misses and early clicks lower it (13.320632ms)
+-✔ stockmaster: needle position and single outcome per gauge (0.535678ms)
+-✔ stockmaster: same seed and click times give the same result (4.637891ms)
+-✔ stockmaster: needle schedules differ across seeds (9.095465ms)
+-✔ theswitch: index exports the game contract and the configured metric (1.767734ms)
+-✔ theswitch: 35 rounds, 17 switches, answers match the active task (12.488692ms)
+-✔ theswitch: accuracy, switch cost and the equal-weight score (1.147991ms)
+-✔ theswitch: no answer within the deadline is a wrong timeout (0.302621ms)
+-✔ theswitch: same seed and timestamps give the same result (1.267278ms)
+-✔ theswitch: at least 300 distinct trials across seeds (9.518815ms)
++✔ mcq: +1 correct, -1 wrong, 0 skip (1.881572ms)
++✔ rank: exact order only, no partial credit (1.132266ms)
++✔ interval: L/U when truth inside inclusive, else 0; L=0 scores 0 (0.474216ms)
++✔ orderbook: flat position with positive profit is correct (2.607573ms)
++✔ decide: push, pull, none and conflict (0.942543ms)
++✔ pack and unpack round-trip, plain and encrypted (489.95652ms)
++✔ two devices: first pushes, an empty second pulls, a changed pair asks (1266.995324ms)
++✔ factorial and binomials (4.323379ms)
++✔ derangements (1.552232ms)
++✔ buildMcq returns 5 sorted, distinct options with misconceptions on wrong ones (1.873039ms)
++✔ validateItem accepts a good mcq and flags a broken one (0.547896ms)
++✔ validateItem checks rank margins and order (0.298435ms)
++✔ validateItem checks interval truth and orderbook best trade (0.319767ms)
++✔ validateItem: mcq option count is 5 by default and item.optionCount when set (80-in-8 uses 4) (0.589929ms)
++✔ validateSolution: ask, fast, check, a picture (or an explicit null) and math on some step (0.271665ms)
++✔ nearestLevel picks the closest supported level (0.600364ms)
++✔ drawItem honours family and difficulty (4.041289ms)
++✔ examItems is deterministic per seed, ramps difficulty, has unique prompts and mixes the bank (2.829954ms)
++✔ examScore follows each section scoring rule (0.280077ms)
++✔ Kickstarter enforces an outer 25-minute BTO cap alongside the item clock (1.283842ms)
++✔ a 30-minute or unstamped BTO run cannot count under a 25-minute cap (0.315089ms)
++✔ wide covering intervals earn their score without claiming mastery (1.493034ms)
++✔ old interval mastery is reassessed while answers, lessons, other mastery and XP survive (0.956104ms)
++✔ fresh exam and adaptive draws avoid questions actually seen in earlier sessions (2.241458ms)
++✔ visible question history persists and shuffling ranking answers does not make a question fresh (1.333967ms)
++✔ the fund explanation stays valid when the volatile fund is positive more often (2.006478ms)
++✔ mm: library has at least 500 distinct valid questions (224.726606ms)
++✔ bto: library has at least 500 distinct valid questions (284.663405ms)
++✔ nl: library has at least 500 distinct valid questions (329.325572ms)
++✔ ll: library has at least 500 distinct valid questions (387.973816ms)
++✔ iv: library has at least 500 distinct valid questions (366.146501ms)
++✔ ob: library has at least 500 distinct valid questions (89.265377ms)
++✔ library is deterministic, unique, sized, and includes the bank (37.496321ms)
++✔ sets partition the library in exam-sized chunks (4.159595ms)
++✔ solveLinear solves a 2x2 system exactly (0.957546ms)
++✔ random walk on a hexagon: expected return time is 6 (0.988952ms)
++✔ stationary distribution of a two-state chain (0.293057ms)
++✔ gambler ruin absorption probability (0.382239ms)
++✔ bands follow the lowest difficulty a family offers (1.590989ms)
++✔ exactly one current row in every state of progress (1.373826ms)
++✔ the current row is the first unfinished one, later units are marked later (2.75984ms)
++✔ a fully mastered path points at the exam checkpoint (0.347067ms)
++✔ next step prefers a due review, then the first unfinished section (0.374287ms)
++✔ real sections build a valid roadmap (0.519012ms)
++✔ applying a preset sets clocks; switching back restores the base format (2.206817ms)
++✔ unknown or missing presets fall back to the Kickstarter battery (0.190243ms)
++✔ custom keeps only real sections and games (0.276122ms)
++✔ preset section lists only name tasks that exist (0.359185ms)
++✔ readiness never counts a run under a looser clock (0.196813ms)
++✔ migrate keeps every v1 key and value (3.007889ms)
++✔ migrate is idempotent and rejects unknown saves (0.726062ms)
++✔ store migrates v1 once, writes v2, leaves v1 byte-for-byte (0.882335ms)
++✔ store never overwrites a save it cannot read (0.623278ms)
++✔ store compacts and flags a full quota instead of losing progress silently (0.970094ms)
++✔ recordAnswer feeds trend, mastery, xp and the mistake log (1.266626ms)
++✔ trend decays with a 7-day half-life (0.19476ms)
++✔ wilson lower bound is cautious with little data (0.205376ms)
++✔ weak patterns: needs evidence, at most two per family, top five (3.94112ms)
++✔ active time: idle, hidden and non-session ticks earn nothing (0.316962ms)
++✔ streak: today pending never breaks it, gaps do, DST is calendar-safe (0.486254ms)
++✔ freezes cover missed days only while they last (0.40933ms)
++✔ xp rules (0.140619ms)
++✔ levels: three clean in a row per level, exam pace for level 5 (0.212407ms)
++✔ mistake log: repeats bump the count, cap holds (1.957195ms)
++✔ every section rebuilds a missed question from its id (40.84345ms)
++✔ blank state has every v2 field (0.277022ms)
++✔ normalises sign and gcd (0.963024ms)
++✔ arithmetic is exact (0.359496ms)
++✔ toNumber and from (0.199417ms)
++✔ division by zero throws (0.287238ms)
++✔ same seed gives the same stream (1.131075ms)
++✔ string seeds work and differ from each other (0.286186ms)
++✔ int is inclusive and in range (1.00728ms)
++✔ shuffle is a permutation and pick returns a member (0.856625ms)
++✔ fork gives an independent reproducible child (0.19528ms)
++✔ mm/mm-addsub: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (103.358778ms)
++✔ mm/mm-multiply: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (61.33205ms)
++✔ mm/mm-divide: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (42.304191ms)
++✔ mm/mm-decimals: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (59.656744ms)
++✔ mm/mm-fractions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (45.732974ms)
++✔ mm/mm-percent: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (53.621837ms)
++✔ mm/mm-missing: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.321312ms)
++✔ mm/mm-mixed: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (23.554299ms)
++✔ mm: every bank item carries the full solution (0.309802ms)
++✔ bto/two-dice-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (17.177703ms)
++✔ bto/die-repeats: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.12582ms)
++✔ bto/dice-order-stats: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.301885ms)
++✔ bto/three-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.771826ms)
++✔ bto/at-least-one: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (31.426652ms)
++✔ bto/first-success: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (36.714461ms)
++✔ bto/conditional-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.104474ms)
++✔ bto/card-symmetry: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.370957ms)
++✔ bto/card-draws: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.589294ms)
++✔ bto/urn-draws: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.138222ms)
++✔ bto/coin-sequences: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.533889ms)
++✔ bto/race-to-k: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.830619ms)
++✔ bto/pattern-waiting: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.914148ms)
++✔ bto/bayes-test: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.324227ms)
++✔ bto/bayes-boxes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.766248ms)
++✔ bto/monty-hall: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (4.345132ms)
++✔ bto/pigeonhole: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.570535ms)
++✔ bto/birthday: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (20.731198ms)
++✔ bto/derangements: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.429264ms)
++✔ bto/expected-waiting: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.489223ms)
++✔ bto/coupon-collector: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.285691ms)
++✔ bto/linearity: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.867739ms)
++✔ bto/expected-extremes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.917192ms)
++✔ bto/dice-duel: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.84919ms)
++✔ bto/dice-games-ev: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.502613ms)
++✔ bto/card-stopping: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.623078ms)
++✔ bto/running-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (59.604708ms)
++✔ bto/random-walk-line: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.114295ms)
++✔ bto/polygon-walk: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.232631ms)
++✔ bto/gamblers-ruin: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.536421ms)
++✔ bto/clt-estimates: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (35.381329ms)
++✔ bto/uniform-geometry: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.153051ms)
++✔ bto: every bank item carries the full solution (4.433894ms)
++✔ nl/arithmetic: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (20.619672ms)
++✔ nl/geometric: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (48.96443ms)
++✔ nl/second-diff: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.114136ms)
++✔ nl/add-index: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (34.90607ms)
++✔ nl/squares-plus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (44.642744ms)
++✔ nl/triangular: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (24.798716ms)
++✔ nl/diff-geometric: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.084409ms)
++✔ nl/affine-recurrence: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.645159ms)
++✔ nl/fibonacci-like: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.069115ms)
++✔ nl/multiply-index: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.369333ms)
++✔ nl/interleaved: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.280863ms)
++✔ nl/alternating-ops: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.00484ms)
++✔ nl/cubes-plus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.285519ms)
++✔ nl/pronic: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.86982ms)
++✔ nl/primes: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.432409ms)
++✔ nl/powers-offset: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.646848ms)
++✔ nl/decimals: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.195866ms)
++✔ nl/alternating-signs: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (19.630738ms)
++✔ nl/third-diff: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (21.608436ms)
++✔ nl/tribonacci: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.649661ms)
++✔ nl/weighted-two-term: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (23.204873ms)
++✔ nl/product-recurrence: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.391066ms)
++✔ nl/prime-gaps: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.833937ms)
++✔ nl/sum-previous: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.066219ms)
++✔ nl/digit-sum: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.046253ms)
++✔ nl/fractions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (22.138705ms)
++✔ nl/fibonacci-squares: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.89543ms)
++✔ nl/reverse-digits: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (15.489581ms)
++✔ nl/square-minus: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.026516ms)
++✔ nl/mixed-combo: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (6.193845ms)
++✔ nl: every bank item carries the full solution (3.455467ms)
++✔ ll/conjunction: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (16.255491ms)
++✔ ll/score-table: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.440689ms)
++✔ ll/football: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.72136ms)
++✔ ll/survey-bar: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.781991ms)
++✔ ll/fund-returns: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.438627ms)
++✔ ll/histogram-bins: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.797715ms)
++✔ ll/scatter-regions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (17.996305ms)
++✔ ll/density-curves: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (82.308544ms)
++✔ ll/markov-graph: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (18.429629ms)
++✔ ll/dice-events: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (8.882601ms)
++✔ ll/card-events: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.870384ms)
++✔ ll/coin-patterns: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.931871ms)
++✔ ll/collisions: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (12.894074ms)
++✔ ll/large-numbers: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.528961ms)
++✔ ll/impossible-bounds: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.462636ms)
++✔ ll: every bank item carries the full solution (1.682927ms)
++✔ iv/prob-exact: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.601199ms)
++✔ iv/prob-estimate: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (26.479371ms)
++✔ iv/expected-dice: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.653862ms)
++✔ iv/coupon: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (63.69523ms)
++✔ iv/waiting-time: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (4.976362ms)
++✔ iv/dots-count: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (25.495404ms)
++✔ iv/dice-grid: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.557477ms)
++✔ iv/path-length: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (7.000326ms)
++✔ iv/percentile: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (27.657615ms)
++✔ iv/series: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (41.326223ms)
++✔ iv/mental-product: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.437199ms)
++✔ iv/powers-roots: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (5.723956ms)
++✔ iv/combinatorics: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.177198ms)
++✔ iv/fermi: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (3.700171ms)
++✔ iv: every bank item carries the full solution (1.445413ms)
++✔ ob/crossed: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.617054ms)
++✔ ob/bundle-rich: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.650483ms)
++✔ ob/bundle-cheap: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (9.634749ms)
++✔ ob/weighted: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (10.418458ms)
++✔ ob/spread: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (14.678593ms)
++✔ ob/chain: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (11.848367ms)
++✔ ob/decoy: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (13.470353ms)
++✔ ob/hidden: ask, picture, step math, exam-speed path and check on 40 seeds per difficulty (18.808816ms)
++✔ ob: every bank item carries the full solution (1.350391ms)
++✔ the no-picture list names real families and gives a reason (0.340297ms)
++✔ store records answers and runs, and round-trips through export/import (9.878311ms)
++✔ store survives a broken backend (0.396741ms)
++✔ SRS: a miss comes back soon, repeated hits push it out (0.29516ms)
++✔ adaptive weights favour weak and unseen families (10.996808ms)
++✔ readiness: last 3 exams must all meet the target (0.487356ms)
++✔ countdown uses an injectable clock (0.252126ms)
++✔ zapn targets: lower is better for *Over metrics, higher otherwise (0.334287ms)
++✔ countdown restarts from full time (0.147129ms)
++✔ caret exponents print as superscripts; grouped or mixed exponents stay as written (3.950312ms)
++✔ a count of one takes the singular; algebra, decimals and larger counts stay as written (0.878458ms)
++✔ app files map to their path; folders map to index.html (1.155ms)
++✔ private folders are refused however they are spelled (0.291824ms)
++✔ dot segments, traversal and odd encodings are refused (0.335199ms)
++✔ Host header must name this server (0.178055ms)
++✔ mk coach: each round gets one or two plain sentences (22.935146ms)
++✔ mk coach: says whether the mid was on fair value (2.757647ms)
++✔ mk coach: says when the spread was narrow for the uncertainty (1.024435ms)
++✔ mk coach: names adverse selection and what it implies (2.077495ms)
++✔ mk coach: the session summary picks the single most costly habit (160.083446ms)
++✔ mk coach: the summary reports trades, expected value and P&L in plain words (7.53397ms)
++✔ mk coach: number formats and every piece of game copy follow the copy rules (0.305024ms)
++✔ mk: fair values are exact and match an independent formula (14.921621ms)
++✔ mk: the other trader's expectations are exact and average back to fair value (1.30214ms)
++✔ mk: the other trader buys above your ask, sells below your bid, otherwise passes (14.247269ms)
++✔ mk: P&L sign conventions (you buy at your bid when it sells to you) (0.508156ms)
++✔ mk: expected value of a quote matches a brute-force sum over every outcome and hedge (106.86568ms)
++✔ mk: a centred full-width market earns on average, a tight one loses, an off-centre one earns less (0.87962ms)
++✔ mk: prices parse exactly, with two decimals at most (3.468646ms)
++✔ mk: the spread cap and the other quote rules are enforced (1.605792ms)
++✔ mk: a session is always 8 rounds, each quantity twice (189.849795ms)
++✔ mk: same seed, same rounds and results; different seeds differ (7.969809ms)
++✔ mk: session totals equal the sum of the rounds, exactly (26.833141ms)
++✔ bto/two-dice-sum: metadata and lesson (3.523608ms)
++✔ bto/two-dice-sum: 120 seeds satisfy the item contract (21.968706ms)
++✔ bto/two-dice-sum: independent verifier agrees on 40 seeds (6.011283ms)
++✔ bto/die-repeats: metadata and lesson (0.227169ms)
++✔ bto/die-repeats: 120 seeds satisfy the item contract (28.383025ms)
++✔ bto/die-repeats: independent verifier agrees on 40 seeds (46.336526ms)
++✔ bto/dice-order-stats: metadata and lesson (0.933239ms)
++✔ bto/dice-order-stats: 120 seeds satisfy the item contract (13.401429ms)
++✔ bto/dice-order-stats: independent verifier agrees on 40 seeds (3.429507ms)
++✔ bto/three-dice: metadata and lesson (0.285986ms)
++✔ bto/three-dice: 120 seeds satisfy the item contract (8.56156ms)
++✔ bto/three-dice: independent verifier agrees on 40 seeds (10.698939ms)
++✔ bto/at-least-one: metadata and lesson (0.159778ms)
++✔ bto/at-least-one: 120 seeds satisfy the item contract (19.161616ms)
++✔ bto/at-least-one: independent verifier agrees on 40 seeds (15.032804ms)
++✔ bto/first-success: metadata and lesson (0.469519ms)
++✔ bto/first-success: 120 seeds satisfy the item contract (9.208072ms)
++✔ bto/first-success: independent verifier agrees on 40 seeds (4.656585ms)
++✔ bto/conditional-dice: metadata and lesson (0.132708ms)
++✔ bto/conditional-dice: 120 seeds satisfy the item contract (12.471864ms)
++✔ bto/conditional-dice: independent verifier agrees on 40 seeds (6.872655ms)
++✔ bto/card-symmetry: metadata and lesson (0.146738ms)
++✔ bto/card-symmetry: 120 seeds satisfy the item contract (5.178863ms)
++✔ bto/card-symmetry: independent verifier agrees on 40 seeds (2.96095ms)
++✔ bto/card-draws: metadata and lesson (0.304864ms)
++✔ bto/card-draws: 120 seeds satisfy the item contract (6.868829ms)
++✔ bto/card-draws: independent verifier agrees on 40 seeds (10.360549ms)
++✔ bto/urn-draws: metadata and lesson (0.118126ms)
++✔ bto/urn-draws: 120 seeds satisfy the item contract (17.212895ms)
++✔ bto/urn-draws: independent verifier agrees on 40 seeds (3.09526ms)
++✔ bto/coin-sequences: metadata and lesson (0.113639ms)
++✔ bto/coin-sequences: 120 seeds satisfy the item contract (18.302477ms)
++✔ bto/coin-sequences: independent verifier agrees on 40 seeds (11.860274ms)
++✔ bto/race-to-k: metadata and lesson (0.211565ms)
++✔ bto/race-to-k: 120 seeds satisfy the item contract (7.524244ms)
++✔ bto/race-to-k: independent verifier agrees on 40 seeds (2.835683ms)
++✔ bto/pattern-waiting: metadata and lesson (0.08077ms)
++✔ bto/pattern-waiting: 120 seeds satisfy the item contract (6.409927ms)
++✔ bto/pattern-waiting: independent verifier agrees on 40 seeds (4.499972ms)
++✔ bto/bayes-test: metadata and lesson (0.088051ms)
++✔ bto/bayes-test: 120 seeds satisfy the item contract (8.651765ms)
++✔ bto/bayes-test: independent verifier agrees on 40 seeds (2.870755ms)
++✔ bto/bayes-boxes: metadata and lesson (0.127951ms)
++✔ bto/bayes-boxes: 120 seeds satisfy the item contract (8.00415ms)
++✔ bto/bayes-boxes: independent verifier agrees on 40 seeds (1.843776ms)
++✔ bto/monty-hall: metadata and lesson (0.099879ms)
++✔ bto/monty-hall: 120 seeds satisfy the item contract (4.284581ms)
++✔ bto/monty-hall: independent verifier agrees on 40 seeds (3.958676ms)
++✔ bto/pigeonhole: metadata and lesson (0.085327ms)
++✔ bto/pigeonhole: 120 seeds satisfy the item contract (14.525102ms)
++✔ bto/pigeonhole: independent verifier agrees on 40 seeds (9.981916ms)
++✔ bto/birthday: metadata and lesson (0.074ms)
++✔ bto/birthday: 120 seeds satisfy the item contract (16.377671ms)
++✔ bto/birthday: independent verifier agrees on 40 seeds (4.16292ms)
++✔ bto/derangements: metadata and lesson (0.202983ms)
++✔ bto/derangements: 120 seeds satisfy the item contract (10.310004ms)
++✔ bto/derangements: independent verifier agrees on 40 seeds (16.026437ms)
++✔ bto/expected-waiting: metadata and lesson (0.131536ms)
++✔ bto/expected-waiting: 120 seeds satisfy the item contract (7.866286ms)
++✔ bto/expected-waiting: independent verifier agrees on 40 seeds (2.756985ms)
++✔ bto/coupon-collector: metadata and lesson (0.14137ms)
++✔ bto/coupon-collector: 120 seeds satisfy the item contract (8.775509ms)
++✔ bto/coupon-collector: independent verifier agrees on 40 seeds (4.819748ms)
++✔ bto/linearity: metadata and lesson (0.522268ms)
++✔ bto/linearity: 120 seeds satisfy the item contract (6.465619ms)
++✔ bto/linearity: independent verifier agrees on 40 seeds (19.476286ms)
++✔ bto/expected-extremes: metadata and lesson (0.11408ms)
++✔ bto/expected-extremes: 120 seeds satisfy the item contract (16.416267ms)
++✔ bto/expected-extremes: independent verifier agrees on 40 seeds (8.419158ms)
++✔ bto/dice-duel: metadata and lesson (0.115432ms)
++✔ bto/dice-duel: 120 seeds satisfy the item contract (12.558894ms)
++✔ bto/dice-duel: independent verifier agrees on 40 seeds (4.70039ms)
++✔ bto/dice-games-ev: metadata and lesson (0.117735ms)
++✔ bto/dice-games-ev: 120 seeds satisfy the item contract (12.517553ms)
++✔ bto/dice-games-ev: independent verifier agrees on 40 seeds (30.446072ms)
++✔ bto/card-stopping: metadata and lesson (0.19476ms)
++✔ bto/card-stopping: 120 seeds satisfy the item contract (12.406656ms)
++✔ bto/card-stopping: independent verifier agrees on 40 seeds (3.576386ms)
++✔ bto/running-sum: metadata and lesson (0.099138ms)
++✔ bto/running-sum: 120 seeds satisfy the item contract (96.300637ms)
++✔ bto/running-sum: independent verifier agrees on 40 seeds (38.742789ms)
++✔ bto/random-walk-line: metadata and lesson (0.12116ms)
++✔ bto/random-walk-line: 120 seeds satisfy the item contract (9.618394ms)
++✔ bto/random-walk-line: independent verifier agrees on 40 seeds (2.827441ms)
++✔ bto/polygon-walk: metadata and lesson (0.062893ms)
++✔ bto/polygon-walk: 120 seeds satisfy the item contract (4.93554ms)
++✔ bto/polygon-walk: independent verifier agrees on 40 seeds (6.088703ms)
++✔ bto/gamblers-ruin: metadata and lesson (0.105947ms)
++✔ bto/gamblers-ruin: 120 seeds satisfy the item contract (7.159161ms)
++✔ bto/gamblers-ruin: independent verifier agrees on 40 seeds (10.261322ms)
++✔ bto/clt-estimates: metadata and lesson (0.121481ms)
++✔ bto/clt-estimates: 120 seeds satisfy the item contract (24.457924ms)
++✔ bto/clt-estimates: independent verifier agrees on 40 seeds (21.232514ms)
++✔ bto/uniform-geometry: metadata and lesson (0.150374ms)
++✔ bto/uniform-geometry: 120 seeds satisfy the item contract (9.416977ms)
++✔ bto/uniform-geometry: independent verifier agrees on 40 seeds (69.509629ms)
++✔ bto: at least 500 distinct generated items (849.038119ms)
++✔ bto: curated bank has at least 45 valid sourced items (0.58409ms)
++✔ bto: at least 30 families spanning difficulty 1..5 (0.145848ms)
++✔ bto: every family contributes at least 15 distinct items over 400 seeds (665.455012ms)
++✔ bto: every item carries plain-JSON params naming its family (49.63508ms)
++✔ bto: the keyed option is the unique closest value to the exact answer (59.296348ms)
++✔ bto: famous reported items keep their known answers (0.506725ms)
++✔ iv/prob-exact: metadata and lesson (1.943404ms)
++✔ iv/prob-exact: 120 seeds satisfy the item contract (8.263727ms)
++✔ iv/prob-exact: independent verifier agrees on 40 seeds (12.242913ms)
++✔ iv/prob-estimate: metadata and lesson (0.241529ms)
++✔ iv/prob-estimate: 120 seeds satisfy the item contract (26.281579ms)
++✔ iv/prob-estimate: independent verifier agrees on 40 seeds (5.676603ms)
++✔ iv/expected-dice: metadata and lesson (0.254459ms)
++✔ iv/expected-dice: 120 seeds satisfy the item contract (4.412392ms)
++✔ iv/expected-dice: independent verifier agrees on 40 seeds (12.697881ms)
++✔ iv/coupon: metadata and lesson (0.338054ms)
++✔ iv/coupon: 120 seeds satisfy the item contract (70.718587ms)
++✔ iv/coupon: independent verifier agrees on 40 seeds (25.687375ms)
++✔ iv/waiting-time: metadata and lesson (0.164204ms)
++✔ iv/waiting-time: 120 seeds satisfy the item contract (14.574134ms)
++✔ iv/waiting-time: independent verifier agrees on 40 seeds (14.367437ms)
++✔ iv/dots-count: metadata and lesson (1.867602ms)
++✔ iv/dots-count: 120 seeds satisfy the item contract (38.349823ms)
++✔ iv/dots-count: independent verifier agrees on 40 seeds (13.180389ms)
++✔ iv/dice-grid: metadata and lesson (0.193138ms)
++✔ iv/dice-grid: 120 seeds satisfy the item contract (41.033429ms)
++✔ iv/dice-grid: independent verifier agrees on 40 seeds (5.904674ms)
++✔ iv/path-length: metadata and lesson (0.325294ms)
++✔ iv/path-length: 120 seeds satisfy the item contract (9.449994ms)
++✔ iv/path-length: independent verifier agrees on 40 seeds (3.888491ms)
++✔ iv/percentile: metadata and lesson (0.125137ms)
++✔ iv/percentile: 120 seeds satisfy the item contract (61.073533ms)
++✔ iv/percentile: independent verifier agrees on 40 seeds (21.808489ms)
++✔ iv/series: metadata and lesson (0.156223ms)
++✔ iv/series: 120 seeds satisfy the item contract (63.606826ms)
++✔ iv/series: independent verifier agrees on 40 seeds (13.52948ms)
++✔ iv/mental-product: metadata and lesson (0.276912ms)
++✔ iv/mental-product: 120 seeds satisfy the item contract (5.812035ms)
++✔ iv/mental-product: independent verifier agrees on 40 seeds (0.934121ms)
++✔ iv/powers-roots: metadata and lesson (0.104095ms)
++✔ iv/powers-roots: 120 seeds satisfy the item contract (16.17496ms)
++✔ iv/powers-roots: independent verifier agrees on 40 seeds (2.298733ms)
++✔ iv/combinatorics: metadata and lesson (0.099628ms)
++✔ iv/combinatorics: 120 seeds satisfy the item contract (2.658099ms)
++✔ iv/combinatorics: independent verifier agrees on 40 seeds (2.492482ms)
++✔ iv/fermi: metadata and lesson (0.12732ms)
++✔ iv/fermi: 120 seeds satisfy the item contract (5.106645ms)
++✔ iv/fermi: independent verifier agrees on 40 seeds (1.827071ms)
++✔ iv: at least 500 distinct generated items (750.32842ms)
++✔ iv: curated bank has at least 45 valid sourced items (0.685611ms)
++✔ iv: every family contributes at least 15 distinct items over 400 seeds (290.069714ms)
++✔ iv: items carry unit, coach and JSON params; a spot-on zero-width answer to an exact item scores 1 (19.17485ms)
++✔ iv visuals: specs reproduce the truth (9.150559ms)
++✔ iv bank: every truth is recomputed independently (45.82879ms)
++✔ optimal: exact belief gives zero width and score 1 (0.217374ms)
++✔ optimal: wider belief gives a wider optimum and a lower score (1.512302ms)
++✔ optimal: the interval leans high because lower/upper rewards higher intervals (1.043304ms)
++✔ optimal: lognormal optimum satisfies the first-order condition φ(z)/s = 2Φ(z) − 1 (2.349399ms)
++✔ optimal: no nearby interval beats the optimum, and Monte Carlo agrees with expectedScore (3.922512ms)
++✔ visual renderers: pure SVG with role=img, viewBox, CSS-variable colours and no answer in the label (21.473483ms)
++✔ ll/conjunction: metadata and lesson (2.88077ms)
++✔ ll/conjunction: 120 seeds satisfy the item contract (34.597674ms)
++✔ ll/conjunction: independent verifier agrees on 40 seeds (2.513313ms)
++✔ ll/score-table: metadata and lesson (0.226777ms)
++✔ ll/score-table: 120 seeds satisfy the item contract (17.965897ms)
++✔ ll/score-table: independent verifier agrees on 40 seeds (5.824724ms)
++✔ ll/football: metadata and lesson (0.20826ms)
++✔ ll/football: 120 seeds satisfy the item contract (15.179587ms)
++✔ ll/football: independent verifier agrees on 40 seeds (8.584655ms)
++✔ ll/survey-bar: metadata and lesson (0.368469ms)
++✔ ll/survey-bar: 120 seeds satisfy the item contract (7.35957ms)
++✔ ll/survey-bar: independent verifier agrees on 40 seeds (4.248908ms)
++✔ ll/fund-returns: metadata and lesson (0.159898ms)
++✔ ll/fund-returns: 120 seeds satisfy the item contract (15.482316ms)
++✔ ll/fund-returns: independent verifier agrees on 40 seeds (2.509948ms)
++✔ ll/histogram-bins: metadata and lesson (0.364463ms)
++✔ ll/histogram-bins: 120 seeds satisfy the item contract (9.922918ms)
++✔ ll/histogram-bins: independent verifier agrees on 40 seeds (1.293166ms)
++✔ ll/scatter-regions: metadata and lesson (11.849556ms)
++✔ ll/scatter-regions: 120 seeds satisfy the item contract (12.839462ms)
++✔ ll/scatter-regions: independent verifier agrees on 40 seeds (4.519ms)
++✔ ll/density-curves: metadata and lesson (0.12734ms)
++✔ ll/density-curves: 120 seeds satisfy the item contract (70.113607ms)
++✔ ll/density-curves: independent verifier agrees on 40 seeds (43.354626ms)
++✔ ll/markov-graph: metadata and lesson (0.123423ms)
++✔ ll/markov-graph: 120 seeds satisfy the item contract (16.852259ms)
++✔ ll/markov-graph: independent verifier agrees on 40 seeds (39.136142ms)
++✔ ll/dice-events: metadata and lesson (0.095492ms)
++✔ ll/dice-events: 120 seeds satisfy the item contract (22.383585ms)
++✔ ll/dice-events: independent verifier agrees on 40 seeds (6.309396ms)
++✔ ll/card-events: metadata and lesson (0.204575ms)
++✔ ll/card-events: 120 seeds satisfy the item contract (5.624577ms)
++✔ ll/card-events: independent verifier agrees on 40 seeds (8.157249ms)
++✔ ll/coin-patterns: metadata and lesson (0.211024ms)
++✔ ll/coin-patterns: 120 seeds satisfy the item contract (15.897324ms)
++✔ ll/coin-patterns: independent verifier agrees on 40 seeds (14.302961ms)
++✔ ll/collisions: metadata and lesson (0.146689ms)
++✔ ll/collisions: 120 seeds satisfy the item contract (40.931136ms)
++✔ ll/collisions: independent verifier agrees on 40 seeds (6.21099ms)
++✔ ll/large-numbers: metadata and lesson (0.244575ms)
++✔ ll/large-numbers: 120 seeds satisfy the item contract (12.705184ms)
++✔ ll/large-numbers: independent verifier agrees on 40 seeds (10.79611ms)
++✔ ll/impossible-bounds: metadata and lesson (0.167039ms)
++✔ ll/impossible-bounds: 120 seeds satisfy the item contract (5.719148ms)
++✔ ll/impossible-bounds: independent verifier agrees on 40 seeds (7.566049ms)
++✔ ll: at least 500 distinct generated items (559.954325ms)
++✔ ll: curated bank has at least 45 valid sourced items (0.912229ms)
++✔ ll: at least 15 families; every one contributes at least 15 distinct items over 400 seeds (509.617329ms)
++✔ ll: every item carries plain-JSON params naming its family; margins hold with room (26.713067ms)
++✔ ll: hard Markov questions vary statement order and chain structure (38.98094ms)
++✔ ll: impossible and certain statements are exactly 0 and 1 (1.736616ms)
++✔ ll: scatter points avoid gridlines and the diagonal, so region counts are unambiguous (2.074701ms)
++✔ ll: every visual spec renders to an accessible SVG with finite coordinates and token colours only (93.373556ms)
++✔ ll: bank table params (scope and hit rows) reproduce every statement probability (15.913674ms)
++✔ mm/mm-addsub: metadata and lesson (1.625551ms)
++✔ mm/mm-addsub: 120 seeds satisfy the item contract (29.863444ms)
++✔ mm/mm-addsub: independent verifier agrees on 40 seeds (7.397507ms)
++✔ mm/mm-multiply: metadata and lesson (0.108141ms)
++✔ mm/mm-multiply: 120 seeds satisfy the item contract (23.200331ms)
++✔ mm/mm-multiply: independent verifier agrees on 40 seeds (21.926804ms)
++✔ mm/mm-divide: metadata and lesson (5.932877ms)
++✔ mm/mm-divide: 120 seeds satisfy the item contract (35.695417ms)
++✔ mm/mm-divide: independent verifier agrees on 40 seeds (9.818014ms)
++✔ mm/mm-decimals: metadata and lesson (0.299075ms)
++✔ mm/mm-decimals: 120 seeds satisfy the item contract (45.156087ms)
++✔ mm/mm-decimals: independent verifier agrees on 40 seeds (21.078084ms)
++✔ mm/mm-fractions: metadata and lesson (0.16098ms)
++✔ mm/mm-fractions: 120 seeds satisfy the item contract (21.810697ms)
++✔ mm/mm-fractions: independent verifier agrees on 40 seeds (8.272942ms)
++✔ mm/mm-percent: metadata and lesson (0.171455ms)
++✔ mm/mm-percent: 120 seeds satisfy the item contract (51.261971ms)
++✔ mm/mm-percent: independent verifier agrees on 40 seeds (11.935648ms)
++✔ mm/mm-missing: metadata and lesson (0.116143ms)
++✔ mm/mm-missing: 120 seeds satisfy the item contract (27.4332ms)
++✔ mm/mm-missing: independent verifier agrees on 40 seeds (13.044454ms)
++✔ mm/mm-mixed: metadata and lesson (0.389951ms)
++✔ mm/mm-mixed: 120 seeds satisfy the item contract (48.042642ms)
++✔ mm/mm-mixed: independent verifier agrees on 40 seeds (8.497968ms)
++✔ mm: at least 560 distinct generated items (565.811247ms)
++✔ mm: eight families with unique mm- ids across every section (0.433055ms)
++✔ mm: exactly 4 options, distinct labels and values, a named false belief on every wrong one (74.2757ms)
++✔ mm: the answer label parses back to the exact value, and all four options share one form and size (89.025899ms)
++✔ mm: every solution has ask, steps, an exam-speed path and a sanity check (37.874793ms)
++✔ mm: a twin keeps the variant and changes the numbers (19.364853ms)
++✔ mm: the answer position is spread over all four slots (365.741333ms)
++✔ mm: the closest-to-the-others option is the answer no more often than chance (2,000 seeds per family) (1754.602572ms)
++✔ mm: the verifier rejects an item keyed to a wrong option (15.159459ms)
++✔ mm: the prompt parser follows the order of operations, fractions and percent (0.819821ms)
++✔ mm: division notation swaps ÷ for : only when the setting asks for it (0.224204ms)
++✔ mm: the library fills seven 80-question sets with distinct prompts (75.999767ms)
++✔ mm: config replicates the reported 80-in-8 format (0.421178ms)
++✔ nl/arithmetic: metadata and lesson (2.169571ms)
++✔ nl/arithmetic: 120 seeds satisfy the item contract (64.679644ms)
++✔ nl/arithmetic: independent verifier agrees on 40 seeds (34.906225ms)
++✔ nl/geometric: metadata and lesson (0.195742ms)
++✔ nl/geometric: 120 seeds satisfy the item contract (76.650746ms)
++✔ nl/geometric: independent verifier agrees on 40 seeds (21.81573ms)
++✔ nl/second-diff: metadata and lesson (0.109954ms)
++✔ nl/second-diff: 120 seeds satisfy the item contract (70.504501ms)
++✔ nl/second-diff: independent verifier agrees on 40 seeds (32.323895ms)
++✔ nl/add-index: metadata and lesson (0.317453ms)
++✔ nl/add-index: 120 seeds satisfy the item contract (43.595303ms)
++✔ nl/add-index: independent verifier agrees on 40 seeds (13.56946ms)
++✔ nl/squares-plus: metadata and lesson (0.143785ms)
++✔ nl/squares-plus: 120 seeds satisfy the item contract (42.8142ms)
++✔ nl/squares-plus: independent verifier agrees on 40 seeds (30.263086ms)
++✔ nl/triangular: metadata and lesson (0.18123ms)
++✔ nl/triangular: 120 seeds satisfy the item contract (14.549244ms)
++✔ nl/triangular: independent verifier agrees on 40 seeds (10.811039ms)
++✔ nl/diff-geometric: metadata and lesson (0.172187ms)
++✔ nl/diff-geometric: 120 seeds satisfy the item contract (17.00641ms)
++✔ nl/diff-geometric: independent verifier agrees on 40 seeds (9.042769ms)
++✔ nl/affine-recurrence: metadata and lesson (0.16115ms)
++✔ nl/affine-recurrence: 120 seeds satisfy the item contract (22.042842ms)
++✔ nl/affine-recurrence: independent verifier agrees on 40 seeds (7.196448ms)
++✔ nl/fibonacci-like: metadata and lesson (0.646182ms)
++✔ nl/fibonacci-like: 120 seeds satisfy the item contract (32.135947ms)
++✔ nl/fibonacci-like: independent verifier agrees on 40 seeds (10.664833ms)
++✔ nl/multiply-index: metadata and lesson (0.097295ms)
++✔ nl/multiply-index: 120 seeds satisfy the item contract (10.967976ms)
++✔ nl/multiply-index: independent verifier agrees on 40 seeds (4.526773ms)
++✔ nl/interleaved: metadata and lesson (0.145707ms)
++✔ nl/interleaved: 120 seeds satisfy the item contract (14.485205ms)
++✔ nl/interleaved: independent verifier agrees on 40 seeds (14.489641ms)
++✔ nl/alternating-ops: metadata and lesson (0.2285ms)
++✔ nl/alternating-ops: 120 seeds satisfy the item contract (14.907865ms)
++✔ nl/alternating-ops: independent verifier agrees on 40 seeds (22.449116ms)
++✔ nl/cubes-plus: metadata and lesson (0.121491ms)
++✔ nl/cubes-plus: 120 seeds satisfy the item contract (20.696857ms)
++✔ nl/cubes-plus: independent verifier agrees on 40 seeds (5.695263ms)
++✔ nl/pronic: metadata and lesson (0.089664ms)
++✔ nl/pronic: 120 seeds satisfy the item contract (10.489833ms)
++✔ nl/pronic: independent verifier agrees on 40 seeds (4.925025ms)
++✔ nl/primes: metadata and lesson (0.12099ms)
++✔ nl/primes: 120 seeds satisfy the item contract (23.112145ms)
++✔ nl/primes: independent verifier agrees on 40 seeds (23.865636ms)
++✔ nl/powers-offset: metadata and lesson (0.099809ms)
++✔ nl/powers-offset: 120 seeds satisfy the item contract (10.015608ms)
++✔ nl/powers-offset: independent verifier agrees on 40 seeds (4.357531ms)
++✔ nl/decimals: metadata and lesson (0.098147ms)
++✔ nl/decimals: 120 seeds satisfy the item contract (14.425715ms)
++✔ nl/decimals: independent verifier agrees on 40 seeds (5.473242ms)
++✔ nl/alternating-signs: metadata and lesson (0.093209ms)
++✔ nl/alternating-signs: 120 seeds satisfy the item contract (13.097238ms)
++✔ nl/alternating-signs: independent verifier agrees on 40 seeds (7.414164ms)
++✔ nl/third-diff: metadata and lesson (0.142442ms)
++✔ nl/third-diff: 120 seeds satisfy the item contract (14.054303ms)
++✔ nl/third-diff: independent verifier agrees on 40 seeds (7.738656ms)
++✔ nl/tribonacci: metadata and lesson (0.105067ms)
++✔ nl/tribonacci: 120 seeds satisfy the item contract (13.375433ms)
++✔ nl/tribonacci: independent verifier agrees on 40 seeds (11.335815ms)
++✔ nl/weighted-two-term: metadata and lesson (0.115201ms)
++✔ nl/weighted-two-term: 120 seeds satisfy the item contract (16.395921ms)
++✔ nl/weighted-two-term: independent verifier agrees on 40 seeds (4.604959ms)
++✔ nl/product-recurrence: metadata and lesson (0.12794ms)
++✔ nl/product-recurrence: 120 seeds satisfy the item contract (11.194895ms)
++✔ nl/product-recurrence: independent verifier agrees on 40 seeds (9.569764ms)
++✔ nl/prime-gaps: metadata and lesson (0.110094ms)
++✔ nl/prime-gaps: 120 seeds satisfy the item contract (11.826324ms)
++✔ nl/prime-gaps: independent verifier agrees on 40 seeds (9.073515ms)
++✔ nl/sum-previous: metadata and lesson (0.161681ms)
++✔ nl/sum-previous: 120 seeds satisfy the item contract (13.177167ms)
++✔ nl/sum-previous: independent verifier agrees on 40 seeds (4.528735ms)
++✔ nl/digit-sum: metadata and lesson (0.173038ms)
++✔ nl/digit-sum: 120 seeds satisfy the item contract (12.821456ms)
++✔ nl/digit-sum: independent verifier agrees on 40 seeds (4.761662ms)
++✔ nl/fractions: metadata and lesson (0.149483ms)
++✔ nl/fractions: 120 seeds satisfy the item contract (13.52817ms)
++✔ nl/fractions: independent verifier agrees on 40 seeds (4.21635ms)
++✔ nl/fibonacci-squares: metadata and lesson (0.108933ms)
++✔ nl/fibonacci-squares: 120 seeds satisfy the item contract (15.316813ms)
++✔ nl/fibonacci-squares: independent verifier agrees on 40 seeds (5.449927ms)
++✔ nl/reverse-digits: metadata and lesson (0.128692ms)
++✔ nl/reverse-digits: 120 seeds satisfy the item contract (12.6819ms)
++✔ nl/reverse-digits: independent verifier agrees on 40 seeds (4.106587ms)
++✔ nl/square-minus: metadata and lesson (0.103575ms)
++✔ nl/square-minus: 120 seeds satisfy the item contract (7.348866ms)
++✔ nl/square-minus: independent verifier agrees on 40 seeds (4.002421ms)
++✔ nl/mixed-combo: metadata and lesson (0.061612ms)
++✔ nl/mixed-combo: 120 seeds satisfy the item contract (9.401572ms)
++✔ nl/mixed-combo: independent verifier agrees on 40 seeds (2.899599ms)
++✔ nl: at least 500 distinct generated items (993.99184ms)
++✔ nl: curated bank has at least 45 valid sourced items (1.062583ms)
++✔ nl: every family contributes at least 15 distinct items over 400 seeds (1102.740758ms)
++✔ nl: ~30 families cover difficulties 1..5 (0.830126ms)
++✔ nl: the true rule reproduces every shown term, and misconceptions are specific (83.213793ms)
++✔ nl solver: finds the reported example and rejects ambiguity (0.501317ms)
++✔ nl: missing-term items have exactly one option that completes a rule (34.862506ms)
++✔ nl bank: every curated item has a unique rule-consistent answer (5.851946ms)
++✔ nl/digit-sum: difficulty 4 always generates (313.783223ms)
++✔ ob/crossed: metadata and lesson (0.873681ms)
++✔ ob/crossed: 120 seeds satisfy the item contract (16.067282ms)
++✔ ob/crossed: independent verifier agrees on 40 seeds (32.716329ms)
++✔ ob/bundle-rich: metadata and lesson (0.197074ms)
++✔ ob/bundle-rich: 120 seeds satisfy the item contract (7.225683ms)
++✔ ob/bundle-rich: independent verifier agrees on 40 seeds (26.345791ms)
++✔ ob/bundle-cheap: metadata and lesson (0.272827ms)
++✔ ob/bundle-cheap: 120 seeds satisfy the item contract (8.408294ms)
++✔ ob/bundle-cheap: independent verifier agrees on 40 seeds (31.496352ms)
++✔ ob/weighted: metadata and lesson (0.276572ms)
++✔ ob/weighted: 120 seeds satisfy the item contract (5.301707ms)
++✔ ob/weighted: independent verifier agrees on 40 seeds (11.651454ms)
++✔ ob/spread: metadata and lesson (0.178826ms)
++✔ ob/spread: 120 seeds satisfy the item contract (10.580509ms)
++✔ ob/spread: independent verifier agrees on 40 seeds (38.113718ms)
++✔ ob/chain: metadata and lesson (0.256673ms)
++✔ ob/chain: 120 seeds satisfy the item contract (16.788405ms)
++✔ ob/chain: independent verifier agrees on 40 seeds (51.643431ms)
++✔ ob/decoy: metadata and lesson (0.088472ms)
++✔ ob/decoy: 120 seeds satisfy the item contract (15.73377ms)
++✔ ob/decoy: independent verifier agrees on 40 seeds (107.237164ms)
++✔ ob/hidden: metadata and lesson (0.079107ms)
++✔ ob/hidden: 120 seeds satisfy the item contract (6.511639ms)
++✔ ob/hidden: independent verifier agrees on 40 seeds (47.063068ms)
++✔ ob: at least 500 distinct generated items (128.582117ms)
++✔ ob: curated bank has at least 45 valid sourced items (0.717228ms)
++✔ ob: every family contributes at least 15 distinct boards over 400 seeds (184.277401ms)
++✔ ob: best equals the solver result, is accepted by the checker, and prices sit on 0.5 ticks (14.074975ms)
++✔ ob bank: the written trades are flat, indecomposable and as profitable as the exhaustive best (60.633614ms)
++✔ ob solver: small known boards (0.632211ms)
++✔ ob solver: decomposable positions are recognised (0.142913ms)
++✔ ob solver: agrees with the brute force on random boards (15.949426ms)
++✔ the lesson catalog matches the lesson content (2.243892ms)
++✔ the family catalog matches the question families (0.546033ms)
++✔ catalog links agree with the content for every family lesson (0.571391ms)
++✔ grading for every question type (20.637808ms)
++✔ generator questions resolve per seed (1.743767ms)
++✔ number checks accept typed fractions (1.581456ms)
++✔ number checks accept the typographic minus sign (0.306857ms)
++✔ choice options are arranged fairly: shuffled, numeric sorted, traps follow (9.983411ms)
++✔ choice validation still catches duplicates and bad indexes alongside the length cue (0.356111ms)
++✔ quotes like "100.5 / 101.5" are shuffled, not sorted as fractions (0.405294ms)
++✔ study/assessment: book, tree and lessons validate (5.124022ms)
++✔ study/assessment: diagrams, checks and live examples (1.941852ms)
++✔ study/prob: book, tree and lessons validate (1.91312ms)
++✔ study/prob: diagrams, checks and live examples (41.033668ms)
++✔ study/mm: book, tree and lessons validate (1.663238ms)
++✔ study/mm: diagrams, checks and live examples (177.59522ms)
++✔ study/bto: book, tree and lessons validate (3.919077ms)
++✔ study/bto: diagrams, checks and live examples (582.980654ms)
++✔ study/ll: book, tree and lessons validate (3.047229ms)
++✔ study/ll: diagrams, checks and live examples (234.820133ms)
++✔ study/nl: book, tree and lessons validate (4.220116ms)
++✔ study/nl: diagrams, checks and live examples (492.391303ms)
++✔ study/iv: book, tree and lessons validate (2.330952ms)
++✔ study/iv: diagrams, checks and live examples (291.017885ms)
++✔ study/ob: book, tree and lessons validate (1.132887ms)
++✔ study/ob: diagrams, checks and live examples (84.360902ms)
++✔ study/zapn: book, tree and lessons validate (1.595887ms)
++✔ study/zapn: diagrams, checks and live examples (202.909644ms)
++✔ study coverage: every question family and every Zap-N game has a lesson (1.288569ms)
++✔ tree: branches sum to 1 and marked total is exact (1.747103ms)
++✔ grid: counts and ranges (0.213608ms)
++✔ venn: regions add to total (6.771657ms)
++✔ numberline, cycle, unitsquare, plot (4.271252ms)
++✔ ladder: exact differences and ratios (0.4432ms)
++✔ flow: reachable, acyclic (0.226278ms)
++✔ orderbook diagrams: book, bundle, ledger arithmetic (0.474827ms)
++✔ reused visuals and unknown types (0.172747ms)
++✔ week stats: last 7 days against the 7 before (2.889594ms)
++✔ the reading: plain rules from the numbers (1.06081ms)
++✔ a goal says how to study, not only what (0.485143ms)
++✔ goal check comes back a week after setting or the last check (0.172527ms)
++✔ next up: review > re-test > resume > start > done (0.380197ms)
++✔ relative time (0.09409ms)
++✔ tokenizes bold, italics, code, fractions, sup and sub (1.310892ms)
++✔ never turns text into markup it did not ask for (0.15467ms)
++✔ unclosed markers stay literal (0.101121ms)
++✔ read, master with 3/3 clean, come back for review, drop on a miss (2.149972ms)
++✔ interleave: no type twice in a row when avoidable (615.876908ms)
++✔ units: a missed unit is weak until its next first attempt is right (0.544301ms)
++✔ exam pace, scaffolds and the belief log (1.320867ms)
++✔ a complete family lesson validates (10.00381ms)
++✔ missing or reordered sections, too few diagrams, wrong tryit are caught (9.278329ms)
++✔ every teaching unit needs 1-3 micro-checks; steps each need their own (0.515237ms)
++✔ thinkaloud and variation are required and validated (0.528538ms)
++✔ challenge attempts must each be answered by exactly one derivation step (0.488458ms)
++✔ unit rule passes: one idea (text plus its diagram, formula or callout), then a check (0.197054ms)
++✔ unit rule fails: a second text, diagram or callout before a check starts a new unchecked unit (0.351994ms)
++✔ unit rule fails: more than 3 blocks in one unit, even of different types (0.112437ms)
++✔ unit rule fails: a unit that ends its section unchecked, also before a non-teaching block (0.132518ms)
++✔ unit rule: find-the-error, steps, recognition and transfer blocks close a unit (0.20786ms)
++✔ unit rule exceptions: only the last unit of "why" and "rule" may go unchecked (0.169422ms)
++✔ spiralBlocks: plain check blocks only, not mastery (1.534475ms)
++✔ no spiral before any answer, after an odd count, or right after a spiral (0.334438ms)
++✔ after the second new check: the earlier one, never the one just answered (0.228921ms)
++✔ a missed check comes first, earliest miss first (0.1942ms)
++✔ a miss repaired on recall stops counting as missed (0.128831ms)
++✔ a miss that stays wrong on recall keeps priority (0.113709ms)
++✔ blocks never re-asked come before blocks already re-asked (0.123254ms)
++✔ expanding gap is exact for a single re-asked block (0.184575ms)
++✔ mastery checks and unknown blocks are never re-asked (0.113069ms)
++✔ a custom cadence: every third new check (0.175291ms)
++✔ deterministic: same log, same answer (0.118647ms)
++✔ spiralQuestion prefers a generator, else the first question (0.160049ms)
++✔ bto/information-protocols: metadata and lesson (7.358229ms)
++✔ bto/information-protocols: 240 seeds satisfy the item contract (29.717734ms)
++✔ bto/information-protocols: independent verifier agrees on 120 seeds (6.396587ms)
++✔ bto/shared-source: metadata and lesson (0.165617ms)
++✔ bto/shared-source: 240 seeds satisfy the item contract (24.793098ms)
++✔ bto/shared-source: independent verifier agrees on 120 seeds (9.355926ms)
++✔ ll/selection-weights: metadata and lesson (0.185447ms)
++✔ ll/selection-weights: 240 seeds satisfy the item contract (13.124278ms)
++✔ ll/selection-weights: independent verifier agrees on 120 seeds (39.928782ms)
++✔ iv/rates-weights: metadata and lesson (0.264854ms)
++✔ iv/rates-weights: 240 seeds satisfy the item contract (28.451047ms)
++✔ iv/rates-weights: independent verifier agrees on 120 seeds (10.793756ms)
++✔ all supported structural branches have valid solutions and independently checked answers (43.84861ms)
++✔ distinct numeric questions are not counted as distinct structures (38.669517ms)
++✔ random and first reports agree while existence reports change the answer (3.971906ms)
++✔ history affects a fixed source but not a fresh source; corrupted keys are rejected (5.95484ms)
++✔ shared-group comparisons vary answer positions and the third comparator position (4.136001ms)
++✔ equal time and equal distance require different answers with identical speeds (2.133397ms)
++✔ difficulty changes reasoning relationships rather than just number size (5.802482ms)
++✔ backend startup never replaces transfer-only local progress with an older server snapshot (2.17481ms)
++✔ a genuinely empty browser can still restore server-side transfer progress (0.415909ms)
++✔ attempting transfer practice cannot overwrite a save from an unknown future version (0.234369ms)
++✔ fifteen mixed questions preserve preset and select distinct families per section (34.430963ms)
++✔ cross-session selection avoids exact repetition and honestly reports familiar structures (122.86409ms)
++✔ MCQ shuffling preserves answers and uses all five positions (2.528236ms)
++✔ branch signatures ignore numbers and wording while preserving important operation changes (0.604209ms)
++✔ old progress imports intact and transfer results survive reload without changing ordinary progress (8.712317ms)
++✔ summary separates intervals, new structures, familiar structures and review (0.291985ms)
++✔ every product row is sourced, priced and covers each task with a known value (14.019441ms)
++✔ the chart lists every product, cheapest first, in both themes (7.64674ms)
++✔ light theme meets WCAG AA (1.215541ms)
++✔ dark theme meets WCAG AA (0.558101ms)
++✔ the system dark block repeats the dark theme exactly (1.582487ms)
++✔ system follows the OS, explicit choices win (0.167099ms)
++✔ every module reachable from app.js exists (42.912456ms)
++✔ only this machine counts as a backend host (0.679872ms)
++✔ a hosted copy never probes for the backend (0.619402ms)
++✔ a local copy probes with relative URLs (0.226978ms)
++✔ backend startup cannot replace transfer-only local progress (0.755255ms)
++✔ backend startup cannot erase displayed-only freshness history (0.485623ms)
++✔ balloon: index exports the game contract and the configured metric (37.724348ms)
++✔ balloon: round format matches the reported spec (1.016764ms)
++✔ balloon: round 1 optimum equals a brute-force scan over thresholds (0.267989ms)
++✔ balloon: bank-penalty DP matches brute-force expectimax on small rounds (3.024876ms)
++✔ balloon: round 2 policy shrinks as the bank grows (numbers quoted by the coach) (0.602067ms)
++✔ balloon: same seed and same actions give the same result (1.153688ms)
++✔ balloon: scoring rules for cash, pop and the round-2 bank penalty (0.35594ms)
++✔ balloon: playing the optimal policy scores ratio 1; timid play scores less (8.252312ms)
++✔ balloon: pop points differ across seeds and cover 1..20 evenly (0.853462ms)
++✔ codecompare: index exports the game contract and the configured metric (2.3905ms)
++✔ codecompare: 30 rounds, allowance 5 s down to 3 s, length 7 up to 10 (0.700103ms)
++✔ codecompare: exactly one identical option; distractors differ by 1-2 edits and from each other (11.040254ms)
++✔ codecompare: scoring and timeouts (1.49062ms)
++✔ codecompare: an answer after the deadline is a timeout, not a hit (0.325204ms)
++✔ codecompare: same seed gives the same rounds (2.760752ms)
++✔ codecompare: at least 300 distinct rounds across seeds (2.999998ms)
++✔ figureitout: index exports the game contract and the configured metric (0.926731ms)
++✔ figureitout: 5 rounds with growing property counts, values within PROPS (0.547475ms)
++✔ figureitout: closed-form optimum equals exhaustive search over all adaptive strategies (15.758983ms)
++✔ figureitout: solver optimum is no worse than any tested strategy (10.479869ms)
++✔ figureitout: guessesOver is about 0 for perfect play and larger for one-at-a-time (31.248904ms)
++✔ figureitout: invalid guesses are ignored; same seed gives the same hidden figures (0.251735ms)
++✔ figureitout: at least 300 distinct hidden figures across seeds (0.437252ms)
++✔ numberbox: index exports the game contract and the configured metric (34.720324ms)
++✔ numberbox: solver finds known answers including a fractional intermediate (4.852848ms)
++✔ numberbox: subset DP reaches exactly the values of a brute-force tree enumeration (242.781376ms)
++✔ numberbox: parser handles precedence, brackets, symbols and rejects bad input (1.259747ms)
++✔ numberbox: 10 rounds, every round solvable and the shown solution evaluates exactly to the target (85.808096ms)
++✔ numberbox: scoring counts solved rounds; wrong submits and skips are tracked (10.757151ms)
++✔ numberbox: at least 300 distinct solvable puzzles, each with a verified solution (210.74252ms)
++✔ numberbox: same seed gives the same rounds (17.410733ms)
++✔ pincode: index exports the game contract and the configured metric (1.147409ms)
++✔ pincode: transforms for the three modes (0.780192ms)
++✔ pincode: two correct advance, two wrong end the mode; span is the forward length (1.143483ms)
++✔ pincode: a correct-wrong-correct sequence still advances (two correct at the length) (0.327187ms)
++✔ pincode: digits typed while the code is visible are ignored; backspace edits (0.224214ms)
++✔ pincode: same seed gives the same codes (1.516379ms)
++✔ pincode: at least 300 distinct codes across seeds (2.204223ms)
++✔ shapeshift: index exports the game contract and the configured metric (1.169091ms)
++✔ shapeshift: 60 rounds, balanced shapes, positions inside the stage (1.016964ms)
++✔ shapeshift: scoring counts correct keys, misses and reaction time (2.693011ms)
++✔ shapeshift: a flash is visible for flashMs, a press before onset is early (0.20156ms)
++✔ shapeshift: same seed and same timestamps give the same result (1.649667ms)
++✔ shapeshift: at least 300 distinct trials across seeds (1.851277ms)
++✔ skyscraper: index exports the game contract and the configured metric (52.341701ms)
++✔ skyscraper: BFS optimum on small known cases (0.661145ms)
++✔ skyscraper: optimalPath replays legally to the target in the optimal count (12.066764ms)
++✔ skyscraper: 10 levels, every generated level solvable at exactly the reported optimum (828.929863ms)
++✔ skyscraper: same seed gives the same levels (35.935604ms)
++✔ skyscraper: optimal play scores 0 moves over; a detour adds exactly 2 (189.880673ms)
++✔ skyscraper: illegal moves are rejected and not counted (24.799157ms)
++✔ skyscraper: at least 300 distinct solvable levels with a verified optimum (212.573797ms)
++✔ stockmaster: index exports the game contract and the configured metric (4.019306ms)
++✔ stockmaster: 2-minute schedule, non-overlapping per slot, zones inside the dial, speeds ramp up (1.813411ms)
++✔ stockmaster: perfect timing scores 1; misses and early clicks lower it (6.930192ms)
++✔ stockmaster: needle position and single outcome per gauge (0.361088ms)
++✔ stockmaster: same seed and click times give the same result (3.683356ms)
++✔ stockmaster: needle schedules differ across seeds (2.897025ms)
++✔ theswitch: index exports the game contract and the configured metric (1.901342ms)
++✔ theswitch: 35 rounds, 17 switches, answers match the active task (8.919616ms)
++✔ theswitch: accuracy, switch cost and the equal-weight score (0.828524ms)
++✔ theswitch: no answer within the deadline is a wrong timeout (0.236222ms)
++✔ theswitch: same seed and timestamps give the same result (1.341198ms)
++✔ theswitch: at least 300 distinct trials across seeds (8.883501ms)
+ ℹ tests 777
+ ℹ suites 0
+ ℹ pass 777
+@@ -787,4 +782,4 @@ npm warn Unknown env config "http-proxy". This will stop working in the next maj
+ ℹ cancelled 0
+ ℹ skipped 0
+ ℹ todo 0
+-ℹ duration_ms 5635.655662
++ℹ duration_ms 5836.644526
+diff --git a/evaluation/logs/qa-python.log b/evaluation/logs/qa-python.log
+index 175f6c4..ca417b4 100644
+--- a/evaluation/logs/qa-python.log
++++ b/evaluation/logs/qa-python.log
+@@ -1,2 +1,2 @@
+ ....................................                                     [100%]
+-36 passed in 3.22s
++36 passed in 3.14s
+diff --git a/evaluation/logs/transfer-review-regressions.log b/evaluation/logs/transfer-review-regressions.log
+index 5b9ca0e..c4e8e7c 100644
+--- a/evaluation/logs/transfer-review-regressions.log
++++ b/evaluation/logs/transfer-review-regressions.log
+@@ -8,4 +8,5 @@ PASS the overall deadline is enforced before submitting or showing another item
+ PASS a late skip cannot erase an answer already committed before timeout
+ PASS keyboard answers after the deadline are ignored
+ PASS finishing on the last displayed question records a complete session
+-10/10 focused interface regressions passed
++PASS saving an unchanged fresh battery picker preserves the active Kickstarter preset
++11/11 focused interface regressions passed
+diff --git a/evaluation/validation.json b/evaluation/validation.json
+index 1031f71..64eed65 100644
+--- a/evaluation/validation.json
++++ b/evaluation/validation.json
+@@ -1,5 +1,5 @@
+ {
+-  "edition": "1.0.3-transfer.2",
++  "edition": "1.0.3-transfer.3",
+   "date": "2026-11-12",
+   "baseline_js_passed": 747,
+   "javascript_passed": 777,
+@@ -8,13 +8,17 @@
+   "unit_test_total": 847,
+   "additional_js_cases": 13000,
+   "additional_python_cases": 1300,
+-  "dom_integration": "passed: earlier fixes, transfer smoke, 10 focused regressions and full-app router",
++  "dom_integration": "passed: earlier fixes, transfer smoke, 11 focused regressions and full-app router",
+   "ordinary_mock_questions_unchanged": 990,
+   "protected_files_compared": 176,
+-  "browser_visual_qa": "blocked: headless socket restrictions and connected-browser local-URL policy",
++  "browser_visual_qa": "passed: desktop Chrome at 1348x936; timed expiry, 15-question untimed flow, review, themes and reload",
+   "local_http_smoke": "passed: launcher and five HTTP 200 responses",
+-  "focused_dom_regressions_passed": 10,
++  "focused_dom_regressions_passed": 11,
+   "full_router_integration": "passed: 15-question run, migration, controls, deadlines, review, history and cleanup",
+   "reliability_patch_from": "1.0.3-transfer.1",
+-  "reliability_patch_base_revision": "e4591faa8617edf3ec872b1917a46702aa70bf05"
++  "reliability_patch_base_revision": "e4591faa8617edf3ec872b1917a46702aa70bf05",
++  "visual_patch_from": "1.0.3-transfer.2",
++  "visual_patch_base_revision": "6f70c9d58ca0c756740007e32ae7186baf886b1f",
++  "mobile_cross_browser_qa": "not performed",
++  "visual_evidence_file": "evaluation/visual-browser-results.json"
+ }
+diff --git a/evaluation/visual-browser-results.json b/evaluation/visual-browser-results.json
+new file mode 100644
+index 0000000..40dfc73
+--- /dev/null
++++ b/evaluation/visual-browser-results.json
+@@ -0,0 +1,93 @@
++{
++  "edition": "1.0.3-transfer.3",
++  "date": "2026-11-12",
++  "method": "Manual browser UI interactions and real rendered screenshot inspection; not a simulated DOM run",
++  "browser": "Provided desktop Chrome",
++  "viewport": {
++    "width": 1348,
++    "height": 936
++  },
++  "flow_version": "1.0.3-transfer.2",
++  "preset_fix_reloaded_and_checked": "1.0.3-transfer.3",
++  "timed_attempt": {
++    "displayed": 2,
++    "completed": false,
++    "correct": 2,
++    "real_per_item_expiry_observed": true,
++    "first_choice": 0.429,
++    "first_question": "3 red, 4 blue; replacement; first drawn red; probability both red",
++    "second_position_cash": 1,
++    "second_position_flat": true
++  },
++  "untimed_attempt": {
++    "displayed": 15,
++    "completed": true,
++    "regular_correct": 9,
++    "regular_total": 12,
++    "deliberately_incorrect_questions": [
++      4,
++      5
++    ],
++    "deliberately_skipped_questions": [
++      8
++    ],
++    "interval_inputs": [
++      [
++        45,
++        55
++      ],
++      [
++        25,
++        40
++      ],
++      [
++        79,
++        81
++      ]
++    ],
++    "displayed_interval_scores": [
++      0.818,
++      0.625,
++      0.975
++    ],
++    "displayed_interval_mean": 0.806,
++    "purpose": "Exercise controls and feedback; not a training-effectiveness score"
++  },
++  "observed_checks": [
++    "Training-only label and hidden method names before review",
++    "MCQ mouse and letter-key selection",
++    "Ranking button and number/arrow-key movement",
++    "Interval lower/upper entry",
++    "Orderbook buy/sell, removal and Clear",
++    "Correct/incorrect choice colour and disabled review controls",
++    "Ranking submitted order and probabilities revealed",
++    "Interval bounds and orderbook position restored",
++    "Current Transfer sidebar link returns to landing",
++    "Both session histories survive reload",
++    "Ordinary wrong-answer log remains empty",
++    "Light screens and dark landing/history readable; original theme restored",
++    "After correction, default picker and unchanged Save retain Kickstarter"
++  ],
++  "horizontal_overflow": {
++    "landing": false,
++    "long_interval_grid": false
++  },
++  "limitations": [
++    "One desktop viewport and one browser",
++    "Phone/touch and other browsers not exercised",
++    "Full 20-minute real-time timeout not waited out; deterministic DOM checks cover total deadline",
++    "Not Optiver difficulty calibration"
++  ],
++  "existing_timing_discrepancies": {
++    "ll": "15x90 seconds, no explicit 25-minute total cap",
++    "iv": "18x45 seconds, no explicit 15-minute total cap",
++    "ob": "8-minute cap retained; supplied invitation says about 15 minutes"
++  },
++  "timing_changes_made": false,
++  "preset_bug": {
++    "before": "No saved preset: active Kickstarter but radio Everything; unchanged Save switches battery",
++    "after": "Picker uses configured DEFAULT_PRESET; browser reload and unchanged Save retain Kickstarter",
++    "regression_before": "10/11 focused cases pass",
++    "regression_after": "11/11 focused cases pass"
++  }
++}
+diff --git a/package.json b/package.json
+index 4e1c2f9..ae44887 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "optprep",
+-  "version": "1.0.3-transfer.2",
++  "version": "1.0.3-transfer.3",
+   "description": "Offline practice app for the Optiver online assessment: Beat the Odds, NumberLogic, Likelihood List, Intervals, Orderbooks and Zap-N. Not affiliated with Optiver.",
+   "keywords": [
+     "optiver",
+diff --git a/src/ui/pages/path.js b/src/ui/pages/path.js
+index bd6ac41..45bf91f 100644
+--- a/src/ui/pages/path.js
++++ b/src/ui/pages/path.js
+@@ -2,7 +2,7 @@
+ // candidate's battery. First launch asks which battery they will sit.
+ import { h, mount } from '../dom.js';
+ import { SECTIONS } from '../../../config/sections.js';
+-import { PRESETS, activatePreset, activePreset, presetSections } from '../../../config/presets.js';
++import { PRESETS, DEFAULT_PRESET, activatePreset, activePreset, presetSections } from '../../../config/presets.js';
+ import { FAMILIES, GAMES } from '../../sections/catalog.js';
+ import { roadmap, nextStep } from '../../core/path.js';
+ import { readiness } from '../../core/readiness.js';
+@@ -11,7 +11,7 @@ import { icon } from '../icons.js';
+ import { sectionMap } from './section-map.js';
+ 
+ export function presetPicker(store, { onDone, compact = false } = {}) {
+-  let picked = store.settings().preset?.id || 'full';
++  let picked = store.settings().preset?.id || DEFAULT_PRESET;
+   const options = Object.values(PRESETS).map((p) => ({ value: p.id, label: p.title, hint: p.who }));
+   return h('div', { class: 'preset-picker' },
+     choice({ legend: 'Battery', hideLegend: true, options, value: picked, onChange: (v) => { picked = v; } }),
+diff --git a/sw.js b/sw.js
+index 40769ea..76e553c 100644
+--- a/sw.js
++++ b/sw.js
+@@ -4,7 +4,7 @@
+ // whose activate deletes every cache and calls self.registration.unregister(), and
+ // which has no fetch handler, installed clients recover on their next visit.
+ const BUILD = '__BUILD__';
+-const CACHE = `optprep-${BUILD.startsWith('__') ? 'transfer-training-2' : BUILD}`;
++const CACHE = `optprep-${BUILD.startsWith('__') ? 'transfer-training-3' : BUILD}`;
+ // The Pages workflow fills FILES with every module and asset the app can load, so an installed
+ // copy works offline on every page, including the ones that load on demand.
+ const FILES = [/*FILES*/];
+diff --git a/tools/transfer-regression.mjs b/tools/transfer-regression.mjs
+index b0a2efd..d2c46d2 100644
+--- a/tools/transfer-regression.mjs
++++ b/tools/transfer-regression.mjs
+@@ -16,6 +16,8 @@ const {SECTION_MODULES}=await import('../src/sections/index.js');
+ const {makeRng}=await import('../src/core/rng.js');
+ const {questionKey}=await import('../src/core/questions.js');
+ const {structureKey}=await import('../src/transfer/profile.js');
++const {presetPicker}=await import('../src/ui/pages/path.js');
++const {activatePreset,activePreset,presetSections}=await import('../config/presets.js');
+ const root=document.getElementById('view'),button=(label)=>[...root.querySelectorAll('button')].find(b=>b.textContent===label);
+ const generate=(id,difficulty=3)=>EXTRA_FAMILIES.find(f=>f.id===id).generate(makeRng(`regression:${id}`),{difficulty});
+ const rows=(items)=>items.map(item=>({item,key:questionKey(item),structure:structureKey(item),repeat:false,newStructure:true,extended:!!item.transfer}));
+@@ -35,6 +37,7 @@ const tests=[
+  ['a late skip cannot erase an answer already committed before timeout',()=>{const store=start([mcq,rank],true);root.querySelectorAll('.option')[wrong].click();now+=91000;button('Skip').click();button('Finish session').click();assert.equal(store.transferRuns()[0].items[0].score,-1);assert.equal(store.transferRuns()[0].items[0].skipped,false);}],
+  ['keyboard answers after the deadline are ignored',()=>{const store=start([mcq,rank],true);root.querySelectorAll('.option')[wrong].click();now+=91000;document.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'ABCDE'[mcq.answerIndex],bubbles:true,cancelable:true}));button('Finish session').click();assert.equal(store.transferRuns()[0].items[0].score,-1);}],
+  ['finishing on the last displayed question records a complete session',()=>{const store=start([mcq]);root.querySelectorAll('.option')[mcq.answerIndex].click();button('Finish session').click();assert.equal(store.transferRuns()[0].completed,true);}],
++ ['saving an unchanged fresh battery picker preserves the active Kickstarter preset',()=>{const store=makeStore(memoryBackend());activatePreset(store.settings().preset);const before=activePreset().id;root.replaceChildren(presetPicker(store,{compact:true}));button('Save').click();assert.equal(activePreset().id,before,'Save must not silently switch a new browser to Everything');assert.equal(store.settings().preset.id,'kickstarter');assert.equal(root.querySelector('input[value="kickstarter"]').checked,true);assert.ok(!presetSections(activePreset()).includes('mm'));}],
+ ];
+ let failures=0;
+ for(const [name,fn] of tests){try{fn();console.log(`PASS ${name}`);}catch(e){failures++;console.log(`FAIL ${name}: ${e.message}`);}finally{stop();}}
