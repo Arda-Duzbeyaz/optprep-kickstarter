@@ -9,6 +9,7 @@ import { readiness } from '../../core/readiness.js';
 import { bubbles, field, choice, setRail } from '../sheet.js';
 import { icon } from '../icons.js';
 import { sectionMap } from './section-map.js';
+import { resumePracticeCards, levelLabel } from '../practice-progress.js';
 
 export function presetPicker(store, { onDone, compact = false } = {}) {
   let picked = store.settings().preset?.id || DEFAULT_PRESET;
@@ -33,7 +34,7 @@ function taskRow(store, id, map) {
   return h('li', {}, h('a', { class: 'task-row', href: `#/s/${id}` },
     h('span', { class: 'task-name' }, cfg.title),
     ready ? h('span', { class: 'stamp stamp-mastered' }, 'Practice target met') : null,
-    h('span', { class: 'task-progress num' }, `${map.skillsDone} of ${map.skillsTotal} skills`),
+    h('span', { class: 'task-progress num' }, `${map.skillsDone} of ${map.skillsTotal} skills practised`),
     map.due ? h('span', { class: 'stamp stamp-needs-review' }, `${map.due} to review`) : null));
 }
 
@@ -70,10 +71,11 @@ export function pathPage(root, { store }) {
         h('span', { class: 'stat' }, icon('fire', { size: 18 }), h('span', { class: 'num' }, String(st.current)), st.current === 1 ? ' day' : ' days'),
         h('span', { class: 'stat' }, icon('bolt', { size: 18 }), h('span', { class: 'num' }, String(store.xpTotal())), ' XP'),
         st.freezes ? h('span', { class: 'stat muted' }, h('span', { class: 'num' }, String(st.freezes)), st.freezes === 1 ? ' freeze' : ' freezes') : null)),
+    resumePracticeCards(store, ids),
     step ? h('a', { class: 'next-step', href: step.row.href },
       h('span', { class: 'next-title' }, stepTitle),
       h('span', { class: 'next-kind' }, `${SECTIONS[step.sectionId].title} · ${step.why === 'review' ? 'review due' : 'next step'}`),
-      step.row.kind === 'skill' ? bubbles(5, step.row.lv, { label: `Level ${step.row.lv} of 5` }) : null,
+      step.row.kind === 'skill' ? h('span', {}, bubbles(5, step.row.lv, { label: `Level ${step.row.lv} of 5` }), levelLabel(store.mastery()[step.row.key])) : null,
       h('span', { class: 'btn primary' }, stepVerb, icon('arrow', { size: 18 }))) : null,
     h('div', { class: 'tasks-head' }, h('h2', {}, 'Your tasks'), h('a', { class: 'small-note muted', href: '#/settings' }, `Battery: ${active.title}`)),
     h('ul', { class: 'task-list' }, ids.map((id) => (id === 'zapn' || mapOf[id] ? taskRow(store, id, mapOf[id]) : null))),

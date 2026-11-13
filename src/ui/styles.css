@@ -755,6 +755,46 @@ input.study-input[type=number] { width: 120px; }
   a { text-decoration: none; }
 }
 .dg-halo { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+/* Bounded practice and explicit skill goals; existing themes and sheet layout. */
+.practice-block-status { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; }
+.practice-block-progress { display: block; flex: 1; width: 100%; min-width: 30px; height: 8px; border: 0; border-radius: 4px; overflow: hidden; background: var(--border); accent-color: var(--text); }
+.practice-block-progress::-webkit-progress-bar { background: var(--border); border-radius: 4px; }
+.practice-block-progress::-webkit-progress-value { background: var(--text); border-radius: 4px; }
+.practice-block-progress::-moz-progress-bar { background: var(--text); border-radius: 4px; }
+.practice-save-note { margin: 10px 0 0; }
+.practice-level-strip { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 0 0 12px; }
+.practice-level-strip:empty { display: none; }
+.practice-level-strip .skill-level-label { margin: 0; }
+.skill-progress { margin: 18px 0 8px; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); }
+.skill-progress-head { justify-content: space-between; margin-bottom: 10px; }
+.skill-progress-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.skill-progress-grid p { margin: 6px 0 0; }
+.skill-level-label { display: block; font-size: 13px; font-weight: 650; line-height: 1.4; margin: 4px 0; }
+.skill-next, .skill-mixed { display: block; max-width: 180px; line-height: 1.4; }
+.skill-notice { color: var(--text); font-weight: 600; }
+.skill-meaning { margin: 12px 0 0; }
+.level-guide { margin: 16px 0 24px; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.level-guide summary { cursor: pointer; font-weight: 650; }
+.level-guide[open] summary { margin-bottom: 12px; }
+.level-guide td, .level-guide th { font-size: 13px; }
+.resume-practice { margin: 16px 0 24px; }
+.resume-practice h2 { font-size: 18px; }
+.resume-practice-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 14px 16px; margin: 8px 0; }
+.resume-practice-card p { margin: 4px 0 0; }
+.skill-overview { margin-top: 16px; }
+.skill-overview h2 { font-size: 20px; }
+.skill-overview-counts { display: flex; flex-wrap: wrap; gap: 6px 24px; }
+@media (max-width: 760px) {
+  .tabs { flex-wrap: wrap; gap: 4px; }
+  .tabs a { font-size: 13px; padding-inline: 8px; }
+  .skill-progress-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .skill-progress { padding: 12px; }
+  .grid-level { max-width: 150px; }
+  .skill-next, .skill-mixed { font-size: 11px; max-width: 140px; }
+  .skill-level-label { font-size: 12px; }
+  .resume-practice-card .btn { width: 100%; }
+  .practice-block-status { gap: 10px; }
+}
 .study-figure svg.dg-flowchart { min-width: min(var(--flow-min, 720px), 100%); }
 @media (max-width: 760px) { .study-figure svg.dg-flowchart { min-width: 640px; } }
 

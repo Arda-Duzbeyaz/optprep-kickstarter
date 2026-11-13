@@ -10,7 +10,7 @@ export const UNITS = [
   { band: 'hard', title: 'Hard' },
   { band: 'exam', title: 'Exam pace' },
 ];
-export const SKILLED = 3; // a skill row counts as done at level 3; levels 4 and 5 are speed
+export const SKILLED = 3; // level 3 is practised; level 4 adds consistency, level 5 requires pace
 
 export function bandOf(family) {
   const lo = Math.min(...(family.levels?.length ? family.levels : [1]));

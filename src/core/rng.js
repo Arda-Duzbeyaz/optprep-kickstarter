@@ -23,6 +23,13 @@ export function makeRng(seed = Date.now()) {
   const rng = {
     seed: origin,
     next,
+    // Only ordinary practice persists this cursor. Forks and seeded exam streams
+    // keep exactly the same behaviour; restoring never replays earlier draws.
+    getState: () => a,
+    setState: (state) => {
+      if (!Number.isInteger(state) || state < 0 || state > 0xffffffff) throw new Error('Invalid random state');
+      a = state;
+    },
     int: (lo, hi) => lo + Math.floor(next() * (hi - lo + 1)),
     float: (lo, hi) => lo + next() * (hi - lo),
     chance: (p) => next() < p,

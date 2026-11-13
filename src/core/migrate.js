@@ -9,6 +9,7 @@ export const blankV2 = () => ({
   version: VERSION, runs: [], stats: {}, srs: {}, zapn: {}, settings: {}, sets: {}, calibration: [],
   trend: {}, mastery: {}, activity: { days: {}, xpBase: 0, freezes: 0, frozen: [] }, mistakes: [],
   recentQuestions: {}, recentStructures: {}, transferRuns: [], practiceRuleVersion: 1,
+  activePractice: {}, mixedEvidence: {},
 });
 
 // The exam formats v1 runs were taken under, so readiness can tell a 60 s run from a 45 s one.

@@ -1,0 +1,57 @@
+{
+  "edition": "1.0.4-practice.1",
+  "baseline_edition": "1.0.3-transfer.3",
+  "baseline_commit": "f926761ff1319627f495c29b05e3591839ba4662",
+  "tests": {
+    "javascript": 791,
+    "python": 36,
+    "cpp": 34,
+    "total": 861,
+    "failed": 0,
+    "skipped": 0
+  },
+  "practice_flow_assertions": 103,
+  "transfer_interface_regressions": 11,
+  "other_ui_checks": [
+    "ui-smoke",
+    "transfer-smoke",
+    "transfer-route-smoke"
+  ],
+  "preservation": {
+    "baselineVersion": "1.0.3-transfer.3",
+    "unchangedOrdinarySourceFiles": 133,
+    "unchangedConfigFiles": 2,
+    "licenceUnchanged": true,
+    "identicalMockPapers": 50,
+    "identicalMockQuestions": 990,
+    "snapshotVerifierCases": 780
+  },
+  "browser_qa": {
+    "browser": "Chrome",
+    "desktop": true,
+    "responsive_frame_width": 390,
+    "responsive_content_width": 375,
+    "physical_mobile_tested": false,
+    "other_browsers_tested": false,
+    "checks": [
+      "draft selection survived navigation",
+      "same answered feedback after reload",
+      "counter advanced 1/3 to 2/3 to Level 1",
+      "resume cards retained 3/10 answered",
+      "level guide and skills dashboard fit narrow width",
+      "light and dark practice inspected"
+    ],
+    "eligibility_and_pause_rules": "verified in deterministic unit and DOM checks"
+  },
+  "publishing_at_packaging": {
+    "github_pages_updated": false,
+    "reason": "Connected browser unavailable from the originating chat; GitHub connector reports no repository installations. Source is complete and ready to publish."
+  },
+  "limitations": [
+    "Mixed checks count fresh instances, not independently established structural diversity.",
+    "Training milestones are not calibrated Optiver pass thresholds.",
+    "Existing assessment clocks, question generators and scoring rules are unchanged.",
+    "One active app tab; no concurrent-tab state merge.",
+    "Older versions did not save unfinished questions; these cannot be retroactively recovered."
+  ]
+}

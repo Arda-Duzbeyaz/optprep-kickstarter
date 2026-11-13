@@ -1,10 +1,13 @@
-# OptPrep — mathematical transfer edition
+# OptPrep — resumable practice and mathematical transfer edition
 
-**Version:** `1.0.3-transfer.3` · **Prepared:** 12 November 2026
+**Version:** `1.0.4-practice.1` · **Prepared:** 12 November 2026
+**Latest starting point:** the deployed `1.0.3-transfer.3`, commit `f926761ff1319627f495c29b05e3591839ba4662`
 **Based on:** the previously fixed `1.0.2-kickstarter.1` release, original revision `6b840e45a3b4145b06f76dec8e216d68799099fc`
 **Original project:** [Coflazo/optprep](https://github.com/Coflazo/optprep) · **License:** MIT
 
 This edition improves practice for recognising mathematical methods in unfamiliar mixed problems. It adds four targeted generator families and a separate **Transfer Challenge**, while retaining the ordinary assessment generators and all earlier fixes.
+
+The latest update also adds **resumable ten-question practice**, visible level counters and a separate mixed-practice check. It fixes the checkpoint that could previously pass after one correct answer in an unfinished ten-question drill. See [the practice update report](docs/PRACTICE_UPDATE.md) for the exact changes, validation and limitations.
 
 **It is a stronger training resource:** the measured improvements concern structural contrasts, mixed attempts without family cues, exposure tracking and separate transfer results. Actual learning gains and correspondence with Optiver's difficulty have not been experimentally measured.
 
@@ -31,6 +34,47 @@ python serve.py
 ```
 
 Choose **Career Kickstarter: Trading** for ordinary assessment practice. Open **Transfer Challenge** from Today or the sidebar for additional mixed training. The original [live website](https://coflazo.github.io/optprep/) and upstream `npx optprep` do not contain these modifications; use the downloaded copy.
+
+## Practice, resume and visible levels
+
+Ordinary **Practise** now means a block of **10 questions**. Submit an answer, review its feedback, then select Next. After the tenth answer select Finish for your summary. End session finishes early; submitted answers still contribute to progress.
+
+Use **Save & exit** to pause. Today and the task page show **Resume practice** with the number answered. Reopening the same practice route restores the same question, selection, partial interval bounds, ranking, trades, viewed hints or already-submitted feedback. Navigation and reload do not award the answer again. The generator cursor is restored too; elapsed time away is excluded from untimed practice.
+
+An unanswered question that was paused, hidden or reloaded can still build accuracy levels, but cannot earn Level 5 pace evidence or pass a mixed check. Pause on an answered question's feedback screen to keep the next question eligible for an uninterrupted attempt.
+
+One unfinished block is retained per task. Choosing a different skill in the same task offers Resume saved practice or Start new; it does not silently replace the old block. Different tasks retain separate blocks. Timed drills, assessment mocks, fixed library sets, lessons and Transfer Challenge keep their existing lifecycles and clocks; the new pause/resume behaviour applies to ordinary practice.
+
+The five bubbles are **practice levels**, now shown as text above a focused question and beside each skill. The visible counter says exactly what remains, for example **Level 1/5 · Learning — 2/3 towards Level 2**.
+
+| Level | Label | Requirement for the next milestone |
+|---|---|---|
+| 0 | New | Three fresh, unhinted correct answers in a row earn Level 1 |
+| 1 | Learning | Three more earn Level 2 |
+| 2 | Building accuracy | Three more earn Level 3 |
+| 3 | Practised | The roadmap counts the skill as practised; three more earn Level 4 |
+| 4 | Consistent | Three more within the existing practice pace budget earn Level 5 |
+| 5 | At pace | All existing practice levels reached |
+
+Two qualifying answers give 2/3. A third earns one level and starts its next counter at 0/3. Each skill has its own counter; other skills' answers do not reset it. A mistake, hint or review question for that skill resets its current qualifying counter; earned levels stay. The existing thresholds are preserved. These levels track practice evidence; they do not unlock a different generator difficulty automatically.
+
+Mock answers remain a separate benchmark. They still update assessment statistics, but no longer reset an ordinary practice counter merely because mocks cannot award practice levels.
+
+**Mixed-practice check** is a separate counter. It needs three fresh, correct, unhinted, uninterrupted answers in a row for that skill, within practice pace, in mixed ordinary practice or an unlabelled drill. Choosing a named skill, reusing questions, reading lessons or revisiting feedback cannot earn it. An eligible miss, hint, interrupted or slow answer resets this check. Level 5 plus a current mixed check shows **Training goal met**.
+
+The mixed check establishes performance on new instances without a topic cue. It does **not** establish different mathematical structures or independent mastery. Use **Transfer Challenge** and unfamiliar independent problems for that broader evidence. Transfer results remain separate from ordinary skill levels and the new mixed counters.
+
+Open **Progress → Skills** for skills started, answers submitted, Level 3+ skills, at-pace skills and mixed checks. Open a task to see each named skill's level and next counter. The highlighted roadmap row is labelled **Suggested next step**, rather than implying that it bookmarks your last question. A completed focused block can offer the next unfinished skill once Level 3 is reached.
+
+The thin practice rail and the labelled horizontal bar now both show **questions answered out of 10**. They advance on submission, including the final answer. Session progress and skill evidence are displayed separately.
+
+### Existing progress and upgrading
+
+The `optprep:v2` save format is extended with optional `activePractice` and `mixedEvidence` objects. Existing levels, counters, settings, exam history, transfer history, XP, SRS and lessons are retained. Old answers do not fabricate new mixed-check evidence. Proven legacy ten-answer drills retain their checkpoint; partial drills remain in history without passing it.
+
+Updating the existing GitHub Pages repository at the **same website address** retains that browser's progress. Use Settings → Export backup first if moving to localhost, another browser or a different website address; then Import backup at the new location. Unsubmitted questions from an older version cannot be recovered because that version never saved their state. Use one active app tab for training.
+
+This archive is the complete application. For GitHub Pages, extract it and put the **contents** of `OptPrep_Kickstarter_Transfer` at the repository root, where `index.html`, `app.js`, `src/`, `config/`, `assets/` and `.github/` belong. Keep `.nojekyll`, `LICENSE` and the existing attribution. Do not upload the ZIP as one repository file or put an extra containing folder above `index.html`. Choose GitHub Actions as the Pages source; the included workflow packages and deploys the client.
 
 ## Investigation
 
@@ -130,16 +174,31 @@ Regression tests cover all supported branches, deterministic reproduction, contr
 
 Existing NumberLogic rival-rule checks and Orderbooks solvers are unchanged. No checks or difficult cases were removed. Sequence uniqueness remains relative to the implemented rule libraries, rather than every possible rule for a finite sequence.
 
-## Results from this recovered build
+## Verification results
 
-The saved starting ZIP was verified against SHA-256 `9e30970b01a65ab319928a68cb219a54095194efe393b0207d53e21fff6255dc` before restoration. The changes and validation were rerun in the recovered workspace; earlier claims were not treated as a substitute for testing this build.
+The current practice update was tested from the deployed transfer source. The complete suites passed again, including the optional engine-backed Python test.
 
-| Unit/regression suite | Previous fixed edition | This edition |
-|---|---:|---:|
-| JavaScript | 747 passed | **777 passed** |
-| Python, engine available | 27 passed | **36 passed** |
-| C++ | 34 passed | **34 passed** |
-| Total | 808 | **847 passed** |
+| Unit/regression suite | Earlier fixed edition | Transfer 1.0.3 | Current practice 1.0.4 |
+|---|---:|---:|---:|
+| JavaScript | 747 passed | 777 passed | **791 passed** |
+| Python, engine available | 27 passed | 36 passed | **36 passed** |
+| C++ | 34 passed | 34 passed | **34 passed** |
+| Total | 808 | 847 | **861 passed** |
+
+| Current practice evaluation | Result |
+|---|---|
+| Practice-flow integration | **103 assertions passed**, all answer kinds, drafts, hints, feedback, RNG continuation, level-up, partial/full finish, pause, storage recovery and drill checkpoints |
+| Snapshot mathematics | **780 generated items**, across every ordinary family and supported level, remain valid after JSON serialization and pass their existing mathematical verifiers |
+| Ordinary mock preservation | **50 papers / 990 item objects identical** to `1.0.3-transfer.3` |
+| Source preservation | **133 ordinary section source files**, both assessment config files and MIT licence byte-for-byte unchanged |
+| Existing interface checks | UI smoke, Transfer smoke, **11/11** focused Transfer regressions and the full-app Transfer router check passed |
+| Browser layout/continuity | Desktop Chrome and a 390px phone-width iframe; selection resume, 1/3 → 2/3 → level-up, saved feedback, guide, skills dashboard and light/dark practice inspected |
+
+Full results and the deployment-access limitation at packaging time are in [evaluation/practice-results.json](evaluation/practice-results.json). Browser inspection establishes the listed layout and continuity checks; deterministic regressions cover eligibility and clock guards. Physical mobile devices and other browsers were not tested.
+
+### Earlier transfer audit (retained evidence)
+
+The earlier saved starting ZIP was verified against SHA-256 `9e30970b01a65ab319928a68cb219a54095194efe393b0207d53e21fff6255dc` before restoration. The following transfer-specific sweeps were performed for the transfer release and are retained for provenance. They were not rerun as new learning-effectiveness experiments for this practice update; question formulas are unchanged.
 
 Additional evaluations are case sweeps and integration checks, not extra unit-test counts:
 
@@ -165,7 +224,7 @@ The original library still has partial independent numerical coverage: **1,438 o
 
 Ordinary mocks retained zero exact repeats in the sampled sets, while branch signatures still recurred. Raw histograms are included; a small sample showing every answer position does not establish perfect statistical uniformity.
 
-DOM integration exercises actual MCQ, rank, interval and orderbook controls, hidden solutions, complete/partial runs, both clocks, extra time, displayed-only history, cleanup, preset preservation and isolated progress. Desktop visual inspection now supplements those checks; it covers one Chrome viewport and does not establish mobile or cross-browser compatibility.
+The transfer DOM integration exercises actual MCQ, rank, interval and orderbook controls, hidden solutions, complete/partial runs, both clocks, extra time, displayed-only history, cleanup, preset preservation and isolated progress. Its earlier visual inspection covered one desktop Chrome viewport. The additional practice-responsive checks are listed above; neither establishes cross-browser compatibility.
 
 ## Reproduce validation
 

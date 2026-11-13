@@ -24,6 +24,8 @@ import { divNotation, prose } from '../core/format.js';
 import { setRail, scanSheet, bubbles, tickTo } from './sheet.js';
 import { mistakeRow } from '../core/mistakes.js';
 import { timingOf } from '../../config/presets.js';
+import { PRACTICE_BLOCK_SIZE, DRILL_COUNT, PRACTICE_VERSION, practiceHref } from '../core/practice.js';
+import { skillProgress, levelLabel, nextLevelText } from './practice-progress.js';
 
 const VIEWS = { mcq: mcqView, rank: rankView, interval: intervalView, orderbook: orderbookView };
 // Sure/unsure buttons. Not the 80-in-8: one tap answers there, so there is no second button to press.
@@ -59,21 +61,65 @@ function paintTimer(el, ms) {
 export function runFeedbackSession(root, { sectionId, mode, family, count, store, onDone, items: fixedItems, title, setNumber, diagnose = false, onMiss, noHints = false }) {
   const section = SECTION_MODULES[sectionId];
   const cfg = SECTIONS[sectionId];
-  const rng = makeRng(`${sectionId}:${mode}:${Date.now()}`);
+  const resumable = mode === 'practice' && !fixedItems && setNumber == null;
+  const options = { sectionId, mode, family, count, store, onDone, title, diagnose, onMiss, noHints };
+  const saved = resumable ? store.practiceSession?.(sectionId) : null;
+  // One saved block per task, like Quant Sprint. Choosing another skill must
+  // never silently replace an unfinished block from the same task.
+  if (resumable && (saved && (saved.family || null) !== (family || null) || !saved && store.state.activePractice?.[sectionId])) {
+    let nextCleanup = () => {};
+    mount(root, h('h1', {}, `${cfg.title}: Practice`), h('section', { class: 'panel' },
+      h('h2', {}, saved ? 'You have a saved practice block' : 'This saved block could not be restored'),
+      h('p', {}, saved ? `${saved.log.length}/${saved.count} answered in ${saved.family ? familyTitle(section, saved.family) : 'mixed practice'}. Resume it, or start the practice you selected.` : 'Your other progress is preserved. Start a new block to replace this unreadable session.'),
+      h('div', { class: 'row' }, saved ? h('a', { class: 'btn primary', href: practiceHref(saved) }, 'Resume saved practice') : null,
+        h('button', { class: 'btn', type: 'button', onclick: () => { store.clearPractice(sectionId); nextCleanup = runFeedbackSession(root, options); } }, 'Start new 10-question block'))));
+    return () => nextCleanup();
+  }
+  const seed = saved?.seed ?? `${sectionId}:${mode}:${Date.now()}`;
+  const rng = makeRng(seed);
+  if (saved) rng.setState(saved.rngState);
   const perItemMs = drillMs(cfg);
   // One-tap sections (the 80-in-8): a pace line against the exam's seconds per question, and in
   // drill a tap on an option submits it, as in the exam. Practice keeps Submit, so you can rethink.
   const paceMs = cfg.exam.autoAdvance ? perItemMs() : 0;
   const tapSubmits = cfg.exam.autoAdvance && mode === 'drill';
   const notation = notationOf(store);
-  const log = [];
-  const xp0 = store.xpTotal();
-  const lv0 = { ...store.mastery() };
-  let idx = 0;
+  const log = saved?.log || [];
+  const xp0 = saved?.xp0 ?? store.xpTotal();
+  const lv0 = saved?.lv0 || structuredClone(store.mastery());
+  let idx = saved?.index || 0;
   let current = null;
   let cleanup = () => {};
-  const limit = fixedItems ? fixedItems.length : (count || (mode === 'practice' ? Infinity : 10));
+  let followingCleanup = () => {};
+  let restoring = false, disposed = false, finished = false;
+  let pending = saved?.current || null;
+  const limit = fixedItems ? fixedItems.length : (saved?.count || count || (mode === 'practice' ? PRACTICE_BLOCK_SIZE : DRILL_COUNT));
   const dueKeys = mode === 'mistakes' ? srsDue(store.srs).filter((k) => k.startsWith(`${sectionId}:`)).map((k) => k.split(':')[1]) : [];
+
+  function elapsed() { return current?.done ? current.ms : current?.pausedMs ?? Math.max(0, performance.now() - current.start); }
+  function snapshot() {
+    return { version: PRACTICE_VERSION, section: sectionId, family: family || null, seed, rngState: rng.getState(),
+      index: idx, count: limit, log: structuredClone(log), xp0, lv0, savedAt: Date.now(),
+      current: { item: current.item, fresh: current.fresh, hints: current.hints, budgetMs: current.budgetMs, interrupted: !!current.interrupted,
+        elapsedMs: elapsed(), done: !!current.done, response: current.response || null,
+        draft: current.body?.view.draftResponse?.() ?? current.body?.view.response() ?? null } };
+  }
+  function saveActive() {
+    if (!resumable || restoring || disposed || finished || !current?.body) return;
+    store.savePractice(snapshot());
+    if (current.saveNote) current.saveNote.textContent = store.readOnly || store.storageFull
+      ? 'Autosave is unavailable in this browser. Export your progress before closing.'
+      : 'Saved automatically · Save & exit keeps this question and your progress.';
+  }
+  function visibility() {
+    if (!resumable || !current || finished || disposed) return;
+    if (document.hidden) { if (!current.done) current.pausedMs = elapsed(); pause(); }
+    else if (current.pausedMs != null) { current.start = performance.now() - current.pausedMs; current.pausedMs = null; }
+  }
+  function pause() { if (resumable && current && !current.done) current.interrupted = true; saveActive(); }
+  const pagehide = () => pause();
+  if (resumable) { document.addEventListener('visibilitychange', visibility); window.addEventListener('pagehide', pagehide); }
+  function detach() { document.removeEventListener('visibilitychange', visibility); window.removeEventListener('pagehide', pagehide); }
 
   function nextItem() {
     if (fixedItems) return fixedItems[idx];
@@ -88,17 +134,20 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
   function show() {
     cleanup();
     if (idx >= limit) return summary();
-    const item = nextItem();
+    const resumed = pending; pending = null;
+    const item = resumed?.item || nextItem();
     if (!item) return summary();
-    const fresh = setNumber == null && !(store.recentQuestionKeys?.(sectionId)?.has(questionKey(item)));
-    current = { item, start: performance.now(), hints: 0, fresh };
-    store.rememberQuestion?.(item);
-    if (Number.isFinite(limit)) setRail(idx / limit, `Question ${idx + 1} of ${limit}`);
+    const fresh = resumed ? resumed.fresh : setNumber == null && !(store.recentQuestionKeys?.(sectionId)?.has(questionKey(item)));
+    current = { item, start: performance.now() - (resumed?.elapsedMs || 0), hints: resumed?.hints || 0, fresh,
+      budgetMs: resumed?.budgetMs || perItemMs(item), done: false, interrupted: !!resumed?.interrupted || !!resumed && !resumed.done };
+    if (!resumed) store.rememberQuestion?.(item);
+    setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
     const submitBtn = h('button', { class: 'btn primary', type: 'button', onclick: () => submit() }, 'Submit');
     const unsureBtn = CALIBRATED.has(sectionId) ? h('button', { class: 'btn ghost', type: 'button', onclick: () => submit({ confidence: 0.6 }) }, 'Submit, not sure') : null;
     const skipBtn = item.kind === 'mcq' ? h('button', { class: 'btn ghost', type: 'button', onclick: () => submit({ skip: true }) }, 'Skip') : null;
-    const hints = mode === 'drill' || noHints ? null : hintLadder(item, (n) => { current.hints = n; });
-    const body = itemBody(item, { preview: mode !== 'drill', notation, keys: keysOf(store), label: Number.isFinite(limit) ? `Question ${idx + 1} of ${limit}` : `Question ${idx + 1}`, onChange: tapSubmits && item.kind === 'mcq' ? () => submit() : undefined });
+    const hints = mode === 'drill' || noHints ? null : hintLadder(item, (n) => { current.hints = n; saveActive(); }, { initialUsed: current.hints });
+    const body = itemBody(item, { preview: mode !== 'drill', notation, keys: keysOf(store), label: `Question ${idx + 1} of ${limit}`,
+      onChange: () => { if (restoring) return; if (tapSubmits && item.kind === 'mcq') submit(); else saveActive(); } });
     const t = timerEl();
     const paceEl = paceMs && mode !== 'drill' ? h('span', { class: 'num pace', title: 'Seconds on this question against the exam pace' }) : null;
     // The family name can give the method away (e.g. "cheap bundle: buy it, sell the parts"),
@@ -107,16 +156,41 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     if (!fresh && setNumber == null) famLabel.textContent += ' · Review question';
     const head = h('div', { class: 'qhead' },
       h('span', {}, `${title || cfg.title} · ${modeLabel(mode)}`, famLabel),
-      h('span', {}, Number.isFinite(limit) ? `${idx + 1} / ${limit}` : `#${idx + 1}`, mode === 'drill' ? ' · ' : '', mode === 'drill' ? t : '', paceEl ? ' · ' : '', paceEl));
+      h('span', {}, `${idx + 1} / ${limit}`, mode === 'drill' ? ' · ' : '', mode === 'drill' ? t : '', paceEl ? ' · ' : '', paceEl));
     const controls = h('div', { class: 'row' }, submitBtn, unsureBtn, skipBtn, hints?.btn,
-      h('span', { style: { flex: 1 } }), h('button', { class: 'btn ghost', type: 'button', onclick: () => { idx = limit; summary(); } }, 'End session'));
+      h('span', { style: { flex: 1 } }), resumable ? h('a', { class: 'btn ghost', href: `#/s/${sectionId}` }, 'Save & exit') : null,
+      h('button', { class: 'btn ghost', type: 'button', onclick: () => summary() }, 'End session'));
     const after = h('div', { 'aria-live': 'polite' });
-    mount(root, h('h1', { class: 'visually-hidden' }, `${title || cfg.title}: ${modeLabel(mode)}`), h('div', { class: 'panel' }, head, tapSubmits && item.kind === 'mcq' ? h('p', { class: 'small-note muted' }, 'Tapping an option submits it.') : null, body.el, hints?.box, controls, after));
+    const skillSlot = h('div', {});
+    if (family && resumable) mount(skillSlot, skillProgress(store, sectionId, family, { budgetMs: current.budgetMs }));
+    const progress = h('progress', { class: 'practice-block-progress', max: limit, value: log.length, 'aria-label': 'Questions answered in this block' });
+    const progressText = h('span', { class: 'small-note num' }, `${log.length}/${limit} answered`);
+    const saveNote = resumable ? h('p', { class: 'small-note muted practice-save-note' }) : null;
+    const levelStrip = h('div', { class: 'practice-level-strip' });
+    if (resumable && family) mount(levelStrip, levelLabel(store.mastery()[`${sectionId}:${family}`]),
+      h('span', { class: 'small-note' }, nextLevelText(store.mastery()[`${sectionId}:${family}`])));
+    mount(root, h('h1', { class: 'visually-hidden' }, `${title || cfg.title}: ${modeLabel(mode)}`),
+      h('div', { class: 'panel' }, head,
+        h('div', { class: 'practice-block-status' }, progressText, progress),
+        levelStrip,
+        resumable && !family ? h('p', { class: 'small-note muted' }, 'Mixed practice · The skill name stays hidden until you submit.') : null,
+        tapSubmits && item.kind === 'mcq' ? h('p', { class: 'small-note muted' }, 'Tapping an option submits it.') : null,
+        body.el, hints?.box, controls, saveNote, skillSlot, after));
     focusIn(root, '.prompt');
-    current.body = body; current.after = after; current.controls = controls; current.famLabel = famLabel;
+    Object.assign(current, { body, after, controls, famLabel, skillSlot, progress, progressText, saveNote, levelStrip });
+    if (resumed) {
+      restoring = true;
+      body.view.setResponse?.(resumed.draft);
+      restoring = false;
+      if (resumed.done) {
+        current.done = true; current.response = resumed.response; current.ms = resumed.elapsedMs;
+        body.view.lock(); renderFeedback(checkItem(item, resumed.response), resumed.response);
+      }
+    }
     if (item.kind === 'interval') body.view.focus?.();
 
     const onKey = (e) => {
+      if (e.repeat || disposed || finished) return;
       if (current.done) { if (e.key === 'Enter' && !e.target.closest?.('a, button, summary, input, select, textarea')) { e.preventDefault(); idx++; show(); } return; }
       body.view.keyHandler?.(e);
       if (e.key === 'Enter' && !e.target.closest?.('button')) { e.preventDefault(); submit(); }
@@ -129,7 +203,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       tick();
     } else if (paceEl) {
       const tick = () => {
-        const ms = performance.now() - current.start;
+        const ms = elapsed();
         paceEl.textContent = `${(ms / 1000).toFixed(1)} s / ${paceMs / 1000} s`;
         paceEl.classList.toggle('over', ms > paceMs);
         if (!current.done) raf = requestAnimationFrame(tick);
@@ -137,6 +211,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       tick();
     }
     cleanup = () => { document.removeEventListener('keydown', onKey); cancelAnimationFrame(raf); };
+    saveActive();
   }
 
   function submit(opts = {}) {
@@ -150,16 +225,26 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     current.done = true;
     body.view.lock();
     const result = checkItem(item, response);
-    const ms = performance.now() - current.start;
+    const ms = Math.max(0, performance.now() - current.start);
+    current.ms = ms; current.response = response;
     const confidence = opts.confidence ?? (CALIBRATED.has(sectionId) && !response.skip ? 0.9 : undefined);
     const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0;
+    log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, ms,
+      levelBefore: store.mastery()[`${sectionId}:${item.family}`]?.lv || 0 });
     store.recordAnswer(sectionId, item.family, {
       correct: correctNoHelp, covered: result.correct, ms, confidence: response.skip ? undefined : confidence, difficulty: item.difficulty, score: item.kind === 'interval' ? result.score : undefined,
-      hints: current.hints, mode, fresh: current.fresh, budgetMs: perItemMs(item),
+      hints: current.hints, mode, fresh: current.fresh, budgetMs: current.budgetMs,
+      mixed: !family && !fixedItems && ['practice', 'drill'].includes(mode), key: questionKey(item),
+      uninterrupted: !current.interrupted,
+      ...(resumable ? { practiceSnapshot: snapshot(), nextSrs: srsRecord(store.srs, `${sectionId}:${item.family}`, correctNoHelp) } : {}),
       miss: !result.correct && !response.skip ? mistakeRow(item, response, { mode, ms: Math.round(ms) }) : undefined,
     });
-    store.srs = srsRecord(store.srs, `${sectionId}:${item.family}`, correctNoHelp);
-    log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, ms });
+    if (!resumable) store.srs = srsRecord(store.srs, `${sectionId}:${item.family}`, correctNoHelp);
+    renderFeedback(result, response);
+  }
+
+  function renderFeedback(result, response) {
+    const { item, body, ms } = current;
     body.view.reveal(result, response);
     current.famLabel.textContent = ` · ${familyTitle(section, item.family)}`;
     const banner = feedbackBanner(item, result, response);
@@ -173,18 +258,39 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       h('div', { class: 'row', style: { marginTop: '12px' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => { idx++; show(); } }, idx + 1 >= limit ? 'Finish' : 'Next (Enter)'),
         !result.correct && lessonForFamily(sectionId, item.family) ? h('a', { class: 'btn', href: `#/study/lesson/${lessonForFamily(sectionId, item.family)}` }, `Study: ${familyTitle(section, item.family)}`) : null));
     if (item.kind === 'interval') intervalCoach(item, banner.querySelector('.coach-slot'));
+    current.progress.value = log.length;
+    current.progressText.textContent = `${log.length}/${limit} answered`;
+    setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
+    if (mode === 'practice' && !fixedItems) {
+      const m = store.mastery()[`${sectionId}:${item.family}`];
+      let notice = !practiceSuccess(sectionId, result) ? 'This answer breaks the current qualifying streak. Earned levels stay.'
+        : current.hints ? 'Correct with a hint: useful practice, but the qualifying streak resets.'
+          : !current.fresh ? 'Review question: useful revision, but the qualifying streak resets.'
+            : (log.at(-1)?.levelBefore || 0) === 4 && (ms > current.budgetMs || current.interrupted) ? 'Correct, but this was paused or outside practice pace. The Level 5 streak resets.'
+              : (m?.lv || 0) > (log.at(-1)?.levelBefore || 0) ? `Level ${m.lv} earned. Your next goal is shown below.` : 'Qualifying answer recorded. Your counter is updated below.';
+      if (current.interrupted && practiceSuccess(sectionId, result) && !current.hints) notice += ' Paused answers can build accuracy levels, but cannot earn pace or mixed-check evidence.';
+      mount(current.skillSlot, skillProgress(store, sectionId, item.family, { budgetMs: current.budgetMs, notice }));
+      mount(current.levelStrip, levelLabel(m), h('span', { class: 'small-note' }, nextLevelText(m)));
+    }
     current.after.querySelector('.btn.primary')?.focus({ preventScroll: true });
     current.controls.querySelectorAll('button').forEach((b) => { if (b.textContent !== 'End session') b.disabled = true; });
   }
 
   function summary() {
+    if (finished) return;
+    finished = true; detach();
     cleanup();
     const n = log.length;
     const correct = log.filter((x) => x.correct).length;
     const byFam = new Map();
     for (const x of log) { const f = byFam.get(x.family) || { n: 0, c: 0 }; f.n++; f.c += x.correct ? 1 : 0; byFam.set(x.family, f); }
     const weakest = [...byFam.entries()].sort((a, b) => a[1].c / a[1].n - b[1].c / b[1].n)[0];
-    if (mode === 'drill' && n) store.recordRun({ section: sectionId, mode: 'drill', score: log.reduce((s, x) => s + x.score, 0), max: n, items: log });
+    const nextSkill = resumable && family && (store.mastery()[`${sectionId}:${family}`]?.lv || 0) >= 3
+      ? section.families.find((f) => f.id !== family && (store.mastery()[`${sectionId}:${f.id}`]?.lv || 0) < 3) : null;
+    const run = { section: sectionId, mode, score: log.reduce((s, x) => s + x.score, 0), max: n,
+      items: log, plannedCount: limit, completed: n === limit };
+    if (mode === 'drill' && n) store.recordRun(run);
+    if (resumable) store.finishPractice(sectionId, run);
     if (setNumber != null && n === limit) store.recordSet(sectionId, setNumber, { score: Math.round(log.reduce((s, x) => s + x.score, 0) * 100) / 100, max: n, mode: 'practice' });
     const xpGain = store.xpTotal() - xp0;
     const now = store.mastery();
@@ -198,12 +304,13 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       return h('li', { class: 'summary-row' },
         h('span', { class: 'summary-fam' }, familyTitle(section, f)),
         h('span', { class: 'num muted' }, `${v.c}/${v.n}`),
-        marks,
+        h('span', {}, marks, levelLabel(now[k])),
         after > before ? h('span', { class: 'stamp stamp-mastered' }, `Level ${after}`) : null);
     });
-    setRail(1, 'Session complete');
+    setRail(n / limit, n === limit ? 'Session complete' : `Session ended · ${n} of ${limit} answered`);
     mount(root, h('section', { class: 'field session-summary' },
       h('h2', { class: 'field-label' }, `${modeLabel(mode)} summary`),
+      h('p', { class: 'small-note muted' }, n === limit ? `Block complete · ${n}/${limit} answered` : `Ended early · ${n}/${limit} answered. Submitted answers still count towards skill progress.`),
       n ? h('div', { class: 'summary-stats' },
         h('span', {}, h('span', { class: 'num big' }, `${correct}/${n}`), ' right'),
         h('span', {}, h('span', { class: 'num big xp-tick' }, '+0'), ' XP'),
@@ -211,6 +318,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
         : h('p', { class: 'muted' }, mode === 'mistakes' ? 'Nothing is due for review in this task right now.' : 'No questions answered.'),
       n ? h('ol', { class: 'summary-list' }, famRows) : null,
       h('div', { class: 'row' },
+        resumable ? h('button', { class: 'btn primary', type: 'button', onclick: () => { followingCleanup = runFeedbackSession(root, options); } }, `Start another ${PRACTICE_BLOCK_SIZE} questions`) : null,
+        resumable && family ? h('a', { class: 'btn', href: `#/run/${sectionId}/practice` }, 'Test in mixed practice') : null,
+        nextSkill ? h('a', { class: 'btn', href: `#/run/${sectionId}/practice/${nextSkill.id}` }, `Next skill: ${nextSkill.title}`) : null,
         weakest && weakest[1].c < weakest[1].n && lessonForFamily(sectionId, weakest[0]) ? h('a', { class: 'btn primary', href: `#/study/lesson/${lessonForFamily(sectionId, weakest[0])}` }, `Study: ${familyTitle(section, weakest[0])}`) : null,
         weakest && weakest[1].c < weakest[1].n ? h('a', { class: 'btn', href: `#/s/${sectionId}/learn/${weakest[0]}` }, `Worked examples: ${familyTitle(section, weakest[0])}`) : null,
         h('a', { class: 'btn ghost', href: `#/s/${sectionId}` }, 'Back to the roadmap'))));
@@ -221,7 +331,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
   }
 
   show();
-  return () => cleanup();
+  return () => { pause(); disposed = true; cleanup(); detach(); followingCleanup(); };
 }
 
 // "Correct until here": list the solution's moves; the learner clicks the first one they would

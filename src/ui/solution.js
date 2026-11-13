@@ -102,7 +102,7 @@ function describeTrades(item) {
   }).join(', ');
 }
 
-export function hintLadder(item, onUse) {
+export function hintLadder(item, onUse, { initialUsed = 0 } = {}) {
   let used = 0;
   const box = h('div', { class: 'hints' });
   const btn = h('button', { class: 'btn small', type: 'button', onclick: () => {
@@ -113,6 +113,12 @@ export function hintLadder(item, onUse) {
     btn.textContent = used >= item.hints.length ? 'No more hints' : `Hint (${used}/${item.hints.length})`;
     btn.disabled = used >= item.hints.length;
   } }, `Hint (0/${item.hints.length})`);
+  // Reconstruct already viewed hints without spending or reporting them again.
+  for (let i = 0; i < Math.min(initialUsed, item.hints.length); i++) {
+    box.append(h('div', { class: 'feedback' }, h('strong', {}, `Hint ${i + 1}. `), item.hints[i]));
+    used++;
+  }
+  if (used) { btn.textContent = used >= item.hints.length ? 'No more hints' : `Hint (${used}/${item.hints.length})`; btn.disabled = used >= item.hints.length; }
   return { btn, box, used: () => used };
 }
 

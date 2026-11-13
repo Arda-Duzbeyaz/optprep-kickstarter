@@ -29,7 +29,9 @@ export function intervalView(item, { onChange, showPreview = true } = {}) {
       const L = parseFloat(lo.value), U = parseFloat(hi.value);
       return Number.isFinite(L) && Number.isFinite(U) ? { lower: L, upper: U } : null;
     },
-    setResponse: (r) => { if (r) { lo.value = r.lower; hi.value = r.upper; update(); } },
+    // Preserve even a single filled field when ordinary practice is paused.
+    draftResponse: () => ({ lower: lo.value, upper: hi.value }),
+    setResponse: (r) => { if (r) { lo.value = r.lower ?? ''; hi.value = r.upper ?? ''; update(); } },
     lock: () => { locked = true; lo.disabled = true; hi.disabled = true; },
     reveal: (res, r) => {
       const s = r ? intervalScore(r.lower, r.upper, item.truth) : 0;

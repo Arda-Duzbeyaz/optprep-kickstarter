@@ -3,7 +3,8 @@
 // version cannot read, and the old v1 key is left untouched as a backup.
 import { blankV2, migrate, VERSION } from './migrate.js';
 import { trendStep } from './patterns.js';
-import { levelStep, xpFor, MAX_FREEZES } from './progression.js';
+import { levelStep, mixedStep, xpFor, MAX_FREEZES } from './progression.js';
+import { validPractice } from './practice.js';
 import { upsertMistake } from './mistakes.js';
 import { dayKey, streak, applyFreezes } from './activity.js';
 import { practiceSuccess } from './check.js';
@@ -84,11 +85,19 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     get migratedFrom() { return migratedFrom; },
     // Displayed-question history also matters: backend adoption must not erase
     // exposure tracking just because no ordinary answer has been submitted yet.
-    isEmpty() { return !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
+    isEmpty() { return !Object.keys(state.activePractice).length && !Object.keys(state.mixedEvidence).length && !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
     save,
     // One answer from any mode. Updates stats, the recency trend, the skill level, XP and
     // the mistake log, then saves once.
-    recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss } = {}) {
+    recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss, mixed = false, key, practiceSnapshot, nextSrs, uninterrupted = true } = {}) {
+      // Commit the answered phase and progress together: reopening feedback must
+      // never record the same answer a second time.
+      if (practiceSnapshot) {
+        if (!validPractice(practiceSnapshot, section) || !practiceSnapshot.current.done) throw new Error('Invalid answered practice snapshot');
+        const previous = state.activePractice[section];
+        if (previous?.current?.done && previous.seed === practiceSnapshot.seed && previous.index === practiceSnapshot.index &&
+          questionKey(previous.current.item) === questionKey(practiceSnapshot.current.item)) return false;
+      }
       const k = `${section}:${family}`;
       const now = clock();
       const s = state.stats[k] || { n: 0, correct: 0, ms: 0 };
@@ -102,16 +111,38 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       state.stats[k] = s;
       state.trend[k] = trendStep(state.trend[k], correct, now);
       const clean = !!correct && !hints && fresh && mode !== 'exam';
-      state.mastery[k] = levelStep(state.mastery[k], { clean, paced: !!budgetMs && ms > 0 && ms <= budgetMs }, now);
+      // Assessment results remain a separate benchmark. A mock must not erase
+      // a practice streak simply because its answers cannot award these levels.
+      if (mode !== 'exam') state.mastery[k] = levelStep(state.mastery[k], { clean, paced: uninterrupted && !!budgetMs && ms > 0 && ms <= budgetMs }, now);
+      if (mixed && fresh && ['practice', 'drill'].includes(mode)) state.mixedEvidence[k] = mixedStep(state.mixedEvidence[k], { key, correct, hints, ms, budgetMs, uninterrupted }, now);
       addXp(xpFor({ type: 'answer', mode, correct, hints, ms }));
       if (!correct && miss) upsertMistake(state.mistakes, miss);
       if (confidence != null) {
         state.calibration.push({ section, confidence, correct: !!correct });
         if (state.calibration.length > 2000) state.calibration.splice(0, state.calibration.length - 2000);
       }
+      if (practiceSnapshot) state.activePractice[section] = JSON.parse(JSON.stringify(practiceSnapshot));
+      if (nextSrs) state.srs = nextSrs;
       hooks.answer?.({ section, family, correct: !!correct, ms, confidence: confidence ?? null, difficulty: difficulty ?? null, score: score ?? null, item_id: miss?.id ?? null, mode, hints, belief: miss?.belief ?? null, at: now / 1000 });
       save();
+      return true;
     },
+    practiceSession(section) {
+      const s = state.activePractice[section];
+      return validPractice(s, section) ? JSON.parse(JSON.stringify(s)) : null;
+    },
+    practiceSessions() { return Object.keys(state.activePractice).map((id) => this.practiceSession(id)).filter(Boolean).sort((a, b) => b.savedAt - a.savedAt); },
+    savePractice(snapshot) {
+      if (!validPractice(snapshot)) throw new Error('Invalid practice snapshot');
+      state.activePractice[snapshot.section] = JSON.parse(JSON.stringify(snapshot)); save();
+    },
+    clearPractice(section) { delete state.activePractice[section]; save(); },
+    finishPractice(section, run) {
+      delete state.activePractice[section];
+      if (run?.max) { const r = { ...run, section, mode: 'practice', finishedAt: clock() }; state.runs.push(r); hooks.run?.(r); }
+      save();
+    },
+    mixedEvidence() { return state.mixedEvidence; },
     recordXp(n) { addXp(n); save(); },
     recordRun(run) {
       const r = { finishedAt: clock(), ...run };

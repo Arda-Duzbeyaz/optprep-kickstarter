@@ -1,0 +1,9 @@
+{
+  "baselineVersion": "1.0.3-transfer.3",
+  "unchangedOrdinarySourceFiles": 133,
+  "unchangedConfigFiles": 2,
+  "licenceUnchanged": true,
+  "identicalMockPapers": 50,
+  "identicalMockQuestions": 990,
+  "snapshotVerifierCases": 780
+}

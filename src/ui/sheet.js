@@ -40,6 +40,7 @@ export function setRail(fraction, label) {
   const k = Math.round(Math.max(0, Math.min(1, fraction)) * RAIL_MARKS);
   [...rail.children].forEach((m, i) => m.classList.toggle('is-filled', i < k));
   rail.setAttribute('aria-label', label || `${Math.round(fraction * 100)}%`);
+  rail.setAttribute('title', label || `${Math.round(fraction * 100)}%`);
 }
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
