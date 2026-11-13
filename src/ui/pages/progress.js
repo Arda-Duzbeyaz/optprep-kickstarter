@@ -8,23 +8,23 @@ import { dayKey, addDays } from '../../core/activity.js';
 import { lessonForFamily } from '../../study/catalog.js';
 import { FAMILIES } from '../../sections/catalog.js';
 import { activePreset, presetSections } from '../../../config/presets.js';
-import { levelGuide } from '../practice-progress.js';
+import { levelGuide, skillCheckpoint } from '../practice-progress.js';
 
 function skillsTab(store) {
   const ids = presetSections(activePreset()).filter((id) => FAMILIES[id]);
-  return h('div', {}, h('p', { class: 'lede' }, 'See what you have practised, what you can solve at pace, and what you have recognised in mixed practice.'),
+  return h('div', {}, h('p', { class: 'lede' }, 'Coverage records what you have learned. Mixed checkpoints record fresh, unaided performance at training pace. They are separate measures.'),
     levelGuide(),
     ids.map((id) => {
-      const rows = FAMILIES[id].map((f) => ({ level: store.mastery()[`${id}:${f.id}`]?.lv || 0, mixed: store.mixedEvidence?.()[`${id}:${f.id}`]?.run || 0, n: store.stats()[`${id}:${f.id}`]?.n || 0 }));
+      const rows = FAMILIES[id].map((f) => ({ ...store.coverage(id,f.id), checkpoint: skillCheckpoint(store,id,f.id), n: store.stats()[`${id}:${f.id}`]?.n || 0 }));
       const count = (fn) => rows.filter(fn).length;
       return h('section', { class: 'panel skill-overview' }, h('h2', {}, SECTIONS[id].title),
-        h('p', { class: 'small-note muted' }, `${count((r) => r.n > 0 || r.level > 0)}/${rows.length} skills started · ${rows.reduce((sum, r) => sum + r.n, 0)} questions answered`),
+        h('p', { class: 'small-note muted' }, `${count((r) => r.started)}/${rows.length} skills started · ${rows.reduce((sum, r) => sum + r.n, 0)} questions answered`),
         h('div', { class: 'skill-overview-counts' },
-          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.level >= 3)}/${rows.length}`), ' practised · Level 3+'),
-          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.level === 5)}/${rows.length}`), ' at pace · Level 5'),
-          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.mixed >= 3)}/${rows.length}`), ' mixed checks met')),
-        h('p', { class: 'small-note muted' }, `${count((r) => r.level === 5 && r.mixed >= 3)}/${rows.length} training goals met: Level 5 plus a current mixed check.`),
-        h('a', { class: 'btn', href: `#/s/${id}` }, 'View levels and practise'));
+          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.covered)}/${rows.length}`), ' covered'),
+          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.verified.length > 0)}/${rows.length}`), ' with a verified difficulty'),
+          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.complete)}/${rows.length}`), ' all supported difficulties verified')),
+        h('p', { class: 'small-note muted' }, `${count((r) => r.checkpoint.review.length)}/${rows.length} skills need a mixed recheck. Earlier levels remain in the previous practice record on each skill.`),
+        h('a', { class: 'btn', href: `#/s/${id}` }, 'View skills and checkpoints'));
     }));
 }
 

@@ -92,15 +92,15 @@ try {
   store=makeStore(memoryBackend());start(store,'bto','two-dice-sum');
   button('Hint (0/3)').click();start(store,'bto','two-dice-sum');
   ok(root.querySelector('.hints').textContent.includes('Hint 1.'));eq(store.practiceSession('bto').current.hints,1);
-  submit(store);eq(store.mastery()['bto:two-dice-sum'].run,0,'a resumed hint cannot count as a clean answer');
-  // Three clean answers visibly earn one level; wrong answers reset the
-  // current counter while preserving that earned level and the old data.
+  submit(store);eq(store.recognition(),{},'a resumed hint cannot count as a cold answer');
+  // Focused learning is now explicitly separate from cold mixed checkpoints.
   stop();stop=()=>{};store=makeStore(memoryBackend());start(store,'bto','two-dice-sum');
   for(let i=0;i<3;i++){submit(store);if(i<2)button('Next (Enter)').click();}
-  eq(store.mastery()['bto:two-dice-sum'].lv,1);ok(root.textContent.includes('Level 1/5 · Learning'));
-  ok(root.textContent.includes('Level 1 earned'));ok(root.textContent.includes('0/3 towards Level 2'));
-  button('Next (Enter)').click();submit(store,'bto',false);eq(store.mastery()['bto:two-dice-sum'].lv,1);
-  eq(store.mastery()['bto:two-dice-sum'].run,0);eq(store.mixedEvidence(),{},'chosen-family practice does not earn mixed checks');
+  eq(store.mastery()['bto:two-dice-sum'],undefined);ok(root.textContent.includes('Learning only · help allowed'));
+  ok(root.textContent.includes('cannot earn mixed checkpoints'));ok(root.textContent.includes('0/3 cold successes'));
+  button('Mark covered').click();eq(store.coverage('bto','two-dice-sum').covered,true);
+  button('Next (Enter)').click();submit(store,'bto',false);eq(store.mastery()['bto:two-dice-sum'],undefined);
+  eq(store.recognition(),{});eq(store.mixedEvidence(),{},'chosen-family practice does not earn mixed checks');
   // Ten answers stop at a finishable block; last-item feedback resumes and the
   // completed history and clear operation happen exactly once.
   stop();stop=()=>{};store=makeStore(memoryBackend());start(store);
@@ -134,10 +134,10 @@ try {
   button('Start new 10-question block').click();eq(store.mastery()['bto:two-dice-sum'].prun,2);
   // Both the landing pages and skills dashboard expose resume and level criteria.
   stop();stop=()=>{};store.setSetting('preset',{id:'kickstarter'});
-  sectionPage(root,{store,id:'bto'});ok(root.textContent.includes('Continue practice'));ok(root.textContent.includes('Level 4/5 · Consistent'));
-  ok(root.textContent.includes('2/3 towards Level 5'));ok(root.textContent.includes('How levels and skill checks work'));
+  sectionPage(root,{store,id:'bto'});ok(root.textContent.includes('Continue practice'));ok(root.textContent.includes('difficulties verified'));
+  eq(store.mastery()['bto:two-dice-sum'].prun,2,'legacy levels preserved');ok(root.textContent.includes('How learning and mixed checkpoints work'));
   pathPage(root,{store});ok(root.textContent.includes('Resume practice'));
-  progressPage(root,{store});ok(root.textContent.includes('Skills'));ok(root.textContent.includes('mixed checks met'));ok(root.textContent.includes('skills started'));
+  progressPage(root,{store});ok(root.textContent.includes('Skills'));ok(root.textContent.includes('all supported difficulties verified'));ok(root.textContent.includes('skills started'));
   // Storage failure is visible rather than a false promise that data was saved.
   const blocked=memoryBackend();blocked.setItem=()=>{throw Error('QuotaExceededError')};
   const memoryOnly=makeStore(blocked);start(memoryOnly);ok(root.querySelector('.practice-save-note').textContent.includes('Autosave is unavailable'));
@@ -153,4 +153,5 @@ try {
     const check=sectionMap(store,'bto').units.flatMap(u=>u.rows).find(r=>r.id==='drill');eq(check.done,count===10);
   }
   console.log(`${checks} practice-flow assertions passed: all answer kinds, drafts, feedback/RNG resume, levels, completion, mixed cues, visibility, recovery, dashboards and drill checkpoints.`);
-} finally {stop();dom.window.close();}
+} catch (error) { console.error('Practice-flow failure:',error); throw error; }
+finally { try { stop(); } finally { dom.window.close(); } }

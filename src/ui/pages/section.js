@@ -12,7 +12,7 @@ import { sectionMap } from './section-map.js';
 import { bubbles, stamp, setRail } from '../sheet.js';
 import { icon } from '../icons.js';
 import { formatLine } from './format.js';
-import { levelGuide, levelLabel, nextLevelText, resumePracticeCards } from '../practice-progress.js';
+import { levelGuide, checkpointLabel, checkpointText, resumePracticeCards } from '../practice-progress.js';
 
 // Some 80-in-8 reports write division as 735 : 15. The learner picks; items keep ÷ underneath.
 function notationToggle(store) {
@@ -23,8 +23,8 @@ function notationToggle(store) {
 
 function row(r, n, id) {
   // One action per row; the title opens the lesson, so the row never needs two buttons.
-  const titleHref = r.kind === 'skill' ? (r.lesson ? `#/study/lesson/${r.lesson}` : `#/s/${id}/learn/${r.id}`) : r.href;
-  const verb = r.kind === 'skill' ? (r.state === 'needs-review' ? 'Review' : 'Practise') : r.kind === 'lesson' ? 'Read' : 'Start';
+  const titleHref = r.href;
+  const verb = r.kind === 'skill' ? (r.state === 'needs-review' ? 'Repair' : 'Learn') : r.kind === 'lesson' ? 'Read' : 'Start';
   const actions = [h('a', { class: `btn small${r.current ? ' primary' : ' ghost'}`, href: r.href, 'aria-label': `${verb}: ${r.title}` }, verb)];
   return h('li', { class: `grid-row${r.current ? ' is-current' : ''}${r.later ? ' is-later' : ''}${r.done ? ' is-done' : ''}`, id: r.current ? 'current-row' : null, 'aria-current': r.current ? 'step' : null },
     h('span', { class: 'grid-num num' }, String(n)),
@@ -33,10 +33,9 @@ function row(r, n, id) {
       r.current && r.kind === 'skill' && r.skill ? h('span', { class: 'grid-skill' }, r.skill) : null,
       r.current ? h('span', { class: 'you-are-here' }, icon('pencil', { size: 14 }), 'Suggested next step') : null),
     h('span', { class: 'grid-level' },
-      r.kind === 'skill' ? [bubbles(5, r.lv, { label: `Level ${r.lv} of 5`, current: r.current }), levelLabel(r.progress), h('span', { class: 'skill-next small-note muted' }, nextLevelText(r.progress))] : bubbles(1, r.done ? 1 : 0, { label: r.done ? 'Done' : 'Not done', current: r.current })),
+      r.kind === 'skill' ? [bubbles(r.checkpoint.levels.length, r.checkpoint.verified.length, { label: `${r.checkpoint.verified.length} of ${r.checkpoint.levels.length} difficulties verified` }), checkpointLabel(r.checkpoint), h('span', { class: 'skill-next small-note muted' }, checkpointText(r.checkpoint))] : bubbles(1, r.done ? 1 : 0, { label: r.done ? 'Done' : 'Not done', current: r.current })),
     h('span', { class: 'grid-state' }, r.state === 'needs-review' ? stamp(r.state)
-      : r.kind === 'skill' && r.lv === 5 ? h('span', { class: 'stamp stamp-mastered' }, 'At pace') : r.kind !== 'skill' && r.done ? stamp('mastered') : null,
-      r.kind === 'skill' ? h('span', { class: 'skill-mixed small-note' }, `Mixed check ${r.mixedRun || 0}/3`) : null),
+      : r.kind === 'skill' ? h('span', { class: r.covered ? 'stamp stamp-mastered' : 'small-note muted' }, r.covered ? 'Covered' : 'To learn') : r.done ? stamp('mastered') : null),
     h('span', { class: 'grid-actions' }, actions));
 }
 
@@ -45,42 +44,40 @@ export function sectionPage(root, { store, id }) {
   const mod = SECTION_MODULES[id];
   if (!cfg || !mod) return mount(root, h('h1', {}, 'Unknown task'), h('p', {}, h('a', { href: '#/' }, 'Back to your sheet')));
   const map = sectionMap(store, id);
-  for (const r of map.units.flatMap((u) => u.rows).filter((r) => r.kind === 'skill')) {
-    r.progress = store.mastery()[r.key] || {};
-    r.mixedRun = Math.min(3, store.mixedEvidence?.()[r.key]?.run || 0);
-  }
   const lib = buildLibrary(mod, { size: setCount(cfg.exam.count) * cfg.exam.count });
   const nSets = librarySets(lib, cfg.exam.count).length;
   const due = srsDue(store.srs).filter((k) => k.startsWith(`${id}:`)).length;
   const rep = REPORTED[id];
-  setRail(map.skillsTotal ? map.skillsDone / map.skillsTotal : 0, `${map.skillsDone} of ${map.skillsTotal} skills at level 3`);
+  setRail(map.skillsTotal ? map.skillsDone / map.skillsTotal : 0, `${map.skillsDone} of ${map.skillsTotal} skills covered`);
   let n = 0;
   mount(root,
     h('h1', {}, cfg.title),
     h('p', { class: 'lede' }, cfg.blurb),
     resumePracticeCards(store, [id]),
     h('section', { class: 'format-line' },
-      h('p', { class: 'num-ish' }, formatLine(cfg)),
+      h('p', { class: 'num-ish' }, 'Practice format · ', formatLine(cfg)),
       h('div', { class: 'row' },
-        h('a', { class: 'btn primary', href: `#/run/${id}/practice` }, 'Mixed practice · 10 questions'),
-        h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Timed practice')),
-      activePreset().note ? h('p', { class: 'small-note muted' }, activePreset().note) : null,
-      id === 'iv' ? h('p', { class: 'small-note muted' }, 'Skill progress requires a score of at least 0.70 on fresh, unhinted answers. This is a practice goal. Coverage and mean score are tracked separately under Progress → Pace.') : null,
+        map.skillsDone >= 2 ? h('a', { class: 'btn primary', href: `#/run/${id}/mixed/covered` }, 'Mixed check · covered skills') : h('button', { class: 'btn primary', type: 'button', onclick: () => root.querySelector('#skills')?.scrollIntoView({ block: 'start' }) }, 'Learn skills below'),
+        h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Timed section')),
+      h('p', { class: 'small-note' }, 'Learn a skill with help, mark it covered, then test recognition in a 10-question mixed batch. Three fresh, unaided, paced successes verify each supported difficulty.'),
+      id === 'iv' ? h('p', { class: 'small-note muted' }, 'A mixed checkpoint requires an interval score of at least 0.70, a training goal. Coverage and mean score appear under Progress → Pace.') : null,
       h('p', { class: 'quiet-links small-note' },
         due ? [h('a', { href: `#/run/${id}/mistakes` }, `Review ${due} due`), ' '] : null,
-        cfg.variants.map((v, i) => [h('a', { href: `#/run/${id}/exam/v${i}` }, `Exam: ${v.label}`), ' ']),
+        h('a', { href: `#/run/${id}/mixed/all` }, 'Mix all skills'), ' ',
+        ['bto','nl','ll','iv','ob'].includes(id) ? [h('a', { href: `#/transfer/${id}` }, 'Unfamiliar challenge'), ' '] : null,
+        cfg.variants.map((v, i) => [h('a', { href: `#/run/${id}/exam/v${i}` }, `Extra format: ${v.label}`), ' ']),
         h('a', { href: `#/s/${id}/sets` }, `Library, ${nSets} sets`), ' ',
         bookLessons(id).length ? h('a', { href: `#/study/book/${id}` }, 'Study book') : null),
-      h('p', { class: 'muted small-note' }, `Trainer bar: ${cfg.target.label}. `, rep ? ['Reported pass: ', rep.text, ' (', h('a', { href: SOURCES[rep.source].url, target: '_blank', rel: 'noopener' }, 'source'), ').'] : null),
+      h('details', { class: 'small-note' }, h('summary', {}, 'Timing, assumptions and practice targets'),
+        activePreset().note ? h('p', {}, activePreset().note) : null,
+        h('p', {}, `Trainer bar: ${cfg.target.label}. `, rep ? ['Reported pass: ', rep.text, ' (', h('a', { href: SOURCES[rep.source].url, target: '_blank', rel: 'noopener' }, 'source'), ').'] : null)),
       id === 'mm' ? notationToggle(store) : null),
-    h('p', { class: 'small-note muted' }, `${map.skillsDone}/${map.skillsTotal} skills practised (Level 3+) · ${map.mastered} at pace (Level 5). Pick a skill below for focused practice, or use mixed practice to test method recognition.`),
+    h('p', { class: 'small-note muted' }, `${map.skillsDone}/${map.skillsTotal} skills covered · ${map.verified}/${map.skillsTotal} skills with all mixed checkpoints verified. Coverage is your learning checklist; checkpoints measure cold practice performance.`),
     levelGuide(),
-    map.units.map((u) => h('section', { class: 'unit' },
+    h('div', { id: 'skills' }, map.units.filter((u) => u.band !== 'foundations').map((u) => h('section', { class: 'unit' },
       h('header', { class: 'unit-head' },
         h('h2', {}, u.title),
         h('span', { class: 'num muted' }, `${u.done} of ${u.total}`)),
-      h('ol', { class: 'grid', start: n + 1 }, u.rows.map((r) => row(r, ++n, id))))));
-  // Bring the current row into view on arrival, without animating a keyboard-driven jump.
-  const cur = root.querySelector('#current-row');
-  if (cur && cur.getBoundingClientRect().top > window.innerHeight * 0.7) cur.scrollIntoView({ block: 'center' });
+      h('ol', { class: 'grid', start: n + 1 }, u.rows.map((r) => row(r, ++n, id)))))),
+    map.units.some((u) => u.band === 'foundations') ? h('details', { class: 'level-guide' }, h('summary', {}, 'Optional foundation lessons'), map.units.filter((u) => u.band === 'foundations').map((u) => h('ol', { class: 'grid' }, u.rows.map((r) => row(r, ++n, id))))) : null);
 }

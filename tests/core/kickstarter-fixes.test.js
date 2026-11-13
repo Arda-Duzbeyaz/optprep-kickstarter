@@ -51,18 +51,20 @@ test('wide covering intervals earn their score without claiming mastery', () => 
     const result = checkItem({ kind: 'interval', truth: 30 + i }, { lower: 1, upper: 1000 });
     assert.equal(result.score, 0.001);
     assert.equal(result.correct, true, 'coverage is separate from training success');
-    store.recordAnswer('iv', 'dots-count', { ...result, ms: 5000, budgetMs: 45000 });
+    store.recordAnswer('iv', 'dots-count', { ...result, ms: 5000, budgetMs: 45000, mixed:true, levels:[1,2],difficulty:1,key:`wide${i}` });
   }
-  assert.equal(store.mastery()['iv:dots-count'].lv, 0);
+  assert.equal(store.mastery()['iv:dots-count'], undefined);
+  assert.deepEqual(store.recognition()['iv:dots-count'].passed, []);
   const stats = store.stats()['iv:dots-count'];
   assert.equal(stats.correct, 0);
   assert.equal(stats.covered, 15);
   assert.equal(stats.scoreN, 15);
   assert.ok(Math.abs(stats.scoreSum / stats.scoreN - 0.001) < 1e-12);
-  for (let i = 0; i < 15; i++) store.recordAnswer('iv', 'dots-count', {
-    correct: true, score: 0.8, ms: 5000, budgetMs: 45000,
+  for (let i = 0; i < 3; i++) store.recordAnswer('iv', 'dots-count', {
+    correct: true, score: 0.8, ms: 5000, budgetMs: 45000, mixed:true,levels:[1,2],difficulty:1,key:`tight${i}`,
   });
-  assert.equal(store.mastery()['iv:dots-count'].lv, 5);
+  assert.deepEqual(store.recognition()['iv:dots-count'].passed, [1]);
+  assert.equal(store.mastery()['iv:dots-count'], undefined);
 });
 
 test('old interval mastery is reassessed while answers, lessons, other mastery and XP survive', () => {

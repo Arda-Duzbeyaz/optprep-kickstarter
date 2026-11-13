@@ -784,6 +784,17 @@ input.study-input[type=number] { width: 120px; }
 .skill-overview { margin-top: 16px; }
 .skill-overview h2 { font-size: 20px; }
 .skill-overview-counts { display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.prep-deadline p { margin: 8px 0 0; }
+.prep-deadline .row { justify-content: space-between; }
+.daily-focus h2 { margin-top: 4px; }
+.daily-focus .eyebrow { font-size: 12px; font-weight: 650; color: var(--text-2); margin: 0; }
+.daily-routine { margin-top: 16px; }
+.daily-routine summary { cursor: pointer; }
+.prep-fields { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin: 14px 0; }
+.prep-fields label { display: grid; gap: 6px; min-width: 0; }
+.prep-fields input, .prep-fields select { width: 100%; min-width: 0; }
+.daily-focus .row, .format-line .row { gap: 10px; }
+.grid-level { min-width: 0; max-width: 180px; }
 @media (max-width: 760px) {
   .tabs { flex-wrap: wrap; gap: 4px; }
   .tabs a { font-size: 13px; padding-inline: 8px; }
@@ -794,6 +805,17 @@ input.study-input[type=number] { width: 120px; }
   .skill-level-label { font-size: 12px; }
   .resume-practice-card .btn { width: 100%; }
   .practice-block-status { gap: 10px; }
+  .prep-fields { grid-template-columns: minmax(0,1fr); }
+  .daily-focus .row .btn, .format-line .row > .btn { width: 100%; }
+  .task-row { flex-wrap: wrap; }
+  .task-row .task-progress { margin-left: 0; flex-basis: 100%; }
+  .grid-row { grid-template-columns: 28px minmax(0,1fr) auto; grid-template-areas: "num body actions" "num level level" "num state state"; }
+  .grid-num { grid-area: num; align-self: start; }
+  .grid-body { grid-area: body; }
+  .grid-level { grid-area: level; max-width: none; margin-top: 6px; }
+  .grid-state { grid-area: state; }
+  .grid-actions { grid-area: actions; align-self: start; }
+  .grid-level .skill-next { max-width: none; }
 }
 .study-figure svg.dg-flowchart { min-width: min(var(--flow-min, 720px), 100%); }
 @media (max-width: 760px) { .study-figure svg.dg-flowchart { min-width: 640px; } }

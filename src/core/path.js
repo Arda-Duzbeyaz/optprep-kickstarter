@@ -2,6 +2,7 @@
 // pace, one row per lesson, skill or checkpoint. Pure: data in, rows out. Exactly one row
 // is "current" so the page always shows a single place to start.
 import { skillState, MAX_LEVEL } from './progression.js';
+import { recognitionProgress } from './recognition.js';
 
 export const UNITS = [
   { band: 'foundations', title: 'Foundations' },
@@ -19,16 +20,18 @@ export function bandOf(family) {
 
 // lessons: the section book's non-family lessons [{ id, title, status }] where status is
 // 'new' | 'read' | 'mastered' | 'review'. checkpoints: [{ id, title, href, passed }].
-export function roadmap({ sectionId, families, lessons = [], checkpoints = [], mastery = {}, srs = {}, now = Date.now(), lessonFor = () => null }) {
+export function roadmap({ sectionId, families, lessons = [], checkpoints = [], mastery = {}, coverage, recognition = {}, srs = {}, now = Date.now(), lessonFor = () => null }) {
   const rows = { foundations: [], easy: [], medium: [], hard: [], exam: [] };
   for (const l of lessons) rows.foundations.push({ kind: 'lesson', id: l.id, title: l.title, done: l.status === 'mastered' || l.status === 'review', state: l.status === 'review' ? 'needs-review' : l.status === 'mastered' ? 'mastered' : l.status === 'read' ? 'learning' : 'new', href: `#/study/lesson/${l.id}` });
   for (const f of families) {
     const key = `${sectionId}:${f.id}`;
     const m = mastery[key];
     const lv = m?.lv || 0;
+    const checkpoint = recognitionProgress(recognition[key], f.levels);
+    const covered = coverage ? !!coverage[key]?.covered : lv >= SKILLED;
     rows[bandOf(f)].push({
-      kind: 'skill', id: f.id, key, title: f.title, skill: f.skill, lv, done: lv >= SKILLED,
-      state: skillState(m, srs[key], now), lesson: lessonFor(f.id),
+      kind: 'skill', id: f.id, key, title: f.title, skill: f.skill, lv, done: covered, covered, checkpoint,
+      state: coverage ? checkpoint.review.length ? 'needs-review' : checkpoint.complete ? 'mastered' : covered ? 'learning' : 'new' : skillState(m, srs[key], now), lesson: lessonFor(f.id),
       href: `#/run/${sectionId}/practice/${f.id}`,
     });
   }
@@ -37,6 +40,7 @@ export function roadmap({ sectionId, families, lessons = [], checkpoints = [], m
   const units = UNITS.map((u) => ({ ...u, rows: rows[u.band] })).filter((u) => u.rows.length);
   let current = null;
   for (let ui = 0; ui < units.length && !current; ui++) {
+    if (coverage && units[ui].band === 'foundations') continue;
     const ri = units[ui].rows.findIndex((r) => !r.done);
     if (ri >= 0) current = { unit: ui, row: ri };
   }
@@ -53,6 +57,7 @@ export function roadmap({ sectionId, families, lessons = [], checkpoints = [], m
     skillsDone: skills.filter((r) => r.done).length,
     skillsTotal: skills.length,
     mastered: skills.filter((r) => r.lv >= MAX_LEVEL).length,
+    verified: skills.filter((r) => r.checkpoint.complete).length,
     due: skills.filter((r) => r.state === 'needs-review').length,
   };
 }

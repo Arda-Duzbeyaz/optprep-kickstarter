@@ -1,8 +1,9 @@
-import { h } from './dom.js';
+import { h, mount } from './dom.js';
 import { bubbles } from './sheet.js';
-import { levelProgress, LEVEL_NAMES } from '../core/progression.js';
+import { levelProgress } from '../core/progression.js';
+import { recognitionProgress } from '../core/recognition.js';
 import { practiceHref } from '../core/practice.js';
-import { familyTitle } from '../sections/catalog.js';
+import { familyTitle, FAMILIES } from '../sections/catalog.js';
 import { SECTIONS } from '../../config/sections.js';
 
 export function levelLabel(m) {
@@ -15,38 +16,51 @@ export function nextLevelText(m) {
   return p.next ? `${p.streak}/3 towards Level ${p.next}${p.paced ? ' · at pace' : ''}` : 'All five practice levels reached';
 }
 
-export function skillProgress(store, section, family, { budgetMs, notice } = {}) {
-  const key = `${section}:${family}`, m = store.mastery()[key], p = levelProgress(m);
-  const evidence = store.mixedEvidence?.()[key], mixed = Math.min(3, evidence?.run || 0);
-  const met = p.level === 5 && mixed === 3;
-  return h('section', { class: 'skill-progress', 'aria-label': 'Skill progress' },
-    h('div', { class: 'row skill-progress-head' }, h('strong', {}, familyTitle(section, family)),
-      met ? h('span', { class: 'stamp stamp-mastered' }, 'Training goal met') : null),
-    notice ? h('p', { class: 'skill-notice', role: 'status' }, notice) : null,
-    h('div', { class: 'skill-progress-grid' },
-      h('div', {}, h('span', { class: 'small-note muted' }, 'Practice level'),
-        h('div', { class: 'row' }, bubbles(5, p.level), levelLabel(m)),
-        h('p', { class: 'small-note' }, nextLevelText(m)),
-        p.next ? h('p', { class: 'small-note muted' }, `${p.remaining} more correct, fresh, unhinted answer${p.remaining === 1 ? '' : 's'} in a row${p.paced ? ` within ${Number((budgetMs / 1000).toFixed(2))} seconds each` : ''}.`) : null),
-      h('div', {}, h('span', { class: 'small-note muted' }, 'Mixed-practice check'),
-        h('p', { class: 'num' }, `${mixed}/3`, mixed === 3 ? ' · Check met' : evidence?.attempts ? ' · Building evidence' : ' · Not checked yet'),
-        h('p', { class: 'small-note muted' }, 'Fresh questions, no topic label or hints, uninterrupted and within practice pace. Selected-topic practice does not count.'))),
-    h('p', { class: 'small-note muted skill-meaning' }, 'Level 3 = practised; Level 5 = at pace. Both Level 5 and the mixed check meet this app’s training goal. Test broader reasoning in ', h('a', { href: '#/transfer' }, 'Transfer Challenge'), '.'));
+export function skillCheckpoint(store, section, family) {
+  const levels = FAMILIES[section]?.find((f) => f.id === family)?.levels || [1];
+  return recognitionProgress(store.recognition?.()[`${section}:${family}`], levels);
+}
+
+export function checkpointText(p) {
+  return p.complete ? 'All supported difficulties verified' : `Difficulty ${p.target} · ${p.streak}/3 cold successes${p.review.length ? ' · recheck due' : ''}`;
+}
+
+export function checkpointLabel(p) {
+  return h('span', { class: 'skill-level-label' }, `${p.verified.length}/${p.levels.length} difficulties verified`);
+}
+
+export function skillProgress(store, section, family, { budgetMs, notice, learning = false, onCoverage } = {}) {
+  const key = `${section}:${family}`, root = h('section', { class: 'skill-progress', 'aria-label': 'Skill progress' });
+  function render() {
+    const p = skillCheckpoint(store, section, family), coverage = store.coverage(section, family);
+    mount(root,
+      h('div', { class: 'row skill-progress-head' }, h('strong', {}, familyTitle(section, family)),
+        p.complete ? h('span', { class: 'stamp stamp-mastered' }, 'Mixed checks complete') : null),
+      notice ? h('p', { class: 'skill-notice', role: 'status' }, notice) : null,
+      h('div', { class: 'skill-progress-grid' },
+        h('div', {}, h('strong', {}, learning ? 'Learning only · help allowed' : 'Learning coverage'),
+          h('p', {}, coverage.covered ? `Covered · ${coverage.source}` : 'Not marked covered yet'),
+          learning ? h('button', { class: 'btn small', type: 'button', onclick: () => { store.markCovered(section, family, !coverage.covered); render(); onCoverage?.(); } }, coverage.covered ? 'Mark for learning' : 'Mark covered') : h('a', { href: `#/run/${section}/practice/${family}` }, 'Learn or repair this skill')),
+        h('div', {}, h('strong', {}, 'Mixed recognition'),
+          h('div', { class: 'row' }, bubbles(p.levels.length, p.verified.length), checkpointLabel(p)),
+          h('p', { class: 'small-note' }, checkpointText(p)),
+          h('p', { class: 'small-note muted' }, `Three consecutive cold successes on this skill, each within the ${Number((budgetMs / 1000).toFixed(2))} s training budget. Other skills can appear between them. Hints, outside help, slow or interrupted answers cannot qualify.`))),
+      h('p', { class: 'small-note muted skill-meaning' }, 'These checks test fresh instances at authored generator difficulties. They do not prove unfamiliar mathematical structures or an Optiver pass.'),
+      (store.mastery()[key] || store.mixedEvidence?.()[key]) ? h('details', { class: 'legacy-progress' }, h('summary', {}, 'Previous practice record'),
+        h('p', { class: 'small-note muted' }, `Earlier Level ${store.mastery()[key]?.lv || 0}/5 and mixed evidence are retained. They are not relabelled as passes under the new rules.`)) : null);
+  }
+  render(); return root;
 }
 
 export function levelGuide() {
-  return h('details', { class: 'level-guide' }, h('summary', {}, 'How levels and skill checks work'),
-    h('p', {}, 'The five bubbles are practice levels for each skill. Every submitted answer updates the counter immediately; it continues across sessions.'),
-    h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Level'), h('th', {}, 'Milestone'), h('th', {}, 'To earn it'))),
-      h('tbody', {}, LEVEL_NAMES.map((name, i) => h('tr', {}, h('td', { class: 'num' }, String(i)), h('td', {}, name),
-        h('td', {}, i === 0 ? 'Start here' : i === 5 ? '3 more fresh, unhinted correct answers within practice pace' : '3 more fresh, unhinted correct answers in a row'))))),
-    h('p', {}, 'For example: two qualifying answers show 2/3. A third earns one level and the counter starts again at 0/3. A mistake, hint or review question resets that counter; earned levels stay.'),
-    h('p', {}, 'Each skill has its own counter. Answers on other skills do not advance or reset it.'),
-    h('p', {}, 'Mock results are a separate benchmark: they do not award or reset practice levels. Their accuracy and pace are still recorded.'),
-    h('p', {}, 'Pausing an unanswered question saves it for learning, but that answer cannot establish pace or pass a mixed check. Pause between answered questions when you want an uninterrupted pace attempt.'),
-    h('p', {}, 'A skill counts as practised on the roadmap at Level 3. You can move to another skill then, and return for consistency, pace and mixed practice.'),
-    h('p', {}, 'Levels track practice evidence, not the difficulty number printed on a question. Mixed checks require three fresh correct answers in a row with the method hidden, without hints and within pace. They do not establish that the questions use different mathematical structures.'),
-    h('p', { class: 'small-note muted' }, 'Existing levels are preserved. Mixed checks start with new evidence; old answers cannot establish whether a topic label was visible. These are training milestones, not Optiver grades.'));
+  return h('details', { class: 'level-guide' }, h('summary', {}, 'How learning and mixed checkpoints work'),
+    h('p', {}, 'Learn a named skill with explanations, hints or ChatGPT. Mark it covered when you understand the method and can explain a simple example. Coverage is your learning checklist, not proof of proficiency.'),
+    h('p', {}, 'The 0/3 counter belongs to one skill at one difficulty. Questions on other skills can appear between its successes. A miss, help, interruption or over-budget attempt on this skill resets its current counter; it does not erase other skills.'),
+    h('p', {}, 'Mix covered skills after learning a few topics. Mixed batches hide the skill and difficulty until submission. Three fresh, correct, unaided, uninterrupted answers at the current supported difficulty, within the displayed training budget, verify that difficulty and move the next draw to the next supported level.'),
+    h('p', {}, 'Each skill has its own counter. A failed, aided, paused or slow eligible attempt resets its streak. A later miss on a verified difficulty marks it for recheck; the earlier pass remains recorded. Questions on other skills do not reset it.'),
+    h('p', {}, 'Fresh means first recorded exposure in this browser, not a guaranteed unfamiliar mathematical structure. Use “Used outside help” in a mixed batch if you consult assistance. Extra-time practice, repeats, named-topic practice, mocks and Transfer Challenges cannot earn these checkpoints.'),
+    h('p', {}, 'Supported levels belong to the existing generators. A dice skill with levels 1 and 2 has two checkpoints; there are no invented levels 3–5. The budgets and difficulty labels are training choices, not independently calibrated Optiver limits.'),
+    h('p', { class: 'small-note muted' }, 'Old five-level practice records and mixed streaks are preserved as history. They do not fabricate new cold checkpoints. Transfer Challenge is a separate, unfamiliar-question benchmark; choose a single assessment there.'));
 }
 
 export function resumePracticeCards(store, ids) {
@@ -56,6 +70,6 @@ export function resumePracticeCards(store, ids) {
     h('h2', {}, 'Continue practice'),
     sessions.map((s) => h('div', { class: 'resume-practice-card' },
       h('div', {}, h('strong', {}, SECTIONS[s.section].title),
-        h('p', { class: 'small-note muted' }, `${s.family ? familyTitle(s.section, s.family) : 'Mixed practice'} · ${s.log.length}/${s.count} answered${s.current.done ? ' · feedback saved' : ' · current question saved'}`)),
+        h('p', { class: 'small-note muted' }, `${s.family ? familyTitle(s.section, s.family) : s.scope === 'covered' ? 'Mixed covered skills' : 'Mixed all skills'} · ${s.log.length}/${s.count} answered${s.current.done ? ' · feedback saved' : ' · current question saved'}`)),
       h('a', { class: 'btn primary', href: practiceHref(s) }, 'Resume practice'))));
 }

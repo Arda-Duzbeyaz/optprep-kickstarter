@@ -5,31 +5,43 @@ import { setRail } from '../sheet.js';
 import { checkItem } from '../../core/check.js';
 import { makeCountdown, examClockStatus } from '../../core/timer.js';
 import { SECTION_MODULES } from '../../sections/index.js';
-import { transferItems, transferSummary, TRANSFER_SECTIONS, TRANSFER_TIMING } from '../../transfer/draw.js';
-const scoreLine = (s) => `${s.regularCorrect}/${s.regularN} non-interval questions correct${s.intervalN ? `; interval mean ${s.intervalMean.toFixed(3)} (${s.intervalN} items)` : ''}`;
+import { transferItems, transferSummary, TRANSFER_SECTIONS, TRANSFER_TIMING, SECTION_TRANSFER_TIMING } from '../../transfer/draw.js';
+import { SECTIONS } from '../../../config/sections.js';
+const scoreLine = (s) => [s.regularN ? `${s.regularCorrect}/${s.regularN} non-interval questions correct` : '',
+  s.intervalN ? `interval mean ${s.intervalMean.toFixed(3)} (${s.intervalN} items)` : ''].filter(Boolean).join('; ') || 'No questions in this group';
 const timeMultiplier = (store) => { const n = Number(store.settings().extraTime); return Number.isFinite(n) && n > 1 ? n : 1; };
 
-export function transferPage(root, { store }) {
+export function transferPage(root, { store, section = 'bto' }) {
   let cleanup = null;
-  const timing = h('select', { 'aria-label': 'Transfer practice timing' }, h('option', { value: 'timed' }, 'Timed: 20 minutes overall, 90 seconds per item'), h('option', { value: 'untimed' }, 'Untimed'));
+  const timing = h('select', { id: 'transfer-timing', 'aria-label': 'Transfer practice timing' }, h('option', { value: 'timed' }, 'Timed'), h('option', { value: 'untimed' }, 'Untimed'));
+  const scope = h('select', { id: 'transfer-scope', 'aria-label': 'Transfer assessment' }, TRANSFER_SECTIONS.map((s) => h('option', { value: s }, SECTIONS[s].title)), h('option', { value: 'all' }, 'All five · optional broader mix'));
+  scope.value = TRANSFER_SECTIONS.includes(section) || section === 'all' ? section : 'bto';
+  const clockNote = h('p', { class: 'small-note muted' });
+  const updateNote = () => { clockNote.textContent = scope.value === 'all' ? '15 questions · 20 minutes overall · 90 seconds per question if timed.' : '10 questions from one assessment · 15 minutes overall · 90 seconds per question if timed.'; };
+  scope.addEventListener('change', updateNote); updateNote();
   const history = store.transferRuns().slice(-5).reverse(), extra = timeMultiplier(store);
   mount(root, h('h1', {}, 'Transfer Challenge'),
-    h('p', { class: 'lede' }, 'Additional mathematical training: 15 questions across the five reasoning sections. Family names and methods stay hidden until review.'),
-    h('p', {}, 'This is not an official Optiver assessment replica. Your Career Kickstarter preset and its clocks are unchanged.'),
-    h('p', {}, 'Unseen questions and less familiar recorded structures are prioritised. A recorded structure is a conservative generator-branch signature, not proof that a mathematical idea is new to you. Tracking starts in this edition.'),
-    h('p', {}, 'Attempt without hints. Answers and solutions appear at the end. Results stay separate from revision, mastery and assessment practice targets.'),
+    h('p', { class: 'lede' }, 'Test unfamiliar questions within one assessment. Methods stay hidden and solutions appear at the end.'),
+    h('p', {}, 'Additional training, not an official Optiver assessment replica. Results and training clocks stay separate. For invitation-aligned section practice, use Timed section instead.'),
     extra > 1 ? h('p', { class: 'muted' }, `Your extra-time setting ×${extra} applies to both training clocks and is recorded with the result.`) : null,
-    h('div', { class: 'row' }, timing, h('button', { class: 'btn primary', type: 'button', onclick: () => { cleanup = runTransfer(root, { store, timed: timing.value === 'timed' }); } }, 'Start Transfer Challenge')),
+    h('div', { class: 'prep-fields' }, h('label', { for: 'transfer-scope' }, 'Assessment', scope), h('label', { for: 'transfer-timing' }, 'Timing', timing)), clockNote,
+    h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: () => { cleanup = runTransfer(root, { store, timed: timing.value === 'timed', section: scope.value }); } }, 'Start Transfer Challenge')),
+    h('details', { class: 'level-guide' }, h('summary', {}, 'What this challenge measures'),
+      h('p', {}, 'Unseen questions and less familiar recorded structures are prioritised. A recorded structure is a generator-branch signature, not proof that an idea is new to you. Attempt without help; results stay separate from mixed checkpoints and exam targets.'),
+      h('p', {}, 'The all-five option is optional broader reasoning practice. The real assessments are taken separately; cross-assessment mixing is not required for progress. These training clocks are not verified Optiver item limits.')),
     h('h2', {}, 'Recent transfer sessions'),
-    history.length ? h('ul', {}, history.map((r) => h('li', {}, `${new Date(r.finishedAt).toLocaleDateString()} · ${r.timed ? `timed${r.extraTime > 1 ? ` ×${r.extraTime}` : ''}` : 'untimed'}${r.completed ? '' : ' · partial'} · ${scoreLine(r.summary.all)} · ${r.summary.unseen.displayed} unseen recorded questions`))) : h('p', { class: 'muted' }, 'No transfer sessions yet.'));
+    history.length ? h('ul', {}, history.map((r) => h('li', {}, `${new Date(r.finishedAt).toLocaleDateString()} · ${SECTIONS[r.section]?.title || 'All five'} · ${r.timed ? `timed${r.extraTime > 1 ? ` ×${r.extraTime}` : ''}` : 'untimed'}${r.completed ? '' : ' · partial'} · ${scoreLine(r.summary.all)} · ${r.summary.unseen.displayed} unseen recorded questions`))) : h('p', { class: 'muted' }, 'No transfer sessions yet.'));
   return () => cleanup?.();
 }
 
-export function runTransfer(root, { store, seed = Date.now(), timed = true, items: fixedRows } = {}) {
+export function runTransfer(root, { store, seed = Date.now(), timed = true, items: fixedRows, section = 'all' } = {}) {
+  if (section !== 'all' && !TRANSFER_SECTIONS.includes(section)) throw new Error('Unsupported transfer assessment');
+  const timing = section === 'all' ? TRANSFER_TIMING : SECTION_TRANSFER_TIMING;
   const questionHistory = Object.fromEntries(TRANSFER_SECTIONS.map((s) => [s, store.recentQuestionKeys(s)]));
   const structureHistory = Object.fromEntries(TRANSFER_SECTIONS.map((s) => [s, store.recentStructureKeys(s)]));
-  const rows = fixedRows || transferItems(SECTION_MODULES, { seed, questionHistory, structureHistory });
-  const extra = timeMultiplier(store), total = timed ? makeCountdown(TRANSFER_TIMING.totalSeconds * 1000 * extra) : null;
+  const rows = fixedRows || transferItems(SECTION_MODULES, { seed, questionHistory, structureHistory,
+    ...(section === 'all' ? {} : { sections: [section], perSection: timing.count }) });
+  const extra = timeMultiplier(store), total = timed ? makeCountdown(timing.totalSeconds * 1000 * extra) : null;
   const records = [], responses = [], displayed = new Set();
   let index = 0, current = null, perItem = null, frame = 0, finished = false;
   const timer = h('span', { class: 'timer', 'aria-live': 'off' }), itemTimer = h('span', { class: 'timer', 'aria-live': 'off' });
@@ -39,7 +51,7 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
     if (index >= rows.length) return finish(true);
     const row = rows[index]; displayed.add(index); store.rememberQuestion(row.item);
     const shownIndex = index;
-    perItem = timed ? makeCountdown(TRANSFER_TIMING.perItemSeconds * 1000 * extra) : null;
+    perItem = timed ? makeCountdown(timing.perItemSeconds * 1000 * extra) : null;
     const body = itemBody(row.item, { preview: false, notation: store.settings().divNotation, keys: store.settings().answerKeys !== false,
       onChange: () => {
         // Keep the last response actually entered within both deadlines. A
@@ -48,7 +60,7 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
       } });
     current = { body, started: performance.now(), response: body.view.response() };
     mount(root, h('h1', { class: 'visually-hidden' }, 'Transfer Challenge'), h('div', { class: 'panel exam' },
-      h('div', { class: 'qhead' }, h('span', {}, `Transfer training · Question ${index + 1} of ${rows.length}`), timed ? h('span', {}, 'Total ', timer, ' · Question ', itemTimer) : h('span', {}, 'Untimed')),
+      h('div', { class: 'qhead' }, h('span', {}, `${section === 'all' ? 'Transfer training' : SECTIONS[section].title + ' · Transfer training'} · Question ${index + 1} of ${rows.length}`), timed ? h('span', {}, 'Total ', timer, ' · Question ', itemTimer) : h('span', {}, 'Untimed')),
       row.repeat ? h('p', { class: 'muted' }, 'Review item: this question was recorded before and is reported separately.') : null,
       body.el, h('div', { class: 'row' },
         h('button', { class: 'btn primary', type: 'button', onclick: () => advance() }, 'Submit and next'),
@@ -94,7 +106,7 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
     if (finished) return;
     finished = true; cancelAnimationFrame(frame); document.removeEventListener('keydown', onKey);
     const saved = records.filter(Boolean), summary = transferSummary(saved);
-    store.recordTransferRun({ seed: String(seed), timed, extraTime: extra, completed, count: rows.length, ms: Math.round(performance.now() - start), summary, items: saved });
+    store.recordTransferRun({ seed: String(seed), section, timing: { ...timing }, timed, extraTime: extra, completed, count: rows.length, ms: Math.round(performance.now() - start), summary, items: saved });
     mount(root, h('h1', {}, 'Transfer Challenge: review'),
       h('p', {}, `${completed ? 'Completed' : 'Partial session'} · ${timed ? `timed${extra > 1 ? ` ×${extra}` : ''}` : 'untimed'} · ${scoreLine(summary.all)}.`),
       h('p', { class: 'muted' }, 'Additional-training results stay separate from revision and exam targets. Different score types are not combined into an invented pass mark.'),

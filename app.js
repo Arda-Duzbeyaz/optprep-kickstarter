@@ -52,6 +52,7 @@ const ROUTES = [
   [/^#\/s\/(\w+)\/sets\/(\d+)\/(practice|timed)$/, (m, pg) => pg.setRunPage(view, { store, id: m[1], n: +m[2], mode: m[3] }), setsPg],
   [/^#\/s\/(\w+)\/learn\/([\w-]+)$/, (m, pg) => pg.learnPage(view, { store, id: m[1], family: m[2] }), learnPg],
   [/^#\/run\/(\w+)\/exam(?:\/v(\d+))?$/, (m, pg) => pg.runExam(view, { sectionId: m[1], store, variant: m[2] != null ? SECTIONS[m[1]].variants[+m[2]] : null }), runnerPg],
+  [/^#\/run\/(\w+)\/mixed\/(covered|all)$/, (m, pg) => pg.runFeedbackSession(view, { sectionId: m[1], mode: 'practice', scope: m[2], store }), runnerPg],
   [/^#\/run\/(\w+)\/(practice|drill|mistakes)(?:\/([\w-]+))?$/, (m, pg) => pg.runFeedbackSession(view, { sectionId: m[1], mode: m[2], family: m[3], store }), runnerPg],
   [/^#\/zapn$/, (m, pg) => pg.zapnHub(view, { store }), zapnPg],
   [/^#\/zapn\/(\w+)(?:\/(practice|exam))?$/, (m, pg) => pg.zapnGame(view, { store, id: m[1], mode: m[2] || 'practice' }), zapnPg],
@@ -66,6 +67,7 @@ const ROUTES = [
   [/^#\/study\/drill\/(\w+)$/, (m, pg) => pg.drillPage(view, { id: m[1] }), study],
   [/^#\/study\/mixed\/(\w+)\/(\d+)$/, (m, pg) => pg.mixedPage(view, { store, id: m[1], chapter: +m[2] }), study],
   [/^#\/mock$/, (m, pg) => pg.mockPage(view, { store }), mockPg],
+  [/^#\/transfer\/(bto|nl|ll|iv|ob|all)$/, (m, pg) => pg.transferPage(view, { store, section: m[1] }), transferPg],
   [/^#\/transfer$/, (m, pg) => pg.transferPage(view, { store }), transferPg],
   [/^#\/mk$/, (m, pg) => pg.mkPage(view, { store }), mkPg],
   // Backup moved into Settings; old #/data bookmarks land there.

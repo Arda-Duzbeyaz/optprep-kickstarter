@@ -24,6 +24,8 @@ export function sectionMap(store, id) {
   const lessons = bookLessons(id).filter((l) => l.kind !== 'family' && l.kind !== 'game').map((l) => ({ id: l.id, title: l.title, status: statusOf(store, l.id) }));
   return roadmap({
     sectionId: id, families: FAMILIES[id], lessons, checkpoints: checkpoints(store, id),
-    mastery: store.mastery(), srs: store.srs, lessonFor: (fid) => lessonForFamily(id, fid),
+    mastery: store.mastery(), recognition: store.recognition(),
+    coverage: Object.fromEntries(FAMILIES[id].map((f) => [`${id}:${f.id}`, store.coverage(id, f.id)])),
+    srs: store.srs, lessonFor: (fid) => lessonForFamily(id, fid),
   });
 }

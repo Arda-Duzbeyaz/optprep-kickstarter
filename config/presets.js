@@ -25,8 +25,9 @@ export const PRESETS = {
     zapn: ZAPN_ALL,
     // The overall BTO limit is from the 2027 Kickstarter invitation. The count and
     // 90-second item limit remain practice assumptions, pending portal instructions.
-    timing: { bto: { totalSeconds: 25 * 60 }, iv: { perItemSeconds: 45 }, nl: { navigation: 'free' } },
-    note: 'BTO has the 25-minute overall limit in the 2027 invitation. Question counts, per-question clocks and scoring remain reported practice formats. Read your portal instructions before sitting the assessment.',
+    timing: { bto: { totalSeconds: 25 * 60 }, nl: { totalSeconds: 25 * 60, navigation: 'free' },
+      ll: { totalSeconds: 25 * 60 }, iv: { totalSeconds: 15 * 60, perItemSeconds: null }, ob: { totalSeconds: 15 * 60 } },
+    note: 'Overall section durations follow your 2027 invitation (Likelihood-list is about 25 minutes). Counts, scoring and the BTO/Likelihood-list per-question clocks remain practice assumptions. Intervals uses its 15-minute overall clock without an invented item deadline. Follow the instructions in your portal.',
     sources: ['overview', 'iv', 'ob', 'll'],
   },
   trader: {

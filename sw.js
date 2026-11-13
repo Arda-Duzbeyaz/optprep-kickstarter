@@ -4,7 +4,7 @@
 // whose activate deletes every cache and calls self.registration.unregister(), and
 // which has no fetch handler, installed clients recover on their next visit.
 const BUILD = '__BUILD__';
-const CACHE = `optprep-${BUILD.startsWith('__') ? 'practice-resume-1' : BUILD}`;
+const CACHE = `optprep-${BUILD.startsWith('__') ? 'mixed-checkpoints-1' : BUILD}`;
 // The Pages workflow fills FILES with every module and asset the app can load, so an installed
 // copy works offline on every page, including the ones that load on demand.
 const FILES = [/*FILES*/];

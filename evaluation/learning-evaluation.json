@@ -1,0 +1,84 @@
+{
+  "baselineBroaderSessionsIdentical": 10,
+  "baselineBroaderQuestionsIdentical": 150,
+  "scoped": {
+    "bto": {
+      "sessions": 10,
+      "questions": 100,
+      "exactRepeats": 0,
+      "minimumFamiliesPerSession": 10,
+      "familiesSampled": 34,
+      "recordedStructures": 97,
+      "familiarStructureOccurrences": 3,
+      "mcqAnswerPositions": {
+        "0": 21,
+        "1": 26,
+        "2": 17,
+        "3": 16,
+        "4": 20
+      },
+      "rankingAnswerOrders": {}
+    },
+    "nl": {
+      "sessions": 10,
+      "questions": 100,
+      "exactRepeats": 0,
+      "minimumFamiliesPerSession": 10,
+      "familiesSampled": 30,
+      "recordedStructures": 45,
+      "familiarStructureOccurrences": 55,
+      "mcqAnswerPositions": {
+        "0": 26,
+        "1": 23,
+        "2": 18,
+        "3": 14,
+        "4": 19
+      },
+      "rankingAnswerOrders": {}
+    },
+    "ll": {
+      "sessions": 10,
+      "questions": 100,
+      "exactRepeats": 0,
+      "minimumFamiliesPerSession": 10,
+      "familiesSampled": 16,
+      "recordedStructures": 97,
+      "familiarStructureOccurrences": 3,
+      "mcqAnswerPositions": {},
+      "rankingAnswerOrders": {
+        "1,2,0": 21,
+        "0,2,1": 21,
+        "2,0,1": 13,
+        "0,1,2": 13,
+        "2,1,0": 16,
+        "1,0,2": 16
+      }
+    },
+    "iv": {
+      "sessions": 10,
+      "questions": 100,
+      "exactRepeats": 0,
+      "minimumFamiliesPerSession": 10,
+      "familiesSampled": 15,
+      "recordedStructures": 65,
+      "familiarStructureOccurrences": 35,
+      "mcqAnswerPositions": {},
+      "rankingAnswerOrders": {}
+    },
+    "ob": {
+      "sessions": 10,
+      "questions": 100,
+      "exactRepeats": 0,
+      "minimumFamiliesPerSession": 8,
+      "familiesSampled": 8,
+      "recordedStructures": 10,
+      "familiarStructureOccurrences": 90,
+      "mcqAnswerPositions": {},
+      "rankingAnswerOrders": {}
+    }
+  },
+  "limits": [
+    "Structure signatures are proxies, not measured conceptual novelty.",
+    "These samples do not calibrate Optiver difficulty or establish learning gains."
+  ]
+}

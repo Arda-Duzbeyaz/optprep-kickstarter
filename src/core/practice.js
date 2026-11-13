@@ -10,6 +10,7 @@ const record = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 const finite = (n) => Number.isFinite(n) && n >= 0;
 
 export function practiceHref(session) {
+  if (!session.family && session.scope === 'covered') return `#/run/${session.section}/mixed/covered`;
   return `#/run/${session.section}/practice${session.family ? `/${session.family}` : ''}`;
 }
 
@@ -31,6 +32,8 @@ export function validResponse(item, response, { draft = false } = {}) {
 export function validPractice(s, section = s?.section) {
   try {
     if (!record(s) || s.version !== PRACTICE_VERSION || s.section !== section ||
+      (s.scope !== undefined && !['all', 'covered'].includes(s.scope)) ||
+      (s.familyPool !== undefined && (!Array.isArray(s.familyPool) || !s.familyPool.length || s.familyPool.length > 200 || !s.familyPool.every((id) => typeof id === 'string' && /^[\w-]+$/.test(id)))) ||
       !(s.family == null || typeof s.family === 'string' && /^[\w-]+$/.test(s.family)) ||
       !(typeof s.seed === 'string' || Number.isFinite(s.seed)) ||
       !Number.isInteger(s.rngState) || s.rngState < 0 || s.rngState > 0xffffffff ||
@@ -39,8 +42,10 @@ export function validPractice(s, section = s?.section) {
       !Array.isArray(s.log) || !finite(s.xp0) || !record(s.lv0) || !finite(s.savedAt)) return false;
     const c = s.current, item = c?.item;
     if (!record(c) || !record(item) || item.section !== section || (s.family && item.family !== s.family) || validateItem(item).length ||
+      (s.familyPool && (!s.familyPool.includes(item.family) || s.log.some((r) => !s.familyPool.includes(r.family)))) ||
       typeof c.fresh !== 'boolean' || typeof c.done !== 'boolean' || !finite(c.elapsedMs) ||
       (c.interrupted !== undefined && typeof c.interrupted !== 'boolean') ||
+      (c.aided !== undefined && typeof c.aided !== 'boolean') ||
       !Number.isInteger(c.hints) || c.hints < 0 || c.hints > item.hints.length ||
       !Number.isFinite(c.budgetMs) || c.budgetMs <= 0 || !validResponse(item, c.draft, { draft: true }) ||
       s.log.length !== s.index + Number(c.done) || s.log.some((r) => !record(r) || typeof r.family !== 'string' ||

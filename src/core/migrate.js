@@ -10,6 +10,7 @@ export const blankV2 = () => ({
   trend: {}, mastery: {}, activity: { days: {}, xpBase: 0, freezes: 0, frozen: [] }, mistakes: [],
   recentQuestions: {}, recentStructures: {}, transferRuns: [], practiceRuleVersion: 1,
   activePractice: {}, mixedEvidence: {},
+  learningCoverage: {}, recognition: {},
 });
 
 // The exam formats v1 runs were taken under, so readiness can tell a 60 s run from a 45 s one.
@@ -56,6 +57,17 @@ function shapeOk(raw) {
     if (!(k in raw)) continue;
     if (kind(raw[k]) !== kind(blank[k])) return false;
     if (Array.isArray(raw[k]) && !records(raw[k])) return false;
+  }
+  for (const row of Object.values(raw.learningCoverage || {})) {
+    if (kind(row) !== 'object' || row.covered !== undefined && typeof row.covered !== 'boolean') return false;
+  }
+  for (const row of Object.values(raw.recognition || {})) {
+    if (kind(row) !== 'object') return false;
+    for (const name of ['passed','review']) if (row[name] !== undefined && (!Array.isArray(row[name]) || row[name].some((n) => !Number.isInteger(n) || n < 1 || n > 5))) return false;
+    for (const name of ['keys','streakKeys']) if (row[name] !== undefined && (!Array.isArray(row[name]) || row[name].some((key) => typeof key !== 'string'))) return false;
+    if (row.proofs !== undefined && (!Array.isArray(row.proofs) || !records(row.proofs))) return false;
+    if (row.run !== undefined && (!Number.isInteger(row.run) || row.run < 0 || row.run > 2)) return false;
+    if (row.target !== undefined && (!Number.isInteger(row.target) || row.target < 1 || row.target > 5)) return false;
   }
   const days = raw.activity?.days;
   return days === undefined || kind(days) === 'object';

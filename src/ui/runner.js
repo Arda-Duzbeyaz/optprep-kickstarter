@@ -25,7 +25,8 @@ import { setRail, scanSheet, bubbles, tickTo } from './sheet.js';
 import { mistakeRow } from '../core/mistakes.js';
 import { timingOf } from '../../config/presets.js';
 import { PRACTICE_BLOCK_SIZE, DRILL_COUNT, PRACTICE_VERSION, practiceHref } from '../core/practice.js';
-import { skillProgress, levelLabel, nextLevelText } from './practice-progress.js';
+import { skillProgress, skillCheckpoint, checkpointLabel, checkpointText } from './practice-progress.js';
+import { recognitionProgress } from '../core/recognition.js';
 
 const VIEWS = { mcq: mcqView, rank: rankView, interval: intervalView, orderbook: orderbookView };
 // Sure/unsure buttons. Not the 80-in-8: one tap answers there, so there is no second button to press.
@@ -58,15 +59,15 @@ function paintTimer(el, ms) {
 }
 
 // ---------------------------------------------------------------- feedback modes
-export function runFeedbackSession(root, { sectionId, mode, family, count, store, onDone, items: fixedItems, title, setNumber, diagnose = false, onMiss, noHints = false }) {
+export function runFeedbackSession(root, { sectionId, mode, family, count, store, onDone, items: fixedItems, title, setNumber, diagnose = false, onMiss, noHints = false, scope = 'all' }) {
   const section = SECTION_MODULES[sectionId];
   const cfg = SECTIONS[sectionId];
   const resumable = mode === 'practice' && !fixedItems && setNumber == null;
-  const options = { sectionId, mode, family, count, store, onDone, title, diagnose, onMiss, noHints };
+  const options = { sectionId, mode, family, count, store, onDone, title, diagnose, onMiss, noHints, scope };
   const saved = resumable ? store.practiceSession?.(sectionId) : null;
   // One saved block per task, like Quant Sprint. Choosing another skill must
   // never silently replace an unfinished block from the same task.
-  if (resumable && (saved && (saved.family || null) !== (family || null) || !saved && store.state.activePractice?.[sectionId])) {
+  if (resumable && (saved && ((saved.family || null) !== (family || null) || !family && (saved.scope || 'all') !== scope) || !saved && store.state.activePractice?.[sectionId])) {
     let nextCleanup = () => {};
     mount(root, h('h1', {}, `${cfg.title}: Practice`), h('section', { class: 'panel' },
       h('h2', {}, saved ? 'You have a saved practice block' : 'This saved block could not be restored'),
@@ -75,6 +76,15 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
         h('button', { class: 'btn', type: 'button', onclick: () => { store.clearPractice(sectionId); nextCleanup = runFeedbackSession(root, options); } }, 'Start new 10-question block'))));
     return () => nextCleanup();
   }
+  const familyPool = saved?.familyPool || (family ? [family] : section.families.filter((f) => scope !== 'covered' || store.coverage(sectionId, f.id).covered).map((f) => f.id));
+  if (!family && scope === 'covered' && familyPool.length < 2) {
+    mount(root, h('h1', {}, `${cfg.title}: Mixed practice`), h('section', { class: 'panel' },
+      h('p', {}, 'Cover at least two skills before a covered-skills mixed batch. Learn a few topics first, or use all skills for a diagnostic.'),
+      h('div', { class: 'row' }, h('a', { class: 'btn primary', href: `#/s/${sectionId}` }, 'Learn skills'), h('a', { class: 'btn', href: `#/run/${sectionId}/practice` }, 'Mix all skills'))));
+    return () => {};
+  }
+  const mixedAttempt = !family && !fixedItems && familyPool.length >= 2 && ['practice', 'drill'].includes(mode);
+  const standardTime = !(Number(store.settings().extraTime) > 1);
   const seed = saved?.seed ?? `${sectionId}:${mode}:${Date.now()}`;
   const rng = makeRng(seed);
   if (saved) rng.setState(saved.rngState);
@@ -98,9 +108,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
 
   function elapsed() { return current?.done ? current.ms : current?.pausedMs ?? Math.max(0, performance.now() - current.start); }
   function snapshot() {
-    return { version: PRACTICE_VERSION, section: sectionId, family: family || null, seed, rngState: rng.getState(),
+    return { version: PRACTICE_VERSION, section: sectionId, family: family || null, scope, familyPool, seed, rngState: rng.getState(),
       index: idx, count: limit, log: structuredClone(log), xp0, lv0, savedAt: Date.now(),
-      current: { item: current.item, fresh: current.fresh, hints: current.hints, budgetMs: current.budgetMs, interrupted: !!current.interrupted,
+      current: { item: current.item, fresh: current.fresh, hints: current.hints, budgetMs: current.budgetMs, interrupted: !!current.interrupted, aided: !!current.aided,
         elapsedMs: elapsed(), done: !!current.done, response: current.response || null,
         draft: current.body?.view.draftResponse?.() ?? current.body?.view.response() ?? null } };
   }
@@ -112,13 +122,13 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       : 'Saved automatically · Save & exit keeps this question and your progress.';
   }
   function visibility() {
-    if (!resumable || !current || finished || disposed) return;
-    if (document.hidden) { if (!current.done) current.pausedMs = elapsed(); pause(); }
+    if ((!resumable && !mixedAttempt) || !current || finished || disposed) return;
+    if (document.hidden) { if (resumable && !current.done) current.pausedMs = elapsed(); pause(); }
     else if (current.pausedMs != null) { current.start = performance.now() - current.pausedMs; current.pausedMs = null; }
   }
-  function pause() { if (resumable && current && !current.done) current.interrupted = true; saveActive(); }
+  function pause() { if ((resumable || mixedAttempt) && current && !current.done) current.interrupted = true; saveActive(); }
   const pagehide = () => pause();
-  if (resumable) { document.addEventListener('visibilitychange', visibility); window.addEventListener('pagehide', pagehide); }
+  if (resumable || mixedAttempt) { document.addEventListener('visibilitychange', visibility); window.addEventListener('pagehide', pagehide); }
   function detach() { document.removeEventListener('visibilitychange', visibility); window.removeEventListener('pagehide', pagehide); }
 
   function nextItem() {
@@ -127,7 +137,10 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       if (!dueKeys.length) return null;
       return drawItem(section, rng, { family: dueKeys[idx % dueKeys.length] });
     }
-    return practiceItem(section, rng, store.stats(), { family,
+    const targets = Object.fromEntries(section.families.map((f) => [f.id, recognitionProgress(store.recognition()[`${sectionId}:${f.id}`], f.levels).target]));
+    const round = new Set();
+    for (const row of log) { if (round.size === familyPool.length) round.clear(); if (familyPool.includes(row.family)) round.add(row.family); }
+    return practiceItem(section, rng, store.stats(), { family, familyPool, targets, avoidFamilies: [...round],
       excludeKeys: store.recentQuestionKeys?.(sectionId) || [] });
   }
 
@@ -139,7 +152,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     if (!item) return summary();
     const fresh = resumed ? resumed.fresh : setNumber == null && !(store.recentQuestionKeys?.(sectionId)?.has(questionKey(item)));
     current = { item, start: performance.now() - (resumed?.elapsedMs || 0), hints: resumed?.hints || 0, fresh,
-      budgetMs: resumed?.budgetMs || perItemMs(item), done: false, interrupted: !!resumed?.interrupted || !!resumed && !resumed.done };
+      budgetMs: resumed?.budgetMs || perItemMs(item), done: false, interrupted: !!resumed?.interrupted || !!resumed && !resumed.done, aided: !!resumed?.aided };
     if (!resumed) store.rememberQuestion?.(item);
     setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
     const submitBtn = h('button', { class: 'btn primary', type: 'button', onclick: () => submit() }, 'Submit');
@@ -149,31 +162,34 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const body = itemBody(item, { preview: mode !== 'drill', notation, keys: keysOf(store), label: `Question ${idx + 1} of ${limit}`,
       onChange: () => { if (restoring) return; if (tapSubmits && item.kind === 'mcq') submit(); else saveActive(); } });
     const t = timerEl();
-    const paceEl = paceMs && mode !== 'drill' ? h('span', { class: 'num pace', title: 'Seconds on this question against the exam pace' }) : null;
+    const paceEl = (paceMs || mixedAttempt) && mode !== 'drill' ? h('span', { class: 'num pace', title: 'Training checkpoint budget; not a verified Optiver per-question limit' }) : null;
     // The family name can give the method away (e.g. "cheap bundle: buy it, sell the parts"),
     // so it is shown only after the answer is in, except when the learner chose the family.
     const famLabel = h('span', {}, family || mode === 'learn' ? ` · ${familyTitle(section, item.family)}` : '');
     if (!fresh && setNumber == null) famLabel.textContent += ' · Review question';
     const head = h('div', { class: 'qhead' },
-      h('span', {}, `${title || cfg.title} · ${modeLabel(mode)}`, famLabel),
+      h('span', {}, `${title || cfg.title} · ${resumable ? family ? 'Learn a skill' : 'Mixed practice' : modeLabel(mode)}`, famLabel),
       h('span', {}, `${idx + 1} / ${limit}`, mode === 'drill' ? ' · ' : '', mode === 'drill' ? t : '', paceEl ? ' · ' : '', paceEl));
-    const controls = h('div', { class: 'row' }, submitBtn, unsureBtn, skipBtn, hints?.btn,
+    const helpBtn = mixedAttempt && mode === 'practice' ? h('button', { class: 'btn ghost', type: 'button', onclick: () => { current.aided = true; helpBtn.textContent = 'Help recorded · learning only'; helpBtn.disabled = true; saveActive(); } }, 'Used outside help') : null;
+    const controls = h('div', { class: 'row' }, submitBtn, unsureBtn, skipBtn, hints?.btn, helpBtn,
       h('span', { style: { flex: 1 } }), resumable ? h('a', { class: 'btn ghost', href: `#/s/${sectionId}` }, 'Save & exit') : null,
       h('button', { class: 'btn ghost', type: 'button', onclick: () => summary() }, 'End session'));
     const after = h('div', { 'aria-live': 'polite' });
     const skillSlot = h('div', {});
-    if (family && resumable) mount(skillSlot, skillProgress(store, sectionId, family, { budgetMs: current.budgetMs }));
+    const updateLearningStrip = () => mount(levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, `${store.coverage(sectionId, family).covered ? 'Covered' : 'Not yet covered'} · question difficulty ${item.difficulty}`));
     const progress = h('progress', { class: 'practice-block-progress', max: limit, value: log.length, 'aria-label': 'Questions answered in this block' });
     const progressText = h('span', { class: 'small-note num' }, `${log.length}/${limit} answered`);
     const saveNote = resumable ? h('p', { class: 'small-note muted practice-save-note' }) : null;
     const levelStrip = h('div', { class: 'practice-level-strip' });
-    if (resumable && family) mount(levelStrip, levelLabel(store.mastery()[`${sectionId}:${family}`]),
-      h('span', { class: 'small-note' }, nextLevelText(store.mastery()[`${sectionId}:${family}`])));
+    if (resumable && family) {
+      updateLearningStrip();
+      mount(skillSlot, skillProgress(store, sectionId, family, { budgetMs: current.budgetMs, learning: true, onCoverage: updateLearningStrip }));
+    }
     mount(root, h('h1', { class: 'visually-hidden' }, `${title || cfg.title}: ${modeLabel(mode)}`),
       h('div', { class: 'panel' }, head,
         h('div', { class: 'practice-block-status' }, progressText, progress),
         levelStrip,
-        resumable && !family ? h('p', { class: 'small-note muted' }, 'Mixed practice · The skill name stays hidden until you submit.') : null,
+        resumable && !family ? h('p', { class: 'small-note muted' }, `Mixed ${scope === 'covered' ? 'covered' : 'all'} skills · Topic and difficulty stay hidden until submission. ${standardTime ? 'Cold, unaided answers within training pace can verify a checkpoint.' : 'Extra-time practice does not earn checkpoints.'}`) : null,
         tapSubmits && item.kind === 'mcq' ? h('p', { class: 'small-note muted' }, 'Tapping an option submits it.') : null,
         body.el, hints?.box, controls, saveNote, skillSlot, after));
     focusIn(root, '.prompt');
@@ -186,6 +202,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
         current.done = true; current.response = resumed.response; current.ms = resumed.elapsedMs;
         body.view.lock(); renderFeedback(checkItem(item, resumed.response), resumed.response);
       }
+      if (resumed.aided && helpBtn) { helpBtn.textContent = 'Help recorded · learning only'; helpBtn.disabled = true; }
     }
     if (item.kind === 'interval') body.view.focus?.();
 
@@ -204,8 +221,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     } else if (paceEl) {
       const tick = () => {
         const ms = elapsed();
-        paceEl.textContent = `${(ms / 1000).toFixed(1)} s / ${paceMs / 1000} s`;
-        paceEl.classList.toggle('over', ms > paceMs);
+        const budget = current.budgetMs;
+        paceEl.textContent = `${current.interrupted || current.aided ? 'Learning only · ' : 'Training pace · '}${(ms / 1000).toFixed(1)} s / ${Number((budget / 1000).toFixed(2))} s`;
+        paceEl.classList.toggle('over', ms > budget || current.interrupted || current.aided);
         if (!current.done) raf = requestAnimationFrame(tick);
       };
       tick();
@@ -228,14 +246,16 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const ms = Math.max(0, performance.now() - current.start);
     current.ms = ms; current.response = response;
     const confidence = opts.confidence ?? (CALIBRATED.has(sectionId) && !response.skip ? 0.9 : undefined);
-    const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0;
+    const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0 && !current.aided;
     log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, ms,
-      levelBefore: store.mastery()[`${sectionId}:${item.family}`]?.lv || 0 });
+      levelBefore: store.mastery()[`${sectionId}:${item.family}`]?.lv || 0,
+      recognitionBefore: [...(store.recognition()[`${sectionId}:${item.family}`]?.passed || [])] });
     store.recordAnswer(sectionId, item.family, {
       correct: correctNoHelp, covered: result.correct, ms, confidence: response.skip ? undefined : confidence, difficulty: item.difficulty, score: item.kind === 'interval' ? result.score : undefined,
       hints: current.hints, mode, fresh: current.fresh, budgetMs: current.budgetMs,
-      mixed: !family && !fixedItems && ['practice', 'drill'].includes(mode), key: questionKey(item),
-      uninterrupted: !current.interrupted,
+      mixed: mixedAttempt, key: questionKey(item), aided: !!current.aided,
+      uninterrupted: !current.interrupted, standardTime,
+      levels: section.families.find((f) => f.id === item.family)?.levels,
       ...(resumable ? { practiceSnapshot: snapshot(), nextSrs: srsRecord(store.srs, `${sectionId}:${item.family}`, correctNoHelp) } : {}),
       miss: !result.correct && !response.skip ? mistakeRow(item, response, { mode, ms: Math.round(ms) }) : undefined,
     });
@@ -262,15 +282,18 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     current.progressText.textContent = `${log.length}/${limit} answered`;
     setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
     if (mode === 'practice' && !fixedItems) {
-      const m = store.mastery()[`${sectionId}:${item.family}`];
-      let notice = !practiceSuccess(sectionId, result) ? 'This answer breaks the current qualifying streak. Earned levels stay.'
-        : current.hints ? 'Correct with a hint: useful practice, but the qualifying streak resets.'
-          : !current.fresh ? 'Review question: useful revision, but the qualifying streak resets.'
-            : (log.at(-1)?.levelBefore || 0) === 4 && (ms > current.budgetMs || current.interrupted) ? 'Correct, but this was paused or outside practice pace. The Level 5 streak resets.'
-              : (m?.lv || 0) > (log.at(-1)?.levelBefore || 0) ? `Level ${m.lv} earned. Your next goal is shown below.` : 'Qualifying answer recorded. Your counter is updated below.';
-      if (current.interrupted && practiceSuccess(sectionId, result) && !current.hints) notice += ' Paused answers can build accuracy levels, but cannot earn pace or mixed-check evidence.';
-      mount(current.skillSlot, skillProgress(store, sectionId, item.family, { budgetMs: current.budgetMs, notice }));
-      mount(current.levelStrip, levelLabel(m), h('span', { class: 'small-note' }, nextLevelText(m)));
+      const p = skillCheckpoint(store, sectionId, item.family);
+      const notice = !mixedAttempt ? 'Learning attempt recorded. Focused practice cannot earn mixed checkpoints.'
+        : !current.fresh ? 'Previously seen question: revision only; no cold checkpoint credit.'
+          : !standardTime ? 'Extra-time practice: no checkpoint credit.'
+            : current.aided || current.hints ? 'Help used: learning only; the cold streak resets.'
+              : current.interrupted ? 'Paused or resumed before answering: learning only; the cold streak resets.'
+                : !practiceSuccess(sectionId, result) ? 'This cold attempt was unsuccessful. The current checkpoint streak resets.'
+                  : ms > current.budgetMs ? 'Correct, but over the training pace budget. Practise efficiency and retry in mixed practice.'
+                    : store.recognition()[`${sectionId}:${item.family}`]?.lastReason === 'passed' ? `Generator difficulty ${item.difficulty} verified by three cold, paced successes. ${p.complete ? 'All supported difficulties are verified.' : `Next target: difficulty ${p.target}.`}`
+                      : 'Cold success recorded. Your checkpoint counter is updated below.';
+      mount(current.skillSlot, skillProgress(store, sectionId, item.family, { budgetMs: current.budgetMs, notice, learning: !!family, onCoverage: () => mount(current.levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, store.coverage(sectionId, family).covered ? 'Covered' : 'Not yet covered')) }));
+      if (mixedAttempt) mount(current.levelStrip, checkpointLabel(p), h('span', { class: 'small-note' }, checkpointText(p)));
     }
     current.after.querySelector('.btn.primary')?.focus({ preventScroll: true });
     current.controls.querySelectorAll('button').forEach((b) => { if (b.textContent !== 'End session') b.disabled = true; });
@@ -285,27 +308,23 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const byFam = new Map();
     for (const x of log) { const f = byFam.get(x.family) || { n: 0, c: 0 }; f.n++; f.c += x.correct ? 1 : 0; byFam.set(x.family, f); }
     const weakest = [...byFam.entries()].sort((a, b) => a[1].c / a[1].n - b[1].c / b[1].n)[0];
-    const nextSkill = resumable && family && (store.mastery()[`${sectionId}:${family}`]?.lv || 0) >= 3
-      ? section.families.find((f) => f.id !== family && (store.mastery()[`${sectionId}:${f.id}`]?.lv || 0) < 3) : null;
+    const nextSkill = resumable && family && store.coverage(sectionId, family).covered
+      ? section.families.find((f) => f.id !== family && !store.coverage(sectionId, f.id).covered) : null;
     const run = { section: sectionId, mode, score: log.reduce((s, x) => s + x.score, 0), max: n,
       items: log, plannedCount: limit, completed: n === limit };
     if (mode === 'drill' && n) store.recordRun(run);
     if (resumable) store.finishPractice(sectionId, run);
     if (setNumber != null && n === limit) store.recordSet(sectionId, setNumber, { score: Math.round(log.reduce((s, x) => s + x.score, 0) * 100) / 100, max: n, mode: 'practice' });
     const xpGain = store.xpTotal() - xp0;
-    const now = store.mastery();
     const spentS = Math.round(log.reduce((t, x) => t + x.ms, 0) / 1000);
     const famRows = [...byFam.entries()].map(([f, v]) => {
-      const k = `${sectionId}:${f}`;
-      const before = lv0[k]?.lv || 0, after = now[k]?.lv || 0;
-      const marks = bubbles(5, after, { label: `Level ${after} of 5` });
-      // Level-up: the newly filled bubbles pop in once (rare, so it earns a moment).
-      [...marks.children].slice(before, after).forEach((b) => b.classList.add('is-new'));
+      const p = skillCheckpoint(store, sectionId, f);
+      const marks = bubbles(p.levels.length, p.verified.length, { label: `${p.verified.length} of ${p.levels.length} difficulties verified` });
       return h('li', { class: 'summary-row' },
         h('span', { class: 'summary-fam' }, familyTitle(section, f)),
         h('span', { class: 'num muted' }, `${v.c}/${v.n}`),
-        h('span', {}, marks, levelLabel(now[k])),
-        after > before ? h('span', { class: 'stamp stamp-mastered' }, `Level ${after}`) : null);
+        h('span', {}, marks, checkpointLabel(p)),
+        h('span', { class: 'small-note muted' }, store.coverage(sectionId, f).covered ? 'Covered' : 'Learning'));
     });
     setRail(n / limit, n === limit ? 'Session complete' : `Session ended · ${n} of ${limit} answered`);
     mount(root, h('section', { class: 'field session-summary' },
@@ -319,7 +338,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       n ? h('ol', { class: 'summary-list' }, famRows) : null,
       h('div', { class: 'row' },
         resumable ? h('button', { class: 'btn primary', type: 'button', onclick: () => { followingCleanup = runFeedbackSession(root, options); } }, `Start another ${PRACTICE_BLOCK_SIZE} questions`) : null,
-        resumable && family ? h('a', { class: 'btn', href: `#/run/${sectionId}/practice` }, 'Test in mixed practice') : null,
+        resumable && family ? h('a', { class: 'btn', href: `#/run/${sectionId}/mixed/${section.families.filter((f) => store.coverage(sectionId,f.id).covered).length >= 2 ? 'covered' : 'all'}` }, 'Test in mixed practice') : null,
         nextSkill ? h('a', { class: 'btn', href: `#/run/${sectionId}/practice/${nextSkill.id}` }, `Next skill: ${nextSkill.title}`) : null,
         weakest && weakest[1].c < weakest[1].n && lessonForFamily(sectionId, weakest[0]) ? h('a', { class: 'btn primary', href: `#/study/lesson/${lessonForFamily(sectionId, weakest[0])}` }, `Study: ${familyTitle(section, weakest[0])}`) : null,
         weakest && weakest[1].c < weakest[1].n ? h('a', { class: 'btn', href: `#/s/${sectionId}/learn/${weakest[0]}` }, `Worked examples: ${familyTitle(section, weakest[0])}`) : null,

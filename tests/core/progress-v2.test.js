@@ -85,7 +85,7 @@ test('store compacts and flags a full quota instead of losing progress silently'
   assert.ok(STATE_BUDGET > 1e6);
 });
 
-test('recordAnswer feeds trend, mastery, xp and the mistake log', () => {
+test('focused answers feed learning, trend, xp and mistakes without creating cold checkpoints', () => {
   let t = NOW;
   const s = makeStore(memoryBackend(), {}, { clock: () => t });
   const fam = SECTION_MODULES.bto.families[0];
@@ -94,7 +94,9 @@ test('recordAnswer feeds trend, mastery, xp and the mistake log', () => {
   s.recordAnswer('bto', fam.id, { correct: false, ms: 30000, miss: mistakeRow(item, { choice: wrong }, { now: t }) });
   for (let i = 0; i < 3; i++) { t += 1000; s.recordAnswer('bto', fam.id, { correct: true, ms: 20000 }); }
   const k = `bto:${fam.id}`;
-  assert.equal(s.mastery()[k].lv, 1);
+  assert.equal(s.mastery()[k], undefined);
+  assert.equal(s.state.learningCoverage[k].attempts, 4);
+  assert.deepEqual(s.recognition(), {});
   assert.equal(s.mistakes().length, 1);
   assert.equal(s.mistakes()[0].chosen, item.options[wrong].label);
   assert.equal(s.xpTotal(), 6);

@@ -128,15 +128,17 @@ test('mixed checks reject repeats and reset on mistakes, hints and slow answers'
   }
 });
 
-test('pausing builds accuracy evidence but cannot manufacture a pace or mixed-check pass', () => {
+test('pausing records accuracy but resets new cold evidence while preserving historical levels', () => {
   const store=makeStore(memoryBackend());
   store.state.mastery['bto:toy']={lv:4,run:0,prun:2};
-  store.recordAnswer('bto','toy',{correct:true,ms:2000,budgetMs:90000,fresh:true,mixed:true,key:'paused',uninterrupted:false});
-  assert.equal(store.mastery()['bto:toy'].lv,4);assert.equal(store.mastery()['bto:toy'].prun,0);
-  assert.equal(store.mixedEvidence()['bto:toy'].run,0);
+  store.state.recognition['bto:toy']={target:1,run:2,streakKeys:['a','b'],keys:['a','b']};
+  store.recordAnswer('bto','toy',{correct:true,ms:2000,budgetMs:90000,fresh:true,mixed:true,key:'paused',uninterrupted:false,levels:[1,2],difficulty:1});
+  assert.equal(store.mastery()['bto:toy'].lv,4);assert.equal(store.mastery()['bto:toy'].prun,2);
+  assert.equal(store.recognition()['bto:toy'].run,0);
+  assert.deepEqual(store.mixedEvidence(),{});
   store.state.mastery['bto:toy']={lv:1,run:2,prun:0};
   store.recordAnswer('bto','toy',{correct:true,ms:2000,budgetMs:90000,fresh:true,uninterrupted:false});
-  assert.equal(store.mastery()['bto:toy'].lv,2);
+  assert.equal(store.mastery()['bto:toy'].lv,1);
 });
 
 test('mock answers retain practice counters while still recording assessment statistics', () => {
@@ -148,14 +150,16 @@ test('mock answers retain practice counters while still recording assessment sta
   }
 });
 
-test('only fresh unlabelled practice or drill answers contribute to mixed evidence', () => {
+test('only fresh standard-time unlabelled practice or drill answers contribute to new mixed evidence', () => {
   const store = makeStore(memoryBackend());
-  const good = {correct:true,ms:2000,budgetMs:90000,fresh:true,mixed:true};
-  for (const [i, event] of [{mixed:false},{fresh:false},{mode:'exam'},{mode:'learn'},{mode:'mistakes'}].entries())
+  const good = {correct:true,ms:2000,budgetMs:90000,fresh:true,mixed:true,levels:[1,2],difficulty:1};
+  for (const [i, event] of [{mixed:false},{fresh:false},{mode:'exam'},{mode:'learn'},{mode:'mistakes'},{standardTime:false}].entries())
     store.recordAnswer('bto','toy',{...good,...event,key:`excluded${i}`});
   assert.deepEqual(store.mixedEvidence(),{});
+  assert.deepEqual(store.recognition(),{});
   for(let i=0;i<3;i++) store.recordAnswer('bto','toy',{...good,key:`eligible${i}`});
-  assert.equal(store.mixedEvidence()['bto:toy'].run,3);
+  assert.deepEqual(store.recognition()['bto:toy'].passed,[1]);
+  assert.deepEqual(store.mixedEvidence(),{});
 });
 
 test('ten-question checkpoint rejects early exits, mismatched counts and inflated scores', () => {

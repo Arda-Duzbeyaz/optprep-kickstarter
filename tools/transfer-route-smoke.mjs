@@ -49,7 +49,8 @@ try {
  await load('app.js');
  await until(()=>root.querySelector('h1')?.textContent==='Transfer Challenge','initial route');
  assert.ok(document.querySelector('#nav a[href="#/transfer"]'),'sidebar link works');
- root.querySelector('select').value='untimed';
+ root.querySelector('#transfer-scope').value='all';
+ root.querySelector('#transfer-timing').value='untimed';
  const plan=transferItems(SECTION_MODULES,{seed:fixedDate,questionHistory:oldSave.recentQuestions,structureHistory:{}});
  button('Start Transfer Challenge').click();
  advance(1500000);assert.match(root.querySelector('.qhead').textContent,/Question 1 of 15/,'page timing selection really starts untimed');

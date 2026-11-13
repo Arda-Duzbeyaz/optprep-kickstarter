@@ -8,6 +8,26 @@ import { presetPicker } from './path.js';
 import { icon } from '../icons.js';
 import { gistConfig, connectGist, disconnectGist, syncNow } from '../gist.js';
 import { describe as describeSave } from '../../core/cloud.js';
+import { preparationPlan, deadlineLabel } from '../../core/preparation.js';
+
+function preparationField(store) {
+  const plan = preparationPlan(store.settings());
+  const day = h('input', { type: 'date', id: 'prep-deadline', value: new Date(plan.deadline + 3600000).toISOString().slice(0,10), required: true });
+  const hours = h('input', { type: 'number', id: 'prep-hours', min: 1, max: 40, step: 0.5, value: plan.weeklyHours, required: true });
+  const status = h('p', { class: 'small-note muted', role: 'status' });
+  return field('Assessment preparation plan',
+    h('p', {}, 'Your invitation deadline is 6 December 2026, 23:59 CET (22:59 UK). Today uses this date to suggest a preparation phase.'),
+    h('div', { class: 'prep-fields' },
+      h('label', { for: 'prep-deadline' }, 'Deadline date · 23:59 CET', day),
+      h('label', { for: 'prep-hours' }, 'Preparation hours per week', hours)),
+    h('button', { class: 'btn', type: 'button', onclick: () => {
+      if (!day.reportValidity() || !hours.reportValidity()) return;
+      const iso = new Date(`${day.value}T23:59:00+01:00`).toISOString();
+      store.setSetting('assessmentDeadline',iso); store.setSetting('weeklyPrepHours',Number(hours.value));
+      status.textContent = `Plan saved: ${deadlineLabel(Date.parse(iso))} UK · ${hours.value} hours/week.`;
+    } }, 'Save preparation plan'), status,
+    h('p', { class: 'small-note muted' }, 'This planning budget is separate from the daily habit goal and from assessment clocks.'));
+}
 
 function backup(store) {
   const status = h('p', { role: 'status', class: 'muted small-note' });
@@ -109,14 +129,16 @@ export function settingsPage(root, { store }) {
   const install = canInstall() ? h('button', { class: 'btn', type: 'button', onclick: async () => { if (await promptInstall()) install.replaceWith(h('p', { class: 'muted' }, 'Installed.')); } }, 'Install the app') : null;
   mount(root,
     h('h1', {}, 'Settings'),
+    preparationField(store),
     field('Theme', choice({ legend: 'Theme', hideLegend: true, name: 'theme', value: getTheme(), onChange: setTheme, columns: true, options: [
       { value: 'system', label: 'System', hint: 'Follows your device' },
       { value: 'light', label: 'Light' },
       { value: 'dark', label: 'Dark' }] })),
-    field('Daily goal', choice({ legend: 'Daily goal', hideLegend: true, name: 'goal', value: goal, columns: true, onChange: (v) => store.setSetting('dailyGoalMin', v), options: [
+    field('Daily habit goal', choice({ legend: 'Daily habit goal', hideLegend: true, name: 'goal', value: goal, columns: true, onChange: (v) => store.setSetting('dailyGoalMin', v), options: [
       { value: 5, label: '5 minutes', hint: 'A quick daily habit' },
       { value: 10, label: '10 minutes', hint: 'Recommended' },
-      { value: 20, label: '20 minutes', hint: 'Exam is close' }] }),
+      { value: 20, label: '20 minutes', hint: 'A longer habit' },
+      { value: 60, label: '60 minutes', hint: 'A full preparation session' }] }),
     h('p', { class: 'muted small-note' }, 'Minutes count only while you answer or read, with the tab open.')),
     field('Battery', h('p', {}, 'Currently: ', h('strong', {}, activePreset().title), '.'), presetPicker(store, { compact: true, onDone: () => settingsPage(root, { store }) })),
     field('Division sign', choice({ legend: 'Division sign', hideLegend: true, name: 'div', value: store.settings().divNotation || 'obelus', columns: true, onChange: (v) => store.setSetting('divNotation', v), options: [
@@ -126,10 +148,10 @@ export function settingsPage(root, { store }) {
       { value: 'steps', label: 'One step at a time', hint: 'A short idea, then a question on it' },
       { value: 'all', label: 'Whole lesson', hint: 'Scroll through every section' }] })),
     field('Answering', choice({ legend: 'Answer keys', hideLegend: true, name: 'keys', value: store.settings().answerKeys === false ? 'off' : 'on', columns: true, onChange: (v) => store.setSetting('answerKeys', v === 'on'), options: [
-      { value: 'on', label: 'Number keys answer', hint: '1 to 4 or A to D pick an option, as in the test' },
+      { value: 'on', label: 'Number keys answer', hint: '1 to 5 or A to E select the displayed options' },
       { value: 'off', label: 'Mouse or touch only', hint: 'Stray key presses never answer' }] }),
     choice({ legend: 'Extra time', name: 'extra', value: String(store.settings().extraTime || 1), columns: true, onChange: (v) => store.setSetting('extraTime', Number(v)), options: [
-      { value: '1', label: 'Standard time', hint: 'Counts toward Ready' },
+      { value: '1', label: 'Standard time', hint: 'Eligible for mixed checks and timed targets' },
       { value: '1.5', label: '1.5 times', hint: 'Practice only' },
       { value: '2', label: 'Double time', hint: 'Practice only' }] })),
     install ? field('App', h('p', {}, 'Install OptPrep to open it from your dock or home screen and practise offline.'), install) : null,

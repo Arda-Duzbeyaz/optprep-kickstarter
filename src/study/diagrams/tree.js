@@ -34,6 +34,9 @@ export function validate(spec) {
 }
 
 export function render(spec) {
+  // Layout coordinates and exact path products belong to this rendering only.
+  // Mutating the question's spec leaks BigInt fractions into resumable saves.
+  spec = structuredClone(spec);
   const leaves = [];
   const rowH = 34, padX = 60, gap = 90;
   const labW = (n) => (n.label ? textW(n.label) + 16 : 8);

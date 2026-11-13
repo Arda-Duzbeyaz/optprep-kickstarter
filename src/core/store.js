@@ -3,7 +3,8 @@
 // version cannot read, and the old v1 key is left untouched as a backup.
 import { blankV2, migrate, VERSION } from './migrate.js';
 import { trendStep } from './patterns.js';
-import { levelStep, mixedStep, xpFor, MAX_FREEZES } from './progression.js';
+import { xpFor, MAX_FREEZES } from './progression.js';
+import { recognitionStep, coverageInfo } from './recognition.js';
 import { validPractice } from './practice.js';
 import { upsertMistake } from './mistakes.js';
 import { dayKey, streak, applyFreezes } from './activity.js';
@@ -85,11 +86,11 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     get migratedFrom() { return migratedFrom; },
     // Displayed-question history also matters: backend adoption must not erase
     // exposure tracking just because no ordinary answer has been submitted yet.
-    isEmpty() { return !Object.keys(state.activePractice).length && !Object.keys(state.mixedEvidence).length && !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
+    isEmpty() { return !Object.keys(state.learningCoverage).length && !Object.keys(state.recognition).length && !Object.keys(state.activePractice).length && !Object.keys(state.mixedEvidence).length && !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
     save,
     // One answer from any mode. Updates stats, the recency trend, the skill level, XP and
     // the mistake log, then saves once.
-    recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss, mixed = false, key, practiceSnapshot, nextSrs, uninterrupted = true } = {}) {
+    recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss, mixed = false, key, practiceSnapshot, nextSrs, uninterrupted = true, levels, standardTime = true, aided = false } = {}) {
       // Commit the answered phase and progress together: reopening feedback must
       // never record the same answer a second time.
       if (practiceSnapshot) {
@@ -110,11 +111,11 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       s.n += 1; s.correct += correct ? 1 : 0; s.ms += ms;
       state.stats[k] = s;
       state.trend[k] = trendStep(state.trend[k], correct, now);
-      const clean = !!correct && !hints && fresh && mode !== 'exam';
-      // Assessment results remain a separate benchmark. A mock must not erase
-      // a practice streak simply because its answers cannot award these levels.
-      if (mode !== 'exam') state.mastery[k] = levelStep(state.mastery[k], { clean, paced: uninterrupted && !!budgetMs && ms > 0 && ms <= budgetMs }, now);
-      if (mixed && fresh && ['practice', 'drill'].includes(mode)) state.mixedEvidence[k] = mixedStep(state.mixedEvidence[k], { key, correct, hints, ms, budgetMs, uninterrupted }, now);
+      // Old mastery/mixed fields remain unchanged as historical evidence. The
+      // new checkpoint cannot be earned through a named topic or aided learning.
+      if (mode !== 'exam' && !mixed) state.learningCoverage[k] = { ...state.learningCoverage[k], at: now, attempts: (state.learningCoverage[k]?.attempts || 0) + 1 };
+      if (mixed && fresh && standardTime && levels?.length && ['practice', 'drill'].includes(mode))
+        state.recognition[k] = recognitionStep(state.recognition[k], { key, correct, hints, ms, budgetMs, uninterrupted, difficulty, levels, aided }, now);
       addXp(xpFor({ type: 'answer', mode, correct, hints, ms }));
       if (!correct && miss) upsertMistake(state.mistakes, miss);
       if (confidence != null) {
@@ -143,6 +144,15 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       save();
     },
     mixedEvidence() { return state.mixedEvidence; },
+    recognition() { return state.recognition; },
+    coverage(section, family) {
+      const key = `${section}:${family}`;
+      return coverageInfo(state.learningCoverage[key], state.mastery[key], state.recognition[key], state.stats[key]);
+    },
+    markCovered(section, family, covered = true) {
+      const key = `${section}:${family}`;
+      state.learningCoverage[key] = { ...state.learningCoverage[key], covered: !!covered, at: clock() }; save();
+    },
     recordXp(n) { addXp(n); save(); },
     recordRun(run) {
       const r = { finishedAt: clock(), ...run };

@@ -55,12 +55,17 @@ export function examItems(section, cfg, seed) {
   return out;
 }
 
-export function practiceItem(section, rng, stats, { family, difficulty, excludeKeys = [] } = {}) {
+export function practiceItem(section, rng, stats, { family, difficulty, excludeKeys = [], familyPool, avoidFamilies = [], targets = {} } = {}) {
   const excluded = new Set(excludeKeys);
-  const w = familyWeights(section.id, section.families.map((f) => f.id), stats);
+  const all = section.families.map((f) => f.id);
+  const pool = family ? [family] : familyPool ? all.filter((id) => familyPool.includes(id)) : all;
+  if (!pool.length) throw new Error('No eligible practice skills');
+  const unused = pool.filter((id) => !avoidFamilies.includes(id));
+  const w = familyWeights(section.id, unused.length ? unused : pool, stats);
   let item;
   for (let tries = 0; tries < 40; tries++) {
-    item = drawItem(section, rng, { family: family || pickFamily(rng, w), difficulty });
+    const id = family || pickFamily(rng, w);
+    item = drawItem(section, rng, { family: id, difficulty: difficulty ?? targets[id] });
     if (!excluded.has(questionKey(item))) break;
   }
   return item;

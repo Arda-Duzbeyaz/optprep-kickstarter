@@ -1,0 +1,69 @@
+{
+  "edition": "1.1.0-kickstarter.1",
+  "prepared": "2026-11-13",
+  "baseline": "1.0.4-practice.1",
+  "baseline_revision": "25021dc4f828f22d80147dafaba6118e27af6421",
+  "javascript": {
+    "passed": 818,
+    "failed": 0,
+    "skipped": 0
+  },
+  "python": {
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0
+  },
+  "cpp": {
+    "passed": 34,
+    "failed": 0
+  },
+  "unit_total": 888,
+  "practice_flow_assertions": 104,
+  "learning_route_assertions": 95,
+  "focused_transfer_regressions": 11,
+  "other_integration": [
+    "Original UI smoke passed",
+    "Transfer smoke passed",
+    "Full broader Transfer router passed"
+  ],
+  "ordinary_preservation": {
+    "baselineVersion": "1.0.4-practice.1",
+    "unchangedOrdinarySourceFiles": 133,
+    "unchangedBaseSectionConfig": true,
+    "otherPresetsAndScoringUnchanged": true,
+    "authorisedInvitationClocks": true,
+    "licenceUnchanged": true,
+    "identicalMockPapers": 50,
+    "identicalMockQuestions": 990,
+    "snapshotVerifierCases": 780
+  },
+  "scoped_evaluation": "evaluation/learning-evaluation.json",
+  "browser_qa": {
+    "browser": "Chrome",
+    "desktop": "1348x936 viewport",
+    "phone_layout": "390px iframe with 375px content and native desktop scrollbar; not a physical phone",
+    "checked": [
+      "Today, compact deadline and resume",
+      "Skill map and focus actions",
+      "Correct learning answer and full feedback",
+      "Light and dark themes",
+      "Deadline/settings and progress",
+      "Single-section Transfer selector and 10-question Intervals run with skips and review"
+    ],
+    "layout_observation": "All six main iframe screens had body width 375px. Root scrollWidth readings during view transitions sometimes included an extra 15px; settled inspected screens fit the viewport. No broad cross-browser claim.",
+    "screenshot_export": "Desktop screenshot saved. A later extra phone screenshot export timed out after visual inspection had already completed.",
+    "physical_mobile": false,
+    "other_browsers": false
+  },
+  "deployment": {
+    "github_pages_updated": false,
+    "reason": "Connected GitHub exposed no repository installations; no push attempted."
+  },
+  "limitations": [
+    "Three cold instances are not necessarily three structures or concepts.",
+    "Difficulty and budgets are authored training choices, not Optiver calibration.",
+    "No controlled learning-outcome or hiring-outcome validation."
+  ],
+  "implementation_revision": "320581ae78a0dbf720c5bf5b87591300f7d68272",
+  "source_revision_meaning": "Local implementation commit; following metadata-only commit records provenance."
+}

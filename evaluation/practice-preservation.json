@@ -1,7 +1,9 @@
 {
-  "baselineVersion": "1.0.3-transfer.3",
+  "baselineVersion": "1.0.4-practice.1",
   "unchangedOrdinarySourceFiles": 133,
-  "unchangedConfigFiles": 2,
+  "unchangedBaseSectionConfig": true,
+  "otherPresetsAndScoringUnchanged": true,
+  "authorisedInvitationClocks": true,
   "licenceUnchanged": true,
   "identicalMockPapers": 50,
   "identicalMockQuestions": 990,

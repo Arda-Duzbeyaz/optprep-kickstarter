@@ -7,7 +7,8 @@ test('applying a preset sets clocks; switching back restores the base format', (
   activatePreset({ id: 'full' });
   const ivBase = { ...SECTIONS.iv.exam };
   activatePreset({ id: 'kickstarter' });
-  assert.equal(SECTIONS.iv.exam.perItemSeconds, 45);
+  assert.equal(SECTIONS.iv.exam.perItemSeconds, null);
+  for (const [id, seconds] of Object.entries({bto:1500,nl:1500,ll:1500,iv:900,ob:900})) assert.equal(SECTIONS[id].exam.totalSeconds,seconds,id);
   assert.equal(SECTIONS.nl.exam.navigation, 'free');
   activatePreset({ id: 'trader' });
   assert.equal(SECTIONS.nl.exam.count, 15);
