@@ -18,6 +18,7 @@ import { srsRecord, srsDue } from '../core/srs.js';
 import { makeCountdown, examClockStatus } from '../core/timer.js';
 import { SECTIONS } from '../../config/sections.js';
 import { SECTION_MODULES } from '../sections/index.js';
+import { PRACTICE_MODULES } from '../practice/index.js';
 import { readiness, runMeetsTarget } from '../core/readiness.js';
 import { lessonForFamily } from '../study/catalog.js';
 import { divNotation, prose } from '../core/format.js';
@@ -60,7 +61,7 @@ function paintTimer(el, ms) {
 
 // ---------------------------------------------------------------- feedback modes
 export function runFeedbackSession(root, { sectionId, mode, family, count, store, onDone, items: fixedItems, title, setNumber, diagnose = false, onMiss, noHints = false, scope = 'all' }) {
-  const section = SECTION_MODULES[sectionId];
+  const section = PRACTICE_MODULES[sectionId];
   const cfg = SECTIONS[sectionId];
   const resumable = mode === 'practice' && !fixedItems && setNumber == null;
   const options = { sectionId, mode, family, count, store, onDone, title, diagnose, onMiss, noHints, scope };
@@ -141,7 +142,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const round = new Set();
     for (const row of log) { if (round.size === familyPool.length) round.clear(); if (familyPool.includes(row.family)) round.add(row.family); }
     return practiceItem(section, rng, store.stats(), { family, familyPool, targets, avoidFamilies: [...round],
-      excludeKeys: store.recentQuestionKeys?.(sectionId) || [] });
+      excludeKeys: store.recentQuestionKeys?.(sectionId) || [], preferStructures: store.recentStructureKeys?.(sectionId) || [], shuffleOptions: true });
   }
 
   function show() {
@@ -330,6 +331,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     mount(root, h('section', { class: 'field session-summary' },
       h('h2', { class: 'field-label' }, `${modeLabel(mode)} summary`),
       h('p', { class: 'small-note muted' }, n === limit ? `Block complete · ${n}/${limit} answered` : `Ended early · ${n}/${limit} answered. Submitted answers still count towards skill progress.`),
+      resumable ? h('p', { class: 'next-training-action' }, h('strong', {}, 'Next: '),
+        !family ? weakest && weakest[1].c < weakest[1].n ? `Review your misses, repair ${familyTitle(section,weakest[0])}, then start another fresh mixed batch.` : 'Try another fresh mixed batch, or take a timed section for a full-clock check.'
+          : nextSkill ? 'Move to the next skill, then test the covered topics together in mixed practice.' : 'Keep learning until you can explain the method, mark it covered, then test it in mixed practice.') : null,
       n ? h('div', { class: 'summary-stats' },
         h('span', {}, h('span', { class: 'num big' }, `${correct}/${n}`), ' right'),
         h('span', {}, h('span', { class: 'num big xp-tick' }, '+0'), ' XP'),

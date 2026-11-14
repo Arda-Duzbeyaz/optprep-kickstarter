@@ -3,6 +3,8 @@
 import { makeRng } from './rng.js';
 import { familyWeights, pickFamily } from './adaptive.js';
 import { questionKey } from './questions.js';
+import { structureKey } from '../transfer/profile.js';
+import { presentation } from './presentation.js';
 
 export function nearestLevel(levels, d) {
   const ls = levels?.length ? levels : [1];
@@ -55,20 +57,31 @@ export function examItems(section, cfg, seed) {
   return out;
 }
 
-export function practiceItem(section, rng, stats, { family, difficulty, excludeKeys = [], familyPool, avoidFamilies = [], targets = {} } = {}) {
+export function practiceItem(section, rng, stats, { family, difficulty, excludeKeys = [], familyPool, avoidFamilies = [], targets = {}, preferStructures, shuffleOptions = false } = {}) {
   const excluded = new Set(excludeKeys);
   const all = section.families.map((f) => f.id);
   const pool = family ? [family] : familyPool ? all.filter((id) => familyPool.includes(id)) : all;
   if (!pool.length) throw new Error('No eligible practice skills');
   const unused = pool.filter((id) => !avoidFamilies.includes(id));
   const w = familyWeights(section.id, unused.length ? unused : pool, stats);
+  if (preferStructures !== undefined) {
+    const structures = new Set(preferStructures), id = family || pickFamily(rng, w);
+    let best = null, cost = Infinity;
+    for (let tries = 0; tries < 16; tries++) {
+      const candidate = drawItem(section, rng, { family: id, difficulty: difficulty ?? targets[id] });
+      const nextCost = 10000 * Number(excluded.has(questionKey(candidate))) + Number(structures.has(structureKey(candidate)));
+      if (nextCost < cost) { best = candidate; cost = nextCost; }
+      if (cost === 0) break;
+    }
+    return shuffleOptions ? presentation(best, rng) : best;
+  }
   let item;
   for (let tries = 0; tries < 40; tries++) {
     const id = family || pickFamily(rng, w);
     item = drawItem(section, rng, { family: id, difficulty: difficulty ?? targets[id] });
     if (!excluded.has(questionKey(item))) break;
   }
-  return item;
+  return shuffleOptions ? presentation(item, rng) : item;
 }
 
 export function examScore(sectionId, scores) {

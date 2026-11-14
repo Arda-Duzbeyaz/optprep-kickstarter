@@ -3,7 +3,7 @@ import { bubbles } from './sheet.js';
 import { levelProgress } from '../core/progression.js';
 import { recognitionProgress } from '../core/recognition.js';
 import { practiceHref } from '../core/practice.js';
-import { familyTitle, FAMILIES } from '../sections/catalog.js';
+import { practiceFamilyTitle as familyTitle, PRACTICE_FAMILIES as FAMILIES } from '../practice/catalog.js';
 import { SECTIONS } from '../../config/sections.js';
 
 export function levelLabel(m) {
@@ -58,18 +58,18 @@ export function levelGuide() {
     h('p', {}, 'The 0/3 counter belongs to one skill at one difficulty. Questions on other skills can appear between its successes. A miss, help, interruption or over-budget attempt on this skill resets its current counter; it does not erase other skills.'),
     h('p', {}, 'Mix covered skills after learning a few topics. Mixed batches hide the skill and difficulty until submission. Three fresh, correct, unaided, uninterrupted answers at the current supported difficulty, within the displayed training budget, verify that difficulty and move the next draw to the next supported level.'),
     h('p', {}, 'Each skill has its own counter. A failed, aided, paused or slow eligible attempt resets its streak. A later miss on a verified difficulty marks it for recheck; the earlier pass remains recorded. Questions on other skills do not reset it.'),
-    h('p', {}, 'Fresh means first recorded exposure in this browser, not a guaranteed unfamiliar mathematical structure. Use “Used outside help” in a mixed batch if you consult assistance. Extra-time practice, repeats, named-topic practice, mocks and Transfer Challenges cannot earn these checkpoints.'),
+    h('p', {}, 'Fresh means first recorded exposure in this browser, not a guaranteed unfamiliar mathematical structure. Use “Used outside help” in a mixed batch if you consult assistance. Extra-time practice, repeats, named-topic practice, mocks and batch checks cannot earn these checkpoints.'),
     h('p', {}, 'Supported levels belong to the existing generators. A dice skill with levels 1 and 2 has two checkpoints; there are no invented levels 3–5. The budgets and difficulty labels are training choices, not independently calibrated Optiver limits.'),
-    h('p', { class: 'small-note muted' }, 'Old five-level practice records and mixed streaks are preserved as history. They do not fabricate new cold checkpoints. Transfer Challenge is a separate, unfamiliar-question benchmark; choose a single assessment there.'));
+    h('p', { class: 'small-note muted' }, 'Old five-level practice records and mixed streaks are preserved as history. Batch check uses the same practice library but withholds feedback until the end and keeps its results separate.'));
 }
 
-export function resumePracticeCards(store, ids) {
+export function resumePracticeCards(store, ids, { compact = false } = {}) {
   const sessions = (store.practiceSessions?.() || []).filter((s) => !ids || ids.includes(s.section));
   if (!sessions.length) return null;
-  return h('section', { class: 'resume-practice', 'aria-label': 'Saved practice' },
-    h('h2', {}, 'Continue practice'),
+  return h('section', { class: `resume-practice${compact ? ' resume-practice-compact' : ''}`, 'aria-label': 'Saved practice' },
+    h('h2', { class: compact ? 'visually-hidden' : null }, 'Continue practice'),
     sessions.map((s) => h('div', { class: 'resume-practice-card' },
-      h('div', {}, h('strong', {}, SECTIONS[s.section].title),
+      h('div', {}, compact ? null : h('strong', {}, SECTIONS[s.section].title),
         h('p', { class: 'small-note muted' }, `${s.family ? familyTitle(s.section, s.family) : s.scope === 'covered' ? 'Mixed covered skills' : 'Mixed all skills'} · ${s.log.length}/${s.count} answered${s.current.done ? ' · feedback saved' : ' · current question saved'}`)),
       h('a', { class: 'btn primary', href: practiceHref(s) }, 'Resume practice'))));
 }

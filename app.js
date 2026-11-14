@@ -107,7 +107,7 @@ function renderNav(hash) {
     link('#/study', 'Study guide', due ? h('span', { class: 'nav-count' }, String(due), h('span', { class: 'visually-hidden' }, ' lessons due')) : null, 'study', (hash === '#/study' || hash.startsWith('#/study/')) && !studyOwn),
     link('#/progress', 'Progress', open ? h('span', { class: 'nav-count' }, String(open), h('span', { class: 'visually-hidden' }, ' open mistakes')) : null, 'progress', hash.startsWith('#/progress') || studyOwn),
     link('#/mock', 'Full mock', null, 'timer'),
-    link('#/transfer', 'Transfer Challenge', null, 'bolt'),
+    link('#/transfer', 'Batch check', null, 'bolt'),
     link('#/mk', 'Market making', null, 'bolt'),
     link('#/settings', 'Settings', null, 'settings', hash === '#/settings'));
   mount(tabbar,

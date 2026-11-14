@@ -134,7 +134,7 @@ try {
   button('Start new 10-question block').click();eq(store.mastery()['bto:two-dice-sum'].prun,2);
   // Both the landing pages and skills dashboard expose resume and level criteria.
   stop();stop=()=>{};store.setSetting('preset',{id:'kickstarter'});
-  sectionPage(root,{store,id:'bto'});ok(root.textContent.includes('Continue practice'));ok(root.textContent.includes('difficulties verified'));
+  sectionPage(root,{store,id:'bto'});ok(root.querySelector('[data-action="mixed-practice"]').textContent.startsWith('Resume mixed practice'));ok(root.textContent.includes('difficulties verified'));
   eq(store.mastery()['bto:two-dice-sum'].prun,2,'legacy levels preserved');ok(root.textContent.includes('How learning and mixed checkpoints work'));
   pathPage(root,{store});ok(root.textContent.includes('Resume practice'));
   progressPage(root,{store});ok(root.textContent.includes('Skills'));ok(root.textContent.includes('all supported difficulties verified'));ok(root.textContent.includes('skills started'));

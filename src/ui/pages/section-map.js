@@ -1,7 +1,7 @@
 // A section's roadmap data: its skills (from the family catalog), concept lessons and
 // checkpoints. Today and the section page both draw from it; it never loads a generator.
 import { SECTIONS } from '../../../config/sections.js';
-import { FAMILIES } from '../../sections/catalog.js';
+import { PRACTICE_FAMILIES as FAMILIES } from '../../practice/catalog.js';
 import { roadmap } from '../../core/path.js';
 import { readiness } from '../../core/readiness.js';
 import { lessonForFamily, bookLessons } from '../../study/catalog.js';

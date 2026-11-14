@@ -1,6 +1,6 @@
 import { h, mount } from '../dom.js';
 import { SECTIONS } from '../../../config/sections.js';
-import { SECTION_MODULES } from '../../sections/index.js';
+import { PRACTICE_MODULES as SECTION_MODULES } from '../../practice/index.js';
 import { makeRng } from '../../core/rng.js';
 import { runFeedbackSession } from '../runner.js';
 

@@ -1,0 +1,171 @@
+{
+  "edition": "1.2.0-kickstarter.1",
+  "prepared": "2026-11-13",
+  "baseline": "1.1.0-kickstarter.1",
+  "baseline_revision": "ac8b10b78e5b0462968fd6e895b8f384c5d77c3e",
+  "javascript": {
+    "passed": 826,
+    "failed": 0,
+    "skipped": 0
+  },
+  "python": {
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0
+  },
+  "cpp": {
+    "passed": 34,
+    "failed": 0
+  },
+  "unit_total": 896,
+  "practice_flow_assertions": 104,
+  "learning_route_assertions": 100,
+  "shared_practice_flow_assertions": 71,
+  "focused_interface_regressions": 11,
+  "other_integration": [
+    "Original UI smoke",
+    "Batch-check response/clock smoke",
+    "Full broader-batch router"
+  ],
+  "shared_practice_families": {
+    "bto": 34,
+    "nl": 30,
+    "ll": 16,
+    "iv": 15,
+    "ob": 8
+  },
+  "question_formulas_changed": false,
+  "preset_clocks_changed": false,
+  "ordinary_mock_preservation": {
+    "baselineVersion": "1.0.4-practice.1",
+    "unchangedOrdinarySourceFiles": 133,
+    "unchangedBaseSectionConfig": true,
+    "otherPresetsAndScoringUnchanged": true,
+    "authorisedInvitationClocks": true,
+    "licenceUnchanged": true,
+    "identicalMockPapers": 50,
+    "identicalMockQuestions": 990,
+    "snapshotVerifierCases": 780
+  },
+  "batch_sampling": {
+    "baselineBroaderSessionsIdentical": 10,
+    "baselineBroaderQuestionsIdentical": 150,
+    "scoped": {
+      "bto": {
+        "sessions": 10,
+        "questions": 100,
+        "exactRepeats": 0,
+        "minimumFamiliesPerSession": 10,
+        "familiesSampled": 34,
+        "recordedStructures": 97,
+        "familiarStructureOccurrences": 3,
+        "mcqAnswerPositions": {
+          "0": 21,
+          "1": 26,
+          "2": 17,
+          "3": 16,
+          "4": 20
+        },
+        "rankingAnswerOrders": {}
+      },
+      "nl": {
+        "sessions": 10,
+        "questions": 100,
+        "exactRepeats": 0,
+        "minimumFamiliesPerSession": 10,
+        "familiesSampled": 30,
+        "recordedStructures": 45,
+        "familiarStructureOccurrences": 55,
+        "mcqAnswerPositions": {
+          "0": 26,
+          "1": 23,
+          "2": 18,
+          "3": 14,
+          "4": 19
+        },
+        "rankingAnswerOrders": {}
+      },
+      "ll": {
+        "sessions": 10,
+        "questions": 100,
+        "exactRepeats": 0,
+        "minimumFamiliesPerSession": 10,
+        "familiesSampled": 16,
+        "recordedStructures": 97,
+        "familiarStructureOccurrences": 3,
+        "mcqAnswerPositions": {},
+        "rankingAnswerOrders": {
+          "1,2,0": 21,
+          "0,2,1": 21,
+          "2,0,1": 13,
+          "0,1,2": 13,
+          "2,1,0": 16,
+          "1,0,2": 16
+        }
+      },
+      "iv": {
+        "sessions": 10,
+        "questions": 100,
+        "exactRepeats": 0,
+        "minimumFamiliesPerSession": 10,
+        "familiesSampled": 15,
+        "recordedStructures": 65,
+        "familiarStructureOccurrences": 35,
+        "mcqAnswerPositions": {},
+        "rankingAnswerOrders": {}
+      },
+      "ob": {
+        "sessions": 10,
+        "questions": 100,
+        "exactRepeats": 0,
+        "minimumFamiliesPerSession": 8,
+        "familiesSampled": 8,
+        "recordedStructures": 10,
+        "familiarStructureOccurrences": 90,
+        "mcqAnswerPositions": {},
+        "rankingAnswerOrders": {}
+      }
+    },
+    "limits": [
+      "Structure signatures are proxies, not measured conceptual novelty.",
+      "These samples do not calibrate Optiver difficulty or establish learning gains."
+    ]
+  },
+  "browser_qa": {
+    "browser": "Chrome",
+    "desktop": "1348x936",
+    "phone": "390px responsive iframe with 375px content, not a physical phone",
+    "checked": [
+      "Prominent all-skills start and saved-block choice",
+      "Mixed MCQ shuffled answers and correct cold feedback",
+      "Per-skill 1/3 counter",
+      "Same-family-pool batch explanation and timed/untimed selector",
+      "Feedback withheld across answers and shown in partial review",
+      "Return-to-mixed control",
+      "Light/dark layouts and existing history"
+    ],
+    "main_phone_action": {
+      "bottom_px": 530,
+      "viewport_height_px": 844,
+      "body_width_px": 375,
+      "content_width_px": 375,
+      "visible_without_scrolling": true
+    },
+    "infrastructure_note": "Preview stopped during QA; one restart restored it. No application code was changed to compensate.",
+    "physical_mobile": false,
+    "cross_browser": false
+  },
+  "progress_compatibility": "Same v2 schema; existing records and saved questions retained; new practice entries start unverified. Saved blocks keep their frozen pool.",
+  "deployment": {
+    "github_pages_updated": false,
+    "upstream_repository_modified": false
+  },
+  "limits": [
+    "A new instance or recorded branch is not guaranteed conceptual novelty.",
+    "Shared practice does not make the optional batch a holdout test.",
+    "Three cold successes are a training criterion, not Optiver calibration.",
+    "No controlled learning-outcome study was performed."
+  ],
+  "implementation_revision": "56adcc7dea21f232c07f2c84c6f3d33131125949",
+  "source_revision_meaning": "Local tested implementation; following metadata-only commit records provenance."
+}

@@ -10,6 +10,7 @@ import { bubbles, field, choice, setRail } from '../sheet.js';
 import { icon } from '../icons.js';
 import { sectionMap } from './section-map.js';
 import { resumePracticeCards } from '../practice-progress.js';
+import { mixedPracticeAction } from '../practice-actions.js';
 
 export function presetPicker(store, { onDone, compact = false } = {}) {
   let picked = store.settings().preset?.id || DEFAULT_PRESET;
@@ -75,9 +76,10 @@ export function pathPage(root, { store }) {
       h('p', { class: 'eyebrow' }, weekday === 0 ? 'Weekly benchmark' : weekday === 6 ? 'Catch-up and repair' : 'Suggested assessment today'),
       h('h2', {}, SECTIONS[focus.id].title),
       h('p', {}, focus.map.skillsDone < 2 ? 'Learn a few skills with help. Mark them covered, then start mixed checks.' : 'Start a cold mixed batch. Review mistakes with ChatGPT, then repair one weakness.'),
-      h('div', { class: 'row' },
-        h('a', { class: 'btn primary', href: weekday === 0 ? `#/run/${focus.id}/exam` : focus.map.skillsDone >= 2 ? `#/run/${focus.id}/mixed/covered` : nextSkill?.href || `#/s/${focus.id}` }, weekday === 0 ? 'Take a timed section' : focus.map.skillsDone >= 2 ? 'Start mixed check · 10 questions' : 'Learn the next skill'),
-        h('a', { class: 'btn', href: `#/s/${focus.id}` }, 'View skills')),
+      weekday === 0 ? h('a', { class: 'btn primary', href: `#/run/${focus.id}/exam` }, 'Take a timed section') : null,
+      weekday !== 0 && focus.map.skillsDone < 2 ? h('p', {}, h('a', { class: 'btn primary', href: nextSkill?.href || `#/s/${focus.id}` }, 'Learn the next skill')) : null,
+      mixedPracticeAction(store,focus.id,{primary:weekday !== 0 && focus.map.skillsDone >= 2}),
+      h('p', { class: 'small-note' }, h('a', { href: `#/s/${focus.id}` }, 'Choose or repair a skill')),
       h('details', { class: 'daily-routine' }, h('summary', {}, 'How to use your preparation time'),
         h('ol', {}, h('li', {}, 'Attempt without help: 25 minutes of mixed checks or one timed section.'), h('li', {}, 'Review: 15 minutes explaining mistakes and the underlying method with ChatGPT.'), h('li', {}, 'Repair: 15 minutes of focused learning on one weak skill.'), h('li', {}, 'Record one lesson and choose the next topic: 5 minutes.')),
         h('p', { class: 'small-note muted' }, 'At 8 hours/week, use six one-hour sessions and one two-hour session for timed sections plus review. Shorter days are fine: resume the saved block. Paused unanswered questions are learning-only.'),
@@ -93,7 +95,7 @@ export function pathPage(root, { store }) {
     h('div', { class: 'tasks-head' }, h('h2', {}, 'Your tasks'), h('a', { class: 'small-note muted', href: '#/settings' }, `Battery: ${active.title}`)),
     h('ul', { class: 'task-list' }, ids.map((id) => (id === 'zapn' || mapOf[id] ? taskRow(store, id, mapOf[id]) : null))),
     h('details', { class: 'level-guide' }, h('summary', {}, 'More training tools'), h('ul', { class: 'task-list task-list-after' }, h('li', {}, h('a', { class: 'task-row', href: '#/transfer' },
-      h('span', { class: 'task-name' }, 'Transfer Challenge', h('span', { class: 'task-blurb' }, 'Unfamiliar questions within one assessment. Optional broader mix; results stay separate.')))), h('li', {}, h('a', { class: 'task-row', href: '#/mk' },
+      h('span', { class: 'task-name' }, 'Batch check', h('span', { class: 'task-blurb' }, 'Same practice library; answers and feedback only at the end. Optional, with separate results.')))), h('li', {}, h('a', { class: 'task-row', href: '#/mk' },
       h('span', { class: 'task-name' }, 'Market making', h('span', { class: 'task-blurb' }, 'After the online assessment: quote two-sided markets against a trader who knows more than you.')),
       h('span', { class: 'task-progress num' }, store.zapnRuns('mk').length ? `${store.zapnRuns('mk').length} sessions` : 'bonus'))))));
 }

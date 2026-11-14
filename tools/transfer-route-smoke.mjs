@@ -47,12 +47,12 @@ function answer(row){const item=row.item;
 }
 try {
  await load('app.js');
- await until(()=>root.querySelector('h1')?.textContent==='Transfer Challenge','initial route');
+ await until(()=>root.querySelector('h1')?.textContent==='Batch check','initial route');
  assert.ok(document.querySelector('#nav a[href="#/transfer"]'),'sidebar link works');
  root.querySelector('#transfer-scope').value='all';
  root.querySelector('#transfer-timing').value='untimed';
  const plan=transferItems(SECTION_MODULES,{seed:fixedDate,questionHistory:oldSave.recentQuestions,structureHistory:{}});
- button('Start Transfer Challenge').click();
+ button('Start batch check').click();
  advance(1500000);assert.match(root.querySelector('.qhead').textContent,/Question 1 of 15/,'page timing selection really starts untimed');
  for(let i=0;i<plan.length;i++){
   assert.equal(root.querySelectorAll('details').length,0,'no solution leaked before review');
@@ -60,7 +60,7 @@ try {
   if(i<14){button('Submit and next').click();const header=root.querySelector('.qhead').textContent;key('Enter',true);assert.equal(root.querySelector('.qhead').textContent,header,'held Enter cannot skip the next question');}
   else button('Finish session').click();
  }
- assert.match(root.textContent,/Transfer Challenge: review/);
+ assert.match(root.textContent,/Batch check: review/);
  const completed=snapshot();
  assert.equal(completed.transferRuns.length,1);
  assert.equal(completed.transferRuns[0].items.length,15);
@@ -72,13 +72,13 @@ try {
  assert.deepEqual(completed.srs,oldSave.srs);
  assert.equal(completed.runs.length,oldSave.runs.length);
  document.querySelector('#nav a[href="#/transfer"]').click();
- await until(()=>root.querySelector('h1')?.textContent==='Transfer Challenge','current Transfer sidebar link');
- assert.match(root.textContent,/Recent transfer sessions/);
+ await until(()=>root.querySelector('h1')?.textContent==='Batch check','current Transfer sidebar link');
+ assert.match(root.textContent,/Recent batch checks/);
  assert.match(root.textContent,/12\/12 non-interval questions correct/);
  const reloaded=makeStore(localStorage);assert.equal(reloaded.transferRuns().length,1);
  const backup=reloaded.exportJSON();assert.ok(JSON.parse(backup).recentStructures);
  // Start again, leave, and make sure the abandoned session's handlers are gone.
- button('Start Transfer Challenge').click();
+ button('Start batch check').click();
  await route('#/s/bto','Beat the Odds');
  const before=root.textContent;key('Enter');advance(2000000);assert.equal(root.textContent,before);
  assert.equal(snapshot().transferRuns.length,1,'abandoned run is not silently completed');

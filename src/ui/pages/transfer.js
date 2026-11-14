@@ -5,6 +5,7 @@ import { setRail } from '../sheet.js';
 import { checkItem } from '../../core/check.js';
 import { makeCountdown, examClockStatus } from '../../core/timer.js';
 import { SECTION_MODULES } from '../../sections/index.js';
+import { PRACTICE_MODULES } from '../../practice/index.js';
 import { transferItems, transferSummary, TRANSFER_SECTIONS, TRANSFER_TIMING, SECTION_TRANSFER_TIMING } from '../../transfer/draw.js';
 import { SECTIONS } from '../../../config/sections.js';
 const scoreLine = (s) => [s.regularN ? `${s.regularCorrect}/${s.regularN} non-interval questions correct` : '',
@@ -13,24 +14,26 @@ const timeMultiplier = (store) => { const n = Number(store.settings().extraTime)
 
 export function transferPage(root, { store, section = 'bto' }) {
   let cleanup = null;
-  const timing = h('select', { id: 'transfer-timing', 'aria-label': 'Transfer practice timing' }, h('option', { value: 'timed' }, 'Timed'), h('option', { value: 'untimed' }, 'Untimed'));
-  const scope = h('select', { id: 'transfer-scope', 'aria-label': 'Transfer assessment' }, TRANSFER_SECTIONS.map((s) => h('option', { value: s }, SECTIONS[s].title)), h('option', { value: 'all' }, 'All five · optional broader mix'));
+  const timing = h('select', { id: 'transfer-timing', 'aria-label': 'Batch check timing' }, h('option', { value: 'timed' }, 'Timed'), h('option', { value: 'untimed' }, 'Untimed'));
+  const scope = h('select', { id: 'transfer-scope', 'aria-label': 'Batch check assessment' }, TRANSFER_SECTIONS.map((s) => h('option', { value: s }, SECTIONS[s].title)), h('option', { value: 'all' }, 'All five · optional broader mix'));
   scope.value = TRANSFER_SECTIONS.includes(section) || section === 'all' ? section : 'bto';
   const clockNote = h('p', { class: 'small-note muted' });
   const updateNote = () => { clockNote.textContent = scope.value === 'all' ? '15 questions · 20 minutes overall · 90 seconds per question if timed.' : '10 questions from one assessment · 15 minutes overall · 90 seconds per question if timed.'; };
   scope.addEventListener('change', updateNote); updateNote();
   const history = store.transferRuns().slice(-5).reverse(), extra = timeMultiplier(store);
-  mount(root, h('h1', {}, 'Transfer Challenge'),
-    h('p', { class: 'lede' }, 'Test unfamiliar questions within one assessment. Methods stay hidden and solutions appear at the end.'),
-    h('p', {}, 'Additional training, not an official Optiver assessment replica. Results and training clocks stay separate. For invitation-aligned section practice, use Timed section instead.'),
+  mount(root, h('h1', {}, 'Batch check'),
+    h('p', { class: 'lede' }, 'The same practice library, with answers and feedback held until the end.'),
+    h('p', {}, 'Use mixed practice for your daily workout and checkpoints. Use this optional check to solve a whole batch without learning from earlier feedback. It samples across training difficulties and keeps results separate.'),
+    h('p', { class: 'small-note muted' }, 'Additional training, not an official Optiver assessment replica. These clocks are separate from your invitation-aligned timed sections.'),
     extra > 1 ? h('p', { class: 'muted' }, `Your extra-time setting ×${extra} applies to both training clocks and is recorded with the result.`) : null,
     h('div', { class: 'prep-fields' }, h('label', { for: 'transfer-scope' }, 'Assessment', scope), h('label', { for: 'transfer-timing' }, 'Timing', timing)), clockNote,
-    h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: () => { cleanup = runTransfer(root, { store, timed: timing.value === 'timed', section: scope.value }); } }, 'Start Transfer Challenge')),
-    h('details', { class: 'level-guide' }, h('summary', {}, 'What this challenge measures'),
-      h('p', {}, 'Unseen questions and less familiar recorded structures are prioritised. A recorded structure is a generator-branch signature, not proof that an idea is new to you. Attempt without help; results stay separate from mixed checkpoints and exam targets.'),
+    h('p', { class: 'small-note' }, 'Timed enforces the clocks; untimed removes them. Both use the same question pool and neither earns normal mixed checkpoints.'),
+    h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: () => { cleanup = runTransfer(root, { store, timed: timing.value === 'timed', section: scope.value }); } }, 'Start batch check')),
+    h('details', { class: 'level-guide' }, h('summary', {}, 'How this check works'),
+      h('p', {}, 'Mixed practice and batch checks both include the extended probability, selection and rate families, prioritise less familiar recorded branches, and shuffle multiple-choice options. No question family is reserved for this check. A branch signature does not prove a new mathematical idea.'),
       h('p', {}, 'The all-five option is optional broader reasoning practice. The real assessments are taken separately; cross-assessment mixing is not required for progress. These training clocks are not verified Optiver item limits.')),
-    h('h2', {}, 'Recent transfer sessions'),
-    history.length ? h('ul', {}, history.map((r) => h('li', {}, `${new Date(r.finishedAt).toLocaleDateString()} · ${SECTIONS[r.section]?.title || 'All five'} · ${r.timed ? `timed${r.extraTime > 1 ? ` ×${r.extraTime}` : ''}` : 'untimed'}${r.completed ? '' : ' · partial'} · ${scoreLine(r.summary.all)} · ${r.summary.unseen.displayed} unseen recorded questions`))) : h('p', { class: 'muted' }, 'No transfer sessions yet.'));
+    h('h2', {}, 'Recent batch checks'),
+    history.length ? h('ul', {}, history.map((r) => h('li', {}, `${new Date(r.finishedAt).toLocaleDateString()} · ${SECTIONS[r.section]?.title || 'All five'} · ${r.timed ? `timed${r.extraTime > 1 ? ` ×${r.extraTime}` : ''}` : 'untimed'}${r.completed ? '' : ' · partial'} · ${scoreLine(r.summary.all)} · ${r.summary.unseen.displayed} unseen recorded questions`))) : h('p', { class: 'muted' }, 'No batch checks yet.'));
   return () => cleanup?.();
 }
 
@@ -59,8 +62,8 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
         if (!finished && index === shownIndex && current && (!timed || !examClockStatus(total, perItem).expired)) current.response = body.view.response();
       } });
     current = { body, started: performance.now(), response: body.view.response() };
-    mount(root, h('h1', { class: 'visually-hidden' }, 'Transfer Challenge'), h('div', { class: 'panel exam' },
-      h('div', { class: 'qhead' }, h('span', {}, `${section === 'all' ? 'Transfer training' : SECTIONS[section].title + ' · Transfer training'} · Question ${index + 1} of ${rows.length}`), timed ? h('span', {}, 'Total ', timer, ' · Question ', itemTimer) : h('span', {}, 'Untimed')),
+    mount(root, h('h1', { class: 'visually-hidden' }, 'Batch check'), h('div', { class: 'panel exam' },
+      h('div', { class: 'qhead' }, h('span', {}, `${section === 'all' ? 'Batch check' : SECTIONS[section].title + ' · Batch check'} · Question ${index + 1} of ${rows.length}`), timed ? h('span', {}, 'Total ', timer, ' · Question ', itemTimer) : h('span', {}, 'Untimed')),
       row.repeat ? h('p', { class: 'muted' }, 'Review item: this question was recorded before and is reported separately.') : null,
       body.el, h('div', { class: 'row' },
         h('button', { class: 'btn primary', type: 'button', onclick: () => advance() }, 'Submit and next'),
@@ -69,7 +72,7 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
           if (finished || settleExpiry()) return;
           if (confirm('Finish this training session? The current answer will be saved. Unreached questions will not be marked as seen.')) { saveCurrent(); finish(records.filter(Boolean).length === rows.length); }
         } }, 'Finish session'))));
-    setRail(index / rows.length, `Transfer question ${index + 1} of ${rows.length}`);
+    setRail(index / rows.length, `Batch-check question ${index + 1} of ${rows.length}`);
     paint(timer, total?.remaining() || 0); paint(itemTimer, perItem?.remaining() || 0); root.querySelector('.prompt')?.focus();
   }
   function saveCurrent(skip = false) {
@@ -107,7 +110,7 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
     finished = true; cancelAnimationFrame(frame); document.removeEventListener('keydown', onKey);
     const saved = records.filter(Boolean), summary = transferSummary(saved);
     store.recordTransferRun({ seed: String(seed), section, timing: { ...timing }, timed, extraTime: extra, completed, count: rows.length, ms: Math.round(performance.now() - start), summary, items: saved });
-    mount(root, h('h1', {}, 'Transfer Challenge: review'),
+    mount(root, h('h1', {}, 'Batch check: review'),
       h('p', {}, `${completed ? 'Completed' : 'Partial session'} · ${timed ? `timed${extra > 1 ? ` ×${extra}` : ''}` : 'untimed'} · ${scoreLine(summary.all)}.`),
       h('p', { class: 'muted' }, 'Additional-training results stay separate from revision and exam targets. Different score types are not combined into an invented pass mark.'),
       h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Recorded exposure'), h('th', {}, 'Displayed'), h('th', {}, 'Performance'))),
@@ -120,11 +123,12 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
         question.view.setResponse?.(responses[i]);
         question.view.lock?.();
         question.view.reveal?.(result, responses[i]);
-        const supportedPractice = SECTION_MODULES[row.item.section]?.families.some((f) => f.id === row.item.family);
+        const supportedPractice = PRACTICE_MODULES[row.item.section]?.families.some((f) => f.id === row.item.family);
         return [h('details', { class: 'panel' }, h('summary', {}, `Question ${i + 1} · ${row.item.section.toUpperCase()} · ${row.item.family} · ${result.skipped ? 'skipped' : row.item.kind === 'interval' ? `score ${result.score.toFixed(3)}` : result.correct ? 'correct' : 'incorrect'}`),
           question.el, feedbackBanner(row.item, result, responses[i] || { skip: true }), solutionPanel(row.item, { stepwise: false, actions: supportedPractice }))];
-      }), h('a', { class: 'btn primary', href: '#/' }, 'Back to Today'));
-    setRail(1, 'Transfer session finished');
+      }), h('div', { class: 'row' }, section !== 'all' ? h('a', { class: 'btn primary', href: `#/run/${section}/mixed/${PRACTICE_MODULES[section].families.filter((f) => store.coverage(section,f.id).covered).length >= 2 ? store.settings().mixedPool?.[section] || 'covered' : 'all'}` }, 'Return to mixed practice') : null,
+        h('a', { class: `btn${section === 'all' ? ' primary' : ''}`, href: '#/' }, 'Back to Today')));
+    setRail(1, 'Batch check finished');
   }
   document.addEventListener('keydown', onKey); show(); if (timed) frame = requestAnimationFrame(tick);
   return () => { finished = true; cancelAnimationFrame(frame); document.removeEventListener('keydown', onKey); };

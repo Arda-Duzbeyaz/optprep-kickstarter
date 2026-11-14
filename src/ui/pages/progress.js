@@ -2,11 +2,11 @@
 // behind it, and pace per task. Each pattern and mistake leads straight to practice.
 import { h, mount } from '../dom.js';
 import { SECTIONS } from '../../../config/sections.js';
-import { familyTitle as famTitle } from '../../sections/catalog.js';
+import { practiceFamilyTitle as famTitle } from '../../practice/catalog.js';
 import { weakPatterns } from '../../core/patterns.js';
 import { dayKey, addDays } from '../../core/activity.js';
 import { lessonForFamily } from '../../study/catalog.js';
-import { FAMILIES } from '../../sections/catalog.js';
+import { PRACTICE_FAMILIES as FAMILIES } from '../../practice/catalog.js';
 import { activePreset, presetSections } from '../../../config/presets.js';
 import { levelGuide, skillCheckpoint } from '../practice-progress.js';
 

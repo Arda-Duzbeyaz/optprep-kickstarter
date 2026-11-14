@@ -21,7 +21,7 @@ assert.match(root.textContent, /not an official Optiver assessment replica/);
 assert.match(root.textContent, /10 questions from one assessment.*15 minutes overall.*90 seconds per question/);
 root.querySelector('#transfer-scope').value='all';root.querySelector('#transfer-scope').dispatchEvent(new dom.window.Event('change'));
 assert.match(root.textContent,/15 questions.*20 minutes overall.*90 seconds per question/);
-button('Start Transfer Challenge').click(); assert.match(root.querySelector('.qhead').textContent, /Question 1 of 15/); pageCleanup();
+button('Start batch check').click(); assert.match(root.querySelector('.qhead').textContent, /Question 1 of 15/); pageCleanup();
 const rows = transferItems(SECTION_MODULES, { seed: 'dom-transfer-complete' });
 let stop = runTransfer(root, { store, seed: 'dom-transfer-complete', timed: false, items: rows });
 for (const row of rows) {
@@ -36,7 +36,7 @@ for (const row of rows) {
   }
   advance(5000); button('Submit and next').click();
 }
-assert.match(root.textContent, /Transfer Challenge: review/); assert.equal(root.querySelectorAll('details').length, 15);
+assert.match(root.textContent, /Batch check: review/); assert.equal(root.querySelectorAll('details').length, 15);
 const run = store.transferRuns()[0]; assert.ok(run.completed && !run.timed); assert.equal(run.summary.all.regularCorrect, 12); assert.ok(run.summary.all.intervalMean > .99);
 assert.equal(store.state.runs.length, 0); assert.deepEqual(store.stats(), {}); assert.deepEqual(store.mastery(), {}); assert.deepEqual(store.srs, {}); assert.equal(JSON.stringify(activePreset()), preset); stop();
 const clockStore = makeStore(memoryBackend()); stop = runTransfer(root, { store: clockStore, seed: 'dom-transfer-clock', timed: true });

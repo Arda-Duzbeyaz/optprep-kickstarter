@@ -3,14 +3,11 @@ import { nearestLevel } from '../core/draw.js';
 import { questionKey } from '../core/questions.js';
 import { structureKey } from './profile.js';
 import { TRANSFER_FAMILIES } from './index.js';
+import { presentation } from '../core/presentation.js';
+export { presentation } from '../core/presentation.js';
 export const TRANSFER_SECTIONS = ['bto', 'nl', 'll', 'iv', 'ob'];
 export const TRANSFER_TIMING = Object.freeze({ count: 15, totalSeconds: 1200, perItemSeconds: 90 });
 export const SECTION_TRANSFER_TIMING = Object.freeze({ count: 10, totalSeconds: 900, perItemSeconds: 90 });
-export function presentation(item, rng) {
-  if (item.kind !== 'mcq') return item;
-  const options = rng.shuffle(item.options);
-  return { ...item, options, answerIndex: options.indexOf(item.options[item.answerIndex]) };
-}
 export function transferItems(modules, { seed, questionHistory = {}, structureHistory = {}, perSection = 3, sections = TRANSFER_SECTIONS } = {}) {
   if (!Number.isInteger(perSection) || perSection < 1 || perSection > 20) throw new Error('perSection must be 1..20');
   if (!Array.isArray(sections) || !sections.length || new Set(sections).size !== sections.length || sections.some((s) => !TRANSFER_SECTIONS.includes(s))) throw new Error('Choose supported transfer sections');

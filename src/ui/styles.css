@@ -781,6 +781,10 @@ input.study-input[type=number] { width: 120px; }
 .resume-practice h2 { font-size: 18px; }
 .resume-practice-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 14px 16px; margin: 8px 0; }
 .resume-practice-card p { margin: 4px 0 0; }
+.resume-practice-compact { margin: 12px 0 16px; }
+.resume-practice-compact .resume-practice-card { padding: 9px 12px; margin: 0; }
+.resume-practice-compact .resume-practice-card > div { flex: 1; min-width: 130px; }
+.resume-practice-compact .resume-practice-card .btn { width: auto; }
 .skill-overview { margin-top: 16px; }
 .skill-overview h2 { font-size: 20px; }
 .skill-overview-counts { display: flex; flex-wrap: wrap; gap: 6px 24px; }
@@ -793,6 +797,18 @@ input.study-input[type=number] { width: 120px; }
 .prep-fields { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin: 14px 0; }
 .prep-fields label { display: grid; gap: 6px; min-width: 0; }
 .prep-fields input, .prep-fields select { width: 100%; min-width: 0; }
+.training-options { display: grid; grid-template-columns: minmax(0,1.4fr) repeat(2,minmax(0,1fr)); gap: 14px; margin: 18px 0; }
+.training-option { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--surface); }
+.training-option-main { background: var(--surface-2); border-color: var(--border-strong); }
+.training-option h2 { font-size: 19px; margin: 0 0 8px; }
+.training-option p { font-size: 14px; }
+.mixed-practice-action { display: grid; gap: 10px; max-width: 520px; }
+.mixed-practice-action label { display: grid; gap: 6px; font-size: 13px; font-weight: 600; }
+.mixed-practice-action select { width: 100%; min-width: 0; }
+.mixed-practice-action .btn { white-space: normal; text-align: center; height: auto; }
+.mixed-practice-action p { margin: 0; font-weight: 400; }
+.section-extras { margin: 16px 0; }
+.section-extras summary { cursor: pointer; }
 .daily-focus .row, .format-line .row { gap: 10px; }
 .grid-level { min-width: 0; max-width: 180px; }
 @media (max-width: 760px) {
@@ -806,6 +822,7 @@ input.study-input[type=number] { width: 120px; }
   .resume-practice-card .btn { width: 100%; }
   .practice-block-status { gap: 10px; }
   .prep-fields { grid-template-columns: minmax(0,1fr); }
+  .training-options { grid-template-columns: minmax(0,1fr); }
   .daily-focus .row .btn, .format-line .row > .btn { width: 100%; }
   .task-row { flex-wrap: wrap; }
   .task-row .task-progress { margin-left: 0; flex-basis: 100%; }

@@ -36,6 +36,11 @@ try{
  ok(root.textContent.includes('24 days to your deadline'));ok(root.textContent.includes('22:59'));ok(root.textContent.includes('23:59'));
  ok(root.textContent.includes('8 hours/week'));ok(root.querySelector('.daily-focus'));ok(root.querySelector('.daily-routine'));
  await route('#/s/bto','Beat the Odds');ok(button('Learn skills below'));ok(root.textContent.includes('0/2 difficulties verified'));
+ const mixedAction=root.querySelector('[data-action="mixed-practice"]');
+ eq(mixedAction.textContent,'Start mixed practice · 10 questions');eq(mixedAction.getAttribute('href'),'#/run/bto/mixed/all');
+ ok(!mixedAction.closest('details'),'the main mixed action is not hidden in optional tools');
+ const poolChoice=root.querySelector('[aria-label="Mixed practice question pool"]');eq(poolChoice.options[0].textContent,'All 34 skills');
+ ok(root.textContent.includes('How was the information obtained?'),'extended maths is in the main skill list');
  for(const family of ['two-dice-sum','die-repeats']){
   await practice(`#/run/bto/practice/${family}`);ok(root.textContent.includes('Learning only · help allowed'));
   button('Mark covered').click();eq(state().learningCoverage[`bto:${family}`].covered,true);
@@ -72,12 +77,12 @@ try{
  const hours=root.querySelector('#prep-hours');hours.value='10';button('Save preparation plan').click();eq(state().settings.weeklyPrepHours,10);
  eq(state().settings.assessmentDeadline,'2026-12-06T22:59:00.000Z');eq(state().settings.dailyGoalMin,undefined,'habit default preserved');
  await route('#/','Today');ok(root.textContent.includes('10 hours/week'));
- await route('#/transfer/iv','Transfer Challenge');eq(root.querySelector('#transfer-scope').value,'iv');
+ await route('#/transfer/iv','Batch check');eq(root.querySelector('#transfer-scope').value,'iv');
  ok(root.textContent.includes('10 questions from one assessment'));root.querySelector('#transfer-timing').value='untimed';
  const ordinary=JSON.stringify({recognition:state().recognition,stats:state().stats,mastery:state().mastery});
- button('Start Transfer Challenge').click();
+ button('Start batch check').click();
  for(let i=0;i<10;i++){ok(root.querySelector('.qhead').textContent.includes('Intervals'));button('Skip').click();}
- ok(root.textContent.includes('Transfer Challenge: review'));ok(!root.textContent.includes('0/0 non-interval'),'single-type review avoids meaningless denominators');eq(state().transferRuns.at(-1).section,'iv');
+ ok(root.textContent.includes('Batch check: review'));ok(!root.textContent.includes('0/0 non-interval'),'single-type review avoids meaningless denominators');eq(state().transferRuns.at(-1).section,'iv');
  eq(state().transferRuns.at(-1).count,10);eq(state().transferRuns.at(-1).timing.totalSeconds,900);
  eq(JSON.stringify({recognition:state().recognition,stats:state().stats,mastery:state().mastery}),ordinary,'Transfer stays separate');
  await route('#/progress/skills','Progress');ok(root.textContent.includes('Coverage records what you have learned'));ok(root.textContent.includes('all supported difficulties verified'));

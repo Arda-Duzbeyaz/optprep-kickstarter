@@ -13,6 +13,7 @@ import { bubbles, stamp, setRail } from '../sheet.js';
 import { icon } from '../icons.js';
 import { formatLine } from './format.js';
 import { levelGuide, checkpointLabel, checkpointText, resumePracticeCards } from '../practice-progress.js';
+import { mixedPracticeAction } from '../practice-actions.js';
 
 // Some 80-in-8 reports write division as 735 : 15. The learner picks; items keep ÷ underneath.
 function notationToggle(store) {
@@ -53,21 +54,24 @@ export function sectionPage(root, { store, id }) {
   mount(root,
     h('h1', {}, cfg.title),
     h('p', { class: 'lede' }, cfg.blurb),
-    resumePracticeCards(store, [id]),
+    store.practiceSession?.(id)?.family ? resumePracticeCards(store, [id], { compact: true }) : null,
     h('section', { class: 'format-line' },
       h('p', { class: 'num-ish' }, 'Practice format · ', formatLine(cfg)),
-      h('div', { class: 'row' },
-        map.skillsDone >= 2 ? h('a', { class: 'btn primary', href: `#/run/${id}/mixed/covered` }, 'Mixed check · covered skills') : h('button', { class: 'btn primary', type: 'button', onclick: () => root.querySelector('#skills')?.scrollIntoView({ block: 'start' }) }, 'Learn skills below'),
-        h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Timed section')),
-      h('p', { class: 'small-note' }, 'Learn a skill with help, mark it covered, then test recognition in a 10-question mixed batch. Three fresh, unaided, paced successes verify each supported difficulty.'),
+      h('div', { class: 'training-options' },
+        h('section', { class: 'training-option training-option-main' }, h('h2', {}, 'Mixed practice'),
+          h('p', {}, 'Your main daily workout. Varied questions with feedback after every answer.'), mixedPracticeAction(store,id)),
+        h('section', { class: 'training-option' }, h('h2', {}, 'Learn or repair'), h('p', {}, 'Choose a skill below. Use ChatGPT or hints, then mark it covered.'),
+          h('button', { class: 'btn', type: 'button', onclick: () => root.querySelector('#skills')?.scrollIntoView({ block: 'start' }) }, 'Learn skills below')),
+        h('section', { class: 'training-option' }, h('h2', {}, 'Timed section'), h('p', {}, 'Practise the full section clock. Review answers after finishing.'),
+          h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Timed section'))),
+      h('p', { class: 'small-note' }, 'Routine: mixed batch → review mistakes → repair one skill → repeat with fresh questions. Three cold, paced successes at a supported difficulty earn a checkpoint.'),
       id === 'iv' ? h('p', { class: 'small-note muted' }, 'A mixed checkpoint requires an interval score of at least 0.70, a training goal. Coverage and mean score appear under Progress → Pace.') : null,
-      h('p', { class: 'quiet-links small-note' },
+      h('details', { class: 'section-extras' }, h('summary', {}, 'Optional checks, question sets and lessons'), h('p', { class: 'quiet-links small-note' },
         due ? [h('a', { href: `#/run/${id}/mistakes` }, `Review ${due} due`), ' '] : null,
-        h('a', { href: `#/run/${id}/mixed/all` }, 'Mix all skills'), ' ',
-        ['bto','nl','ll','iv','ob'].includes(id) ? [h('a', { href: `#/transfer/${id}` }, 'Unfamiliar challenge'), ' '] : null,
+        ['bto','nl','ll','iv','ob'].includes(id) ? [h('a', { href: `#/transfer/${id}` }, 'Batch check · feedback at the end'), ' '] : null,
         cfg.variants.map((v, i) => [h('a', { href: `#/run/${id}/exam/v${i}` }, `Extra format: ${v.label}`), ' ']),
         h('a', { href: `#/s/${id}/sets` }, `Library, ${nSets} sets`), ' ',
-        bookLessons(id).length ? h('a', { href: `#/study/book/${id}` }, 'Study book') : null),
+        bookLessons(id).length ? h('a', { href: `#/study/book/${id}` }, 'Study book') : null)),
       h('details', { class: 'small-note' }, h('summary', {}, 'Timing, assumptions and practice targets'),
         activePreset().note ? h('p', {}, activePreset().note) : null,
         h('p', {}, `Trainer bar: ${cfg.target.label}. `, rep ? ['Reported pass: ', rep.text, ' (', h('a', { href: SOURCES[rep.source].url, target: '_blank', rel: 'noopener' }, 'source'), ').'] : null)),
