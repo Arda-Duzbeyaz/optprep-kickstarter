@@ -30,8 +30,8 @@ export function roadmap({ sectionId, families, lessons = [], checkpoints = [], m
     const checkpoint = recognitionProgress(recognition[key], f.levels);
     const covered = coverage ? !!coverage[key]?.covered : lv >= SKILLED;
     rows[bandOf(f)].push({
-      kind: 'skill', id: f.id, key, title: f.title, skill: f.skill, lv, done: covered, covered, checkpoint,
-      state: coverage ? checkpoint.review.length ? 'needs-review' : checkpoint.complete ? 'mastered' : covered ? 'learning' : 'new' : skillState(m, srs[key], now), lesson: lessonFor(f.id),
+      kind: 'skill', id: f.id, key, title: f.title, skill: f.skill, lv, done: covered, covered, checkpoint, learning: coverage?.[key],
+      state: coverage ? checkpoint.review.length ? 'needs-review' : checkpoint.complete ? 'mastered' : covered || coverage[key]?.started ? 'learning' : 'new' : skillState(m, srs[key], now), lesson: lessonFor(f.id),
       href: `#/run/${sectionId}/practice/${f.id}`,
     });
   }

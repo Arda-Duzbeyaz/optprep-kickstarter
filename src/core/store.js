@@ -9,6 +9,7 @@ import { validPractice } from './practice.js';
 import { upsertMistake } from './mistakes.js';
 import { dayKey, streak, applyFreezes } from './activity.js';
 import { practiceSuccess } from './check.js';
+import { addLearningBlock, learningBlock, snapshotLearningBlock } from './learning.js';
 import { questionKey, QUESTION_HISTORY_LIMIT } from './questions.js';
 import { structureKey, STRUCTURE_HISTORY_LIMIT } from '../transfer/profile.js';
 
@@ -114,6 +115,9 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       // Old mastery/mixed fields remain unchanged as historical evidence. The
       // new checkpoint cannot be earned through a named topic or aided learning.
       if (mode !== 'exam' && !mixed) state.learningCoverage[k] = { ...state.learningCoverage[k], at: now, attempts: (state.learningCoverage[k]?.attempts || 0) + 1 };
+      if (mixed && ['practice', 'drill'].includes(mode)) state.learningCoverage[k] = { ...state.learningCoverage[k],
+        mixedAttempts: (state.learningCoverage[k]?.mixedAttempts || 0) + 1,
+        revisionAttempts: (state.learningCoverage[k]?.revisionAttempts || 0) + Number(!fresh) };
       if (mixed && fresh && standardTime && levels?.length && ['practice', 'drill'].includes(mode))
         state.recognition[k] = recognitionStep(state.recognition[k], { key, correct, hints, ms, budgetMs, uninterrupted, difficulty, levels, aided }, now);
       addXp(xpFor({ type: 'answer', mode, correct, hints, ms }));
@@ -122,7 +126,11 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
         state.calibration.push({ section, confidence, correct: !!correct });
         if (state.calibration.length > 2000) state.calibration.splice(0, state.calibration.length - 2000);
       }
-      if (practiceSnapshot) state.activePractice[section] = JSON.parse(JSON.stringify(practiceSnapshot));
+      if (practiceSnapshot) {
+        state.activePractice[section] = JSON.parse(JSON.stringify(practiceSnapshot));
+        const block = snapshotLearningBlock(practiceSnapshot, now);
+        if (block) state.learningCoverage[k] = addLearningBlock(state.learningCoverage[k], block);
+      }
       if (nextSrs) state.srs = nextSrs;
       hooks.answer?.({ section, family, correct: !!correct, ms, confidence: confidence ?? null, difficulty: difficulty ?? null, score: score ?? null, item_id: miss?.id ?? null, mode, hints, belief: miss?.belief ?? null, at: now / 1000 });
       save();
@@ -139,8 +147,15 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     },
     clearPractice(section) { delete state.activePractice[section]; save(); },
     finishPractice(section, run) {
+      const block = learningBlock(run, clock());
+      if (block) {
+        const key = `${section}:${run.family}`;
+        state.learningCoverage[key] = addLearningBlock(state.learningCoverage[key], block);
+      }
       delete state.activePractice[section];
-      if (run?.max) { const r = { ...run, section, mode: 'practice', finishedAt: clock() }; state.runs.push(r); hooks.run?.(r); }
+      if (run?.max && (!run.blockId || !state.runs.some((r) => r.section === section && r.blockId === run.blockId))) {
+        const r = { ...run, section, mode: 'practice', finishedAt: clock() }; state.runs.push(r); hooks.run?.(r);
+      }
       save();
     },
     mixedEvidence() { return state.mixedEvidence; },
@@ -151,7 +166,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     },
     markCovered(section, family, covered = true) {
       const key = `${section}:${family}`;
-      state.learningCoverage[key] = { ...state.learningCoverage[key], covered: !!covered, at: clock() }; save();
+      state.learningCoverage[key] = { ...state.learningCoverage[key], covered: !!covered, coveredBy: 'manual', at: clock() }; save();
     },
     recordXp(n) { addXp(n); save(); },
     recordRun(run) {

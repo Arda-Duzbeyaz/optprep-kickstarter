@@ -35,7 +35,7 @@ try{
  await import('../app.js');await until(()=>root.querySelector('h1')?.textContent==='Today','Today');
  ok(root.textContent.includes('24 days to your deadline'));ok(root.textContent.includes('22:59'));ok(root.textContent.includes('23:59'));
  ok(root.textContent.includes('8 hours/week'));ok(root.querySelector('.daily-focus'));ok(root.querySelector('.daily-routine'));
- await route('#/s/bto','Beat the Odds');ok(button('Learn skills below'));ok(root.textContent.includes('0/2 difficulties verified'));
+ await route('#/s/bto','Beat the Odds');ok(button('Learn skills below'));ok(root.textContent.includes('Mixed checks follow learning'),'cold counters are secondary to the learning checklist');
  const mixedAction=root.querySelector('[data-action="mixed-practice"]');
  eq(mixedAction.textContent,'Start mixed practice · 10 questions');eq(mixedAction.getAttribute('href'),'#/run/bto/mixed/all');
  ok(!mixedAction.closest('details'),'the main mixed action is not hidden in optional tools');

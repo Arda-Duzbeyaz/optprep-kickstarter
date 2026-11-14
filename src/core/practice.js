@@ -49,7 +49,8 @@ export function validPractice(s, section = s?.section) {
       !Number.isInteger(c.hints) || c.hints < 0 || c.hints > item.hints.length ||
       !Number.isFinite(c.budgetMs) || c.budgetMs <= 0 || !validResponse(item, c.draft, { draft: true }) ||
       s.log.length !== s.index + Number(c.done) || s.log.some((r) => !record(r) || typeof r.family !== 'string' ||
-        typeof r.correct !== 'boolean' || !Number.isFinite(r.score) || !finite(r.ms) || !Number.isInteger(r.hints) || r.hints < 0)) return false;
+        typeof r.correct !== 'boolean' || !Number.isFinite(r.score) || !finite(r.ms) || !Number.isInteger(r.hints) || r.hints < 0 ||
+        r.skipped !== undefined && typeof r.skipped !== 'boolean')) return false;
     if (c.done) {
       if (!validResponse(item, c.response)) return false;
       const result = checkItem(item, c.response), last = s.log.at(-1);

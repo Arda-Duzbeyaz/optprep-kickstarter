@@ -26,7 +26,7 @@ import { setRail, scanSheet, bubbles, tickTo } from './sheet.js';
 import { mistakeRow } from '../core/mistakes.js';
 import { timingOf } from '../../config/presets.js';
 import { PRACTICE_BLOCK_SIZE, DRILL_COUNT, PRACTICE_VERSION, practiceHref } from '../core/practice.js';
-import { skillProgress, skillCheckpoint, checkpointLabel, checkpointText } from './practice-progress.js';
+import { skillProgress, skillCheckpoint, checkpointLabel, checkpointText, learningStatus, learningEvidence } from './practice-progress.js';
 import { recognitionProgress } from '../core/recognition.js';
 
 const VIEWS = { mcq: mcqView, rank: rankView, interval: intervalView, orderbook: orderbookView };
@@ -177,7 +177,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       h('button', { class: 'btn ghost', type: 'button', onclick: () => summary() }, 'End session'));
     const after = h('div', { 'aria-live': 'polite' });
     const skillSlot = h('div', {});
-    const updateLearningStrip = () => mount(levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, `${store.coverage(sectionId, family).covered ? 'Covered' : 'Not yet covered'} · question difficulty ${item.difficulty}`));
+    const updateLearningStrip = () => mount(levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, `${learningStatus(store.coverage(sectionId, family))} · question difficulty ${item.difficulty}`));
     const progress = h('progress', { class: 'practice-block-progress', max: limit, value: log.length, 'aria-label': 'Questions answered in this block' });
     const progressText = h('span', { class: 'small-note num' }, `${log.length}/${limit} answered`);
     const saveNote = resumable ? h('p', { class: 'small-note muted practice-save-note' }) : null;
@@ -191,8 +191,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
         h('div', { class: 'practice-block-status' }, progressText, progress),
         levelStrip,
         resumable && !family ? h('p', { class: 'small-note muted' }, `Mixed ${scope === 'covered' ? 'covered' : 'all'} skills · Topic and difficulty stay hidden until submission. ${standardTime ? 'Cold, unaided answers within training pace can verify a checkpoint.' : 'Extra-time practice does not earn checkpoints.'}`) : null,
+        mixedAttempt && !fresh ? h('p', { class: 'revision-notice', role: 'status' }, 'Previously seen question · revision only. This answer counts in your practice record and XP, but cannot advance a cold checkpoint. Some question families have small finite pools.') : null,
         tapSubmits && item.kind === 'mcq' ? h('p', { class: 'small-note muted' }, 'Tapping an option submits it.') : null,
-        body.el, hints?.box, controls, saveNote, skillSlot, after));
+        body.el, hints?.box, controls, saveNote, after, skillSlot));
     focusIn(root, '.prompt');
     Object.assign(current, { body, after, controls, famLabel, skillSlot, progress, progressText, saveNote, levelStrip });
     if (resumed) {
@@ -248,7 +249,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     current.ms = ms; current.response = response;
     const confidence = opts.confidence ?? (CALIBRATED.has(sectionId) && !response.skip ? 0.9 : undefined);
     const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0 && !current.aided;
-    log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, ms,
+    log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, skipped: !!response.skip, ms,
       levelBefore: store.mastery()[`${sectionId}:${item.family}`]?.lv || 0,
       recognitionBefore: [...(store.recognition()[`${sectionId}:${item.family}`]?.passed || [])] });
     store.recordAnswer(sectionId, item.family, {
@@ -284,7 +285,10 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
     if (mode === 'practice' && !fixedItems) {
       const p = skillCheckpoint(store, sectionId, item.family);
-      const notice = !mixedAttempt ? 'Learning attempt recorded. Focused practice cannot earn mixed checkpoints.'
+      const notice = !mixedAttempt ? family && log.length === limit
+        ? store.coverage(sectionId, family).covered ? 'Learning block complete · 10/10 saved. Your learning tick is recorded; cold mixed checks are the next stage.'
+          : 'Block complete and saved. Work through the skipped questions before ticking learning complete.'
+        : 'Learning attempt recorded. Focused practice cannot earn mixed checkpoints.'
         : !current.fresh ? 'Previously seen question: revision only; no cold checkpoint credit.'
           : !standardTime ? 'Extra-time practice: no checkpoint credit.'
             : current.aided || current.hints ? 'Help used: learning only; the cold streak resets.'
@@ -293,7 +297,8 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
                   : ms > current.budgetMs ? 'Correct, but over the training pace budget. Practise efficiency and retry in mixed practice.'
                     : store.recognition()[`${sectionId}:${item.family}`]?.lastReason === 'passed' ? `Generator difficulty ${item.difficulty} verified by three cold, paced successes. ${p.complete ? 'All supported difficulties are verified.' : `Next target: difficulty ${p.target}.`}`
                       : 'Cold success recorded. Your checkpoint counter is updated below.';
-      mount(current.skillSlot, skillProgress(store, sectionId, item.family, { budgetMs: current.budgetMs, notice, learning: !!family, onCoverage: () => mount(current.levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, store.coverage(sectionId, family).covered ? 'Covered' : 'Not yet covered')) }));
+      mount(current.skillSlot, skillProgress(store, sectionId, item.family, { budgetMs: current.budgetMs, notice, learning: !!family, onCoverage: () => mount(current.levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, learningStatus(store.coverage(sectionId, family)))) }));
+      if (family) mount(current.levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, learningStatus(store.coverage(sectionId, family))));
       if (mixedAttempt) mount(current.levelStrip, checkpointLabel(p), h('span', { class: 'small-note' }, checkpointText(p)));
     }
     current.after.querySelector('.btn.primary')?.focus({ preventScroll: true });
@@ -309,12 +314,15 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const byFam = new Map();
     for (const x of log) { const f = byFam.get(x.family) || { n: 0, c: 0 }; f.n++; f.c += x.correct ? 1 : 0; byFam.set(x.family, f); }
     const weakest = [...byFam.entries()].sort((a, b) => a[1].c / a[1].n - b[1].c / b[1].n)[0];
-    const nextSkill = resumable && family && store.coverage(sectionId, family).covered
-      ? section.families.find((f) => f.id !== family && !store.coverage(sectionId, f.id).covered) : null;
     const run = { section: sectionId, mode, score: log.reduce((s, x) => s + x.score, 0), max: n,
-      items: log, plannedCount: limit, completed: n === limit };
+      items: log, plannedCount: limit, completed: n === limit,
+      ...(resumable ? { family: family || null, scope, blockId: String(seed) } : {}) };
     if (mode === 'drill' && n) store.recordRun(run);
     if (resumable) store.finishPractice(sectionId, run);
+    const nextSkill = resumable && family && store.coverage(sectionId, family).covered
+      ? section.families.find((f) => f.id !== family && !store.coverage(sectionId, f.id).covered) : null;
+    const coveredCount = section.families.filter((f) => store.coverage(sectionId, f.id).covered).length;
+    const suggestMixed = resumable && family && store.coverage(sectionId, family).covered && coveredCount >= 2;
     if (setNumber != null && n === limit) store.recordSet(sectionId, setNumber, { score: Math.round(log.reduce((s, x) => s + x.score, 0) * 100) / 100, max: n, mode: 'practice' });
     const xpGain = store.xpTotal() - xp0;
     const spentS = Math.round(log.reduce((t, x) => t + x.ms, 0) / 1000);
@@ -324,16 +332,22 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       return h('li', { class: 'summary-row' },
         h('span', { class: 'summary-fam' }, familyTitle(section, f)),
         h('span', { class: 'num muted' }, `${v.c}/${v.n}`),
-        h('span', {}, marks, checkpointLabel(p)),
-        h('span', { class: 'small-note muted' }, store.coverage(sectionId, f).covered ? 'Covered' : 'Learning'));
+        h('span', {}, family ? h('strong', { class: 'learning-complete' }, learningStatus(store.coverage(sectionId, f))) : [marks, checkpointLabel(p)]),
+        h('span', { class: 'small-note muted' }, family ? learningEvidence(store.coverage(sectionId, f)) : learningStatus(store.coverage(sectionId, f))));
     });
     setRail(n / limit, n === limit ? 'Session complete' : `Session ended · ${n} of ${limit} answered`);
     mount(root, h('section', { class: 'field session-summary' },
       h('h2', { class: 'field-label' }, `${modeLabel(mode)} summary`),
       h('p', { class: 'small-note muted' }, n === limit ? `Block complete · ${n}/${limit} answered` : `Ended early · ${n}/${limit} answered. Submitted answers still count towards skill progress.`),
+      resumable && family && n === limit ? h('p', { class: 'learning-completion-note', role: 'status' },
+        store.coverage(sectionId, family).covered ? 'Learning complete and saved to Progress. This skill is covered; cold mixed checks are still to do.'
+          : 'Block saved to Progress. Revisit the skipped questions, then mark the skill covered or finish a block without skips.') : null,
       resumable ? h('p', { class: 'next-training-action' }, h('strong', {}, 'Next: '),
         !family ? weakest && weakest[1].c < weakest[1].n ? `Review your misses, repair ${familyTitle(section,weakest[0])}, then start another fresh mixed batch.` : 'Try another fresh mixed batch, or take a timed section for a full-clock check.'
-          : nextSkill ? 'Move to the next skill, then test the covered topics together in mixed practice.' : 'Keep learning until you can explain the method, mark it covered, then test it in mixed practice.') : null,
+          : suggestMixed ? 'Test your covered skills together in mixed practice. Return here to repair anything you cannot solve independently.'
+            : nextSkill ? 'Learn the next skill. Once two skills are covered, test them together in mixed practice.'
+              : n < limit ? 'Your partial learning is saved. Complete a fresh block or mark the skill covered once you understand the method.'
+                : 'Review any gaps, then test your covered topics in mixed practice. Use Mark covered only if you have worked through the skipped questions.') : null,
       n ? h('div', { class: 'summary-stats' },
         h('span', {}, h('span', { class: 'num big' }, `${correct}/${n}`), ' right'),
         h('span', {}, h('span', { class: 'num big xp-tick' }, '+0'), ' XP'),
@@ -341,9 +355,11 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
         : h('p', { class: 'muted' }, mode === 'mistakes' ? 'Nothing is due for review in this task right now.' : 'No questions answered.'),
       n ? h('ol', { class: 'summary-list' }, famRows) : null,
       h('div', { class: 'row' },
-        resumable ? h('button', { class: 'btn primary', type: 'button', onclick: () => { followingCleanup = runFeedbackSession(root, options); } }, `Start another ${PRACTICE_BLOCK_SIZE} questions`) : null,
-        resumable && family ? h('a', { class: 'btn', href: `#/run/${sectionId}/mixed/${section.families.filter((f) => store.coverage(sectionId,f.id).covered).length >= 2 ? 'covered' : 'all'}` }, 'Test in mixed practice') : null,
-        nextSkill ? h('a', { class: 'btn', href: `#/run/${sectionId}/practice/${nextSkill.id}` }, `Next skill: ${nextSkill.title}`) : null,
+        suggestMixed ? h('a', { class: 'btn primary', href: `#/run/${sectionId}/mixed/covered` }, 'Test in mixed practice') : null,
+        nextSkill ? h('a', { class: `btn${suggestMixed ? '' : ' primary'}`, href: `#/run/${sectionId}/practice/${nextSkill.id}` }, `Next skill: ${nextSkill.title}`) : null,
+        resumable ? h('button', { class: `btn${nextSkill || suggestMixed ? '' : ' primary'}`, type: 'button', onclick: () => { followingCleanup = runFeedbackSession(root, options); } }, `Start another ${PRACTICE_BLOCK_SIZE} questions`) : null,
+        resumable && family && !suggestMixed ? h('a', { class: 'btn', href: `#/run/${sectionId}/mixed/${coveredCount >= 2 ? 'covered' : 'all'}` }, 'Test in mixed practice') : null,
+        resumable && family && n ? h('a', { class: 'btn', href: '#/progress/skills' }, 'View saved progress') : null,
         weakest && weakest[1].c < weakest[1].n && lessonForFamily(sectionId, weakest[0]) ? h('a', { class: 'btn primary', href: `#/study/lesson/${lessonForFamily(sectionId, weakest[0])}` }, `Study: ${familyTitle(section, weakest[0])}`) : null,
         weakest && weakest[1].c < weakest[1].n ? h('a', { class: 'btn', href: `#/s/${sectionId}/learn/${weakest[0]}` }, `Worked examples: ${familyTitle(section, weakest[0])}`) : null,
         h('a', { class: 'btn ghost', href: `#/s/${sectionId}` }, 'Back to the roadmap'))));

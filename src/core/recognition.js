@@ -12,7 +12,7 @@ export function recognitionProgress(entry = {}, levels = [1]) {
   const verified = passed.filter((n) => !review.includes(n));
   const target = review[0] ?? available.find((n) => !passed.includes(n)) ?? available.at(-1);
   const streak = entry.target === target ? Math.max(0, Math.min(2, entry.run || 0)) : 0;
-  return { levels: available, passed, verified, review, target, streak, remaining: COLD_STREAK - streak,
+  return { levels: available, passed, verified, review, target, streak, remaining: COLD_STREAK - streak, attempts: entry.attempts || 0,
     complete: verified.length === available.length && !review.length };
 }
 
@@ -53,5 +53,9 @@ export function coverageInfo(coverage, legacy, recognition, stats) {
   const explicit = typeof coverage?.covered === 'boolean';
   const covered = explicit ? coverage.covered : (legacy?.lv || 0) >= 3 || !!recognition?.passed?.length;
   return { covered, started: covered || !!coverage || (stats?.n || 0) > 0,
-    source: explicit ? 'your coverage check' : (legacy?.lv || 0) >= 3 ? 'previous practice' : recognition?.passed?.length ? 'mixed checkpoint' : null };
+    completedBlocks: coverage?.completedBlocks || 0, completedAt: coverage?.completedAt || null,
+    learningAttempts: coverage?.attempts || 0, lastBlock: coverage?.lastBlock || null,
+    mixedAttempts: coverage?.mixedAttempts || 0, revisionAttempts: coverage?.revisionAttempts || 0,
+    source: explicit ? coverage.coveredBy === 'learning-block' ? 'completed learning block' : 'your coverage check'
+      : (legacy?.lv || 0) >= 3 ? 'previous practice' : recognition?.passed?.length ? 'mixed checkpoint' : null };
 }

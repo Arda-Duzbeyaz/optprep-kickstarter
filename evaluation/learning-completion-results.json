@@ -1,0 +1,93 @@
+{
+  "edition": "1.2.1-kickstarter.1",
+  "prepared": "2026-11-14",
+  "baseline": "1.2.0-kickstarter.1",
+  "baseline_revision": "040ae56d820fc114820fc37c43b2d82c388b9fdf",
+  "javascript": {
+    "passed": 844,
+    "failed": 0,
+    "skipped": 0
+  },
+  "python": {
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0
+  },
+  "cpp": {
+    "passed": 34,
+    "failed": 0
+  },
+  "unit_total": 914,
+  "new_completion_regression_tests": 18,
+  "full_entry_point_walkthrough": {
+    "assertions": 684,
+    "learningFamilies": 103,
+    "learningQuestions": 1040,
+    "assessments": 5,
+    "batchChecks": 5,
+    "mockReviews": 5,
+    "uncaughtErrors": 0
+  },
+  "existing_integration": {
+    "practice_flow_assertions": 104,
+    "learning_route_assertions": 100,
+    "shared_practice_assertions": 71,
+    "focused_interface_regressions": 11,
+    "original_ui_smoke": "passed",
+    "batch_smoke": "passed",
+    "broader_batch_router": "passed"
+  },
+  "preservation": {
+    "baselineVersion": "1.0.4-practice.1",
+    "unchangedOrdinarySourceFiles": 133,
+    "unchangedBaseSectionConfig": true,
+    "otherPresetsAndScoringUnchanged": true,
+    "authorisedInvitationClocks": true,
+    "licenceUnchanged": true,
+    "identicalMockPapers": 50,
+    "identicalMockQuestions": 990,
+    "snapshotVerifierCases": 780
+  },
+  "chrome_qa": {
+    "scenario": "Rendered-prompt-only UI answers: first two intentionally wrong, then eight correct; 8/10 dice learning block.",
+    "checks": [
+      "completion in Progress before Finish",
+      "final feedback resume without duplicate completion",
+      "Finish and next skill",
+      "completed roadmap row",
+      "reload persistence",
+      "desktop dark progress",
+      "390px dark responsive iframe progress and checklist"
+    ],
+    "phone_iframe_width": 390,
+    "phone_content_width": 375,
+    "phone_scroll_width": 375,
+    "horizontal_overflow": false,
+    "light_desktop": "inspected before final mobile-first ordering adjustment",
+    "physical_phone": "not tested",
+    "cross_browser": "not tested"
+  },
+  "freshness_limit": {
+    "easy_die_repeat_visible_domain": 4,
+    "regression_tested": true,
+    "freshness_rule_relaxed": false,
+    "generator_formulas_changed": false,
+    "revision_attempts_now_visible": true
+  },
+  "progress_compatibility": {
+    "schema": 2,
+    "completion_migration": 1,
+    "xp_and_minutes_preserved": true,
+    "legacy_completion_recovery": "retained full focused runs or valid completed active snapshots; aggregate activity alone is insufficient",
+    "explicit_revisit_choices_preserved": true
+  },
+  "limits": [
+    "Synthetic workflow answers do not independently verify every formula.",
+    "Finite visible-question pools can prevent unseen-question checkpoint completion after learning.",
+    "No access to the user actual browser save; no claim of verified recovery of their particular block.",
+    "No controlled learning-outcome trial or independent Optiver difficulty calibration."
+  ],
+  "live_github_pages_updated": false,
+  "implementation_revision": "2308ad6e5e91849540ba43a0624ca1bafac9f603",
+  "source_revision_meaning": "Local tested implementation; following metadata-only commit records provenance."
+}

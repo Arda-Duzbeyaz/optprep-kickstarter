@@ -75,7 +75,7 @@ export function pathPage(root, { store }) {
     focus ? h('section', { class: 'panel daily-focus' },
       h('p', { class: 'eyebrow' }, weekday === 0 ? 'Weekly benchmark' : weekday === 6 ? 'Catch-up and repair' : 'Suggested assessment today'),
       h('h2', {}, SECTIONS[focus.id].title),
-      h('p', {}, focus.map.skillsDone < 2 ? 'Learn a few skills with help. Mark them covered, then start mixed checks.' : 'Start a cold mixed batch. Review mistakes with ChatGPT, then repair one weakness.'),
+      h('p', {}, focus.map.skillsDone < 2 ? 'Learn a few skills with help. A full 10-question block without skips ticks learning automatically. Then start mixed checks.' : 'Start a cold mixed batch. Review mistakes with ChatGPT, then repair one weakness.'),
       weekday === 0 ? h('a', { class: 'btn primary', href: `#/run/${focus.id}/exam` }, 'Take a timed section') : null,
       weekday !== 0 && focus.map.skillsDone < 2 ? h('p', {}, h('a', { class: 'btn primary', href: nextSkill?.href || `#/s/${focus.id}` }, 'Learn the next skill')) : null,
       mixedPracticeAction(store,focus.id,{primary:weekday !== 0 && focus.map.skillsDone >= 2}),

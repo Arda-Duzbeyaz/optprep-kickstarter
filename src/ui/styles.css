@@ -769,6 +769,18 @@ input.study-input[type=number] { width: 120px; }
 .skill-progress-head { justify-content: space-between; margin-bottom: 10px; }
 .skill-progress-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .skill-progress-grid p { margin: 6px 0 0; }
+.learning-complete { color: var(--text); }
+.learning-completion-note { padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface-2); font-weight: 600; }
+.revision-notice { border-left: 3px solid var(--border-strong); padding: 8px 12px; font-size: 14px; background: var(--surface-2); }
+.cold-next-stage { align-self: start; }
+.cold-next-stage summary, .skill-records summary { cursor: pointer; font-weight: 600; }
+.cold-next-stage[open] summary, .skill-records[open] summary { margin-bottom: 10px; }
+.skill-records { margin: 16px 0; }
+.skill-record-list { list-style: none; padding: 0; margin: 0; }
+.skill-record-list li { border-top: 1px solid var(--border); padding: 12px 0; display: grid; gap: 4px; }
+.skill-record-list p { margin: 0; }
+.skill-record-title { font-weight: 600; }
+.grid-state .stamp { white-space: normal; }
 .skill-level-label { display: block; font-size: 13px; font-weight: 650; line-height: 1.4; margin: 4px 0; }
 .skill-next, .skill-mixed { display: block; max-width: 180px; line-height: 1.4; }
 .skill-notice { color: var(--text); font-weight: 600; }

@@ -2,6 +2,7 @@
 // and adds the new progress fields. Pure: no storage, no clock unless passed in.
 import { SRS_INTERVALS } from './srs.js';
 import { dayKey } from './activity.js';
+import { recoverLearningBlocks } from './learning.js';
 
 export const VERSION = 2;
 
@@ -10,7 +11,7 @@ export const blankV2 = () => ({
   trend: {}, mastery: {}, activity: { days: {}, xpBase: 0, freezes: 0, frozen: [] }, mistakes: [],
   recentQuestions: {}, recentStructures: {}, transferRuns: [], practiceRuleVersion: 1,
   activePractice: {}, mixedEvidence: {},
-  learningCoverage: {}, recognition: {},
+  learningCoverage: {}, recognition: {}, learningCompletionVersion: 1,
 });
 
 // The exam formats v1 runs were taken under, so readiness can tell a 60 s run from a 45 s one.
@@ -60,6 +61,13 @@ function shapeOk(raw) {
   }
   for (const row of Object.values(raw.learningCoverage || {})) {
     if (kind(row) !== 'object' || row.covered !== undefined && typeof row.covered !== 'boolean') return false;
+    for (const key of ['attempts', 'completedBlocks', 'mixedAttempts', 'revisionAttempts']) if (row[key] !== undefined && (!Number.isSafeInteger(row[key]) || row[key] < 0)) return false;
+    if (row.completedAt !== undefined && (!Number.isFinite(row.completedAt) || row.completedAt < 0)) return false;
+    if (row.blockIds !== undefined && (!Array.isArray(row.blockIds) || row.blockIds.some((id) => typeof id !== 'string' || !id) || new Set(row.blockIds).size !== row.blockIds.length)) return false;
+    if (row.lastBlock !== undefined && (kind(row.lastBlock) !== 'object' || typeof row.lastBlock.id !== 'string' ||
+      !Number.isFinite(row.lastBlock.at) || row.lastBlock.at < 0 || row.lastBlock.questions !== 10 ||
+      !Number.isInteger(row.lastBlock.correct) || row.lastBlock.correct < 0 || row.lastBlock.correct > 10 ||
+      !Number.isInteger(row.lastBlock.skipped) || row.lastBlock.skipped < 0 || row.lastBlock.skipped > 10)) return false;
   }
   for (const row of Object.values(raw.recognition || {})) {
     if (kind(row) !== 'object') return false;
@@ -78,6 +86,10 @@ export function migrate(raw, now = Date.now()) {
   if (kind(raw) !== 'object' || !Array.isArray(raw.runs) || !shapeOk(raw)) return null;
   if (raw.version === VERSION) {
     const state = { ...blankV2(), ...raw };
+    if (raw.learningCompletionVersion !== 1) {
+      state.learningCoverage = recoverLearningBlocks(state);
+      state.learningCompletionVersion = 1;
+    }
     if (raw.practiceRuleVersion !== 1) {
       // Old interval mastery did not require useful scores. Keep answers, exams,
       // lessons and XP; ask for new evidence only for these skill levels.

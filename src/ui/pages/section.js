@@ -12,7 +12,7 @@ import { sectionMap } from './section-map.js';
 import { bubbles, stamp, setRail } from '../sheet.js';
 import { icon } from '../icons.js';
 import { formatLine } from './format.js';
-import { levelGuide, checkpointLabel, checkpointText, resumePracticeCards } from '../practice-progress.js';
+import { levelGuide, checkpointLabel, checkpointText, resumePracticeCards, learningStatus, learningEvidence } from '../practice-progress.js';
 import { mixedPracticeAction } from '../practice-actions.js';
 
 // Some 80-in-8 reports write division as 735 : 15. The learner picks; items keep ÷ underneath.
@@ -25,18 +25,22 @@ function notationToggle(store) {
 function row(r, n, id) {
   // One action per row; the title opens the lesson, so the row never needs two buttons.
   const titleHref = r.href;
-  const verb = r.kind === 'skill' ? (r.state === 'needs-review' ? 'Repair' : 'Learn') : r.kind === 'lesson' ? 'Read' : 'Start';
+  const verb = r.kind === 'skill' ? (r.state === 'needs-review' ? 'Repair' : r.covered ? 'Revisit' : 'Learn') : r.kind === 'lesson' ? 'Read' : 'Start';
   const actions = [h('a', { class: `btn small${r.current ? ' primary' : ' ghost'}`, href: r.href, 'aria-label': `${verb}: ${r.title}` }, verb)];
   return h('li', { class: `grid-row${r.current ? ' is-current' : ''}${r.later ? ' is-later' : ''}${r.done ? ' is-done' : ''}`, id: r.current ? 'current-row' : null, 'aria-current': r.current ? 'step' : null },
     h('span', { class: 'grid-num num' }, String(n)),
     h('span', { class: 'grid-body' },
       h('a', { class: 'grid-title', href: titleHref }, r.title),
+      r.kind === 'skill' && r.learning?.started ? h('span', { class: 'small-note muted' }, learningEvidence(r.learning)) : null,
       r.current && r.kind === 'skill' && r.skill ? h('span', { class: 'grid-skill' }, r.skill) : null,
       r.current ? h('span', { class: 'you-are-here' }, icon('pencil', { size: 14 }), 'Suggested next step') : null),
     h('span', { class: 'grid-level' },
-      r.kind === 'skill' ? [bubbles(r.checkpoint.levels.length, r.checkpoint.verified.length, { label: `${r.checkpoint.verified.length} of ${r.checkpoint.levels.length} difficulties verified` }), checkpointLabel(r.checkpoint), h('span', { class: 'skill-next small-note muted' }, checkpointText(r.checkpoint))] : bubbles(1, r.done ? 1 : 0, { label: r.done ? 'Done' : 'Not done', current: r.current })),
+      r.kind === 'skill' ? r.checkpoint.attempts || r.checkpoint.passed.length
+        ? [bubbles(r.checkpoint.levels.length, r.checkpoint.verified.length, { label: `${r.checkpoint.verified.length} of ${r.checkpoint.levels.length} difficulties verified` }), checkpointLabel(r.checkpoint), h('span', { class: 'skill-next small-note muted' }, checkpointText(r.checkpoint))]
+        : h('span', { class: 'skill-next small-note muted' }, r.learning?.revisionAttempts ? 'Revision saved · fresh questions needed for cold checks' : r.covered ? 'Next: cold mixed checks' : 'Mixed checks follow learning')
+        : bubbles(1, r.done ? 1 : 0, { label: r.done ? 'Done' : 'Not done', current: r.current })),
     h('span', { class: 'grid-state' }, r.state === 'needs-review' ? stamp(r.state)
-      : r.kind === 'skill' ? h('span', { class: r.covered ? 'stamp stamp-mastered' : 'small-note muted' }, r.covered ? 'Covered' : 'To learn') : r.done ? stamp('mastered') : null),
+      : r.kind === 'skill' ? h('span', { class: r.covered ? 'stamp stamp-mastered' : 'small-note muted' }, r.covered ? [bubbles(1, 1, { label: 'Learning covered' }), ' ', learningStatus(r.learning)] : learningStatus(r.learning || {})) : r.done ? stamp('mastered') : null),
     h('span', { class: 'grid-actions' }, actions));
 }
 
@@ -60,7 +64,7 @@ export function sectionPage(root, { store, id }) {
       h('div', { class: 'training-options' },
         h('section', { class: 'training-option training-option-main' }, h('h2', {}, 'Mixed practice'),
           h('p', {}, 'Your main daily workout. Varied questions with feedback after every answer.'), mixedPracticeAction(store,id)),
-        h('section', { class: 'training-option' }, h('h2', {}, 'Learn or repair'), h('p', {}, 'Choose a skill below. Use ChatGPT or hints, then mark it covered.'),
+        h('section', { class: 'training-option' }, h('h2', {}, 'Learn or repair'), h('p', {}, 'Choose a skill below. Use ChatGPT or hints. A full block without skips ticks learning automatically.'),
           h('button', { class: 'btn', type: 'button', onclick: () => root.querySelector('#skills')?.scrollIntoView({ block: 'start' }) }, 'Learn skills below')),
         h('section', { class: 'training-option' }, h('h2', {}, 'Timed section'), h('p', {}, 'Practise the full section clock. Review answers after finishing.'),
           h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Timed section'))),

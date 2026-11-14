@@ -8,22 +8,36 @@ import { dayKey, addDays } from '../../core/activity.js';
 import { lessonForFamily } from '../../study/catalog.js';
 import { PRACTICE_FAMILIES as FAMILIES } from '../../practice/catalog.js';
 import { activePreset, presetSections } from '../../../config/presets.js';
-import { levelGuide, skillCheckpoint } from '../practice-progress.js';
+import { levelGuide, skillCheckpoint, learningStatus, learningEvidence, checkpointText } from '../practice-progress.js';
 
 function skillsTab(store) {
   const ids = presetSections(activePreset()).filter((id) => FAMILIES[id]);
-  return h('div', {}, h('p', { class: 'lede' }, 'Coverage records what you have learned. Mixed checkpoints record fresh, unaided performance at training pace. They are separate measures.'),
+  return h('div', {}, h('p', { class: 'lede' }, 'Coverage records what you have learned. Your completed blocks and skill records are saved below.'),
     levelGuide(),
     ids.map((id) => {
-      const rows = FAMILIES[id].map((f) => ({ ...store.coverage(id,f.id), checkpoint: skillCheckpoint(store,id,f.id), n: store.stats()[`${id}:${f.id}`]?.n || 0 }));
+      const rows = FAMILIES[id].map((f) => ({ family: f, ...store.coverage(id,f.id), checkpoint: skillCheckpoint(store,id,f.id), n: store.stats()[`${id}:${f.id}`]?.n || 0 }));
+      const started = rows.filter((r) => r.started);
+      const blocks = rows.reduce((sum, r) => sum + r.completedBlocks, 0);
       const count = (fn) => rows.filter(fn).length;
       return h('section', { class: 'panel skill-overview' }, h('h2', {}, SECTIONS[id].title),
         h('p', { class: 'small-note muted' }, `${count((r) => r.started)}/${rows.length} skills started · ${rows.reduce((sum, r) => sum + r.n, 0)} questions answered`),
-        h('div', { class: 'skill-overview-counts' },
-          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.covered)}/${rows.length}`), ' covered'),
-          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.verified.length > 0)}/${rows.length}`), ' with a verified difficulty'),
-          h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.complete)}/${rows.length}`), ' all supported difficulties verified')),
-        h('p', { class: 'small-note muted' }, `${count((r) => r.checkpoint.review.length)}/${rows.length} skills need a mixed recheck. Earlier levels remain in the previous practice record on each skill.`),
+        h('p', { class: 'learning-block-total' }, `${blocks} learning block${blocks === 1 ? '' : 's'} completed · ${count((r) => r.covered)}/${rows.length} skills covered`),
+        started.length ? h('details', { class: 'skill-records', open: true }, h('summary', {}, `Your skill records (${started.length})`),
+          h('ul', { class: 'skill-record-list' }, started.map((r) => h('li', { 'data-skill': `${id}:${r.family.id}` },
+            h('a', { href: `#/run/${id}/practice/${r.family.id}`, class: 'skill-record-title' }, r.family.title),
+            h('strong', { class: r.covered ? 'learning-complete' : null }, learningStatus(r)),
+            h('p', { class: 'small-note' }, learningEvidence(r)),
+            r.completedAt ? h('p', { class: 'small-note muted' }, `Last block: ${when(r.completedAt)}${r.lastBlock ? ` · ${r.lastBlock.correct}/${r.lastBlock.questions} correct${r.lastBlock.skipped ? ` · ${r.lastBlock.skipped} skipped` : ''}` : ''}`) : null,
+            h('p', { class: 'small-note muted' }, r.revisionAttempts && !r.checkpoint.attempts
+              ? `Mixed: ${r.mixedAttempts} attempts · ${r.revisionAttempts} previously seen. Revision saved; fresh cold evidence still needed.`
+              : `${r.checkpoint.attempts || r.checkpoint.passed.length ? 'Mixed: ' : ''}${checkpointText(r.checkpoint)}${r.mixedAttempts ? ` · ${r.mixedAttempts} attempts, ${r.revisionAttempts} revision` : ''}`)))))
+          : h('p', { class: 'small-note muted' }, 'No learning or practice recorded for this assessment yet.'),
+        h('details', { class: 'skill-records' }, h('summary', {}, 'Cold mixed-check totals'),
+          h('p', { class: 'small-note muted' }, 'These measure fresh, unaided mixed performance at training pace. Learning completion is recorded above.'),
+          h('div', { class: 'skill-overview-counts' },
+            h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.verified.length > 0)}/${rows.length}`), ' with a verified difficulty'),
+            h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.complete)}/${rows.length}`), ' all supported difficulties verified')),
+          h('p', { class: 'small-note muted' }, `${count((r) => r.checkpoint.review.length)}/${rows.length} skills need a mixed recheck. Earlier levels remain in the previous practice record on each skill.`)),
         h('a', { class: 'btn', href: `#/s/${id}` }, 'View skills and checkpoints'));
     }));
 }
