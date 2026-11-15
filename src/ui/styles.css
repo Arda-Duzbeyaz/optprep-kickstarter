@@ -771,7 +771,7 @@ input.study-input[type=number] { width: 120px; }
 .skill-progress-grid p { margin: 6px 0 0; }
 .learning-complete { color: var(--text); }
 .learning-completion-note { padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface-2); font-weight: 600; }
-.revision-notice { border-left: 3px solid var(--border-strong); padding: 8px 12px; font-size: 14px; background: var(--surface-2); }
+.practice-repeat-note { display: block; font-size: 11px; line-height: 1.4; margin: -4px 0 10px; }
 .cold-next-stage { align-self: start; }
 .cold-next-stage summary, .skill-records summary { cursor: pointer; font-weight: 600; }
 .cold-next-stage[open] summary, .skill-records[open] summary { margin-bottom: 10px; }

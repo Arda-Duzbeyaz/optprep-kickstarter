@@ -1,0 +1,94 @@
+{
+  "edition": "1.3.0-kickstarter.1",
+  "baseline_edition": "1.2.2-kickstarter.1",
+  "baseline_revision": "d72f034086496d0e6c09dcb364ee2fa1ea40c6b1",
+  "unit_tests": {
+    "javascript": 879,
+    "python": 36,
+    "cpp": 34,
+    "total": 949,
+    "failures": 0
+  },
+  "integration": {
+    "scripts": 10,
+    "all_passed": true,
+    "full_entrypoint_assertions": 680,
+    "learning_families": 103,
+    "learning_answers": 1040,
+    "practice_flow_assertions": 104,
+    "learning_route_assertions": 100,
+    "shared_practice_assertions": 71,
+    "freshness_flow_assertions": 151,
+    "unseen_session_assertions": 24,
+    "focused_interface_regressions": 11,
+    "uncaught_walkthrough_errors": 0
+  },
+  "variation": {
+    "practice_families": 103,
+    "supported_family_levels": 249,
+    "samples_per_level": 512,
+    "samples_per_release": 127488,
+    "changed_families": 7,
+    "preserved_families": 96,
+    "complete_dice_catalogues": 120,
+    "expanded_repeated_die_variants": 78,
+    "uniform_coupon_states": 75,
+    "additional_seeded_verifier_checks": 3000
+  },
+  "sessions": {
+    "learning_exposures": 1030,
+    "mixed_questions": 1500,
+    "mixed_repeats_before": 63,
+    "mixed_repeats_after": 0,
+    "mock_papers": 150,
+    "mock_questions": 2970,
+    "mock_repeats_before": 0,
+    "mock_repeats_after": 0,
+    "batch_questions": 1000,
+    "batch_repeats": 0,
+    "after_fresh_search_stops": 0
+  },
+  "preserved_source_groups": [
+    "config",
+    "src/core/check.js",
+    "src/core/readiness.js",
+    "src/core/store.js",
+    "src/core/recognition.js",
+    "src/core/learning.js",
+    "src/core/migrate.js",
+    "LICENSE"
+  ],
+  "browser_visual_qa": {
+    "browser": "Chrome",
+    "desktop": true,
+    "responsive_iframe_width": 390,
+    "phone_content_width": 375,
+    "phone_scroll_width": 375,
+    "legacy_saved_question_retained": true,
+    "new_specified_face_question_and_solution_verified": true,
+    "save_exit_resume_same_question": true,
+    "physical_phone_tested": false,
+    "other_browsers_tested": false,
+    "multi_tab_note": "Use one active practice tab; the existing snapshot store does not merge concurrent tab writes.",
+    "preview_stopped": true
+  },
+  "legacy_orderbook_performance": {
+    "max_sampled_cards": 6,
+    "negative_lookups": 20,
+    "elapsed_ms": 104
+  },
+  "source_revision_file": "SOURCE_REVISION.txt",
+  "live_github_pages_updated": false,
+  "comparison_report": "evaluation/reasoning-diversity-results.json",
+  "comparison_sha256": "e11abd1e54e0d37088b8089f78c76505f5ecb6043e30029a9f281b6f5f6c6def",
+  "flow_report": "evaluation/reasoning-diversity-flows.json",
+  "limits": [
+    "Local bounded history: 8,000 keys per assessment.",
+    "Non-enumerated generator searches are bounded.",
+    "Old saved current items are preserved; strict freshness applies to new draws.",
+    "Generator branch signatures are not concepts or proven human transfer.",
+    "No independent Optiver difficulty/scoring calibration."
+  ],
+  "source_revision": "25d92dcc7a7a4289f5e070babbb13b04d291ff02",
+  "source_revision_meaning": "Tested local implementation; the following metadata-only commit records this provenance."
+}

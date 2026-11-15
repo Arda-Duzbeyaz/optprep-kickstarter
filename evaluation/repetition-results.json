@@ -1,0 +1,112 @@
+{
+  "before": "1.2.1-kickstarter.1",
+  "method": "512 independently seeded reference prompts per family at its lowest supported difficulty; begin with up to 20 recorded reference prompts, then draw 20 times per family. A repeat is proven avoidable only when a witnessed same-family/same-difficulty reference prompt remains unseen.",
+  "familySweep": {
+    "before": {
+      "families": 103,
+      "draws": 2060,
+      "repeated": 640,
+      "witnessedAvoidableRepeats": 15,
+      "bySection": {
+        "bto": {
+          "families": 34,
+          "draws": 680,
+          "repeated": 513,
+          "witnessedAvoidableRepeats": 12
+        },
+        "nl": {
+          "families": 30,
+          "draws": 600,
+          "repeated": 86,
+          "witnessedAvoidableRepeats": 2
+        },
+        "ll": {
+          "families": 16,
+          "draws": 320,
+          "repeated": 0,
+          "witnessedAvoidableRepeats": 0
+        },
+        "iv": {
+          "families": 15,
+          "draws": 300,
+          "repeated": 41,
+          "witnessedAvoidableRepeats": 1
+        },
+        "ob": {
+          "families": 8,
+          "draws": 160,
+          "repeated": 0,
+          "witnessedAvoidableRepeats": 0
+        }
+      },
+      "elapsedMs": 3504
+    },
+    "after": {
+      "families": 103,
+      "draws": 2060,
+      "repeated": 638,
+      "witnessedAvoidableRepeats": 0,
+      "bySection": {
+        "bto": {
+          "families": 34,
+          "draws": 680,
+          "repeated": 513,
+          "witnessedAvoidableRepeats": 0
+        },
+        "nl": {
+          "families": 30,
+          "draws": 600,
+          "repeated": 85,
+          "witnessedAvoidableRepeats": 0
+        },
+        "ll": {
+          "families": 16,
+          "draws": 320,
+          "repeated": 0,
+          "witnessedAvoidableRepeats": 0
+        },
+        "iv": {
+          "families": 15,
+          "draws": 300,
+          "repeated": 40,
+          "witnessedAvoidableRepeats": 0
+        },
+        "ob": {
+          "families": 8,
+          "draws": 160,
+          "repeated": 0,
+          "witnessedAvoidableRepeats": 0
+        }
+      },
+      "elapsedMs": 18371
+    }
+  },
+  "lastUnseenDice": {
+    "before": {
+      "cases": 630,
+      "repeatedDespiteKnownUnseenVariant": 293
+    },
+    "after": {
+      "cases": 630,
+      "repeatedDespiteKnownUnseenVariant": 0
+    }
+  },
+  "preservation": {
+    "originalGeneratorFilesUnchanged": 133,
+    "mockPapersIdentical": 50,
+    "mockQuestionsIdentical": 990,
+    "assessmentConfigurationUnchanged": true,
+    "licenceUnchanged": true
+  },
+  "limitations": [
+    "A reference sweep witnesses unseen alternatives but does not enumerate every procedural family.",
+    "Only the two explicitly enumerated dice families have a complete-domain no-repeat guarantee at each supported difficulty.",
+    "Other families use a bounded 256-candidate search. A rare unseen variant can remain undiscovered.",
+    "Repeat history is the existing bounded saved exposure history, not unlimited cross-device knowledge.",
+    "Unseen visible prompts do not establish unfamiliar mathematical structure or empirical Optiver difficulty."
+  ],
+  "after": "1.2.2-kickstarter.1",
+  "prepared": "2026-11-14",
+  "implementation_revision": "7251d24cd73498c99228fd6b6d2a8d841dfd325d",
+  "source_revision_meaning": "Local tested implementation; following metadata-only commit records provenance."
+}

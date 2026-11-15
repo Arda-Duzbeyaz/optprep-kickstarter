@@ -10,6 +10,7 @@ export default family({
   skill: 'Know the primes to 100; test 2p ± c and p² when terms are near primes',
   levels: [2, 3],
   view: 'table',
+  missing: 3,
   show: (d) => (d === 2 ? 6 : 5),
   params: (rng, d) => {
     if (d === 2) return { s: rng.int(0, 10), al: 1, be: 0, sq: false };

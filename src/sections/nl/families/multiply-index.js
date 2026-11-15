@@ -7,6 +7,7 @@ export default family({
   levels: [2, 3],
   view: 'table',
   show: 5,
+  missing: 3,
   params: (rng, d) => (d === 2 ? { a: rng.pick([1, 2, 3, 5]), s: rng.pick([1, 2]), c: 0 } : { a: rng.int(1, 4), s: rng.pick([0, 1]), c: nz(rng, -3, 3) }),
   terms: ({ a, s, c }, n) => { const out = [q(a)]; for (let i = 1; i < n; i++) out.push(out[i - 1].mul(q(i + s)).add(q(c))); return out; },
   rule: ({ s, c }) => `multiply by ${1 + s}, ${2 + s}, ${3 + s}, …${c ? `, then ${c < 0 ? 'subtract' : 'add'} ${Math.abs(c)}` : ''}`,

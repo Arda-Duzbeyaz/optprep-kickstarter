@@ -18,7 +18,7 @@ export default family({
   skill: 'Split each fraction into numerator and denominator and solve the two sequences separately',
   levels: [3, 4, 5],
   view: 'parts',
-  show: 5,
+  show: (difficulty, params) => params.shownCount || 5,
   display: 'frac',
   params: (rng, d) => {
     if (d === 3) return { num: ['arith', rng.int(1, 5), rng.int(1, 4)], den: ['arith', rng.int(2, 9), rng.int(1, 5)] };
@@ -26,10 +26,10 @@ export default family({
       { num: ['arith', rng.int(1, 7), rng.pick([1, 2, 3])], den: ['geo', rng.int(2, 3), 2] },
       { num: ['sq', rng.int(1, 3)], den: ['arith', rng.int(2, 9), rng.int(2, 5)] },
     ]);
-    return rng.pick([
+    return { ...rng.pick([
       { num: ['fib', rng.int(1, 4)], den: ['fib', 0], fibPair: true },
       { num: ['prime', rng.int(0, 3)], den: ['sq', rng.int(2, 4)] },
-    ]);
+    ]), shownCount: rng.int(4, 7) };
   },
   accept: (p, xs) => xs.every((x) => x.d !== 1n && x.n > 0n),
   terms: (p, n) => {

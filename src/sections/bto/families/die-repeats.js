@@ -1,4 +1,4 @@
-// One die, several throws: all different, all the same, no equal neighbours, some repeat.
+// One die, several throws: distinguish a named target, global matches and neighbours.
 import { Q } from '../../../core/rational.js';
 import { nPr, nCr } from '../../../core/combinatorics.js';
 import { mcqItem, agree, qpow, q, sequences, table } from '../lib.js';
@@ -6,7 +6,18 @@ import { mcqItem, agree, qpow, q, sequences, table } from '../lib.js';
 const ID = 'die-repeats';
 const words = ['', 'one', 'two', 'three', 'four', 'five'];
 
-function build(kind, n, k) {
+// Shared discrete input domain for generation and exhaustive fresh-question selection.
+// Answers are independently checked by enumerating outcomes below.
+export function repeatInputs(difficulty) {
+  const kinds = difficulty === 1 ? ['allDiff', 'allSame', 'allTarget']
+    : ['allDiff', 'noAdjacent', 'someRepeat', 'adjacentRepeat', 'returnFirst'];
+  const sides = difficulty === 1 ? [4, 6, 8] : [4, 6, 8, 10, 12];
+  return kinds.flatMap((kind) => sides.flatMap((k) =>
+    Array.from({ length: difficulty === 1 ? 2 : k > 6 ? 2 : 3 }, (_, i) => ({ kind, k, n: (difficulty === 1 ? 2 : 3) + i }))
+      .flatMap((input) => kind === 'allTarget' ? Array.from({ length: k }, (_, i) => ({ ...input, face: i + 1 })) : [input])));
+}
+
+function build(kind, n, k, face) {
   const total = k ** n;
   const die = k === 6 ? 'one die' : `a fair ${k}-sided die`;
   const all = n === 2 ? 'both' : `all ${words[n]}`;
@@ -20,6 +31,72 @@ function build(kind, n, k) {
   const allowed = (perThrow, caption) => table(['Throw', 'Faces allowed', 'Factor'], perThrow.map((a, i) => [i + 1, a, `${a}/${k}`]), caption);
   const freeThen = (x) => Array.from({ length: n }, (_, i) => (i === 0 ? k : x));
   const shrinking = Array.from({ length: n }, (_, i) => k - i);
+  if (kind === 'allTarget') {
+    const target = face ?? (k === 6 ? 6 : 1), value = q(1, total);
+    return {
+      value,
+      text: `You throw ${die} ${words[n]} times. What is the probability that every throw shows ${target}?`,
+      distractors: [
+        { value: allSame, misconception: 'Allowed any common face. Here the face is specified, so the first throw must also hit the target.' },
+        { value: q(1, k), misconception: 'Counted only one throw. Every throw must hit the named face.' },
+        { value: q(n, k), misconception: 'Added the chances instead of multiplying independent requirements.' },
+        { value: q(1).sub(qpow(q(k - 1, k), n)), misconception: 'Computed at least one target face, rather than every throw hitting it.' },
+      ],
+      steps: [
+        { say: `The target ${target} is specified before the first throw, so each throw has exactly 1 allowed face out of ${k}.`, why: 'Unlike "all the same", the first throw is not free.' },
+        { say: `P = (1/${k})^${n} = ${value}.`, why: `Exactly one of the ${total} ordered sequences works.` },
+      ],
+      hints: ['Is the face chosen before the throws, or by the first throw?', `The first throw must also show ${target}.`, `Multiply 1/${k} for all ${n} throws.`],
+      fast: `A named face on every throw: (1/${k})^${n} = ${value}.`,
+      check: `Any common face has probability ${allSame}; specifying which face divides that by ${k}.`,
+      picture: allowed(Array(n).fill(1), `All ${n} throws have one allowed face, including throw 1. Product ${value}.`),
+    };
+  }
+  if (kind === 'adjacentRepeat') {
+    const value = q(1).sub(noAdj);
+    return {
+      value,
+      text: `You throw ${die} ${words[n]} times. What is the probability that at least one pair of consecutive throws shows the same face?`,
+      distractors: [
+        { value: repeat, misconception: 'Included non-consecutive matches. A repeated face separated by other faces does not necessarily satisfy this event.' },
+        { value: noAdj, misconception: 'Answered no equal neighbours, the complement of the question.' },
+        { value: q(n - 1, k), misconception: 'Added the neighbouring-pair probabilities; a sequence can contain more than one matching pair.' },
+        { value: allSame, misconception: 'Required every throw to match, rather than at least one neighbouring pair.' },
+      ],
+      steps: [
+        { say: 'The complement is that every throw after the first differs from its immediate predecessor.', why: 'That excludes every neighbouring match at once.' },
+        { say: `P(no equal neighbours) = (${k - 1}/${k})^${n - 1} = ${noAdj}.`, why: 'The first throw is free; each later throw must avoid exactly one face.' },
+        { say: `P = 1 − ${noAdj} = ${value}.`, why: 'Complement rule.' },
+      ],
+      hints: ['What rules out every matching neighbouring pair?', 'Require each throw to differ from the one just before it, then take the complement.'],
+      fast: `1 − (${k - 1}/${k})^${n - 1} = ${value}.`,
+      check: `Neighbouring matches are a subset of all repeats, so this cannot exceed P(any repeat) = ${repeat}.`,
+      picture: allowed(freeThen(k - 1), `Count no equal neighbours first (${noAdj}); subtract this from 1.`),
+    };
+  }
+  if (kind === 'returnFirst') {
+    const value = q(nPr(k, n - 1), total);
+    const counts = [...shrinking.slice(0, -1), 1];
+    return {
+      value,
+      text: `You throw ${die} ${words[n]} times. What is the probability that the first ${words[n - 1]} throws all show different faces and the last throw matches the first?`,
+      distractors: [
+        { value: allDiff, misconception: 'Required the last throw to be new too; it must instead return to the first face.' },
+        { value: q(1, k), misconception: 'Counted only the final match, ignoring the earlier distinct-face requirement.' },
+        { value: q(nPr(k, n - 1), k ** (n - 1)), misconception: 'Counted the distinct prefix but omitted the final match.' },
+        { value: allSame, misconception: 'Required all throws to match, but the prefix must have distinct faces.' },
+      ],
+      steps: [
+        { say: `The first ${n - 1} throws have ${nPr(k, n - 1)} ordered distinct-face possibilities.`, why: 'Choose each new face from those not yet used.' },
+        { say: 'The last throw has exactly one allowed face: the first one.', why: 'The final requirement is a match, not another new face.' },
+        { say: `P = ${counts.map((c) => `${c}/${k}`).join(' × ')} = ${value}.`, why: `There are ${nPr(k, n - 1)} favourable sequences out of ${total}.` },
+      ],
+      hints: ['Split the distinct prefix from the final return.', 'The final throw has one allowed face, whatever the first face was.'],
+      fast: `${counts.map((c) => `${c}/${k}`).join(' × ')} = ${value}.`,
+      check: `The event is contained in "last matches first", probability 1/${k}; the prefix condition makes it smaller.`,
+      picture: allowed(counts, `Use shrinking choices for the prefix, then exactly 1 choice for the final return. Product ${value}.`),
+    };
+  }
   if (kind === 'allDiff') return {
     value: allDiff,
     text: n === 2
@@ -27,7 +104,7 @@ function build(kind, n, k) {
       : `You throw ${die} ${words[n]} times. What is the probability that all ${words[n]} throws show different faces?`,
     distractors: [
       { value: noAdj, misconception: 'Only required each throw to differ from the one just before it. "All different" means every throw must avoid every earlier face.' },
-      { value: q(1).sub(allSame), misconception: 'Treated "all different" as the complement of "all the same". Most sequences are neither, for example 3, 3, 5.' },
+      { value: q(1).sub(allSame), misconception: 'Treated "all different" as the complement of "all the same". Many sequences are neither, for example 1, 1, 2.' },
       { value: new Q(nCr(k, n), BigInt(total)), misconception: `Counted sets of faces (C(${k},${n})) instead of ordered sequences: each set can appear in ${n}! orders.` },
       { value: qpow(q(1, k), n - 1), misconception: 'Computed "all the same" instead of "all different".' },
       { value: qpow(q(k - 1, k), n), misconception: `Applied the factor ${k - 1}/${k} to every throw, including the first, which cannot clash with anything.` },
@@ -70,7 +147,7 @@ function build(kind, n, k) {
     value: noAdj,
     text: `You throw ${die} ${words[n]} times. What is the probability that no two consecutive throws show the same face?`,
     distractors: [
-      { value: allDiff, misconception: 'Required all faces to be different. The rule only forbids equal neighbours; 2, 5, 2 is allowed.' },
+      { value: allDiff, misconception: 'Required all faces to be different. The rule only forbids equal neighbours; 1, 2, 1 is allowed.' },
       { value: qpow(q(k - 1, k), n), misconception: 'Applied the "differ" condition to the first throw too. The first throw has nothing before it.' },
       { value: q(1).sub(allSame), misconception: 'Only excluded sequences where all throws are equal.' },
       { value: q(1).sub(q(n - 1, k)), misconception: `Subtracted 1/${k} for each neighbouring pair as if the "pair i matches" events were disjoint.` },
@@ -116,21 +193,19 @@ export default {
   levels: [1, 2],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const kind = difficulty === 1 ? rng.pick(['allDiff', 'allSame']) : rng.pick(['allDiff', 'noAdjacent', 'someRepeat']);
-    const k = difficulty === 1 ? 6 : rng.pick([4, 6, 6, 8, 10, 12]);
-    const n = difficulty === 1 ? rng.int(2, 3) : rng.int(3, k > 6 ? 4 : 5);
-    const b = build(kind, n, k);
+    const { kind, k, n, face } = rng.pick(repeatInputs(difficulty));
+    const b = build(kind, n, k, face);
     return mcqItem(ID, rng, difficulty, {
       ...b,
       rule: 'Chain the conditionals: P(throw k is allowed | earlier throws), multiply; use 1 − P(all different) for "some repeat".',
-      anchor: 'A single throw has 6 equally likely faces; several throws multiply those chances, with the allowed count changing as faces get used.',
-      data: { kind, n, k },
+      anchor: `A single throw has ${k} equally likely faces; several throws multiply the conditional chances, with the allowed count set by the constraint.`,
+      data: { kind, n, k, ...(face ? { face } : {}) },
     });
   },
 
   // Independent check: enumerate every one of the k^n sequences.
   verify(item) {
-    const { kind, n, k } = item.params;
+    const { kind, n, k, face } = item.params;
     let hits = 0, total = 0;
     for (const s of sequences(k, n)) {
       total++;
@@ -140,6 +215,9 @@ export default {
       if (kind === 'allSame' && distinct === 1) hits++;
       if (kind === 'noAdjacent' && !adj) hits++;
       if (kind === 'someRepeat' && distinct < n) hits++;
+      if (kind === 'allTarget' && s.every((x) => x === (face ?? (k === 6 ? 6 : 1)))) hits++;
+      if (kind === 'adjacentRepeat' && adj) hits++;
+      if (kind === 'returnFirst' && new Set(s.slice(0, -1)).size === n - 1 && s.at(-1) === s[0]) hits++;
     }
     return agree(item, hits / total);
   },

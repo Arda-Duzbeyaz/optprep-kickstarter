@@ -35,13 +35,15 @@ export function validPractice(s, section = s?.section) {
       (s.scope !== undefined && !['all', 'covered'].includes(s.scope)) ||
       (s.familyPool !== undefined && (!Array.isArray(s.familyPool) || !s.familyPool.length || s.familyPool.length > 200 || !s.familyPool.every((id) => typeof id === 'string' && /^[\w-]+$/.test(id)))) ||
       !(s.family == null || typeof s.family === 'string' && /^[\w-]+$/.test(s.family)) ||
+      (s.difficulty !== undefined && (!s.family || !Number.isInteger(s.difficulty) || s.difficulty < 1 || s.difficulty > 5)) ||
       !(typeof s.seed === 'string' || Number.isFinite(s.seed)) ||
       !Number.isInteger(s.rngState) || s.rngState < 0 || s.rngState > 0xffffffff ||
       !Number.isInteger(s.count) || s.count < 1 || s.count > 100 ||
       !Number.isInteger(s.index) || s.index < 0 || s.index >= s.count ||
       !Array.isArray(s.log) || !finite(s.xp0) || !record(s.lv0) || !finite(s.savedAt)) return false;
     const c = s.current, item = c?.item;
-    if (!record(c) || !record(item) || item.section !== section || (s.family && item.family !== s.family) || validateItem(item).length ||
+    if (!record(c) || !record(item) || item.section !== section || (s.family && item.family !== s.family) ||
+      (s.difficulty !== undefined && item.difficulty !== s.difficulty) || validateItem(item).length ||
       (s.familyPool && (!s.familyPool.includes(item.family) || s.log.some((r) => !s.familyPool.includes(r.family)))) ||
       typeof c.fresh !== 'boolean' || typeof c.done !== 'boolean' || !finite(c.elapsedMs) ||
       (c.interrupted !== undefined && typeof c.interrupted !== 'boolean') ||

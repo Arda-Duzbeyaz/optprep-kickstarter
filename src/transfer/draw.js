@@ -1,6 +1,6 @@
 import { makeRng } from '../core/rng.js';
-import { nearestLevel } from '../core/draw.js';
-import { questionKey } from '../core/questions.js';
+import { nearestLevel, practiceItem } from '../core/draw.js';
+import { questionKey, questionSeen } from '../core/questions.js';
 import { structureKey } from './profile.js';
 import { TRANSFER_FAMILIES } from './index.js';
 import { presentation } from '../core/presentation.js';
@@ -25,10 +25,18 @@ export function transferItems(modules, { seed, questionHistory = {}, structureHi
       for (let attempt = 0; attempt < 24; attempt++) {
         const family = pool[attempt % pool.length], difficulty = nearestLevel(family.levels, rng.pick([2, 3, 4]));
         const item = family.generate(rng.fork(`${section}:${i}:${attempt}:${rng.int(0, 2 ** 30)}`), { difficulty });
-        const key = questionKey(item), structure = structureKey(item), repeat = exactSeen.has(key);
+        const key = questionKey(item), structure = structureKey(item), repeat = questionSeen(exactSeen, item);
+        if (repeat) continue;
         const cost = 10000 * Number(repeat) + 100 * Number(runStructures.has(structure)) + 20 * Number(runFamilies.has(family.id)) + 5 * Number(structureSeen.has(structure));
         if (cost < bestCost) { best = { item, key, structure, repeat }; bestCost = cost; }
         if (cost === 0) break;
+      }
+      if (!best) {
+        // An exhausted preferred family must not force a recycled batch question.
+        const item = practiceItem({ ...modules[section], families: all }, rng, {}, { requireFresh: true,
+          excludeKeys: exactSeen, preferStructures: structureSeen, avoidFamilies: [...runFamilies],
+          targets: Object.fromEntries(all.map((f) => [f.id, nearestLevel(f.levels, rng.pick([2, 3, 4]))])) });
+        best = { item, key: questionKey(item), structure: structureKey(item), repeat: false };
       }
       exactSeen.add(best.key); runStructures.add(best.structure); runFamilies.add(best.item.family);
       const newStructure = !structureSeen.has(best.structure); structureSeen.add(best.structure);

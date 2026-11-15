@@ -99,7 +99,7 @@ try {
   for (let i = 0; i < 10; i++) {
     const current = state().activePractice.bto.current;
     const counts = current.fresh ? freshCounts : revisionCounts; counts[current.item.family] = (counts[current.item.family] || 0) + 1;
-    if (!current.fresh) ok(root.querySelector('.revision-notice'), 'repeat eligibility is explained before answering');
+    if (!current.fresh) ok(root.querySelector('.practice-repeat-note'), 'repeat eligibility has a quiet note before answering');
     answer('bto'); if (i < 9) button('Next (Enter)').click();
   }
   button('Finish').click();
@@ -108,7 +108,8 @@ try {
     eq(p?.attempts || 0, freshCounts[family] || 0, 'only genuinely fresh mixed questions enter recognition');
     eq(state().learningCoverage[`bto:${family}`].revisionAttempts, revisionCounts[family] || 0);
   }
-  ok((revisionCounts['die-repeats'] || 0) > 0, 'the four-instance easy die pool exposes repeat-only revision after learning');
+  eq(Object.values(revisionCounts).reduce((sum, count) => sum + count, 0), 0, 'fresh mixed blocks never recycle guided-learning exposures');
+  ok((freshCounts['die-repeats'] || 0) > 0, 'expanded easy die pool still has unseen questions after guided learning');
   const cold = structuredClone(state().recognition);
 
   // Every shipped family, every form kind, actual route, tenth-answer commit,

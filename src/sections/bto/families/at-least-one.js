@@ -15,6 +15,13 @@ import { Q, sumQ } from '../../../core/rational.js';
 
 const ID = 'at-least-one';
 const FRACS = [[1, 2], [1, 3], [1, 4], [2, 5], [1, 5], [3, 10], [1, 6], [3, 5]];
+const DIE_EVENTS = [
+  { type: 'six', what: 'six', faces: [6] },
+  ...[1, 3].map((face) => ({ type: 'named', what: `roll of ${face}`, faces: [face] })),
+  ...[1, 6].map((face) => ({ type: 'notNamed', what: `roll other than ${face}`, faces: [1, 2, 3, 4, 5, 6].filter((x) => x !== face) })),
+  ...[3, 4, 5].map((bound) => ({ type: 'threshold', what: `roll of ${bound} or higher`, faces: [1, 2, 3, 4, 5, 6].filter((x) => x >= bound) })),
+  ...[0, 1].map((parity) => ({ type: 'parity', what: `${parity ? 'odd' : 'even'} roll`, faces: [1, 2, 3, 4, 5, 6].filter((x) => x % 2 === parity) })),
+];
 
 function repeated(p, n, what, text) {
   const miss = q(1).sub(p);
@@ -53,13 +60,18 @@ export default {
 
   generate(rng, { difficulty = 1 } = {}) {
     let b, data;
-    const variant = difficulty === 1 ? 'six' : difficulty === 2 ? rng.pick(['six', 'trades']) : rng.pick(['demere', 'lottery']);
-    if (variant === 'six') {
+    const variant = difficulty === 1 ? 'dieEvent' : difficulty === 2 ? rng.pick(['six', 'trades']) : rng.pick(['demere', 'lottery']);
+    if (variant === 'dieEvent') {
+      const event = rng.pick(DIE_EVENTS), n = rng.int(2, 4), p = q(event.faces.length, 6);
+      b = repeated(p, n, event.what, `You throw a fair die ${n} times. What is the probability of at least one ${event.what}?`);
+      b.steps.unshift({ say: `One throw succeeds on faces ${event.faces.join(', ')}: probability ${event.faces.length}/6 = ${p}.`, why: 'Identify the event on one throw before applying the complement across throws.' });
+      data = { variant: event.type === 'six' ? 'six' : 'dieEvent', event: event.type, eventFaces: event.faces, ps: Array(n).fill([event.faces.length, 6]) };
+    } else if (variant === 'six') {
       const n = difficulty === 1 ? rng.int(2, 4) : rng.int(4, 8);
       b = repeated(q(1, 6), n, 'six', `You throw a fair die ${n} times. What is the probability of at least one six?`);
       data = { variant, ps: Array(n).fill([1, 6]) };
     } else if (variant === 'demere') {
-      const n = rng.pick([12, 18, 24, 25, 30]);
+      const n = rng.int(8, 30);
       b = repeated(q(1, 36), n, 'double six', `You throw a pair of dice ${n} times. What is the probability of at least one double six?`);
       b.distractors.push({ value: q(1).sub(qpow(q(5, 6), n)), misconception: 'Used 5/6 as the chance of "no double six" on a throw. That is the chance one die is not a six; a double six has chance 1/36.' });
       data = { variant, ps: Array(n).fill([1, 36]) };
@@ -110,6 +122,17 @@ export default {
   // Independent check: sum P(exactly k successes) for k >= 1 (binomial sum), or enumerate 2^3 outcomes.
   verify(item) {
     const ps = item.params.ps.map(([a, c]) => q(a, c));
+    if (item.params.eventFaces) {
+      // Enumerate the actual die outcomes instead of trusting the supplied p.
+      const n = ps.length, faces = new Set(item.params.eventFaces);
+      let hits = 0;
+      for (let code = 0; code < 6 ** n; code++) {
+        let state = code, hit = false;
+        for (let i = 0; i < n; i++) { if (faces.has(1 + state % 6)) hit = true; state = Math.floor(state / 6); }
+        hits += Number(hit);
+      }
+      return agree(item, q(hits, 6 ** n));
+    }
     if (item.params.variant === 'trades') {
       let tot = q(0);
       for (let m = 1; m < 8; m++) {

@@ -21,14 +21,15 @@ export default {
   levels: [1, 2],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const variant = difficulty === 1 ? rng.pick(['onK', 'moreThanK']) : rng.pick(['coinOnK', 'evenThrow', 'duel']);
+    const variant = difficulty === 1 ? rng.pick(['onK', 'moreThanK', 'fairCoinOnK']) : rng.pick(['coinOnK', 'evenThrow', 'duel']);
     let o;
-    if (variant === 'onK' || variant === 'coinOnK' || variant === 'moreThanK') {
-      const [a, c] = variant === 'coinOnK' ? rng.pick(COINS) : [1, 6];
+    if (variant === 'onK' || variant === 'coinOnK' || variant === 'fairCoinOnK' || variant === 'moreThanK') {
+      const coin = variant === 'coinOnK' || variant === 'fairCoinOnK';
+      const [a, c] = variant === 'fairCoinOnK' ? [1, 2] : variant === 'coinOnK' ? rng.pick(COINS) : [1, 6];
       const p = q(a, c), m = q(1).sub(p);
       const k = variant === 'coinOnK' ? rng.int(2, 5) : rng.int(2, 6);
-      const what = variant === 'coinOnK' ? 'head' : 'six';
-      const setup = variant === 'coinOnK' ? `A biased coin lands heads with probability ${p}. You flip it repeatedly.` : 'You throw a fair die repeatedly.';
+      const what = coin ? 'head' : 'six';
+      const setup = variant === 'fairCoinOnK' ? 'You flip a fair coin repeatedly.' : variant === 'coinOnK' ? `A biased coin lands heads with probability ${p}. You flip it repeatedly.` : 'You throw a fair die repeatedly.';
       if (variant === 'moreThanK') {
         const value = qpow(m, k);
         o = {
@@ -54,7 +55,7 @@ export default {
         const value = qpow(m, k - 1).mul(p);
         o = {
           value,
-          text: `${setup} What is the probability that the first ${what} appears on the ${ord(k)} ${variant === 'coinOnK' ? 'flip' : 'throw'}?`,
+          text: `${setup} What is the probability that the first ${what} appears on the ${ord(k)} ${coin ? 'flip' : 'throw'}?`,
           distractors: [
             { value: p, misconception: `Used P(${what}) on that one trial and ignored that the ${k - 1} earlier trials must all miss.` },
             { value: qpow(m, k - 1), misconception: `Forgot the final factor ${p} for the ${what} itself on trial ${k}.` },

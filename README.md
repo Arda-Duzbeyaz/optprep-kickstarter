@@ -1,251 +1,159 @@
-# OptPrep — Kickstarter learning and mixed checks
+# OptPrep — Kickstarter focused practice
 
-**Version 1.2.1-kickstarter.1 · 14 November 2026**
+**Version 1.4.0-kickstarter.1 · 15 November 2026**
 
-Complete preparation application based on [Coflazo/optprep](https://github.com/Coflazo/optprep), with the original MIT licence and attribution preserved. Not affiliated with or endorsed by Optiver.
+Complete application based on [Coflazo/optprep](https://github.com/Coflazo/optprep), with the original MIT licence and attribution preserved. This independent preparation tool is not affiliated with or endorsed by Optiver.
 
-Starting point: the previously modified **1.2.0-kickstarter.1**, revision `040ae56d820fc114820fc37c43b2d82c388b9fdf`. This release fixes learning completion and progress visibility while preserving the earlier mathematical fixes, question-history protection, shared question library, scoring and resumable practice. It does not rebuild from upstream. The [previous complete README](docs/README_SHARED_PRACTICE_1.2.0.md) is retained as historical documentation; the progress rules below supersede it.
+This release starts from the delivered **1.3.0-kickstarter.1** archive. It fixes repetition in focused learning, expands small pools, and keeps the skill and difficulty fixed throughout a block and its resume. Previous scoring, timing, learning-completion and cold-check improvements are retained. The [1.3.0 README](docs/README_REASONING_DIVERSITY_1.3.0.md) remains as historical documentation.
 
-## The ten-question completion fix
+## The confirmed problem and the fix
 
-Previously, finishing a focused learning block awarded XP and study time but left the skill uncovered unless you separately pressed **Mark covered**. Progress showed mostly aggregate cold counters, so completed learning could appear to have vanished. This was a workflow defect.
+Easy **“Two dice: max, min, doubles, differences”** contained only **seven distinct questions**. A ten-question block therefore had to repeat. Other small pools included four basic card questions, four basic three-dice questions and two introductory Monty Hall questions. The previous focused-learning path allowed recycling after its fresh search failed.
 
-Now the **tenth submitted answer** saves a completed learning block. If none of the ten questions was skipped, the skill automatically shows **Learning complete**, receives a filled learning indicator, enters the covered-skills pool and stops being the suggested next new skill. This happens before you press Finish. Hints, ChatGPT and mistakes are allowed during learning: completion records coverage, not independent proficiency.
+New focused-learning questions now **must be unseen** in the retained history. Changing the answer order does not make a question new. The skill and difficulty stay fixed for the entire block, including Save & exit, resume and reload. Small pools have more valid inputs and appropriate event formulations. The two-dice example now has **26 easy and 36 higher-level questions**, still using two standard six-sided dice.
 
-**Progress → Skills** names the skill and shows completed blocks, focused answers, the latest block's date and accuracy, and separate mixed-check status. Cold aggregate totals sit in a collapsed disclosure below the learning record. The summary offers the next skill after your first covered topic, then mixed practice once at least two topics are covered. **Mark covered** remains an optional shortcut; **Mark for learning** requests a revisit without deleting completed blocks.
+Completely enumerated pools select directly from their unseen instances, including the last remaining question. If no unseen question can be supplied, the session **stops and saves submitted answers**. It does not repeat, change topic, raise difficulty or award completion for unattempted questions. Known exhaustion reports the configured capacity; a bounded-search failure says more variants may exist.
 
-A block with skips is still recorded, but does not automatically tick learning coverage. Partial blocks retain their submitted answers and normal progress without being counted as complete. Reopening feedback or pressing Finish cannot duplicate completion, XP or answers.
+An old saved current question remains exactly as saved on upgrade, including an old revision question. Subsequent draws use the new rule. Mistake review, fixed numbered sets and lessons remain deliberate review and may reuse material.
 
-Earlier completed blocks are recovered when retained history or a saved final-answer snapshot supports them. XP, minutes and aggregate answer counts alone are insufficient to reconstruct a finished block. Existing XP, habit minutes, answer statistics and cold evidence are preserved. See the [complete modification and verification record](docs/LEARNING_COMPLETION_UPDATE.md).
-
-## How to use it every day
-
-The route is **learn → mixed check → repair → timed section**.
-
-1. Open **Today**. Resume a saved block or use the suggested assessment.
-2. Choose **Learn** on a skill. Use hints, explanations or ChatGPT. Work through the ten questions without skips: learning ticks automatically. Explain the method in your own words; repair any gaps before relying on independent checks. You can also mark coverage yourself after learning elsewhere.
-3. Press **Start mixed practice · 10 questions**. Its visible selector offers **All skills** or **Covered skills**; start using the covered pool after learning two or three topics. Attempt without help. Each block has ten questions from that assessment, with skill names and difficulties hidden before submission.
-4. Review mistakes with ChatGPT, repair one weakness in focused learning, then return to fresh mixed questions. Recheck on a later day too.
-5. Use **Timed section** regularly for the overall clock and decisions about time. Use independent unfamiliar problems to check transfer. The optional **Batch check** uses this same question library and withholds feedback until the end.
-
-Do not wait to finish all 34 Beat the Odds skills before mixing. A short first pass followed by independent diagnosis is more useful than an exhaustive assisted pass without checks. Cover the other assessments too. Filling every bubble is not a prerequisite for taking your actual assessments.
-
-## What progress means
-
-| Indicator | What earns it | Meaning |
-|---|---|---|
-| Learning complete / covered | A full focused ten-question block without skips, or your manual learning check; earlier Level 3+ records also count as previously practised coverage | Learning checklist, not an unaided pass |
-| Completed learning blocks | Full ten-question focused blocks, with any skips recorded separately | Persistent record of the work completed |
-| 0/3, 1/3, 2/3 cold successes | Eligible fresh mixed attempts on one skill at its current difficulty | That skill's current consecutive-success counter |
-| Filled difficulty bubble | Three qualifying successes at that supported difficulty | A training checkpoint on generated instances |
-| All supported difficulties verified | Every supported difficulty passed, with no recheck due | Current generator-based training goal |
-| Practice target met | Existing qualifying timed-section rules | This trainer's target, not an Optiver cutoff |
-| Batch check results | Separate session using the same library, with feedback only at the end | Additional benchmark evidence; not a held-out question bank |
-
-**Consecutive means consecutive attempts on the same skill.** Other skills can appear between them. A ten-question mixed batch is not ten repetitions of a selected topic. It samples the covered pool, spreads questions across families before repeating, and still weights weaker performance. A new block starts a new breadth round; there is no guarantee that every family appears across a particular number of blocks.
-
-### Cold mixed-check rules
-
-A qualifying answer must be:
-
-- From mixed ordinary practice or an unlabelled timed drill with at least two eligible families.
-- A distinct question instance not recorded as previously displayed, with standard-time settings.
-- Correct without hints or outside help, uninterrupted before submission.
-- Within the displayed **training** pace budget. Intervals additionally needs a score of at least 0.70, the existing training threshold.
-
-Three successes verify the current supported generator difficulty. The next draw of that skill targets the next supported difficulty. A skill supporting `[1, 2]` has two checkpoints; one supporting `[3, 5]` advances directly from 3 to 5. There are no invented intermediate levels.
-
-An eligible miss, hint, outside-help marker, interruption or over-budget answer resets that skill's current streak. A later failure at a passed difficulty requests a recheck while preserving the historical proof. Three new qualifying successes clear the recheck. Other skills' questions do not reset this skill.
-
-Focused learning, lessons, fixed sets, previously seen questions, extra-time practice, mocks and Batch check cannot create these checkpoints. Learning still updates ordinary activity, answer statistics and revision data. Use **Used outside help** if a mixed attempt becomes a learning attempt. Help is self-reported; visibility interruptions are recorded, but the app cannot independently certify an unaided attempt.
-
-Budgets retain the configured item allowance, or use overall time divided by the practice question count: BTO 90 s, NumberLogic about 57.69 s, Likelihood-list 90 s, Intervals 50 s and Orderbooks 45 s in this preset. They depend on unverified counts/item allowances. BTO's 25-minute mock also requires an average of 75 s across 20 questions, so a mixed checkpoint does not by itself establish full-section pace.
-
-**Three fresh instances do not establish three unfamiliar structures or concepts.** The three-success rule is a training choice, not a research-established mastery threshold. Higher generator labels are authored difficulties, without empirical Optiver calibration or a guarantee that every individual higher-level question is harder.
-
-**Finite question pools can prevent fresh checkpoints after learning.** For example, easy “One die, repeated throws” has only four distinct visible instances: two/three throws, all-same/all-different. Learning can expose all four. Further mixed attempts at that difficulty are revision, even if the answers are correct, and cannot generate three previously unseen successes. The runner now explains this before answering and Progress records revision attempts separately. Changing the answer order does not make a question fresh. Do not treat filling every cold bubble as a syllabus-completion requirement. This release exposes the limitation; it does not expand or independently recalibrate the generators.
-
-### Earlier levels and Quant Sprint
-
-The earlier five counters mostly counted repeated correct answers; only the final level required pace. They were not five mathematical difficulty levels. This release stops increasing them and retains them under **Previous practice record**. Coverage and mixed performance are now the primary measures.
-
-The supplied Quant Sprint app informed the separation of assisted learning and cold mixed checks. Its rule also requires at least two schemas. OptPrep's generic branch signatures are not reliable enough to use as a universal schema criterion, so this release does **not** claim to reproduce that requirement. Unfamiliar challenges and independent problems remain necessary to test transfer.
-
-## Deadline and assessment clocks
-
-Your supplied invitation is authoritative for these known overall durations:
-
-| Assessment | Invitation | Kickstarter preset | Still assumed |
-|---|---|---|---|
-| Beat the Odds | 25 min overall; limited time per question | 25 min overall | 20 questions, 90 s/item, format and scoring |
-| NumberLogic | 25 min | 25 min | 26 questions, exact numerical format and scoring |
-| Likelihood-list | About 25 min; limited time per question | 25 min overall | 15 questions, 90 s/item, format and scoring |
-| Intervals | 15 min overall | 15 min overall; no item deadline | 18 questions, distribution and score model |
-| Orderbooks | 15 min overall | 15 min overall | 20 boards, mechanics and score model |
-| Zap-N | One or more games, each 2–15 min | Existing games retained | Which games appear and exact mechanics |
-
-This corrects the previous 8-minute Orderbooks setting, adds the Likelihood-list and Intervals overall clocks, and removes the previously assumed 45-second Intervals item limit from this preset. Other role presets, counts and scoring formulas remain unchanged.
-
-The email's approximate 1 h 44 min total does not exactly reconcile with its listed section estimates. The app uses separate section clocks and breaks, without inventing an exact combined limit. Follow more specific instructions in the real portal.
-
-The preparation deadline is **6 December 2026, 23:59 CET = 22:59 UK**, stored as `2026-12-06T22:59:00.000Z`. Today shows days remaining, your weekly budget and a phase:
-
-| Remaining time | Guidance |
-|---|---|
-| More than 14 days | Build coverage; start mixed checks after a few skills |
-| 5–14 days | Timed sections and targeted repair |
-| Final 4 days | Consolidate and complete assessments with a buffer |
-| Deadline reached | Show the status without locking practice |
-
-Settings allows a deadline date at 23:59 CET and preparation hours/week, default **8**. Remaining hours are simple calendar arithmetic, not a forecast of actual availability. The daily habit goal is separate and preserves its previous value.
-
-### An eight-hour week
-
-Use six one-hour sessions and one two-hour session. Today suggests BTO, NumberLogic, Likelihood-list, Intervals and Orderbooks on weekdays, then catch-up and a weekly benchmark. Weekend selection prioritises incomplete coverage/checkpoints, not a calibrated ranking of ability. You can choose any other task.
-
-A one-hour session: **25 min** cold mixed practice or a timed section; **15 min** review with ChatGPT; **15 min** focused repair or a new skill; **5 min** error notes and planning. Use the longer session for timed sections plus review. Include short Zap-N familiarisation within the budget. Replace some website batches with unfamiliar independent problems under time pressure.
-
-Explain the model before calculating, contrast similar-looking problems with different assumptions, and revisit repaired skills after a delay. During preparation use ChatGPT to teach and diagnose. Complete the actual proctored assessments under your invitation's no-assistance rules.
-
-## One shared practice library; different ways to use it
-
-The former Transfer Challenge is now called **Batch check**. It no longer has exclusive mathematical families. Learn, mixed practice and batch checks share all **103 families** across the five reasoning sections: BTO 34, NumberLogic 30, Likelihood-list 16, Intervals 15 and Orderbooks 8.
-
-| Mode | What to use it for | Feedback | Checkpoint credit | Clock |
-|---|---|---|---|---|
-| Learn or repair | Understand one selected skill with help | After each answer | Learning coverage only | No forced deadline |
-| Mixed practice · 10 questions | Main daily workout within one assessment | After each answer | Fresh, cold, paced successes count | No forced timeout; training pace determines credit |
-| Batch check | Optional whole-batch independent check | At the end | Separate results | Choose timed or untimed |
-| Timed section | Full-section rehearsal | At the end | Existing timed-practice targets | Invitation-aligned overall duration |
-
-**The useful question diversity belongs in ordinary practice.** Information protocols, shared sources, selection weights and rates/weights now appear in the main skill list, focused learning, all-skills batches and covered batches once marked covered. Main practice prefers less recently seen recorded branches within the selected family, while retaining weakness weighting, breadth and the target difficulty. It also shuffles MCQ positions with the answer key remapped correctly.
-
-Batch check draws from the same families, samples across authored training difficulties rather than following each skill's checkpoint target, and withholds solutions until the end. Its single-assessment format remains 10 questions / 15 minutes overall / 90 seconds per item when timed; the optional all-five format remains 15 questions / 20 minutes / 90 seconds per item. Untimed removes those hard clocks. Neither setting earns normal mixed checkpoints. These are training clocks, not verified Optiver item limits.
-
-A new instance or recorded branch is not guaranteed to be a new mathematical idea. Sharing the generators removes an unnecessary content split; it does not turn the optional check into an independently calibrated holdout test. Existing separate histories and results remain intact, and old `#/transfer` links still work.
-
-## Confirmed problems and implemented fixes
-
-| Confirmed problem | Modification | Purpose |
-|---|---|---|
-| Ten learning questions earned activity but no completion tick | Atomic tenth-answer completion ledger and automatic coverage when there are no skips | Make learning work visible and persistent |
-| Progress gave aggregate cold counters without naming completed learning | Per-skill learning records first, cold totals in a separate disclosure | Distinguish learning coverage from independent evidence |
-| Finishing could lead straight back into the same topic | Next-skill or covered-mix action, completed rows labelled Revisit | Make the next step clear |
-| A finite question pool could produce revision without explaining a stuck cold counter | Pre-answer revision notice and separate revision-attempt totals | Explain eligibility honestly |
-| Five counters could be mistaken for mathematical levels | Actual supported difficulty checkpoints; legacy history preserved | Make progression correspond to demonstrated generator difficulty |
-| Assisted topic practice could advance primary counters | Explicit coverage plus mixed-only verification | Separate learning from independent recognition |
-| Mixing the full syllabus could overwhelm early practice | Covered-skills pool plus all-skills diagnostic | Begin mixing after a few topics |
-| Familiar families could recur inside a batch | Breadth round plus weakness weights and exact-history exclusion | Increase exposure while keeping targeted practice |
-| Transfer required crossing assessment categories | Single-assessment default, broader mix optional | Match section-by-section preparation |
-| No preparation deadline in Today | Deadline, budget, phases and suggested daily focus | Make daily action straightforward |
-| Supporting features competed with the main route | Clear Learn/Mixed/Timed actions and collapsed details | Preserve useful tools with less clutter |
-| Probability-tree rendering mutated saved question data with BigInt fractions | Clone diagram input before layout; frozen-input and resume regressions | Display solutions without breaking JSON saves |
-| Invalid new backup fields could break the UI | Validate new progress containers and preserve current data on rejection | Fail explicitly without silently overwriting usable progress |
-
-Ten-question blocks, autosave, identical-question/draft/feedback resume, one saved block per assessment, atomic answer commits and finish screens remain. Changing skill or mixed scope offers an explicit choice before replacing a saved block. Resumed unanswered questions are learning-only; pausing on feedback keeps the next newly drawn question eligible.
-
-All 99 original assessment-generator families, banks, fixed libraries, answer acceptance, scoring and Zap-N game logic are preserved. The four existing additional families remain shared with daily practice, making 103 practice families. No mathematical formulas or games were added in this release. A [file-level change record](docs/LEARNING_COMPLETION_UPDATE.md) accompanies the source.
-
-## Verification and measured results
-
-| Suite | Previous 1.2.0 | This release |
-|---|---:|---:|
-| JavaScript | 826 | **844 passed** |
-| Python, engine available | 36 | **36 passed** |
-| C++ | 34 | **34 passed** |
-| Total unit/regression tests | 896 | **914 passed** |
-
-Separate integration and sampling results:
-
-- **684 new full-entry-point walkthrough assertions:** all **103 learning families**, **1,040 learning answers** including a skipped revisit, tenth-answer completion, visible Progress records, next suggestions, final-feedback resume, mixed fresh/revision eligibility, all Progress tabs, settings/study navigation, **five scoped Batch checks**, **five timed-section start/review flows**, and the Zap-N menu. Zero uncaught application errors. These synthetic correct answers test the workflow; they are not independent checks of every mathematical formula.
-- **104 practice-flow assertions** covering four answer types, drafts, feedback/RNG resume, completion, visibility, saved-scope choices, recovery, storage failure and full ten-question drills.
-- **100 full-app learning-route assertions** covering coverage, hidden mixed labels, three cold successes, next supported difficulty, help, interrupted resume, deadline/settings, isolated scoped Transfer and frozen tree rendering.
-- **71 shared-practice assertions** verify prominent controls, scope preferences, all four additional families in learning/feedback/resume, and their ordinary cold mixed progression.
-- Original UI smoke, batch-check smoke, **11 focused interface regressions** and the complete broader Transfer route pass.
-- **133 ordinary generator source files unchanged; 50 mock papers / 990 complete question objects identical** to 1.0.4 for comparison seeds. Base section config, other presets, scoring and MIT licence preserved.
-- **10 broader Transfer sessions / 150 question objects identical** to the previous release for fixed seeds.
-- **50 scoped sessions / 500 questions**, carrying exposure between sessions: **zero exact repeats** in this sample. Each session used ten families except Orderbooks, which used all eight of its families.
-- All five MCQ positions occurred in the BTO and NumberLogic samples; all six ranking permutations occurred in Likelihood-list. This is not proof of perfect randomness or absence of all answer cues.
-- Current Chrome QA reproduced an **8/10 dice learning block**, checked the saved Progress record before pressing Finish, resumed feedback, finished once, confirmed the next skill and verified persistence after reload. Desktop and a **390px responsive iframe** were inspected; the dark phone layout showed the completed learning record and the filled checklist indicator without horizontal overflow (375px content width). Light desktop was also inspected before the final mobile-first ordering change. Physical phones and other browsers were not tested. The earlier release's broader visual evidence is retained separately.
-
-**Structural repetition remains.** Familiar signature occurrences in 100 scoped questions per section were BTO **3**, NumberLogic **55**, Likelihood-list **3**, Intervals **35**, Orderbooks **90**. Signatures are a conservative branch proxy, not a complete taxonomy of reasoning. Exact freshness does not establish conceptual novelty. Orderbooks continues to rehearse a small set of replication identities.
-
-See the current [completion results](evaluation/learning-completion-results.json) and [change record](docs/LEARNING_COMPLETION_UPDATE.md). Prior release measurements remain in [shared-practice-results.json](evaluation/shared-practice-results.json), [learning-results.json](evaluation/learning-results.json), [learning-evaluation.json](evaluation/learning-evaluation.json) and [practice-preservation.json](evaluation/practice-preservation.json). The 500-question scoped sample, answer-position sample and structural-repeat counts above are retained 1.2.0 evidence about the unchanged batch sampler, not newly repeated experiments on ordinary mixed practice. The [earlier diversity audit](docs/DIVERSITY_AUDIT.md), 13,000-case JS sweep and 1,300-case independent Python checks are retained as historical evidence for unchanged formulas, not newly repeated learning-outcome experiments.
-
-### Verdicts
-
-| Area | Assessment | Confidence |
-|---|---|---|
-| Mathematical correctness | Preserved independently checked formulas and full regression suites; no new formulas here | High for tested cases; not a formal proof over every seed |
-| Realism | Better invitation clock alignment and section-specific training; other mechanics still assumed | High on supplied durations; limited on unprovided details |
-| Difficulty calibration | Real generator levels now drive progression, without independent Optiver calibration | High on mechanics; low on real-test equivalence |
-| Educational quality | Clearer learning, unaided recognition, repair and timed execution | Moderate: justified design, no controlled outcome trial |
-| Overall usefulness | Stronger daily practice engine alongside tutoring and independent problems | Moderate to high for that role; no measured link to hiring outcomes |
-
-Use this as your main **practice engine**, alongside unfamiliar independent questions and timed-section checks. Do not optimise for XP, coverage clicks or exhausting the generators. This release improves the workflow; it does not establish unlimited conceptual novelty or that finishing its checkpoints demonstrates exceptional real-assessment performance.
+“Unseen” is relative to the existing **8,000 fingerprints per assessment**, on the same browser origin. Clearing storage, changing device or eventually evicting old history changes that memory. This is not an infinite supply or cross-device history.
 
 ## Run locally
 
-Extract the ZIP and open a terminal in the folder containing `package.json` and `index.html`. With **Node.js 20+** installed:
+Install **Node.js 20 or later**, extract the ZIP, and open a terminal inside the folder containing package.json and index.html:
 
-```sh
+~~~sh
 npm start
-```
+~~~
 
-No dependency installation or frontend build is required for normal use. The launcher normally serves `http://127.0.0.1:8765/` and opens the browser; use its printed URL if the port is occupied. Do not double-click `index.html` using `file://`; ES modules require a web server. The optional Python/SQLite backend and C++ engine source remain included; static hosting does not require them.
+Open the localhost URL printed by the launcher. No dependency installation, build step, account, Python backend or compiled engine is needed for normal practice. Serve over HTTP; do not double-click index.html as a local file.
 
-## GitHub Pages: upload the application, not the ZIP
+Full source, automated tests, optional backend/engine and documentation are included. Installed dependencies, compiled outputs, credentials and personal progress are not included.
 
-1. Extract the archive and open the inner `OptPrep_Kickstarter_Transfer` folder.
-2. Commit **its contents** at your repository root, including deployment configuration. `index.html`, `app.js`, `src`, `config`, `assets`, `package.json` and `LICENSE` must not be nested an extra level down.
-3. In **Settings → Pages**, select **GitHub Actions**. The included Pages workflow deploys updates on `main` and fills the offline cache manifest/build identifier.
-4. Confirm the workflow succeeds, then open the Pages URL GitHub provides.
+## Deploy to your own GitHub Pages repository
 
-The full archive includes source, tests, backend, engine source, documentation, assets and deployment configuration. Build outputs, dependencies, caches and account data are excluded. Uploading a ZIP file by itself will not unpack or deploy it.
+1. Extract the ZIP.
+2. Commit the **contents of its inner application folder** at the repository root, including index.html, src/, config/, assets/, .github/, .nojekyll, the licence and other project files.
+3. In **Settings → Pages**, select **GitHub Actions**. Enable Actions and push to **main**, as configured in .github/workflows/pages.yml.
+4. Wait for the Pages workflow to finish and use the URL GitHub reports.
 
-**This release has not been pushed to your repository or deployed to your Pages site.** Connected GitHub access exposed no repository installations at packaging time. The original developer's repository was not modified.
+Uploading the ZIP alone does not deploy it. Do not nest the app an extra directory below the repository root. Preserve the MIT licence and attribution. The workflow builds the static file list and updates the offline cache marker.
 
-## Progress compatibility
+**No remote repository or live Pages site was updated in this session**; the GitHub connection exposed no accessible installations. Replacing deployed files at the same address retains that browser's progress. Export a Settings backup before moving to another address or device.
 
-The schema stays at version 2. Existing runs, settings, lessons, mistakes, histories, XP, activity, saved practice and legacy counters are retained. Missing `learningCoverage` and `recognition` maps default safely. A one-time completion migration recovers eligible retained focused runs and completed saved feedback; it preserves an explicit mark-for-learning choice. Missing detailed history is not invented from XP or time. Old progress is not relabelled as new cold evidence. Saved blocks retain their original question and frozen family pool. New fields use the existing full-state backup/sync path and survive old-run history compaction.
+## Use the app as a learning loop
 
-Updating the same browser site preserves its storage. A different origin or browser requires **Settings → Export backup**, then **Import backup** on the destination. Export before replacing your deployment. The app does not upload your invitation or contact external accounts automatically.
+| Mode | Purpose | Progress meaning |
+|---|---|---|
+| Learn a skill | Ten focused questions; hints, explanations and tutoring allowed | A full block without skips automatically ticks learning coverage |
+| Mixed practice within an assessment | Recognise methods among that assessment's skills | Fresh, unaided, uninterrupted, standard-time answers can earn cold checks |
+| Timed section / full mock | Apply configured clocks and response formats | Mock performance and trainer readiness |
+| Batch check / former Transfer Challenge | Additional unfamiliar-instance testing, with section scope and timing choices | Separate session record; additional training, not an official replica |
+| Mistake review | Diagnose a known error | Deliberate revision, where repetition is useful |
 
-## Reproduce validation
+Learning completion means **you worked through the material**. Accuracy and help do not prevent that tick. It does not certify independent performance. Three qualifying cold successes at the current authored difficulty verify a checkpoint; the next supported difficulty becomes the target. A skill with levels [2, 3] has two checkpoints, not four invented levels. A failed, assisted, interrupted or slow attempt does not qualify. These rules are unchanged.
 
-```sh
+Use **learn → mixed practice in that assessment → explain and repair errors → return later for fresh mixed practice**. Start mixed work once at least two skills are covered; finishing all 103 skills first is unnecessary. Use ChatGPT during learning and review, and close outside help for independent checks and mocks.
+
+For eight hours weekly, four two-hour sessions suit deeper work. A useful starting split per session is 45 minutes learning/repair, 45 minutes mixed practice or a timed section, and 30 minutes explaining errors and solving unfamiliar independent questions. Shift more time into timed work as coverage improves. Include all five reasoning assessments during the week and give measured weaknesses extra time. Keep Zap-N brief enough that it does not displace quantitative work. The app deadline is **6 December 2026, 23:59 CET / 22:59 UK time**.
+
+## Audit scope and modifications
+
+The audit covers **111 skills at 273 supported skill/difficulty combinations**: 103 Kickstarter reasoning skills and eight optional arithmetic skills. Source input definitions and hashes are in the machine-readable audit.
+
+**Nineteen existing families were expanded**: 15 Beat the Odds, two NumberLogic and two Intervals. The other **84 Kickstarter families**, all eight optional arithmetic families, Likelihood List, Orderbooks and Zap-N were preserved. There are no new assessment categories or invented difficulty levels.
+
+| Family / difficulty | Before → after | Measurement |
+|---|---:|---|
+| Two-dice max/min/doubles/differences / 1 | 7 → 26 | Exact configured pool |
+| Two-dice max/min/doubles/differences / 2 | 19 → 36 | Exact configured pool |
+| Repeated die / 1 | 18 → 48 | Exact configured pool |
+| Three dice / 2 | 4 → 17 | Exact configured pool |
+| Card draws / 1 | 4 → 21 | Exact configured pool |
+| Monty Hall / 2 | 2 → 20 | Exact configured pool |
+| Best-of series / 2 | 3 → 15 | Exact configured pool |
+| Coupon collection / 2 | 3 → 19 | Exact configured pool |
+| Expected extremes / 2 | 6 → 20 | Exact configured pool |
+| Reroll expected value / 3 and 4 | 5 → 25; 3 → 15 | Exact configured pools |
+| Triangular sequences / 1 | 11 → 21 | 512-seed sample |
+| Fraction sequences / 5 | 8 → 35 | 512-seed sample |
+| Interval pattern waiting / 2 | 12 → 28 | Exact configured pool |
+| Interval expected dice / 3 | 11 → 15 | Exact configured pool |
+
+The [complete inventory](evaluation/FOCUSED_VARIABILITY_INVENTORY.md) lists every supported level. The [full modification log](docs/FOCUSED_LEARNING_UPDATE.md) explains all 19 family changes and selection/verification changes. Standard two-dice sums remain at **21 questions per level**; arbitrarily increasing the die sizes would change that topic.
+
+There are **33 completely enumerated skill/difficulty pools with 776 entries in total**. Other generators use bounded fresh searches. These are configured capacities, not every mathematical problem that could ever be written.
+
+## Reasoning value
+
+Different numbers build fluency but do not create a new concept. Changing a target face is mainly relabelling. A reroll payout multiplier changes the value while preserving the policy; it adds a units check, not a new optimal-stopping technique.
+
+Some additions change event reasoning: exact versus bounded extrema, equal versus unequal faces, signed versus absolute differences, first-only versus both versus neither card events, and fair-coin versus die first-success formulations. Pattern waiting includes all binary overlap structures through length four at the relevant level. Strong existing conditioning, information-protocol, shared-source, recurrence, likelihood-ranking and orderbook families are retained.
+
+Finite selection prefers a new branch before another instance of an encountered branch. It chooses a branch and then a question so a large numerical pool does not crowd out other methods. A branch key is a generator diagnostic, not a measure of conceptual unfamiliarity.
+
+Four existing wrong-choice/explanation details were corrected: the mean of extreme die products is 18.5; the two-outcome coupon expectation is exactly 3; an ordered/unordered minimum distractor needs the actual ordered numerator; and a uniform-product explanation must distinguish a square-root cutoff from a joint probability. Their existing correct answers were already correct.
+
+## Verification
+
+| Check | Result |
+|---|---|
+| Complete JavaScript suite | **1,062 passed**, zero failed/skipped |
+| Python suite with compiled engine available | **36 passed**, zero skipped |
+| C++ engine suite | **34 passed** |
+| Total unit tests | **1,132 passed** |
+| First block: 20 seeds × 273 skill/level combinations | **54,600 questions per release; 1,160 repeated draws before → 0 after** |
+| Up to 40 successive questions per skill/level | **9,764 supplied, zero repeats; 64 pools stopped** |
+| Complete finite catalogues | All **776 entries** verified; membership/reachability tested with 2,048 seeds per pool |
+| Shared-history mode regression | **1,030 learning + 1,000 mixed + 2,970 mock + 500 Batch questions; zero repeats** |
+| DOM integration | All **11 scripts** passed, including 76 focused-learning and 108 freshness assertions |
+| Full learning walkthrough | **103 skills, 1,040 answers, 680 assertions, zero uncaught errors** |
+| Real Chrome walkthrough | Old saved block retained; ten distinct easy two-dice questions finished; save/resume/reload preserved the current question; learning completion visible |
+| Responsive visual check | Desktop and 390 px iframe; content/scroll width both 375 px, no horizontal overflow |
+
+The first-block comparison starts each seed with empty history. It establishes a fresh first block, not an unlimited succession of ten-question blocks after prior exposure. The successive-question test stops when fresh questions cannot be supplied; it does not pad with repeats. Synthetic correct answers in the shared-history regression exercise progression, not human learning.
+
+Independent checks enumerate 36 two-dice outcomes, 216 three-dice outcomes and 2,652 distinct-card ordered draws; weighted series outcomes; waiting-time Markov states; and keep/reroll policies. New continuous-product thresholds receive independent numerical integration. Distinct-face expectations receive exact state counts and a separately implemented recurrence, retaining full enumeration for the old small cases. Existing ambiguity, equivalent-answer, presentation, scoring and timing checks remain.
+
+Reports: [validation](evaluation/focused-learning-validation.json), [comparison](evaluation/focused-variation-results.json), [mode regression](evaluation/focused-assessment-regression.json), [DOM flows](evaluation/focused-learning-flows.json), [visible browser checks](evaluation/focused-browser-results.json). Earlier reports remain as records of their own versions.
+
+![Completed ten-question focused block](docs/media/validation/optprep-focused-complete.jpg)
+
+## Reproduce checks
+
+~~~sh
 npm test
-```
+node tools/focused-assessment-regression.mjs
+node tools/focused-variation-evaluation.mjs /absolute/path/to/extracted-1.3.0
+~~~
 
-For DOM integration, install the optional test dependency:
+The comparison needs the previous extracted release; it cannot reconstruct that baseline from this ZIP alone. Standalone tests and the mode regression do not require it.
 
-```sh
-npm install --no-save jsdom
-node tools/ui-smoke.mjs
-node tools/practice-flow-smoke.mjs
-node tools/learning-route-smoke.mjs
-node tools/shared-practice-flow.mjs
-node tools/learning-completion-flow.mjs
-node tools/transfer-smoke.mjs
-node tools/transfer-regression.mjs
-node tools/transfer-route-smoke.mjs
-```
+DOM scripts need development-only jsdom. Set OPTPREP_TEST_JSDOM to its installed module path, then run the scripts named in evaluation/focused-learning-flows.json. For example:
 
-For deterministic comparison, pass an extracted 1.0.4 directory:
+~~~sh
+OPTPREP_TEST_JSDOM=/absolute/path/to/node_modules/jsdom node tools/focused-learning-flow.mjs
+~~~
 
-```sh
-node tools/practice-preservation.mjs /path/to/previous-release
-node tools/learning-evaluation.mjs /path/to/previous-release
-```
+Optional native checks use python -m pytest -q in backend/, and CMake/CTest for engine/. Their development dependencies are described with those components.
 
-Optional engine/backend checks:
+## Invitation fidelity
 
-```sh
-cmake -S engine -B engine/build
-cmake --build engine/build
-ctest --test-dir engine/build --output-on-failure
-cd backend
-uv run pytest -q
-```
+| Assessment | Supported by the supplied invitation | Still trainer assumptions |
+|---|---|---|
+| Beat the Odds | Probability; limited time per question; 25 minutes total | 20 questions, 90 seconds per item, exact scoring/difficulty |
+| NumberLogic | Numerical reasoning; 25 minutes | 26 questions, sequence coverage, navigation/scoring |
+| Likelihood-list | Rank outcomes; limited time per question; about 25 minutes | 15 questions, 90-second budget, exact-order score |
+| Intervals | Numerical estimates and uncertainty bounds; about 15 minutes | 18 questions, truth distribution/scoring; no invented item deadline in the preset |
+| Orderbooks | Profitable buying/selling combinations; about 15 minutes | 20 boards, trading rules, penalties/difficulty |
+| Zap-N | One or more games, each 2–15 minutes | Which games and fidelity of these approximations |
 
-`SOURCE_REVISION.txt` identifies the local implementation commit; a later commit can record release metadata. `BUILD_INFO.json` records measured results and deployment status. Retain the original [LICENSE](LICENSE) and attribution when publishing or forking.
+The email does **not** specify 90 seconds or 20 questions. Its approximate total and component durations should not be converted into a more precise official schedule. Follow the actual portal instructions. Optional arithmetic is not added to the Kickstarter preset.
+
+The app is now a stronger question source. It does not independently calibrate Optiver difficulty, prove that new-looking questions are conceptually unfamiliar, or measure a human training benefit. Independent unseen questions remain necessary to assess transfer. Physical phones and other browsers were not tested in this session.
+
+## Progress and provenance
+
+The existing optprep:v2 store is retained without reset or destructive migration. Settings, XP, coverage, cold evidence, numbered sets and question fingerprints remain. Saved focused blocks gain an optional difficulty field; old snapshots are supported. Keep one active training tab because the existing snapshot store does not merge simultaneous writes.
+
+SOURCE_REVISION.txt identifies the tested local implementation. BUILD_INFO.json retains release provenance and previous validation. The original public repository was not modified. See [LICENSE](LICENSE), [LEGAL.md](LEGAL.md), and the historical [Kickstarter fixes](KICKSTARTER_FIXES.md).

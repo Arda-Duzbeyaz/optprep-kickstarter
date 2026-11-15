@@ -160,10 +160,10 @@ test('previously seen mixed attempts retain revision evidence without changing a
   assert.equal(copy.coverage('bto', family).revisionAttempts, 1);
 });
 
-test('the small easy repeated-die pool is explicitly a limitation, not made fresh by shuffled answers', () => {
+test('the expanded easy repeated-die pool remains finite and is not made fresh by shuffled answers', () => {
   const generator = SECTION_MODULES.bto.families.find((f) => f.id === 'die-repeats');
   const seen = new Set(Array.from({ length: 300 }, (_, i) => questionKey(generator.generate(makeRng(`finite-dice:${i}`), { difficulty: 1 }))));
-  assert.equal(seen.size, 4, 'only all-same/all-different for two or three throws; no invented variation');
+  assert.equal(seen.size, 48, 'two or three throws on 4/6/8 sides, with all-distinct, any common face or every legal specified target face');
 });
 
 test('completion survives old-history compaction even when question details are trimmed', () => {

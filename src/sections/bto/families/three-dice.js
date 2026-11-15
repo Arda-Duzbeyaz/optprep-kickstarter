@@ -2,6 +2,36 @@
 import { mcqItem, agree, q, pic, table } from '../lib.js';
 
 const ID = 'three-dice';
+export const threeDiceBasics = [
+  ...['allDiff', 'pair', 'triple', 'product', 'oddProduct'].map((kind) => ({ kind })),
+  ...['namedTriple', 'namedPair'].flatMap((kind) => Array.from({ length: 6 }, (_, i) => ({ kind, face: i + 1 }))),
+];
+
+function namedEvent(input) {
+  const { kind, face } = input;
+  if (!['namedTriple', 'namedPair', 'oddProduct'].includes(kind)) return null;
+  const count = kind === 'namedTriple' ? 1 : kind === 'namedPair' ? 15 : 27;
+  const reason = kind === 'namedTriple' ? `Only (${face}, ${face}, ${face}) works. All three faces are specified.`
+    : kind === 'namedPair' ? `Choose which die is not ${face} (3 choices), then its non-${face} value (5 choices): 15 ordered triples.`
+      : 'An odd product requires all three dice to be odd: 3 choices per die, giving 27 triples.';
+  return { value: q(count, 216), data: input,
+    text: kind === 'namedTriple' ? `You throw three fair dice. What is the probability that every die shows ${face}?`
+      : kind === 'namedPair' ? `You throw three fair dice. What is the probability that exactly two dice show ${face} and the other die shows a different number?`
+        : 'You throw three fair dice. What is the probability that the product of the faces is odd?',
+    distractors: [
+      { value: q(count * 2, 216), misconception: 'Doubled a count that already distinguishes the positions of the dice.' },
+      { value: q(count, 36), misconception: 'Used the two-dice sample space instead of 216 triples.' },
+      { value: q(1).sub(q(count, 216)), misconception: 'Answered the complement of the stated event.' },
+      { value: q(1, 6), misconception: 'Only counted a requirement on one die.' },
+    ],
+    steps: [{ say: reason, why: 'Count the event as stated: a specified face and any common face have different counts.' },
+      { say: `P = ${count}/216 = ${q(count, 216)}.`, why: 'There are 6³ equally likely ordered outcomes.' }],
+    hints: ['Which requirements apply to each die?', reason], fast: `${reason} P = ${q(count, 216)}.`,
+    check: kind === 'namedPair' ? 'Six possible paired faces partition all exactly-a-pair outcomes: 6 × 15 = 90.'
+      : kind === 'namedTriple' ? 'Six specified triples partition the six all-equal outcomes.' : 'Odd and even products partition the 216 outcomes: 27 + 189 = 216.',
+    picture: table(['Event', 'Favourable triples', 'All triples'], [[kind, count, 216]], reason),
+  };
+}
 const SPLIT = [['all different', 120, '6 × 5 × 4'], ['exactly a pair', 90, '3 positions × 6 × 5'], ['three of a kind', 6, 'one per face'], ['total', 216, '6³']];
 
 function explain(d) {
@@ -155,11 +185,11 @@ export default {
   levels: [2, 3],
 
   generate(rng, { difficulty = 2 } = {}) {
-    const kind = difficulty === 2 ? rng.pick(['allDiff', 'pair', 'triple', 'product']) : rng.pick(['sum', 'max', 'sum', 'pair']);
-    const b = build(kind, rng);
+    const input = difficulty === 2 ? rng.pick(threeDiceBasics) : { kind: rng.pick(['sum', 'max', 'sum', 'pair']) };
+    const added = namedEvent(input), b = added || build(input.kind, rng);
     return mcqItem(ID, rng, difficulty, {
       ...b,
-      ...explain(b.data),
+      ...(added ? {} : explain(b.data)),
       rule: '216 ordered triples = 120 all different + 90 exactly a pair + 6 triples. P(max ≤ k) = (k/6)³.',
       anchor: 'Two dice give 36 ordered pairs; three dice are the same idea with one more factor of 6: 216 ordered triples.',
     });
@@ -176,7 +206,10 @@ export default {
           : d.kind === 'pair' ? distinct === 2
             : d.kind === 'triple' ? distinct === 1
               : d.kind === 'max' ? Math.max(a, b, c) === d.k
-                : (a * b * c) % 2 === 0;
+                : d.kind === 'namedTriple' ? a === d.face && b === d.face && c === d.face
+                  : d.kind === 'namedPair' ? [a, b, c].filter((x) => x === d.face).length === 2
+                    : d.kind === 'oddProduct' ? (a * b * c) % 2 === 1
+                      : (a * b * c) % 2 === 0;
       if (ok) hits++;
     }
     return agree(item, hits / 216);

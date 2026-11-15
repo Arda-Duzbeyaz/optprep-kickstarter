@@ -101,14 +101,14 @@ function build(kind, rng) {
       };
     }
     case 'product': {
-      const a = rng.pick([0.1, 0.2, 0.25, 0.5]);
+      const a = rng.pick(Array.from({ length: 19 }, (_, i) => (i + 1) / 20));
       const v = a * (1 - Math.log(a));
       return {
         value: v, exact: `${a}(1 − ln ${a})`, data: { kind, a },
         text: `X and Y are independent and uniform on [0, 1]. What is the probability that XY < ${a}?`,
         distractors: [
           { value: a, misconception: 'Treated the product as uniform. Products pile up near 0.' },
-          { value: Math.sqrt(a), misconception: 'Used P(both below √a), which is only part of the region.' },
+          { value: Math.sqrt(a), misconception: 'Treated the cut-off √a as a probability. Both variables below √a has probability a, not √a, and is only part of the required region.' },
           { value: a * a, misconception: 'Squared the threshold.' },
           { value: 2 * a, misconception: 'Doubled the threshold for the two variables.' },
           { value: 1 - v, misconception: 'Answered the complement.' },

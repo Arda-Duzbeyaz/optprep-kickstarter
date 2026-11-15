@@ -63,14 +63,26 @@ const S = {
   },
   distinct: {
     level: 3,
-    make: (rng) => ({ n: rng.int(2, 6) }),
+    make: (rng) => ({ n: rng.int(2, 10) }),
     text: ({ n }) => `A fair six-sided die is rolled ${n} times. What is the expected number of different faces that appear?`,
     ev: ({ n }) => Q.of(6).mul(Q.of(1).sub(Q.of(5 ** n, 6 ** n))),
     steps: ({ n }) => [
       { say: `Each face appears at least once with probability 1 − (5/6)^${n}.`, why: 'Indicator per face: missing a given face has probability (5/6)^n.' },
       { say: `Sum over 6 faces: 6 × (1 − (5/6)^${n}).`, why: 'Linearity: expected count = sum of indicator probabilities.' },
     ],
-    brute: ({ n }) => { let t = 0, c = 0; const xs = []; const rec = (i) => { if (i === n) { t += new Set(xs).size; c++; return; } for (let f = 1; f <= 6; f++) { xs[i] = f; rec(i + 1); } }; rec(0); return t / c; },
+    brute: ({ n }) => {
+      // Count all sequences, coalescing those with the same seen-face mask.
+      // Integer path counts remain exact through the configured maximum n=10.
+      let ways = Array(64).fill(0); ways[0] = 1;
+      for (let roll = 0; roll < n; roll++) {
+        const next = Array(64).fill(0);
+        for (let mask = 0; mask < 64; mask++) for (let face = 0; face < 6; face++) next[mask | (1 << face)] += ways[mask];
+        ways = next;
+      }
+      let total = 0;
+      for (let mask = 0; mask < 64; mask++) { let bits = 0; for (let m = mask; m; m &= m - 1) bits++; total += bits * ways[mask]; }
+      return total / 6 ** n;
+    },
   },
 };
 

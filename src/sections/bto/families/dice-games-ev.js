@@ -100,7 +100,7 @@ export default {
         distractors: prod ? [
           { value: q(91, 6), misconception: 'Used E[X²] (one die squared). The two dice are independent, so E[XY] = E[X]E[Y].' },
           { value: 7, misconception: 'Used the expected sum, not the product.' },
-          { value: 18, misconception: 'Averaged the extreme products 1 and 36, treating products as evenly spread.' },
+          { value: q(37, 2), misconception: 'Averaged the extreme products 1 and 36, treating products as evenly spread.' },
         ] : [
           { value: 0, misconception: 'Reasoned "E[X − Y] = 0, so the difference is worth 0". The absolute value removes the cancellation.' },
           { value: q(5, 2), misconception: 'Averaged the possible differences 0..5 as if equally likely. Small differences are more common.' },
@@ -124,6 +124,7 @@ export default {
       });
     }
     const k = kind === 'threeRolls' ? rng.pick([4, 6, 6, 8]) : rng.pick([4, 6, 6, 8, 10, 12]);
+    const stake = rng.int(1, 5);
     const rolls = kind === 'threeRolls' ? 3 : 2;
     const { V, cuts } = optimal(k, rolls);
     const two = optimal(k, 2).V;
@@ -139,27 +140,29 @@ export default {
       naive = s.div(q(k));
     }
     return mcqItem(ID, rng, difficulty, {
-      ev: true, value: V, minGap,
-      text: `You roll ${die(k)} and may reroll ${rolls === 2 ? 'once' : 'up to twice'}. You are paid the number on your final roll (you cannot go back to an earlier roll). Playing optimally, what is your expected payout?`,
+      ev: true, value: V.mul(q(stake)), minGap,
+      text: `You roll ${die(k)} and may reroll ${rolls === 2 ? 'once' : 'up to twice'}. You are paid ${stake === 1 ? 'the number on your final roll' : `${stake} dollars for each point on your final roll`} (you cannot go back to an earlier roll). Playing optimally, what is your expected payout?`,
       distractors: [
-        { value: mean(k), misconception: 'Ignored the option to reroll.' },
-        { value: maxOfAll, misconception: `Took the maximum of ${rolls} rolls. Once you reroll, you must accept the new roll.` },
-        ...(rolls === 3 ? [{ value: two, misconception: 'Used the one-reroll value; the second reroll option raises the value of continuing.' }] : []),
-        { value: naive, misconception: `Kept only rolls of ${top} or more. Keep any roll at or above the value of rerolling (${firstCut}).` },
-        { value: q(k), misconception: 'Assumed optimal play reaches the top face.' },
+        { value: mean(k).mul(q(stake)), misconception: 'Ignored the option to reroll.' },
+        { value: maxOfAll.mul(q(stake)), misconception: `Took the maximum of ${rolls} rolls. Once you reroll, you must accept the new roll.` },
+        ...(rolls === 3 ? [{ value: two.mul(q(stake)), misconception: 'Used the one-reroll value; the second reroll option raises the value of continuing.' }] : []),
+        { value: naive.mul(q(stake)), misconception: `Kept only rolls of ${top} or more. Keep any roll at or above the value of rerolling (${firstCut}).` },
+        { value: q(k * stake), misconception: 'Assumed optimal play reaches the top face.' },
       ],
       steps: [
+        ...(stake > 1 ? [{ say: `First work in face points; multiply the expected points by ${stake} at the end.`, why: 'A positive payment per point scales every choice equally, so it does not change the best keep/reroll policy.' }] : []),
         { say: `Work backwards. With no rerolls left, a roll is worth its average ${mean(k)}.`, why: 'The last roll must be accepted.' },
         { say: rolls === 2 ? `With one reroll left, keep x if x ≥ ${mean(k)}, otherwise reroll.` : `With one reroll left the value is ${two}; with two left, keep x if x ≥ ${two}.`, why: 'Compare the sure value in hand with the expected value of continuing.' },
         { say: `Value = E[max(X, value of continuing)] = ${V} ≈ ${V.toNumber().toFixed(3)}.`, why: 'Average over the first roll with the keep/reroll rule applied.' },
+        ...(stake > 1 ? [{ say: `Expected dollars = ${stake} × ${V} = ${V.mul(q(stake))}.`, why: 'Convert expected face points to the stated payment.' }] : []),
       ],
-      picture: payTable(k, (x) => (q(x).cmp(firstCut) >= 0 ? `keep: ${x}` : `reroll: worth ${firstCut}`), `First roll: keep a face worth at least the value of continuing (${firstCut}), otherwise reroll. The column averages to ${V}.`, 'Best move and its worth'),
-      fast: `Keep ${firstCut.toNumber() % 1 === 0 ? `${firstCut} or more` : `above ${firstCut.toNumber().toFixed(2)}`}; value = E[max(X, ${firstCut})] = ${V.toNumber().toFixed(3)}.`,
-      check: `Above one roll's ${mean(k)} (the option to reroll can only help) and below the max of ${rolls} rolls, ${maxOfAll.toNumber().toFixed(3)}, because a roll you passed on cannot be taken back.`,
+      picture: payTable(k, (x) => (q(x).cmp(firstCut) >= 0 ? `keep: ${x}` : `reroll: worth ${firstCut}`), `First roll in face points: keep at least ${firstCut}, otherwise reroll. The column averages to ${V} points, paying ${V.mul(q(stake))}.`, 'Best move and its worth in points'),
+      fast: `Keep ${firstCut.toNumber() % 1 === 0 ? `${firstCut} or more` : `above ${firstCut.toNumber().toFixed(2)}`}; expected payout = ${stake} × ${V} = ${V.mul(q(stake))}.`,
+      check: `Above one roll's ${mean(k).mul(q(stake))} and below ${stake} times the max of ${rolls} rolls, ${maxOfAll.mul(q(stake)).toNumber().toFixed(3)}, because a passed roll cannot be taken back.`,
       rule: 'Backward induction: V_1 = mean; V_(r+1) = E[max(X, V_r)]. d6: 3.5 → 4.25 → 4.667.',
       anchor: 'The average roll 3.5, with one change: you may throw away a low roll, so each roll is worth max(roll, value of continuing).',
       hints: ['Start from the last roll: what is it worth?', 'Keep a roll only if it beats the value of rerolling.', `Threshold ${firstCut}.`],
-      data: { kind, k, rolls },
+      data: { kind, k, rolls, stake },
     });
   },
 
@@ -178,7 +181,7 @@ export default {
     let best = -Infinity;
     if (d.rolls === 2) for (let S = 0; S < 2 ** k; S++) best = Math.max(best, val(S, avg));
     else for (let S2 = 0; S2 < 2 ** k; S2++) { const c2 = val(S2, avg); for (let S1 = 0; S1 < 2 ** k; S1++) best = Math.max(best, val(S1, c2)); }
-    return agree(item, best, 1e-9);
+    return agree(item, best * (d.stake || 1), 1e-9);
   },
 
   lesson: {

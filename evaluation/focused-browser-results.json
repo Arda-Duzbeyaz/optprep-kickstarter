@@ -1,0 +1,87 @@
+{
+  "legacyQuestionRetained": true,
+  "legacyBlockFinished": true,
+  "userExample": "dice-order-stats",
+  "questions": [
+    {
+      "prompt": "You throw two fair dice. What is the probability that they show the same face (a double)?",
+      "truth": 0.16666666666666666,
+      "choice": "D0.167",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You and a friend each throw one fair die. What is the probability that your face is strictly higher than your friend's?",
+      "truth": 0.4166666666666667,
+      "choice": "A0.417",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You throw two fair dice. What is the probability that the larger face is at most 2?",
+      "truth": 0.1111111111111111,
+      "choice": "C0.111",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You and a friend each throw one fair die. What is the probability that your face is at least as high as your friend's?",
+      "truth": 0.5833333333333334,
+      "choice": "C0.583",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You throw two fair dice. What is the probability that the larger of the two faces is exactly 2? (If they are equal, that common value counts.)",
+      "truth": 0.08333333333333333,
+      "choice": "D0.083",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You throw two fair dice. What is the probability that they show different faces?",
+      "truth": 0.8333333333333334,
+      "choice": "E0.833",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You throw two fair dice. What is the probability that the smaller face is at least 3?",
+      "truth": 0.4444444444444444,
+      "choice": "C0.444",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You throw two fair dice. What is the probability that both dice show 1?",
+      "truth": 0.027777777777777776,
+      "choice": "B0.028",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You throw two fair dice. What is the probability that both dice show 5?",
+      "truth": 0.027777777777777776,
+      "choice": "C0.028",
+      "difficulty": 1,
+      "correct": true
+    },
+    {
+      "prompt": "You throw two fair dice. What is the probability that the larger face is at most 5?",
+      "truth": 0.6944444444444444,
+      "choice": "B0.694",
+      "difficulty": 1,
+      "correct": true
+    }
+  ],
+  "distinctQuestions": 10,
+  "resumeKeptSameQuestion": true,
+  "learningCompleteVisible": true,
+  "phone": {
+    "iframeWidth": 390,
+    "bodyClientWidth": 375,
+    "bodyScrollWidth": 375,
+    "prompt": "Question 1 of 10.\nYou throw two fair dice. What is the probability that both dice show 3?",
+    "newAfterCompletedBlock": true
+  }
+}

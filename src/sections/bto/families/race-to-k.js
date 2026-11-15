@@ -26,7 +26,7 @@ export default {
 
   generate(rng, { difficulty = 2 } = {}) {
     const k = rng.int(2, 4), n = 2 * k - 1;
-    const [a, c] = difficulty === 2 ? [1, 2] : rng.pick(PS.slice(1));
+    const [a, c] = difficulty === 2 ? rng.pick(PS.slice(0, 5)) : rng.pick(PS.slice(1));
     const p = q(a, c), r = q(1).sub(p);
     const full = difficulty === 2 || rng.chance(0.4);
     if (full) {

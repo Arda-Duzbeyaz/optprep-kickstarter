@@ -11,9 +11,9 @@ import { intervalView } from './kinds/interval.js';
 import { orderbookView } from './kinds/orderbook.js';
 import { feedbackBanner, solutionPanel, hintLadder, intervalCoach } from './solution.js';
 import { checkItem, practiceSuccess } from '../core/check.js';
-import { questionKey } from '../core/questions.js';
+import { questionKey, questionSeen } from '../core/questions.js';
 import { makeRng } from '../core/rng.js';
-import { practiceItem, examItems, examScore, drawItem } from '../core/draw.js';
+import { practiceItem, examItems, examScore, drawItem, FreshQuestionsUnavailable } from '../core/draw.js';
 import { srsRecord, srsDue } from '../core/srs.js';
 import { makeCountdown, examClockStatus } from '../core/timer.js';
 import { SECTIONS } from '../../config/sections.js';
@@ -85,6 +85,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     return () => {};
   }
   const mixedAttempt = !family && !fixedItems && familyPool.length >= 2 && ['practice', 'drill'].includes(mode);
+  const focusedFamily = family && section.families.find((f) => f.id === family);
+  const focusedDifficulty = focusedFamily ? saved?.difficulty ?? saved?.current?.item?.difficulty ??
+    recognitionProgress(store.recognition()[`${sectionId}:${family}`], focusedFamily.levels).target : undefined;
   const standardTime = !(Number(store.settings().extraTime) > 1);
   const seed = saved?.seed ?? `${sectionId}:${mode}:${Date.now()}`;
   const rng = makeRng(seed);
@@ -103,13 +106,15 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
   let cleanup = () => {};
   let followingCleanup = () => {};
   let restoring = false, disposed = false, finished = false;
+  let freshSearchStopped = false;
+  let freshSearchError = null;
   let pending = saved?.current || null;
   const limit = fixedItems ? fixedItems.length : (saved?.count || count || (mode === 'practice' ? PRACTICE_BLOCK_SIZE : DRILL_COUNT));
   const dueKeys = mode === 'mistakes' ? srsDue(store.srs).filter((k) => k.startsWith(`${sectionId}:`)).map((k) => k.split(':')[1]) : [];
 
   function elapsed() { return current?.done ? current.ms : current?.pausedMs ?? Math.max(0, performance.now() - current.start); }
   function snapshot() {
-    return { version: PRACTICE_VERSION, section: sectionId, family: family || null, scope, familyPool, seed, rngState: rng.getState(),
+    return { version: PRACTICE_VERSION, section: sectionId, family: family || null, scope, familyPool, difficulty: focusedDifficulty, seed, rngState: rng.getState(),
       index: idx, count: limit, log: structuredClone(log), xp0, lv0, savedAt: Date.now(),
       current: { item: current.item, fresh: current.fresh, hints: current.hints, budgetMs: current.budgetMs, interrupted: !!current.interrupted, aided: !!current.aided,
         elapsedMs: elapsed(), done: !!current.done, response: current.response || null,
@@ -141,17 +146,23 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const targets = Object.fromEntries(section.families.map((f) => [f.id, recognitionProgress(store.recognition()[`${sectionId}:${f.id}`], f.levels).target]));
     const round = new Set();
     for (const row of log) { if (round.size === familyPool.length) round.clear(); if (familyPool.includes(row.family)) round.add(row.family); }
-    return practiceItem(section, rng, store.stats(), { family, familyPool, targets, avoidFamilies: [...round],
-      excludeKeys: store.recentQuestionKeys?.(sectionId) || [], preferStructures: store.recentStructureKeys?.(sectionId) || [], shuffleOptions: true });
+    return practiceItem(section, rng, store.stats(), { family, familyPool, difficulty: focusedDifficulty, targets, avoidFamilies: [...round],
+      excludeKeys: store.recentQuestionKeys?.(sectionId) || [], preferStructures: store.recentStructureKeys?.(sectionId) || [], shuffleOptions: true,
+      requireFresh: mixedAttempt || !!family, minFreshFamilies: mixedAttempt ? 2 : 1 });
   }
 
   function show() {
     cleanup();
     if (idx >= limit) return summary();
     const resumed = pending; pending = null;
-    const item = resumed?.item || nextItem();
+    let item;
+    try { item = resumed?.item || nextItem(); }
+    catch (error) {
+      if (!(error instanceof FreshQuestionsUnavailable)) throw error;
+      freshSearchStopped = true; freshSearchError = error; return summary();
+    }
     if (!item) return summary();
-    const fresh = resumed ? resumed.fresh : setNumber == null && !(store.recentQuestionKeys?.(sectionId)?.has(questionKey(item)));
+    const fresh = resumed ? resumed.fresh : setNumber == null && !questionSeen(store.recentQuestionKeys?.(sectionId) || new Set(), item);
     current = { item, start: performance.now() - (resumed?.elapsedMs || 0), hints: resumed?.hints || 0, fresh,
       budgetMs: resumed?.budgetMs || perItemMs(item), done: false, interrupted: !!resumed?.interrupted || !!resumed && !resumed.done, aided: !!resumed?.aided };
     if (!resumed) store.rememberQuestion?.(item);
@@ -167,10 +178,11 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     // The family name can give the method away (e.g. "cheap bundle: buy it, sell the parts"),
     // so it is shown only after the answer is in, except when the learner chose the family.
     const famLabel = h('span', {}, family || mode === 'learn' ? ` · ${familyTitle(section, item.family)}` : '');
-    if (!fresh && setNumber == null) famLabel.textContent += ' · Review question';
     const head = h('div', { class: 'qhead' },
       h('span', {}, `${title || cfg.title} · ${resumable ? family ? 'Learn a skill' : 'Mixed practice' : modeLabel(mode)}`, famLabel),
       h('span', {}, `${idx + 1} / ${limit}`, mode === 'drill' ? ' · ' : '', mode === 'drill' ? t : '', paceEl ? ' · ' : '', paceEl));
+    const repeatNote = !fresh && setNumber == null ? h('small', { class: 'practice-repeat-note muted',
+      title: 'This question is already in your saved exposure history. It counts as revision and cannot earn a fresh cold checkpoint.' }, 'Previously seen · revision') : null;
     const helpBtn = mixedAttempt && mode === 'practice' ? h('button', { class: 'btn ghost', type: 'button', onclick: () => { current.aided = true; helpBtn.textContent = 'Help recorded · learning only'; helpBtn.disabled = true; saveActive(); } }, 'Used outside help') : null;
     const controls = h('div', { class: 'row' }, submitBtn, unsureBtn, skipBtn, hints?.btn, helpBtn,
       h('span', { style: { flex: 1 } }), resumable ? h('a', { class: 'btn ghost', href: `#/s/${sectionId}` }, 'Save & exit') : null,
@@ -188,10 +200,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     }
     mount(root, h('h1', { class: 'visually-hidden' }, `${title || cfg.title}: ${modeLabel(mode)}`),
       h('div', { class: 'panel' }, head,
-        h('div', { class: 'practice-block-status' }, progressText, progress),
+        h('div', { class: 'practice-block-status' }, progressText, progress), repeatNote,
         levelStrip,
         resumable && !family ? h('p', { class: 'small-note muted' }, `Mixed ${scope === 'covered' ? 'covered' : 'all'} skills · Topic and difficulty stay hidden until submission. ${standardTime ? 'Cold, unaided answers within training pace can verify a checkpoint.' : 'Extra-time practice does not earn checkpoints.'}`) : null,
-        mixedAttempt && !fresh ? h('p', { class: 'revision-notice', role: 'status' }, 'Previously seen question · revision only. This answer counts in your practice record and XP, but cannot advance a cold checkpoint. Some question families have small finite pools.') : null,
         tapSubmits && item.kind === 'mcq' ? h('p', { class: 'small-note muted' }, 'Tapping an option submits it.') : null,
         body.el, hints?.box, controls, saveNote, after, skillSlot));
     focusIn(root, '.prompt');
@@ -316,7 +327,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const weakest = [...byFam.entries()].sort((a, b) => a[1].c / a[1].n - b[1].c / b[1].n)[0];
     const run = { section: sectionId, mode, score: log.reduce((s, x) => s + x.score, 0), max: n,
       items: log, plannedCount: limit, completed: n === limit,
-      ...(resumable ? { family: family || null, scope, blockId: String(seed) } : {}) };
+      ...(resumable ? { family: family || null, difficulty: focusedDifficulty, scope, blockId: String(seed) } : {}) };
     if (mode === 'drill' && n) store.recordRun(run);
     if (resumable) store.finishPractice(sectionId, run);
     const nextSkill = resumable && family && store.coverage(sectionId, family).covered
@@ -339,11 +350,17 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     mount(root, h('section', { class: 'field session-summary' },
       h('h2', { class: 'field-label' }, `${modeLabel(mode)} summary`),
       h('p', { class: 'small-note muted' }, n === limit ? `Block complete · ${n}/${limit} answered` : `Ended early · ${n}/${limit} answered. Submitted answers still count towards skill progress.`),
+      freshSearchStopped ? h('p', { class: 'fresh-questions-status', role: 'status' }, family
+        ? freshSearchError?.catalogueExhausted
+          ? `All ${freshSearchError.catalogueSize} variants in this skill’s configured difficulty-${focusedDifficulty} pool are in your saved history. Your submitted answers are saved. Choose another skill or review your recorded mistakes.`
+          : `The search found no unseen question in this skill at difficulty ${focusedDifficulty}. Your submitted answers are saved. More variants may exist; this is a search limit, not a claim that the topic is exhausted.`
+        : 'This mixed batch stopped because the search could not find unseen questions in at least two selected skills at their current difficulties. Your answers are saved. Cover another skill or mix all skills.') : null,
       resumable && family && n === limit ? h('p', { class: 'learning-completion-note', role: 'status' },
         store.coverage(sectionId, family).covered ? 'Learning complete and saved to Progress. This skill is covered; cold mixed checks are still to do.'
           : 'Block saved to Progress. Revisit the skipped questions, then mark the skill covered or finish a block without skips.') : null,
       resumable ? h('p', { class: 'next-training-action' }, h('strong', {}, 'Next: '),
-        !family ? weakest && weakest[1].c < weakest[1].n ? `Review your misses, repair ${familyTitle(section,weakest[0])}, then start another fresh mixed batch.` : 'Try another fresh mixed batch, or take a timed section for a full-clock check.'
+        family && freshSearchStopped ? 'Choose another skill or review your mistakes. Learning completion and cold checkpoints are preserved.'
+          : !family ? freshSearchStopped ? 'Learn another skill to broaden your mixed pool, or take a timed section using all available skills.' : weakest && weakest[1].c < weakest[1].n ? `Review your misses, repair ${familyTitle(section,weakest[0])}, then start another fresh mixed batch.` : 'Try another fresh mixed batch, or take a timed section for a full-clock check.'
           : suggestMixed ? 'Test your covered skills together in mixed practice. Return here to repair anything you cannot solve independently.'
             : nextSkill ? 'Learn the next skill. Once two skills are covered, test them together in mixed practice.'
               : n < limit ? 'Your partial learning is saved. Complete a fresh block or mark the skill covered once you understand the method.'
@@ -357,7 +374,8 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       h('div', { class: 'row' },
         suggestMixed ? h('a', { class: 'btn primary', href: `#/run/${sectionId}/mixed/covered` }, 'Test in mixed practice') : null,
         nextSkill ? h('a', { class: `btn${suggestMixed ? '' : ' primary'}`, href: `#/run/${sectionId}/practice/${nextSkill.id}` }, `Next skill: ${nextSkill.title}`) : null,
-        resumable ? h('button', { class: `btn${nextSkill || suggestMixed ? '' : ' primary'}`, type: 'button', onclick: () => { followingCleanup = runFeedbackSession(root, options); } }, `Start another ${PRACTICE_BLOCK_SIZE} questions`) : null,
+        resumable && !freshSearchStopped ? h('button', { class: `btn${nextSkill || suggestMixed ? '' : ' primary'}`, type: 'button', onclick: () => { followingCleanup = runFeedbackSession(root, options); } }, `Start another ${PRACTICE_BLOCK_SIZE} questions`) : null,
+        freshSearchStopped && scope === 'covered' ? h('a', { class: 'btn primary', href: `#/run/${sectionId}/mixed/all` }, 'Mix all skills') : null,
         resumable && family && !suggestMixed ? h('a', { class: 'btn', href: `#/run/${sectionId}/mixed/${coveredCount >= 2 ? 'covered' : 'all'}` }, 'Test in mixed practice') : null,
         resumable && family && n ? h('a', { class: 'btn', href: '#/progress/skills' }, 'View saved progress') : null,
         weakest && weakest[1].c < weakest[1].n && lessonForFamily(sectionId, weakest[0]) ? h('a', { class: 'btn primary', href: `#/study/lesson/${lessonForFamily(sectionId, weakest[0])}` }, `Study: ${familyTitle(section, weakest[0])}`) : null,
@@ -417,11 +435,21 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   // Extra time (an accessibility setting) stretches the clock; such runs never count toward readiness.
   const exam = extra > 1 ? { ...exam0, totalSeconds: exam0.totalSeconds && exam0.totalSeconds * extra, perItemSeconds: exam0.perItemSeconds && exam0.perItemSeconds * extra } : exam0;
   const priorQuestions = store.recentQuestionKeys?.(sectionId) || new Set();
-  const items = fixedItems || examItems(section, { count: exam.count, ramp: sectionId === 'nl', bankRatio: 0.2,
-    excludeKeys: priorQuestions }, seed);
+  let items;
+  try { items = fixedItems || examItems(section, { count: exam.count, ramp: sectionId === 'nl', bankRatio: 0.2,
+    excludeKeys: priorQuestions }, seed); }
+  catch (error) {
+    if (!(error instanceof FreshQuestionsUnavailable)) throw error;
+    mount(root, h('section', { class: 'panel fresh-questions-status', role: 'status' },
+      h('h2', {}, `${base.title}: no fresh paper available`),
+      h('p', {}, 'The search could not build a full paper without questions in your saved exposure history. This section has not started and no score has been recorded.'),
+      h('p', { class: 'muted' }, 'Use focused learning for revision, or practise unfamiliar problems from another source. For large generators, a bounded search can miss a remaining variant.'),
+      h('a', { class: 'btn primary', href: `#/s/${sectionId}` }, 'Back to skills')));
+    return () => {};
+  }
   const seenInRun = new Set(priorQuestions);
   const repeatCount = items.reduce((n, item) => {
-    const key = questionKey(item), repeat = seenInRun.has(key);
+    const key = questionKey(item), repeat = questionSeen(seenInRun, item);
     seenInRun.add(key);
     return n + Number(repeat);
   }, 0);

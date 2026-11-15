@@ -1,0 +1,93 @@
+{
+  "edition": "1.2.2-kickstarter.1",
+  "prepared": "2026-11-14",
+  "baseline": "1.2.1-kickstarter.1",
+  "baseline_revision": "9bdc61e8f11f0d4e3f91b078e23c0af03d35eb7b",
+  "javascript": {
+    "passed": 860,
+    "failed": 0,
+    "skipped": 0
+  },
+  "python": {
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0
+  },
+  "cpp": {
+    "passed": 34,
+    "failed": 0
+  },
+  "unit_total": 930,
+  "new_regression_tests": 16,
+  "new_freshness_flow_assertions": 147,
+  "existing_integration": {
+    "practice_flow_assertions": 104,
+    "learning_route_assertions": 100,
+    "shared_practice_assertions": 71,
+    "full_completion_walkthrough_assertions": 684,
+    "learning_families": 103,
+    "learning_answers": 1040,
+    "focused_interface_regressions": 11,
+    "original_ui_smoke": "passed",
+    "batch_smoke": "passed",
+    "broader_batch_router": "passed"
+  },
+  "finite_catalogue": {
+    "entries": 82,
+    "original_generator_reachability_draws": 16384,
+    "independent_probability_verifiers": "passed for every catalogue entry",
+    "item_contract": "passed for every catalogue entry",
+    "two_dice_levels": {
+      "1": 21,
+      "2": 21
+    },
+    "repeated_die_levels": {
+      "1": 4,
+      "2": 36
+    }
+  },
+  "comparison_report": "evaluation/repetition-results.json",
+  "preservation": {
+    "originalGeneratorFilesUnchanged": 133,
+    "mockPapersIdentical": 50,
+    "mockQuestionsIdentical": 990,
+    "assessmentConfigurationUnchanged": true,
+    "licenceUnchanged": true
+  },
+  "chrome_qa": {
+    "scenario": "Four distinct easy repeated-die prompts answered using rendered UI; first required repeat appeared at question five and matched the oldest shown prompt.",
+    "repeat_note": {
+      "font_size_px": 11,
+      "height_px": 15.390625,
+      "border_px": 0,
+      "background": "transparent",
+      "text": "Previously seen \u00b7 revision",
+      "alert_role": false
+    },
+    "desktop": "passed",
+    "phone_iframe_width": 390,
+    "phone_content_width": 375,
+    "phone_scroll_width": 375,
+    "saved_question_resume": "passed",
+    "theme": "dark",
+    "physical_phone": "not tested",
+    "cross_browser": "not tested"
+  },
+  "progress_compatibility": {
+    "schema": 2,
+    "new_migration_required": false,
+    "existing_fingerprints_reused": true,
+    "saved_current_questions_preserved": true,
+    "xp_scoring_clocks_cold_rules": "unchanged"
+  },
+  "limits": [
+    "A reference sweep witnesses unseen alternatives but does not enumerate every procedural family.",
+    "Only the two explicitly enumerated dice families have a complete-domain no-repeat guarantee at each supported difficulty.",
+    "Other families use a bounded 256-candidate search. A rare unseen variant can remain undiscovered.",
+    "Repeat history is the existing bounded saved exposure history, not unlimited cross-device knowledge.",
+    "Unseen visible prompts do not establish unfamiliar mathematical structure or empirical Optiver difficulty."
+  ],
+  "live_github_pages_updated": false,
+  "implementation_revision": "7251d24cd73498c99228fd6b6d2a8d841dfd325d",
+  "source_revision_meaning": "Local tested implementation; following metadata-only commit records provenance."
+}

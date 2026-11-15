@@ -1,0 +1,181 @@
+{
+  "edition": "1.4.0-kickstarter.1",
+  "date": "2026-11-15",
+  "baselineEdition": "1.3.0-kickstarter.1",
+  "baselineArchiveSha256": "176ea2b8d00d5f1e40c02c610cfa3f47ac7eabdfa1a7779508920b9d40fdd231",
+  "javascript": {
+    "passed": 1062,
+    "failed": 0,
+    "skipped": 0,
+    "command": "npm test"
+  },
+  "python": {
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0,
+    "command": "python -m pytest -q (backend/; compiled engine available)"
+  },
+  "cpp": {
+    "passed": 34,
+    "failed": 0,
+    "command": "ctest --test-dir engine/build --output-on-failure"
+  },
+  "unitTestTotal": 1132,
+  "domIntegration": {
+    "scripts": 11,
+    "allExitCodes": 0,
+    "report": "evaluation/focused-learning-flows.json",
+    "focusedLearningAssertions": 76,
+    "practiceFreshnessAssertions": 108,
+    "fullWalkthrough": {
+      "learningFamilies": 103,
+      "questions": 1040,
+      "assertions": 680,
+      "uncaughtErrors": 0
+    }
+  },
+  "comparison": {
+    "skills": 111,
+    "invitedSkills": 103,
+    "optionalArithmeticSkills": 8,
+    "familyLevels": 273,
+    "sampleDrawsPerLevelPerRelease": 512,
+    "seedsPerFirstBlock": 20,
+    "questionsPerRelease": 54600,
+    "firstBlockRepeatsBefore": 1160,
+    "firstBlockRepeatsAfter": 0,
+    "acrossBlocks": {
+      "questions": 9764,
+      "repeats": 0,
+      "stoppedPools": 64
+    },
+    "completeCataloguePools": 33,
+    "completeCatalogueEntries": 776,
+    "report": "evaluation/focused-variation-results.json"
+  },
+  "assessmentRegression": {
+    "guided": 1030,
+    "mixed": 1000,
+    "mockPapers": 150,
+    "mockQuestions": 2970,
+    "batchQuestions": 500,
+    "repeatedQuestions": 0,
+    "sectionCounts": {
+      "bto": 1240,
+      "nl": 1380,
+      "ll": 910,
+      "iv": 990,
+      "ob": 980
+    }
+  },
+  "browser": {
+    "browser": "Chrome (managed preview)",
+    "legacySavedQuestionAndBlockPreserved": true,
+    "exampleFamily": "dice-order-stats",
+    "exampleDifficulty": 1,
+    "completedQuestions": 10,
+    "distinctQuestions": 10,
+    "correctAnswersIndependentlyCountedFromVisiblePrompts": 10,
+    "saveExitResumeReloadKeptQuestion": true,
+    "learningCompletionVisible": true,
+    "phoneIframeWidth": 390,
+    "phoneBodyClientWidth": 375,
+    "phoneBodyScrollWidth": 375,
+    "physicalPhoneOrOtherBrowsersTested": false,
+    "screenshots": [
+      "docs/media/validation/optprep-focused-complete.jpg",
+      "docs/media/validation/optprep-focused-phone.jpg"
+    ],
+    "report": "evaluation/focused-browser-results.json"
+  },
+  "unchangedFileChecks": [
+    {
+      "path": "config/presets.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "d4d3ccc061f5ef89a09b30bc8b3bc26081e60fb5ede25817eeb9b7a749bfe626"
+    },
+    {
+      "path": "config/sections.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "d2cc53cbd7c5fb26f3e7defe64e6e4948207eec7f87ebe09f0b4a854ad6b946f"
+    },
+    {
+      "path": "src/core/questions.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "e56c9647699fbff210e1f95b10e39ad09ea70f3067698c3b4c042db55a9ab5dd"
+    },
+    {
+      "path": "src/core/recognition.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "0338c3c8431fce1a9b842842294b0c8c789128745a2c6644432fa552532f9226"
+    },
+    {
+      "path": "src/core/learning.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "6566b7b41faa37145dedfc87b8b5b728ac0598645aaa692a70685e0c73488ece"
+    },
+    {
+      "path": "src/core/store.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "b2be41e0771337719af95b65e06a9bbe2c44751bdde20e2051cfb67558f21014"
+    },
+    {
+      "path": "src/core/migrate.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "21665f7a7536d0f2aa97d69ea35ce7b65dab1cb14e0b1a9420de373c48076164"
+    },
+    {
+      "path": "src/transfer/draw.js",
+      "unchangedFrom1_3_0": true,
+      "sha256": "be9302e26e590a8fe4f7b0340f8fb2638d8be41a8b762f32ecd6fa98f136e0ef"
+    },
+    {
+      "path": "LICENSE",
+      "unchangedFrom1_3_0": true,
+      "sha256": "5870a49cfb94ebb9dc3c192a41ad1f76205bbc81724df9461e1300d0eeef939f"
+    }
+  ],
+  "changedSourceAndTestsBeforeDocumentation": [
+    "package.json",
+    "src/core/draw.js",
+    "src/core/practice.js",
+    "src/practice/finite-variants.js",
+    "src/sections/bto/families/at-least-one.js",
+    "src/sections/bto/families/card-draws.js",
+    "src/sections/bto/families/coin-sequences.js",
+    "src/sections/bto/families/coupon-collector.js",
+    "src/sections/bto/families/dice-duel.js",
+    "src/sections/bto/families/dice-games-ev.js",
+    "src/sections/bto/families/dice-order-stats.js",
+    "src/sections/bto/families/die-repeats.js",
+    "src/sections/bto/families/expected-extremes.js",
+    "src/sections/bto/families/first-success.js",
+    "src/sections/bto/families/monty-hall.js",
+    "src/sections/bto/families/pattern-waiting.js",
+    "src/sections/bto/families/race-to-k.js",
+    "src/sections/bto/families/three-dice.js",
+    "src/sections/bto/families/uniform-geometry.js",
+    "src/sections/iv/families/expected-dice.js",
+    "src/sections/iv/families/waiting-time.js",
+    "src/sections/nl/families/fractions.js",
+    "src/sections/nl/families/triangular.js",
+    "src/ui/runner.js",
+    "sw.js",
+    "tests/core/learning-completion.test.js",
+    "tests/core/practice-freshness.test.js",
+    "tests/sections/reasoning-diversity.test.js",
+    "tools/practice-freshness-flow.mjs"
+  ],
+  "changedGeneratorFamilies": 19,
+  "unchangedInvitedGeneratorFamilies": 84,
+  "liveGitHubPagesUpdated": false,
+  "limits": [
+    "Exact novelty is relative to the retained 8000 fingerprints per assessment on the same browser origin.",
+    "Configured finite capacity is not the complete mathematical topic; unknown bounded-search failure is not proof of exhaustion.",
+    "Old saved current questions, deliberate mistake review, fixed numbered sets and lessons may reuse questions.",
+    "Numerical and visible variation do not establish conceptual novelty, human learning transfer or Optiver difficulty calibration.",
+    "The final four wrong-choice/explanation corrections were included in the 1062-test final unit run; they do not affect the recorded selection comparisons or UI flows."
+  ],
+  "implementationRevision": "41b529d64fa56cde2182d6e5d89d666811f7f51b",
+  "revisionMeaning": "Tested local implementation; following metadata-only commit records this provenance. The local repository was recovered from the complete previously modified 1.3.0 archive."
+}

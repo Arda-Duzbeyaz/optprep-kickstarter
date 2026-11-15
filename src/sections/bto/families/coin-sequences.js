@@ -161,7 +161,7 @@ export default {
 
   generate(rng, { difficulty = 1 } = {}) {
     const kind = difficulty === 1 ? rng.pick(['allSame', 'exactlyK']) : difficulty === 2 ? rng.pick(['exactlyK', 'moreHeads']) : rng.pick(['noHH', 'run']);
-    const n = difficulty === 1 ? rng.int(3, 5) : rng.int(4, 10);
+    const n = difficulty === 1 ? rng.int(3, 6) : rng.int(4, 10);
     const b = build(kind, n, rng);
     return mcqItem(ID, rng, difficulty, {
       ...b,

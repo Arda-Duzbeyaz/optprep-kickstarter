@@ -13,6 +13,51 @@ const ID = 'card-draws';
 const words = ['', 'one', 'two', 'three', 'four', 'five'];
 const C = (n, k) => nCr(n, k);
 const ratio = (a, b) => new Q(a, b);
+const GROUPS = {
+  aces: { label: 'aces', good: 4, has: (card) => card % 13 === 0 },
+  face: { label: 'face cards (jacks, queens or kings)', good: 12, has: (card) => card % 13 >= 10 },
+  hearts: { label: 'hearts', good: 13, has: (card) => Math.floor(card / 13) === 0 },
+  red: { label: 'red cards', good: 26, has: (card) => card < 26 },
+  numbered: { label: 'number cards (ranks 2 through 10)', good: 36, has: (card) => card % 13 >= 1 && card % 13 <= 9 },
+  redFace: { label: 'red face cards (red jacks, queens or kings)', good: 6, has: (card) => card < 26 && card % 13 >= 10 },
+};
+export const cardBasics = [
+  ...['twoAces', 'sameSuit', 'sameColour', 'pair'].map((kind) => ({ kind })),
+  ...Object.keys(GROUPS).flatMap((group) => ['both', 'firstOnly', 'neither']
+    .filter((mode) => !(group === 'aces' && mode === 'both'))
+    .map((mode) => ({ kind: 'group', group, mode }))),
+];
+
+function groupDraw(data) {
+  const { group, mode } = data, g = GROUPS[group];
+  const counts = mode === 'both' ? [g.good, g.good - 1]
+    : mode === 'firstOnly' ? [g.good, 52 - g.good] : [52 - g.good, 51 - g.good];
+  const value = q(counts[0] * counts[1], 52 * 51);
+  const event = mode === 'both' ? `both cards are ${g.label}`
+    : mode === 'firstOnly' ? `the first card is one of the ${g.label} and the second is not`
+      : `neither card is one of the ${g.label}`;
+  const replacement = q(mode === 'neither' ? 52 - g.good : g.good, 52)
+    .mul(q(mode === 'both' ? g.good : 52 - g.good, 52));
+  return { value, data,
+    text: `You draw two cards in order from a shuffled 52-card deck without replacement. What is the probability that ${event}?`,
+    distractors: [
+      { value: replacement, misconception: 'Used the original deck for both draws, as if the first card were replaced.' },
+      { value: q(counts[0], 52), misconception: 'Only checked the first draw.' },
+      { value: q(counts[1], 51), misconception: 'Only checked the conditional probability of the second draw.' },
+      { value: value.mul(q(2)), misconception: 'Counted a second order even though the event already specifies which draw is which.' },
+      { value: q(1).sub(value), misconception: 'Answered the complementary event.' },
+    ],
+    steps: [
+      { say: `The full deck has ${g.good} ${g.label} and ${52 - g.good} other cards.`, why: 'Identify the relevant group before shrinking the deck.' },
+      { say: `The first draw has ${counts[0]} good cards out of 52. Given that result, the second has ${counts[1]} good cards out of 51.`, why: 'Remove the actual first card from the appropriate group, not from both groups.' },
+      { say: `P = ${counts[0]}/52 × ${counts[1]}/51 = ${value}.`, why: 'Chain conditional probabilities for the two ordered draws.' },
+    ],
+    hints: [`How many ${g.label} are in a standard deck?`, 'Remove the first card from its group, and reduce the deck size to 51.'],
+    picture: table(['Draw', 'Allowed cards', 'Cards left'], [[1, counts[0], 52], [2, counts[1], 51]], 'The second count is conditional on the specified first result.'),
+    fast: `${counts[0]}/52 × ${counts[1]}/51 = ${value}.`,
+    check: `The joint event cannot be more likely than its first requirement, ${counts[0]}/52.`,
+  };
+}
 
 function build(kind, rng) {
   if (kind === 'twoAces') return {
@@ -222,9 +267,8 @@ export default {
   levels: [1, 2, 3],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const kind = difficulty === 1 ? rng.pick(['twoAces', 'sameSuit', 'sameColour', 'pair'])
-      : difficulty === 2 ? rng.pick(['atLeastAce', 'allRed', 'atLeastHeart']) : rng.pick(['flush', 'allDiffRanks', 'atLeastAce', 'atLeastHeart']);
-    const b = build(kind, rng);
+    const input = difficulty === 1 ? rng.pick(cardBasics) : { kind: difficulty === 2 ? rng.pick(['atLeastAce', 'allRed', 'atLeastHeart']) : rng.pick(['flush', 'allDiffRanks', 'atLeastAce', 'atLeastHeart']) };
+    const b = input.kind === 'group' ? groupDraw(input) : build(input.kind, rng);
     return mcqItem(ID, rng, difficulty, {
       ...b,
       rule: 'Without replacement: multiply (good left)/(cards left) at each draw. "At least one" = 1 − P(none).',
@@ -236,13 +280,14 @@ export default {
   verify(item) {
     const d = item.params;
     const seq = (good, k) => { let p = 1; for (let i = 0; i < k; i++) p *= (good - i) / (52 - i); return p; };
-    if (['twoAces', 'sameSuit', 'sameColour', 'pair'].includes(d.kind)) {
+    if (['twoAces', 'sameSuit', 'sameColour', 'pair', 'group'].includes(d.kind)) {
       // card c: rank = c % 13, suit = floor(c / 13), red = suit < 2
       let hits = 0, tot = 0;
       for (let a = 0; a < 52; a++) for (let b = 0; b < 52; b++) {
         if (a === b) continue;
         tot++;
-        const ok = d.kind === 'twoAces' ? a % 13 === 0 && b % 13 === 0
+        const groupEvent = () => { const x = GROUPS[d.group].has(a), y = GROUPS[d.group].has(b); return d.mode === 'both' ? x && y : d.mode === 'firstOnly' ? x && !y : !x && !y; };
+        const ok = d.kind === 'group' ? groupEvent() : d.kind === 'twoAces' ? a % 13 === 0 && b % 13 === 0
           : d.kind === 'sameSuit' ? Math.floor(a / 13) === Math.floor(b / 13)
             : d.kind === 'sameColour' ? (Math.floor(a / 13) < 2) === (Math.floor(b / 13) < 2)
               : a % 13 === b % 13;

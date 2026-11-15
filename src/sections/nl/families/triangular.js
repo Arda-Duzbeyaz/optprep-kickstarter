@@ -9,7 +9,7 @@ export default family({
   levels: [1, 2],
   show: 5,
   missing: 1,
-  params: (rng, d) => (d === 1 ? { s: rng.int(1, 7), k: 1, c: 0 } : { s: rng.int(1, 7), k: rng.pick([2, 3]), c: rng.int(-5, 5) }),
+  params: (rng, d) => (d === 1 ? { s: rng.int(1, 12), k: 1, c: 0 } : { s: rng.int(1, 7), k: rng.pick([2, 3]), c: rng.int(-5, 5) }),
   terms: ({ s, k, c }, n) => Array.from({ length: n }, (_, i) => q(k * T(i + s) + c)),
   rule: ({ k, c }) => `${k === 1 ? '' : `${k}·`}T(m)${c ? ` ${c < 0 ? '−' : '+'} ${Math.abs(c)}` : ''} with T(m) = m(m+1)/2`,
   explain: ({ k, c, s }, { shown }) => [

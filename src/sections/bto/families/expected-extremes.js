@@ -17,7 +17,7 @@ export default {
     const minOf = rng.chance(0.4);
     if (!uniform) {
       const n = difficulty === 2 ? 2 : rng.int(3, 4);
-      const s = rng.pick(difficulty === 2 ? [6, 6, 4, 8] : [6, 6, 4, 8, 10]);
+      const s = difficulty === 2 ? rng.int(3, 12) : rng.pick([6, 6, 4, 8, 10]);
       let E = q(0);
       for (let k = 1; k <= s; k++) {
         // P(max >= k) = 1 - ((k-1)/s)^n ; P(min >= k) = ((s-k+1)/s)^n

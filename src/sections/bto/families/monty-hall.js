@@ -11,8 +11,8 @@ export default {
   levels: [2, 3],
 
   generate(rng, { difficulty = 2 } = {}) {
-    const n = difficulty === 2 ? 3 : rng.int(4, 7);
-    const m = difficulty === 2 ? 1 : rng.int(1, n - 2);
+    const n = difficulty === 2 ? rng.int(3, 12) : rng.int(4, 7);
+    const m = difficulty === 2 ? n - 2 : rng.int(1, n - 2);
     const variant = difficulty === 2 ? rng.pick(['switch', 'switch', 'stay']) : rng.pick(['switch', 'switch', 'random']);
     const closedOthers = n - m - 1;
     let value, text, steps;

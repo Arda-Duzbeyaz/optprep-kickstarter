@@ -23,17 +23,19 @@ const fam = {
   skill: 'Split the wait into stages (uniform) or use inclusion-exclusion over the missing set (weighted)',
   levels: [3, 4, 5],
   generate(rng, { difficulty = 3 } = {}) {
-    let text, ps, steps, coach;
+    let text, ps, steps, coach, collected = 0;
     if (difficulty === 3) {
       const n = rng.int(3, 12);
+      collected = rng.int(0, n - 1);
       ps = range(1, n).map(() => Q.of(1, n));
-      text = `A fair ${n}-sided die is rolled until every face has appeared at least once. What is the expected number of rolls?`;
-      const Hn = sumQ(range(1, n).map((i) => Q.of(1, i)));
+      text = collected ? `A fair ${n}-sided die has already shown ${collected} distinct ${collected === 1 ? 'face' : 'faces'}. What is the expected number of additional rolls until every face has appeared at least once?`
+        : `A fair ${n}-sided die is rolled until every face has appeared at least once. What is the expected number of rolls?`;
+      const remaining = n - collected, Hn = sumQ(range(1, remaining).map((i) => Q.of(1, i)));
       steps = [
-        { say: `Stage i (having seen i − 1 faces) waits a geometric time with success chance (${n} − i + 1)/${n}, mean ${n}/(${n} − i + 1).`, why: 'Each new face is a fresh wait; stages are independent.' },
-        { say: `Sum: ${n} × (1 + 1/2 + … + 1/${n}) = ${n} × ${Hn.toNumber().toFixed(4)}.`, why: 'Linearity over stages gives n·H(n).' },
+        { say: `${collected} faces are already collected. With j faces missing, a new face arrives with probability j/${n}, giving mean wait ${n}/j.`, why: 'Already collected faces still consume rolls; only a missing face advances the collection.' },
+        { say: `Sum the ${remaining} remaining stages: ${n} × (${range(1, remaining).map((i) => i === 1 ? '1' : `1/${i}`).join(' + ')}) = ${n} × ${Hn.toNumber().toFixed(4)}.`, why: 'Linearity over the remaining stages gives n·H(n − collected), not n·H(n) unless starting from zero.' },
       ];
-      coach = { exact: true, belief: { kind: 'point' }, note: 'Exact: n·H(n). Compute the harmonic sum carefully and give a tight bracket.' };
+      coach = { exact: true, belief: { kind: 'point' }, note: 'Exact: n·H(number still missing). Compute the remaining stage waits and give a tight bracket.' };
     } else {
       let w;
       do w = Array.from({ length: difficulty === 4 ? 3 : rng.int(3, 4) }, () => rng.int(1, 6)); while (new Set(w).size === 1);
@@ -47,12 +49,12 @@ const fam = {
       ];
       coach = { exact: true, belief: { kind: 'lognormal', sd: difficulty === 4 ? 0.02 : 0.04 }, note: 'Exact by inclusion-exclusion, but with 7 to 15 terms under time pressure, allow a few percent for arithmetic.' };
     }
-    const e = expectedAll(ps), truth = e.toNumber();
+    const e = expectedAll(ps.slice(collected)), truth = e.toNumber();
     steps.push({ say: `E = ${e.toString()} ≈ ${truth.toFixed(4)}.`, why: 'Exact rational, rounded only for display.' });
     return ivItem(fam, rng, difficulty, {
       text, truth, unit: difficulty === 3 ? 'rolls' : 'boxes', coach, exact: e.toString(), steps,
-      hints: ['Where is most of the waiting? At the end, when only the rarest item is missing.', difficulty === 3 ? 'Add the stage waits n/n + n/(n−1) + … + n/1.' : 'Inclusion-exclusion: add 1/p for singles, subtract 1/(p+q) for pairs, add back triples.'],
-      params: { scenario: difficulty === 3 ? 'uniform' : 'weighted', probs: ps.map((p) => [Number(p.n), Number(p.d)]) },
+      hints: ['Where is most of the waiting? At the end, when only the rarest item is missing.', difficulty === 3 ? `Start with ${ps.length - collected} missing faces: add n/${ps.length - collected}, then the later stage waits, ending at n/1.` : 'Inclusion-exclusion: add 1/p for singles, subtract 1/(p+q) for pairs, add back triples.'],
+      params: { scenario: difficulty === 3 ? (collected ? 'partial' : 'uniform') : 'weighted', collected, probs: ps.map((p) => [Number(p.n), Number(p.d)]) },
     });
   },
   // Independent check: Markov chain solved by elimination, over the collected set (weighted)
@@ -61,7 +63,7 @@ const fam = {
     const ps = item.params.probs.map(([n, d]) => Q.of(n, d));
     const k = ps.length;
     let P, target;
-    if (item.params.scenario === 'uniform') {
+    if (['uniform', 'partial'].includes(item.params.scenario)) {
       P = Array.from({ length: k + 1 }, (_, c) => { const row = Array(k + 1).fill(ZERO); if (c === k) row[k] = ONE; else { row[c] = Q.of(c, k); row[c + 1] = Q.of(k - c, k); } return row; });
       target = k;
     } else {
@@ -69,7 +71,7 @@ const fam = {
       P = Array.from({ length: N }, (_, m) => { const row = Array(N).fill(ZERO); for (let i = 0; i < k; i++) { const t = m | (1 << i); row[t] = row[t].add(ps[i]); } return row; });
       target = N - 1;
     }
-    const h = hittingTimes(P, [target])[0].toNumber();
+    const h = hittingTimes(P, [target])[item.params.collected || 0].toNumber();
     return { ok: Math.abs(h - item.truth) < 1e-9, detail: `Markov chain ${h}, item ${item.truth}` };
   },
   lesson: {

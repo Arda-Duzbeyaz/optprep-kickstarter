@@ -54,7 +54,7 @@ export default {
         data: { s, k },
       });
     }
-    const c = difficulty === 2 ? rng.pick(CTX.slice(1, 4)) : rng.pick([CTX[0], CTX[4], CTX[1]]);
+    const c = difficulty === 2 ? rng.pick(CTX) : rng.pick([CTX[0], CTX[4], CTX[1]]);
     const n = c.n(rng.int(3, 10));
     const v = q(n).mul(harmonic(n));
     const parts = Array.from({ length: n }, (_, i) => `${n}/${n - i}`);
@@ -79,7 +79,8 @@ export default {
       hints: ['Break the wait into stages by how many types you have.', 'Stage i has success probability (n − i)/n.', `Sum ${parts.slice(0, 3).join(' + ')} + …`],
       picture: stageBars(n, n, `Stage i waits for a type not seen yet, ${n}/(${n} − i + 1) on average. The last stage alone takes ${n}; all ${n} bars add to ${n}·H_${n} ≈ ${v.toNumber().toFixed(2)}.`),
       fast: `${n}·H_${n} = ${n} × ${harmonic(n).toNumber().toFixed(3)} ≈ ${v.toNumber().toFixed(2)}.`,
-      check: `The last missing type alone takes ${n} on average, and the first takes 1, so the total sits well above ${n + 1}; n(ln n + 0.58) ≈ ${(n * (Math.log(n) + 0.5772)).toFixed(1)} is a quick estimate.`,
+      check: n === 2 ? 'The first type takes one draw and the other takes two more on average: exactly 3 draws.'
+        : `The first type takes 1 draw and the last missing type alone takes ${n} on average. The intervening stages add positive time, so the total exceeds ${n + 1}. The rough estimate n(ln n + 0.58) ≈ ${(n * (Math.log(n) + 0.5772)).toFixed(1)} is useful away from very small n.`,
       data: { s: n, k: n },
     });
   },

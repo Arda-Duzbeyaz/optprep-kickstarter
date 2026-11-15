@@ -32,14 +32,14 @@ export default {
     let A, B, reroll = false;
     if (difficulty === 2) {
       const pair = rng.pick(['same6', 'sizes', 'reroll']);
-      if (pair === 'same6') { A = { type: 'die', k: 6 }; B = { type: 'die', k: 6 }; }
+      if (pair === 'same6') { A = { type: 'die', k: rng.pick([4, 6, 8, 10, 12]) }; B = { ...A }; }
       else if (pair === 'reroll') { A = { type: 'die', k: rng.pick([6, 8, 10]) }; B = { ...A }; reroll = true; }
       else { const [a, b] = rng.pick([[8, 6], [6, 8], [10, 6], [12, 6], [6, 4], [4, 6], [20, 6], [10, 8]]); A = { type: 'die', k: a }; B = { type: 'die', k: b }; }
     } else {
       const pair = rng.pick(['sum', 'max', 'efron']);
       if (pair === 'sum') { A = { type: 'sum2' }; B = { type: 'sum2' }; }
       else if (pair === 'max') { A = { type: 'max2' }; B = { type: 'die', k: 6 }; }
-      else { const [x, y] = rng.pick([['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'A'], ['A', 'C'], ['B', 'D']]); A = { type: 'custom', faces: EFRON[x] }; B = { type: 'custom', faces: EFRON[y] }; }
+      else { const [x, y] = rng.pick(Object.keys(EFRON).flatMap((x) => Object.keys(EFRON).map((y) => [x, y]))); A = { type: 'custom', faces: EFRON[x] }; B = { type: 'custom', faces: EFRON[y] }; }
     }
     const { win, tie } = beats(A, B);
     const lose = q(1).sub(win).sub(tie);

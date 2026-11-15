@@ -8,6 +8,7 @@ import { SECTION_MODULES } from '../../sections/index.js';
 import { PRACTICE_MODULES } from '../../practice/index.js';
 import { transferItems, transferSummary, TRANSFER_SECTIONS, TRANSFER_TIMING, SECTION_TRANSFER_TIMING } from '../../transfer/draw.js';
 import { SECTIONS } from '../../../config/sections.js';
+import { FreshQuestionsUnavailable } from '../../core/draw.js';
 const scoreLine = (s) => [s.regularN ? `${s.regularCorrect}/${s.regularN} non-interval questions correct` : '',
   s.intervalN ? `interval mean ${s.intervalMean.toFixed(3)} (${s.intervalN} items)` : ''].filter(Boolean).join('; ') || 'No questions in this group';
 const timeMultiplier = (store) => { const n = Number(store.settings().extraTime); return Number.isFinite(n) && n > 1 ? n : 1; };
@@ -42,8 +43,16 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
   const timing = section === 'all' ? TRANSFER_TIMING : SECTION_TRANSFER_TIMING;
   const questionHistory = Object.fromEntries(TRANSFER_SECTIONS.map((s) => [s, store.recentQuestionKeys(s)]));
   const structureHistory = Object.fromEntries(TRANSFER_SECTIONS.map((s) => [s, store.recentStructureKeys(s)]));
-  const rows = fixedRows || transferItems(SECTION_MODULES, { seed, questionHistory, structureHistory,
-    ...(section === 'all' ? {} : { sections: [section], perSection: timing.count }) });
+  let rows;
+  try { rows = fixedRows || transferItems(SECTION_MODULES, { seed, questionHistory, structureHistory,
+    ...(section === 'all' ? {} : { sections: [section], perSection: timing.count }) }); }
+  catch (error) {
+    if (!(error instanceof FreshQuestionsUnavailable)) throw error;
+    mount(root, h('section', { class: 'panel fresh-questions-status', role: 'status' },
+      h('h2', {}, 'No fresh batch available'), h('p', {}, 'The search could not build a full batch without questions in your saved history. No clock has started and no result has been recorded.'),
+      h('a', { class: 'btn primary', href: section === 'all' ? '#/study' : `#/s/${section}` }, 'Back to skills')));
+    return () => {};
+  }
   const extra = timeMultiplier(store), total = timed ? makeCountdown(timing.totalSeconds * 1000 * extra) : null;
   const records = [], responses = [], displayed = new Set();
   let index = 0, current = null, perItem = null, frame = 0, finished = false;

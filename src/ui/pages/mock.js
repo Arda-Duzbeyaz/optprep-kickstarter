@@ -16,7 +16,7 @@ export function mockPage(root, { store }) {
   function intro() {
     mount(root,
       h('h1', {}, 'Full mock'),
-      h('p', { class: 'muted' }, 'The scored sections back to back, in portal order, each on its own clock. Fresh full sections count toward the practice target; repeated questions are review practice. Zap-N runs from its own page.'),
+      h('p', { class: 'muted' }, 'The scored sections back to back, in portal order, each on its own clock. Each section must be a full paper without questions in your saved history; if the fresh search fails, it stops before that section starts. Zap-N runs from its own page.'),
       h('div', { class: 'panel' }, h('table', {}, h('tbody', {}, order.map((id, i) => h('tr', {}, h('td', { class: 'num' }, String(i + 1)), h('td', {}, SECTIONS[id].title), h('td', { class: 'muted' }, formatLine(SECTIONS[id])))))),
         h('div', { class: 'row', style: { marginTop: '16px' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => next(0) }, 'Start the mock'))));
   }

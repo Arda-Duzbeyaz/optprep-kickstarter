@@ -1,0 +1,57 @@
+[
+  {
+    "script": "practice-flow-smoke",
+    "exit_code": 0,
+    "result": "104 practice-flow assertions passed: all answer kinds, drafts, feedback/RNG resume, levels, completion, mixed cues, visibility, recovery, dashboards and drill checkpoints."
+  },
+  {
+    "script": "learning-route-smoke",
+    "exit_code": 0,
+    "result": "100 learning-route assertions passed: deadline, coverage, cold mixed progression, real difficulty advancement, help, resume, settings, single-section transfer and progress preservation."
+  },
+  {
+    "script": "shared-practice-flow",
+    "exit_code": 0,
+    "result": "71 shared-practice assertions passed: prominent actions, all/covered pool settings, every extended family in learning, feedback/resume, cold mixed progression and next-step guidance."
+  },
+  {
+    "script": "learning-completion-flow",
+    "exit_code": 0,
+    "result": "Walkthrough: bto 34 learning families completed.\nWalkthrough: nl 30 learning families completed.\nWalkthrough: ll 16 learning families completed.\nWalkthrough: iv 15 learning families completed.\nWalkthrough: ob 8 learning families completed.\n{\"assertions\":680,\"learningFamilies\":103,\"learningQuestions\":1040,\"assessments\":5,\"batchChecks\":5,\"mockReviews\":5,\"uncaughtErrors\":0}"
+  },
+  {
+    "script": "practice-freshness-flow",
+    "exit_code": 0,
+    "result": "108 freshness-flow assertions passed: no repeats through finite exhaustion, cross-block/reload history, quiet legacy note, expanded die pool and preserved completion/cold rules."
+  },
+  {
+    "script": "focused-learning-flow",
+    "exit_code": 0,
+    "result": "76 focused-learning assertions passed: unique ten-question user example, saved-question resume, assisted coverage without cold credit, frozen level, honest finite exhaustion and unknown search failure."
+  },
+  {
+    "script": "unseen-session-flow",
+    "exit_code": 0,
+    "result": "24 unseen-session UI assertions passed: exhausted mixed block, fresh all-skills fallback, mock and batch preflight without clock/score/history mutation, and fresh batch start."
+  },
+  {
+    "script": "ui-smoke",
+    "exit_code": 0,
+    "result": "DOM integration passed: both clocks, Kickstarter mock selection, interval coverage/mastery, repeat exclusion."
+  },
+  {
+    "script": "transfer-smoke",
+    "exit_code": 0,
+    "result": "Transfer DOM passed: all response kinds, hidden methods, isolated results, preset, both clocks, extra time, displayed-only history and cleanup."
+  },
+  {
+    "script": "transfer-regression",
+    "exit_code": 0,
+    "result": "PASS review restores and locks the submitted MCQ\nPASS additional-family review links into the shared ordinary-practice library\nPASS ranking review shows probabilities and retains the submitted order\nPASS interval review restores bounds and disables its controls\nPASS orderbook review restores the submitted position and locks controls\nPASS answers changed after the item deadline do not replace the last valid answer\nPASS the overall deadline is enforced before submitting or showing another item\nPASS a late skip cannot erase an answer already committed before timeout\nPASS keyboard answers after the deadline are ignored\nPASS finishing on the last displayed question records a complete session\nPASS saving an unchanged fresh battery picker preserves the active Kickstarter preset\n11/11 focused interface regressions passed"
+  },
+  {
+    "script": "transfer-route-smoke",
+    "exit_code": 0,
+    "result": "Full-router DOM passed: delivered entry point, old-save migration, timing dropdown, all answer controls, keyboard repeat, complete result, history/reload, cleanup and Kickstarter mock."
+  }
+]

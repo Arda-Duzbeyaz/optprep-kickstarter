@@ -91,7 +91,7 @@ export default {
         params: { kids: true, older },
       });
     }
-    const t = difficulty === 2 ? rng.pick(['bothSix', 'bothEven', 'seven']) : rng.pick(['xThenSum', 'sumThenX', 'geThenSix', 'firstEvenThenGe']);
+    const t = difficulty === 2 ? rng.pick(['bothSix', 'bothEven', 'seven', 'xThenSum', 'sumThenX']) : rng.pick(['xThenSum', 'sumThenX', 'geThenSix', 'firstEvenThenGe']);
     const c = template(t, rng);
     const v = q(c.AB, c.A);
     return mcqItem(ID, rng, difficulty, {

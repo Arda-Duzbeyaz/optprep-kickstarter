@@ -3,7 +3,8 @@ import { hittingTimes, absorptionProbs } from '../../../core/markov.js';
 import { mcqItem, agree, q, table } from '../lib.js';
 
 const ID = 'pattern-waiting';
-const PATTERNS = { 2: ['HH', 'HT', 'TH', 'TT'], 3: ['HHH', 'HHT', 'HTH', 'HTT', 'THH', 'THT', 'TTH', 'TTT'], 4: ['HHHH', 'HHTT', 'HTHT', 'HTTH', 'HHHT', 'THHH', 'HTHH'] };
+const binary = (n) => Array.from({ length: 2 ** n }, (_, i) => i.toString(2).padStart(n, '0').replace(/0/g, 'H').replace(/1/g, 'T'));
+const PATTERNS = { 2: binary(2), 3: binary(3), 4: binary(4) };
 
 // Conway correlation X·Y = sum over k of 2^(k-1) when the last k letters of X equal the first k of Y.
 const corr = (X, Y) => { let s = 0; for (let k = 1; k <= Math.min(X.length, Y.length); k++) if (X.slice(-k) === Y.slice(0, k)) s += 2 ** (k - 1); return s; };
@@ -19,7 +20,7 @@ export default {
   generate(rng, { difficulty = 3 } = {}) {
     const race = difficulty === 4 && rng.chance(0.5);
     if (!race) {
-      const L = difficulty === 3 ? rng.pick([2, 2, 3]) : rng.pick([3, 4]);
+      const L = difficulty === 3 ? rng.pick([2, 3, 4]) : rng.pick([3, 4]);
       const A = rng.pick(PATTERNS[L]);
       const ks = overlaps(A);
       const E = 2 * corr(A, A); // = sum over overlaps k of 2^k

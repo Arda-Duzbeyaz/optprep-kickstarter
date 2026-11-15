@@ -17,8 +17,19 @@ function overlapWait(pattern, prob) {
   return e;
 }
 
-const COIN = ['HH', 'HT', 'HHH', 'HTH', 'THH', 'HHT', 'HTT', 'HHHH', 'HTHT', 'HHTT', 'THTH', 'HTHH'];
+function words(alphabet, length) {
+  return length === 0 ? [''] : words(alphabet, length - 1).flatMap((prefix) => [...alphabet].map((letter) => prefix + letter));
+}
+const COIN = [2, 3, 4].flatMap((length) => words('HT', length));
 const DIE = [['66', 'two sixes in a row'], ['61', 'a six immediately followed by a one'], ['666', 'three sixes in a row'], ['616', 'the run six, one, six'], ['12', 'a one immediately followed by a two'], ['11', 'two ones in a row']];
+// One representative of each equality pattern, rather than hundreds of face relabelings.
+// In particular, 1212 and 1231 add two different kinds of partial self-overlap.
+const DIE_SHAPES = [3, 4].flatMap((length) => words('1234', length).filter((word) => {
+  let highest = 0;
+  return [...word].every((letter) => { const n = Number(letter); if (n > highest + 1) return false; highest = Math.max(highest, n); return true; });
+}));
+const HARD_DIE = [...new Map([...DIE.filter(([x]) => x.length === 3), ['6666', 'four sixes in a row'], ['1234', 'the run one, two, three, four'],
+  ...DIE_SHAPES.filter((pattern) => pattern !== '1234').map((pattern) => [pattern, `the consecutive sequence ${[...pattern].join(', ')}`])].map((entry) => [entry[0], entry])).values()];
 
 const fam = {
   id: 'waiting-time',
@@ -29,7 +40,7 @@ const fam = {
   generate(rng, { difficulty = 2 } = {}) {
     let text, pattern, prob, desc, unit;
     if (difficulty === 2 || (difficulty === 3 && rng.chance(0.5))) {
-      pattern = rng.pick(COIN.filter((w) => (difficulty === 2 ? w.length <= 3 : w.length >= 3)));
+      pattern = rng.pick(COIN.filter((w) => (difficulty === 2 ? w.length <= 4 : w.length >= 3)));
       const biased = difficulty === 3 && rng.chance(0.5);
       const ph = biased ? Q.of(rng.pick([1, 2]), 3) : Q.of(1, 2);
       prob = (ch) => (ch === 'H' ? ph : ONE.sub(ph));
@@ -42,7 +53,7 @@ const fam = {
       text = `A fair die is rolled until ${d} first appears. What is the expected number of rolls?`;
       unit = 'rolls';
     } else {
-      const [w, d] = rng.pick(DIE.filter(([x]) => x.length === 3).concat([['6666', 'four sixes in a row'], ['1234', 'the run one, two, three, four']]));
+      const [w, d] = rng.pick(HARD_DIE);
       pattern = w; desc = d; prob = () => Q.of(1, 6);
       text = `A fair die is rolled until ${d} first appears. What is the expected number of rolls?`;
       unit = 'rolls';
