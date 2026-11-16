@@ -1,0 +1,53 @@
+{
+  "assertions": 79,
+  "games": [
+    {
+      "game": "balloon",
+      "started": true,
+      "completedInView": true
+    },
+    {
+      "game": "skyscraper",
+      "started": true,
+      "completedInView": false
+    },
+    {
+      "game": "shapeshift",
+      "started": true,
+      "completedInView": false
+    },
+    {
+      "game": "codecompare",
+      "started": true,
+      "completedInView": true
+    },
+    {
+      "game": "pincode",
+      "started": true,
+      "completedInView": false
+    },
+    {
+      "game": "numberbox",
+      "started": true,
+      "completedInView": false
+    },
+    {
+      "game": "figureitout",
+      "started": true,
+      "completedInView": false
+    },
+    {
+      "game": "theswitch",
+      "started": true,
+      "completedInView": false
+    },
+    {
+      "game": "stockmaster",
+      "started": true,
+      "completedInView": true
+    }
+  ],
+  "histogram": true,
+  "signedWeightedBoard": true,
+  "syntheticStateOnly": true
+}

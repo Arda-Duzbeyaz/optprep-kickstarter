@@ -96,6 +96,7 @@ export function mount(container, { rng, mode = 'practice', onFinish } = {}) {
       h('p', {}, h('strong', {}, `Ratio ${res.value.toFixed(2)}`), ` (target ${T.value}: ${T.label}) `,
         h('span', { class: `badge ${res.value >= T.value ? 'ok' : 'no'}` }, res.value >= T.value ? 'met' : 'not met')),
       h('p', { class: 'muted' }, res.detail.perRound.map((r, i) => `Round ${i + 1}: ${money(r.bank)} vs optimal ${money(r.optimal)}, ${r.pops} pops, ${r.meanPumps.toFixed(1)} pumps per balloon.`).join(' ')),
+      h('p', { class: 'muted' }, `Decision cost: ${money(res.detail.decisionLossCents)} of conditional expected value sacrificed across ${res.detail.decisions} choices under this trainer's uniform model. Lower is better; an optimal policy costs zero. The bank ratio still depends on luck. Neither metric is an Optiver cutoff.`),
       practice ? [h('p', { class: 'rule' }, coach.rule), h('ol', { class: 'steps' }, coach.strategy.map((x, i) => h('li', {}, h('span', { class: 'n' }, i + 1), x.say, h('div', { class: 'why' }, x.why))))] : null,
       again));
     again.focus();

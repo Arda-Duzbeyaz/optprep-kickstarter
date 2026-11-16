@@ -87,7 +87,7 @@ const signedPx = (x) => `${x > 0 ? '+' : ''}${px(x)}`;
 export function obSolution(board, best, structure) {
   const { trades, profit } = best;
   const byId = new Map(board.instruments.map((i) => [i.id, i]));
-  const ask = `Find the trades that leave you flat in ${board.products.join(', ')} and lock in the most cash.`;
+  const ask = `Find a combination of trades that leaves you flat in ${board.products.join(', ')} and locks in positive cash. Any profitable flat combination is accepted.`;
   const flat = `Count units per product after all ${trades.length} taps: ${board.products.map((p) => `${p} 0`).join(', ')}. A product left at +1 or −1 means the cash is not locked in yet.`;
   if (structure === 'crossed' || structure === 'crossed-venues') {
     const b = trades.map((t) => byId.get(t.id)), buyI = b[trades.findIndex((t) => t.side === 'buy')], sellI = b[trades.findIndex((t) => t.side === 'sell')];

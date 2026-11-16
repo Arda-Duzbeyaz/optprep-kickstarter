@@ -38,6 +38,28 @@ def _canonical_probabilities(item: dict[str, Any]) -> list[float] | None:
     p = item.get('params') or {}
     visual = item.get('prompt', {}).get('visual') or {}
     family = item.get('family')
+    if family == 'conditional-rates':
+        rows = visual['rows']
+        a, b, c, d = [Fraction(row[3], row[2]) for row in rows]
+        values = {'aLow': a, 'bLow': c, 'aHigh': b,
+                  'aAll': Fraction(rows[0][3]+rows[1][3], rows[0][2]+rows[1][2]),
+                  'bAll': Fraction(rows[2][3]+rows[3][3], rows[2][2]+rows[3][2]),
+                  'stdA': (a+b)/2, 'stdB': (c+d)/2,
+                  'aGivenHit': Fraction(rows[0][3]+rows[1][3], sum(row[3] for row in rows))}
+        return [float(values[key]) for key in p['statements']]
+    if family == 'histogram-bins':
+        bins = visual['bins']
+        def mass(lo, hi):
+            return sum(b['count'] for b in bins if b['from'] >= lo and b['to'] <= hi)
+        inf = float('inf')
+        total = mass(-inf, inf)
+        values = []
+        for s in p['statements']:
+            if s['t'] == 'gt': values.append(mass(s['a'], inf)/total)
+            elif s['t'] == 'lt': values.append(mass(-inf, s['a'])/total)
+            elif s['t'] == 'between': values.append(mass(s['a'], s['b'])/total)
+            else: values.append(mass(s['b'], inf)/mass(s['a'], inf))
+        return values
     if family == 'selection-weights':
         return recompute_transfer(item)
     specs = p.get('statements')

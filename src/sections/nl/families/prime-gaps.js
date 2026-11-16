@@ -30,7 +30,7 @@ export default family({
     purpose: 'A primes list one layer down is a favourite way to make a sequence look random.',
     anchor: 'Adding the counting numbers gives gaps 1, 2, 3, …; this family swaps the counting numbers for the primes.',
     steps: [
-      { say: 'Write the gaps; if they are irregular but all prime and increasing, they are the prime list.', why: 'Recognition replaces formula here: primes have no formula.' },
+      { say: 'Write the gaps; if they are irregular but all prime and increasing, they are the prime list.', why: 'Recognise and test the consecutive-prime list; no fixed gap or simple polynomial is assumed.' },
       { say: 'Next term = last + next prime.', why: 'The gap list continues in order.' },
     ],
     predict: { question: '1, 3, 6, 11, 18, 29, ? Predict the next gap.', answer: 'Gaps 2, 3, 5, 7, 11, so 13: the term is 42.' },

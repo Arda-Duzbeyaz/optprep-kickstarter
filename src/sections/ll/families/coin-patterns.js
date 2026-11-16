@@ -32,7 +32,7 @@ export default {
     return poolItem(ID, rng, difficulty, POOL, {
       keys,
       text: (list) => `A fair coin is flipped. The statements concern ${list}. Rank them from most to least likely.`,
-      compare: 'Order the counts. Trap: HH and HT have the same chance at any fixed position, but HT appears somewhere in n flips more often, because HH needs a clean restart after a miss.',
+      compare: 'Order the counts. Trap: HH and HT have the same chance at any fixed position, but HT appears somewhere in n flips more often, because overlapping HH occurrences cluster; equal per-position chances do not imply equal chances of at least one occurrence.',
       rule: 'Contains HT: 1 − (n + 1)/2^n. Contains HH: 1 − F(n + 2)/2^n. More heads: (1 − P(tie))/2.',
       anchor: 'Counting 2^n equally likely strings, with the one change that the events are about patterns inside the string.',
       hints: ['Count strings that AVOID the pattern.', 'Avoiding HT forces all tails before all heads: n + 1 strings.', 'Avoiding HH gives Fibonacci counts.'],

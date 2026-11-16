@@ -85,9 +85,10 @@ export function createEngine(rng, opts = {}) {
     if (state.phase === 'done') return null;
     if (action.type === 'start') { if (state.phase === 'ready') { state.phase = 'show'; state.onset = tMs; } return null; }
     if (state.phase === 'ready') return null;
+    const unseen = state.phase === 'gap';
     const timedOut = tick(tMs);
     if (action.type === 'tick') return timedOut;
-    if (action.type === 'choose' && state.phase === 'show') return answer(action.index, tMs);
+    if (action.type === 'choose' && state.phase === 'show' && !unseen) return answer(action.index, tMs);
     return null;
   }
 

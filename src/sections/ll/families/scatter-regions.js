@@ -39,6 +39,8 @@ export default {
         const y = Math.round((icpt + slope * x + rng.normal(0, 1.6)) * 10) / 10;
         // keep points off integer gridlines and off the diagonal so every region count is unambiguous
         if (y < 0.2 || y > 9.8 || Number.isInteger(x) || Number.isInteger(y) || x === y) continue;
+        // Separate visible circles, including duplicates, so one dot means one row.
+        if (pts.some(([a, b]) => (a - x) ** 2 + (b - y) ** 2 < 0.55 ** 2)) continue;
         pts.push([x, y]);
       }
       const a = rng.int(3, 7), b = rng.int(2, 7);
@@ -90,7 +92,7 @@ export default {
       { say: 'Count dots in the region; divide by all dots, or by the dots in the conditioning strip.', why: 'Scope decides the denominator.' },
       { say: 'Use containment to skip counts: a corner region is inside both of its strips.', why: 'Subset logic orders some statements without counting.' },
     ],
-    predict: { question: 'With an upward trend, is P(y > 5 | x > 6) larger or smaller than P(y > 5)?', answer: 'Larger: high x comes with high y, so the conditional fraction rises.' },
+    predict: { question: 'Does an upward trend alone guarantee P(y > 5 | x > 6) exceeds P(y > 5)?', answer: 'No. A trend suggests where to look, but the actual region counts and denominators settle this threshold comparison.' },
     edge: 'A statement about a strip with very few points can swing wildly; one point changes the fraction a lot.',
     rule: 'Count / scope. Corner ⊂ strip. Trend → conditionals move with it.',
     contrast: 'P(both) (corner over all points) against P(y > b | x > a) (corner over the strip).',

@@ -112,6 +112,22 @@ def recompute_interval(it: dict[str, Any]) -> float | None:
     sc = p.get("scenario")
     if fam == 'rates-weights':
         return recompute_transfer(it)
+    if fam == 'uncertainty-models':
+        if sc.endswith('-sd'):
+            c, d = p['c'], p['d']
+            values = ([c+d, c-d, -c+d, -c-d] if sc == 'independent-sum-sd' else
+                      [c+d, -c-d] if sc == 'shared-sum-sd' else [c-d, -c+d])
+            mean = sum(values) / len(values)
+            return math.sqrt(sum((v-mean)**2 for v in values) / len(values))
+        x, y, a, b = (p[k] for k in ('x', 'y', 'a', 'b'))
+        if sc == 'shared-offset':
+            return float((x+a)-(y+a))
+        values = []
+        for X in (x-a, x+a):
+            for Y in (y-b, y+b):
+                values.append(X+Y if sc == 'sum-bound' else X*Y if sc == 'product-bound' else
+                              X/Y if sc == 'ratio-bound' else X-Y if sc == 'difference-bound' else X*X)
+        return float((max if p['upper'] else min)(values))
     if fam == "dots-count" and sc == "grid-fill" and v.get("items"):
         return float(sum(1 for x in v["items"] if x.get("shape") == p["countShape"]))
     if fam == "dice-grid" and sc == "count-face":
@@ -144,7 +160,9 @@ def recompute_interval(it: dict[str, Any]) -> float | None:
     if fam == "prob-estimate" and sc == "sixes":
         return 100 * (1 - (5 / 6) ** p["n"])
     if fam == "coupon" and p.get("probs"):
-        probs = [a / b for a, b in p["probs"]]
+        # Already collected coupons still consume draws but need not be awaited.
+        # Their probabilities must NOT be renormalised out of the experiment.
+        probs = [a / b for a, b in p["probs"]][p.get('collected', 0):]
         n = len(probs)
         if n > 14:
             return None

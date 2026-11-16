@@ -61,7 +61,7 @@ export function solutionPanel(item, { stepwise = true, actions = true } = {}) {
   const check = sol.check ? block('solution-check', 'Sanity check', sol.check) : null;
   const rule = h('div', { class: 'rule', hidden: true }, sup(sol.rule));
   const anchor = h('p', { class: 'muted', hidden: true }, `Anchor: ${sup(sol.anchor)}`);
-  const best = item.kind === 'orderbook' && item.best ? h('p', { class: 'num', hidden: true }, `Best position: ${describeTrades(item)} → profit ${fmtNum(item.best.profit)}`) : null;
+  const best = item.kind === 'orderbook' && item.best ? h('p', { class: 'num', hidden: true }, `Verified package: ${describeTrades(item)} → profit ${fmtNum(item.best.profit)}`) : null;
   function render() {
     list.replaceChildren(...steps.slice(0, shown).map((s, i) => h('li', {},
       h('span', { class: 'n' }, String(i + 1)), h('div', {}, sup(s.say)),
@@ -133,8 +133,9 @@ export async function intervalCoach(item, slot) {
     if (!best) return;
     const lo = best.lower ?? best[0], hi = best.upper ?? best[1];
     slot.append(h('div', { class: 'muted' },
-      `Calibrated play: with the uncertainty a prepared candidate has here (${item.coach.note || item.coach.belief?.kind}), the best interval around the answer is `,
+      item.coach.belief?.kind === 'point' ? 'Exact-model illustration: an interval around the computed answer is ' : 'Illustrative error model, not measured candidate accuracy: the approximate best interval centred on the revealed answer is ',
       h('span', { class: 'num' }, `[${fmtNum(lo)}, ${fmtNum(hi)}]`),
-      (best.expectedScore ?? best.score) != null ? ` for an expected score of ${(best.expectedScore ?? best.score).toFixed(2)}.` : '.'));
+      (best.expectedScore ?? best.score) != null ? ` for expected trainer score ${(best.expectedScore ?? best.score).toFixed(2)}.` : '.',
+      item.coach.belief?.kind === 'point' ? '' : ' Review your own misses and widths over many fresh questions. L/U scoring does not require a fixed 90% or 95% confidence interval.'));
   } catch { /* coach is optional */ }
 }

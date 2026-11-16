@@ -1,0 +1,181 @@
+{
+  "allUnchanged": true,
+  "files": [
+    {
+      "path": "src/sections/bto/bank.js",
+      "sha256": "8a90e4b1348ac645b8b9c06dc819ad782b05f6f1c85a56d71dcb11f71bf2e56b"
+    },
+    {
+      "path": "src/sections/bto/curriculum/common.js",
+      "sha256": "db0d572424a3a0572cad7c5bfc3c848db587868c42ad1f4489990dd2b12d4871"
+    },
+    {
+      "path": "src/sections/bto/curriculum/verify.js",
+      "sha256": "d08754fa68d4dec16552111c6c258be2fd311383d1755b85d8911215a972bc2f"
+    },
+    {
+      "path": "src/sections/bto/families/at-least-one.js",
+      "sha256": "c222802fa3fe5c54f5bb88d47c979e93a509a6d52acc83dc2d518f771bb6e971"
+    },
+    {
+      "path": "src/sections/bto/families/bayes-boxes.js",
+      "sha256": "f93b8ad7331031da13a71ac5b50cba5baaf07fb8d94e8aa2dc5eafc0c1a15063"
+    },
+    {
+      "path": "src/sections/bto/families/bayes-test.js",
+      "sha256": "ef5b398b5077b41830db2b01b04cdbe6838a42af390b3bedbfd3f8cf171af83e"
+    },
+    {
+      "path": "src/sections/bto/families/birthday.js",
+      "sha256": "4b9f75d744e3801a98fb6cbcb25cb77b517a1f73465b47b3835da66b490256ac"
+    },
+    {
+      "path": "src/sections/bto/families/card-draws.js",
+      "sha256": "2e75fd8f1ece45c903eff5885491f7cb0d8981ee2eadc68ca578ebfa402aa0b5"
+    },
+    {
+      "path": "src/sections/bto/families/card-stopping.js",
+      "sha256": "ee2eab4ec806d7c0f38595624692c2f010d65c0f5660aaec88e14994e6f6f04c"
+    },
+    {
+      "path": "src/sections/bto/families/card-symmetry.js",
+      "sha256": "590c413b295313e187f719506fcdc5063aab1547779d40aee897e3c4fd58140d"
+    },
+    {
+      "path": "src/sections/bto/families/clt-estimates.js",
+      "sha256": "895ada33bf5a65cf9301f2ff7c4af48e0a7276a1c2f09c50fcf066c5cd7fe566"
+    },
+    {
+      "path": "src/sections/bto/families/coin-sequences.js",
+      "sha256": "189f40faab1555f98bc23fd2394cef0f692406f23e734296b5a6a0a3dcd111b7"
+    },
+    {
+      "path": "src/sections/bto/families/conditional-dice.js",
+      "sha256": "311c68c92241807688d749d695ee5264b230bf8b08fa7e2eed90adbeb1a5e6ae"
+    },
+    {
+      "path": "src/sections/bto/families/coupon-collector.js",
+      "sha256": "152ca5e92b76475c7a987bfd1bb85e5dda31a96f54d961a0129fdfce3ca53121"
+    },
+    {
+      "path": "src/sections/bto/families/derangements.js",
+      "sha256": "cc7711f7a3c570bede5042dc730dbeeaef7fc24136881382cb3616cc25cf7b83"
+    },
+    {
+      "path": "src/sections/bto/families/dice-duel.js",
+      "sha256": "493aec057e80dcfeafa3c61de3c1bdb1f6b08093703b62ff3608c679a74798e9"
+    },
+    {
+      "path": "src/sections/bto/families/dice-games-ev.js",
+      "sha256": "15cd867fc16a867e6f9b3f2ba49d15adb26d05de5f4520cd0580303ab4c0866f"
+    },
+    {
+      "path": "src/sections/bto/families/dice-order-stats.js",
+      "sha256": "a3264729bdcd78ceefef9b0446532715b1b729d0d4a2affe1078888e295872f4"
+    },
+    {
+      "path": "src/sections/bto/families/die-repeats.js",
+      "sha256": "552ff600a4619ae6e97f6c14acc53906288730cbce6a70b5ce057da70b5bfd17"
+    },
+    {
+      "path": "src/sections/bto/families/discrete-sums.js",
+      "sha256": "916c842ab3cbbaafb04b525779ded6b2ffb2aca327dc19032747debad02774a3"
+    },
+    {
+      "path": "src/sections/bto/families/event-algebra.js",
+      "sha256": "5a55bbc4b2e4d8979fb4c69fbb7b4ecf99a6d23284b0b926cae1388fc5c31320"
+    },
+    {
+      "path": "src/sections/bto/families/expected-extremes.js",
+      "sha256": "539f23e156b25c9acbddccc619d1430233d1fca94f378771582fd14ade278c62"
+    },
+    {
+      "path": "src/sections/bto/families/expected-waiting.js",
+      "sha256": "94075832dc794c90b1cb3040f0b258e8930fa51dd834c26fc65446c017e580a9"
+    },
+    {
+      "path": "src/sections/bto/families/first-success.js",
+      "sha256": "8f0dde9fdedb5a76c74f731951c438320d28caef578bf718b491c5c22a44add5"
+    },
+    {
+      "path": "src/sections/bto/families/gamblers-ruin.js",
+      "sha256": "3362bbe783b79c28f7da36b6a37cbd48e2321c30c6cfd7e12e50e344ee5a5910"
+    },
+    {
+      "path": "src/sections/bto/families/linearity.js",
+      "sha256": "8120b7b3e6fbe14ab49a8938aa9c3e06128f18bc5c856ae35c09a38baa792623"
+    },
+    {
+      "path": "src/sections/bto/families/monty-hall.js",
+      "sha256": "023eb393cbad4da05473af33051f4b7817534fca990c2a523836c5bfc371d47d"
+    },
+    {
+      "path": "src/sections/bto/families/pattern-waiting.js",
+      "sha256": "3df3e2366510e41fd9f57a615688b16dc9e4ef026480aa1ee3def0a54507c19d"
+    },
+    {
+      "path": "src/sections/bto/families/payout-models.js",
+      "sha256": "0410b66a4bdb00f30909ce03fe76dbc7421f13539f3328a79a00a76721ea8827"
+    },
+    {
+      "path": "src/sections/bto/families/pigeonhole.js",
+      "sha256": "f580408578a0040ebd0d868e509afee62301990d327d7a58a4ed9185c7f8919e"
+    },
+    {
+      "path": "src/sections/bto/families/polygon-walk.js",
+      "sha256": "48b84c4fe7cca2e6ec0f9365ee13db3c8898ef13cc43dbe9285c01391aac1f3a"
+    },
+    {
+      "path": "src/sections/bto/families/race-to-k.js",
+      "sha256": "96ec76597759d7d311dbf0e1356188843ec1ad3eb0eeff31ebda96c623d3cfeb"
+    },
+    {
+      "path": "src/sections/bto/families/random-walk-line.js",
+      "sha256": "28f816b957eb2b00db999508478e558ab41066820e185ab3833876115c933279"
+    },
+    {
+      "path": "src/sections/bto/families/restricted-counting.js",
+      "sha256": "05f5686aa338ff53d76f20f2ba3fd7ec675be3cc61ae023c6de9d1d9a41d4fbd"
+    },
+    {
+      "path": "src/sections/bto/families/running-sum.js",
+      "sha256": "661b28af9fd6ef81704e608e446f52b8f08414efc7f3cbecfcf1b9ef3942fb30"
+    },
+    {
+      "path": "src/sections/bto/families/success-counts.js",
+      "sha256": "506abcb5bf5ad35bd909589d4c30728aee4a223ab09ede740e3c1f6f8a5e7159"
+    },
+    {
+      "path": "src/sections/bto/families/three-dice.js",
+      "sha256": "c620364263daa923ece6a2833193f4bbc7ec6d6e9e63d28bb21608ee16c73ae0"
+    },
+    {
+      "path": "src/sections/bto/families/two-dice-sum.js",
+      "sha256": "57c3957463c5e35b89f851d079f1d44af61736ea4abcc6aa137466fcb1034aed"
+    },
+    {
+      "path": "src/sections/bto/families/uniform-geometry.js",
+      "sha256": "eb05f4e0378cc39ddd6a2f3fde48573732caf3f8cc3336785559b17ba6f6fb4d"
+    },
+    {
+      "path": "src/sections/bto/families/urn-draws.js",
+      "sha256": "0c0a552f21f882cfe97757d40fcd56c495ca95d882ec79a5ede03b2cecccad21"
+    },
+    {
+      "path": "src/sections/bto/families/variance-dependence.js",
+      "sha256": "de641a194fad7b76acdeadf8031dae6bd1f50cbf4a986c37a331ff9702525f64"
+    },
+    {
+      "path": "src/sections/bto/index.js",
+      "sha256": "743765d3b5f95f6cfd1f2173db75781a1c105957d702212180d71ba5a77a8fbc"
+    },
+    {
+      "path": "src/sections/bto/lib.js",
+      "sha256": "ee0723bf3a9f4f5d631763365dd0eb8ff4907779580c3a3c2fc5c07c432e91c0"
+    },
+    {
+      "path": "src/sections/bto/structures.js",
+      "sha256": "2b6dbf0c9c8508e0a322907b2c5acb0ad5e5fad6e2ee570f116ae10775081e4d"
+    }
+  ]
+}

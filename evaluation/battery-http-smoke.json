@@ -1,0 +1,53 @@
+{
+  "launcher": "node bin/optprep.js --no-open --port 8867",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 2607,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/app.js",
+      "status": 200,
+      "bytes": 13074,
+      "contentType": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "/src/sections/ll/families/conditional-rates.js",
+      "status": 200,
+      "bytes": 6699,
+      "contentType": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "/src/sections/iv/families/uncertainty-models.js",
+      "status": 200,
+      "bytes": 7507,
+      "contentType": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "/src/study/content/battery-lessons.js",
+      "status": 200,
+      "bytes": 12635,
+      "contentType": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "/src/ui/styles.css",
+      "status": 200,
+      "bytes": 66998,
+      "contentType": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/sw.js",
+      "status": 200,
+      "bytes": 2578,
+      "contentType": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "/api/health",
+      "status": 200,
+      "bytes": 12,
+      "contentType": "application/json"
+    }
+  ]
+}

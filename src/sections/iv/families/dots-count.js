@@ -49,7 +49,7 @@ const fam = {
     sd = Number(sd.toPrecision(2));
     return ivItem(fam, rng, difficulty, {
       text, visual, truth, unit: difficulty === 1 ? 'cells' : target === 'coin' ? 'coins' : NAMES[target],
-      coach: { exact: false, belief: { kind: 'normal', sd }, note: `A careful 45-second count is typically within ±${sd} of the truth; widen by that, not by panic.` },
+      coach: { exact: false, belief: { kind: 'normal', sd }, note: `Illustrative counting-error sd ${sd}; replace this assumption with evidence from your own fresh timed counts.` },
       steps: [
         { say: how, why: 'Block counting is faster and more reliable than counting one by one, and the blocks give a built-in check.' },
         { say: `True count: ${truth}.`, why: 'Taken from the picture itself.' },
@@ -72,7 +72,7 @@ const fam = {
       { say: 'For a mostly full grid, count the gaps instead and subtract from 100.', why: 'Count whichever is fewer.' },
       { say: 'Set width from your counting error (a few percent), leaning slightly high.', why: 'L/U scoring rewards a tight interval that still contains the truth.' },
     ],
-    predict: { question: 'You count 47 coins and trust yourself to ±2. Which interval?', answer: 'About [43, 51]: roughly 2 standard deviations each side, a little more above. It scores 0.84 when the truth is inside and about 0.81 on average; the tighter [45, 50] averages only about 0.70 because it misses too often.' },
+    predict: { question: 'Assume truth is normally distributed around your estimate 47 with sd 2. Compare [43,51] with [45,50] under L/U scoring.', answer: '[43,51] gives about 0.80 expected score against 0.70 for [45,50]. These numbers follow from the stated normal model; a vague ±2 bound would not specify those probabilities.' },
     rule: 'Count in blocks; interval ≈ count ± 2 × your error (2.5× for a 1% error, 1.5× near 20%), nudged up.',
     contrast: 'Exact questions: zero width. Counting under time pressure: small, calibrated width. Guessing wildly wide ([20, 80]) scores 0.25 even when right.',
     edge: 'If you are certain of the count (a sparse grid, counted twice), zero width is optimal here too.',

@@ -89,6 +89,8 @@ export default {
     ] },
 
     S('derivation'),
+    { type: 'text', text: 'At hard difficulty the bin widths differ and the vertical axis is frequency density. Recover each count as height × width before adding. A tall narrow bar can contain fewer records than a short wide one. These are complete-bin comparisons: no unspoken assumption about values inside a bin is needed.' },
+    { type: 'check', questions: [{ type: 'number', q: 'A frequency-density bar is 3 units wide and 8 units high. How many observations does it represent?', answer: 24, explain: 'Area = width × height = 3 × 8 = 24.' }] },
     { type: 'text', text: 'Four moves, from the total to the conditional. The last one is the fact that makes conditionals rank high, and it is the fact the item is designed around.' },
     { type: 'steps', steps: [
       { say: 'Find the total N once: it is the denominator of every unconditional statement.', why: 'Each observation is equally likely to be picked, so a probability is (observations in range) / N.',
@@ -185,6 +187,7 @@ export default {
     },
 
     S('tryit'),
+    { type: 'worked', section: 'll', family: 'histogram-bins', difficulty: 4, seed: 'unequal-widths', explainAt: [0], intro: 'Additional training: inspect the vertical-axis meaning before comparing unequal-width bars.' },
     { type: 'tryit', section: 'll', family: 'histogram-bins', count: 3 },
   ],
 };

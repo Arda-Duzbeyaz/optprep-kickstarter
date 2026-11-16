@@ -1,157 +1,133 @@
-# OptPrep — probability curriculum edition
+# OptPrep — assessment battery curriculum edition
 
-**1.6.0-kickstarter.1 · 16 November 2026**
+**1.7.0-kickstarter.1 · 16 November 2026**
 
-Complete application based on [Coflazo/optprep](https://github.com/Coflazo/optprep), with its original MIT licence and attribution preserved. This independent preparation application is not affiliated with or endorsed by Optiver.
+Complete application based on [Coflazo/optprep](https://github.com/Coflazo/optprep). The original **MIT licence and attribution are preserved**. This independent preparation tool is not affiliated with or endorsed by Optiver.
 
-This release builds on the delivered **1.5.0-kickstarter.1**. It audits the whole Beat the Odds practice curriculum against independent sources, adds justified missing practice, and preserves existing progress, focused learning and ten-question blocks.
+This edition builds on the delivered **1.6.0-kickstarter.1** probability curriculum release. It audits and improves **NumberLogic, Likelihood List, Intervals, Orderbooks and Zap-N**, preserving Beat the Odds, existing progress, focused learning and ten-question blocks.
 
-The [comprehensive audit and implementation report](docs/BTO_CURRICULUM_AUDIT.md) contains the research/evidence hierarchy, all 34 original family reviews, exact additions, mathematical checks, difficulty judgements, Quant Sprint comparison and remaining gaps. The [previous README](docs/README_MIXED_PRACTICE_1.5.0.md) and earlier reports remain historical records.
+Read the [comprehensive research, curriculum and verification report](docs/ASSESSMENT_BATTERY_AUDIT.md) for every family/game reviewed, evidence quality, mathematical checks, exact changes, measured comparison and limitations. The [Beat the Odds report](docs/BTO_CURRICULUM_AUDIT.md) and [previous README](docs/README_PROBABILITY_CURRICULUM_1.6.0.md) remain available as historical records.
 
 ## Run locally
 
-Install **Node.js 20 or later**, extract the ZIP, and open a terminal in the inner folder containing `package.json` and `index.html`:
+Install **Node.js 20 or later**, extract the ZIP, and open a terminal in the folder containing `package.json` and `index.html`:
 
 ```sh
 npm start
 ```
 
-Open the localhost URL printed by the launcher. Normal practice needs no dependency installation, build, account, Python backend or compiled engine. Serve the app over HTTP; do not double-click `index.html`.
+Open the localhost URL printed by the launcher. Normal practice needs **no dependency installation, build, account, Python backend or compiled engine**. Serve over HTTP; do not double-click `index.html`.
 
-The ZIP includes the complete application, source, automated tests, optional backend and engine, documentation, evaluation evidence and licence. Installed dependencies, compiled outputs, credentials and personal training progress are excluded.
+The ZIP contains the working application, all relevant source, automated tests, optional backend/engine, research report, evaluation evidence and licence. Installed dependencies, compiled outputs, credentials and personal training data are excluded.
 
-## Upgrade and keep progress
+## Upgrade while keeping progress
 
-1. Export a backup in **Settings → Backup** before replacing deployed files.
-2. Replace the application files at the **same browser address**. Accept the update notice and reload when offered.
-3. Continue in the same browser. If moving to another address, browser or device, import your backup there.
+1. Export **Settings → Backup** before replacing your app files.
+2. Replace the files at the **same browser address**. Accept the update notice and reload when offered.
+3. Continue in the same browser. If changing address, repository URL, browser or device, import the backup there.
 
-The `optprep:v2` store, migration, practice snapshot schema, learning/cold-check rules, scoring and runner are unchanged. Existing coverage, XP, skills, historical scores, pace records, proofs, question history, settings and saved question/draft remain. New skills start unlearned: the denominator increases from **34 to 40 BTO skills**, without erasing completed work.
+The `optprep:v2` store, migration, saved-question format, learning rules, cold checkpoints, scoring and runner are unchanged. Coverage, XP, habits, scores, pace records, proofs, history, settings and saved drafts are preserved.
 
-Keep one active training tab; the existing local store does not merge simultaneous conflicting writes.
+Two new skills start unattempted. The skill total rises **109 → 111**, and Histograms has one additional difficulty checkpoint. An increased denominator is new content, not deleted progress. Existing proofs are retained even where a family gained additional variants.
 
-## GitHub Pages
+## Use your own GitHub Pages repository
 
-Extract the ZIP and commit the **contents of the inner application folder** at your repository root, including `index.html`, `app.js`, `src/`, `config/`, `assets/`, `.github/`, `.nojekyll` and `LICENSE`.
+Extract the ZIP first. Put the **contents of the inner application folder** at the repository root, with `index.html`, `package.json`, `src`, `config` and assets beside one another. Preserve `.github` and `.nojekyll`. Do not upload the ZIP as a single file or leave the application inside an unnecessary extra folder.
 
-In **Settings → Pages**, choose **GitHub Actions**, enable Actions and push to **main**, matching the supplied workflow. Use the URL GitHub reports after successful deployment. The workflow assembles the browser files and creates a commit-specific offline cache including the new modules.
+Commit the full source. The included workflow supports Pages; choose the appropriate Pages source for your repository. This is a static application and needs no backend hosting for ordinary practice. The optional backend source is included for developers, not required for Pages.
 
-Uploading the ZIP itself, or placing the application an extra directory below the repository root, does not deploy it. No public repository or live Pages deployment was changed while producing this archive.
+This release does **not** publish your site, alter the upstream repository or transfer browser-local progress to another origin automatically.
 
-## What the audit found
+## What changed and why
 
-The old curriculum was strong in conditioning, indicators, pattern overlap, stopping and random walks. Its separate foundations book already explained several general models. Ordinary BTO practice was less balanced: model selection, weighted payoffs, restricted counting, variance/covariance and nonuniform sums were thinner than the advanced processes.
-
-Independent preparation sources support a curriculum covering event algebra, counting, conditioning/Bayes, independence, distributions, expectation, dependence, sequential reasoning, symmetry, extremes and basic approximation. They do not justify importing every advanced trading interview topic into this online assessment.
-
-The additions fill the main practice gaps:
-
-| New family | Levels | Reasoning demand |
+| Assessment | Improvement | Benefit |
 |---|---|---|
-| Events: overlap, complements and independence | 1,2 | Translate the event and identify overlap/conditioning without inventing independence |
-| Success counts: recognise the sampling model | 1,2,3 | Choose binomial, depleted sampling or unequal-trial counts across coins, dice, cards and urns |
-| Weighted payoffs and conditional expectation | 1,2,3 | Weight net/transformed payoffs and update source weights after information |
-| Restricted counting: roles, groups and arrangements | 2,3 | Choose ordered/subset/multiset spaces and enforce adjacency, gaps and colour restrictions |
-| Variance, covariance and shared risk | 2,3,4 | Distinguish scaling, independent copies, reuse, depletion and shared hidden sources |
-| Combining discrete random quantities | 2,3,4 | Build weighted sum/comparison distributions and handle observed totals or random horizons |
+| NumberLogic | Hard interleaved answers now require quadratic/Fibonacci-like strands with enough shown terms; combined rules add square/geometric residuals | Hardness lies in the reasoning needed for the answer, rather than an irrelevant strand or larger numbers |
+| Likelihood List | New **Conditional rates and changing group mix** skill; unequal-width density Histograms; clearer scatter and sequential explanations | Practise changing sample spaces, weighted averages, reverse conditioning and area-versus-height distinctions |
+| Intervals | New **Uncertainty: bounds, sensitivity and shared errors** skill, with nine structures | Distinguish extrema, monotonicity, dependence and standard deviation |
+| Intervals feedback | Width models explicitly labelled illustrative; corrected bound/percentile advice and optional backend partial-coupon verification | Avoid learning invented personal calibration or incorrect model interpretations |
+| Orderbooks | Signed weighted baskets such as `2A−B` and `2A+B−C`; accurate “any profitable flat combination” instruction | Combine quantity, trade direction and executable sides; remove an unbounded “most cash” claim |
+| Zap-N | Fixed CodeCompare unseen-stimulus input, complete StockMaster opportunities, Balloon expected decision-cost feedback, Figure It Out coaching | More accurate mechanics and feedback; separate decisions from luck |
+| Phone feedback | Readable ranking statements after answering | Disabled controls no longer compress text into a narrow column |
 
-The existing first-success skill additionally covers **memorylessness and the rth success on trial k**. Its complete level-2 pool grows from 22 to 197 prompts, retaining all its old prompt identities and levels. The Study lesson connects later-success waiting to the mean r/p.
+The new skills are integrated into the existing learning books, mixed practice and relevant assessment question pools. There are **150 lessons**, **111 ordinary skills** across the five question-based assessments and the existing **nine games**. The optional eight arithmetic families remain separate. No new game or redundant practice mode was added.
 
-The six new families have per-question worked explanations, misconception alternatives and full linked Study lessons. They appear in focused learning, mixed practice, Batch checks and mocks. No new mode or interface redesign is required.
+## What is confirmed about your assessment
 
-The roadmap groups a skill by its easiest supported level. An Easy or Medium skill can have later harder levels. These levels are authored training distinctions, not independently validated Optiver difficulty bands.
+Your invitation is authoritative for these durations:
 
-### Every substantive modification
-
-- Added six original rational-arithmetic generators with **42 selectable task branches** and structure/operation metadata.
-- Added separate finite-outcome JavaScript verification, an independently written Python Fraction oracle and a reproducible input corpus.
-- Expanded first-success generation and its complete finite catalogue; added Study guidance on memorylessness, later successes and stage means.
-- Added six Study lessons, a new chapter, recognition-tree links and regenerated catalogues.
-- Corrected urn replacement comparisons/counting language, expectation independence/median wording, gambler's-ruin stopping conditions, nonlinear-EV equality claims and Monty Hall host-policy explanations.
-- Softened unsupported topic-frequency and exhaustive-coverage claims.
-- Added branch, boundary, answer-choice, mutation and integration tests. Updated curriculum-count assertions and increased rare-input reachability coverage without removing difficult cases.
-- Advanced the development service-worker cache marker. The Pages workflow and protected training/progress implementations remain unchanged.
-- Retained the original licence, attribution and full earlier application. [BUILD_INFO.json](BUILD_INFO.json) and `SOURCE_REVISION.txt` record release provenance.
-
-## Research and actual assessment relevance
-
-Your invitation confirms **25 minutes overall for BTO and limited time per question**. The [official 2027 programme listing](https://www.optiver.com/join-us/jobs/trading/amsterdam/career-kickstarter-trading-2027/?gh_jid=8859789002) confirms the deadline **6 December 2026, 23:59 CET / 22:59 UK**. Public information does not provide a complete BTO syllabus or normed difficulty distribution.
-
-The configured **20 questions, 90-second item budget, scoring and readiness thresholds remain trainer assumptions**, not newly verified requirements. Invitation-aligned overall section clocks, assessment categories and the Career Kickstarter preset are unchanged. Follow the instructions in your actual portal.
-
-The independent standard also used [MIT's probability curriculum](https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-spring-2006/pages/calendar/) and [Jane Street's primary probability/interview material](https://www.janestreet.com/probability-markets/). These support mathematical preparation choices, not a claim that Jane Street interview content is Optiver OA content. Recent candidate reports receive lower weight than your invitation; commercial replica claims are not independent calibration evidence.
-
-[Rohrer and Taylor's mathematics practice study](https://digitalcommons.usf.edu/psy_facpub/1767/) supports spaced and mixed practice in its experimental settings. It does not validate this application or three-correct streaks as a complete measure of mastery.
-
-Quant Sprint was inspected for multicolour sampling, restricted selections, conditioned counts and payout moments. Useful mathematical ideas informed independently implemented additions. Its source, UI, progress system and calibration claims were not copied wholesale.
-
-## Use it consistently
-
-| Activity | What to do | What the record means |
+| Module | Invitation duration | Retained assumptions in the trainer |
 |---|---|---|
-| Learn or repair | Ten focused questions; use ChatGPT, hints and solutions | All ten answered without skips ticks coverage; help/accuracy do not prevent learning completion |
-| Mixed practice within BTO | Ten fresh questions without topic labels; choose the method independently | Three qualifying cold, paced successes at a supported difficulty earn that checkpoint |
-| Review | Explain model/assumption errors and solve cleanly later | Diagnosis and correction, not a new cold success on a known answer |
-| Batch check | Choose one assessment; feedback arrives at the end | Separate check; optional cross-category mixing is not required |
-| Timed section/mock | Use configured clocks with no outside help | Sustained performance, distinct from learning coverage and checkpoints |
-| External unfamiliar problems | Different source, no topic cue and a time budget | Evidence of transfer beyond the app's templates |
+| Beat the Odds | 25 minutes, limited time per question | 20 items, 90 seconds each, +1/−1 |
+| NumberLogic | 25 minutes | 26 sequence questions, free navigation, +1/−1 |
+| Likelihood-list | About 25 minutes, limited time per question | 15 three-statement rankings, 90 seconds each, exact-order credit |
+| Intervals | About 15 minutes | 18 items, ratio score; overall clock without an invented item deadline |
+| Orderbooks | About 15 minutes | 20 static boards, five-second wrong-submit penalty |
+| Zap-N | One or more games, each 2–15 minutes | These nine games, parameters and trainer targets |
 
-Start mixing after learning a few skills; do not wait until completing all 40. Keep learning new material while revisiting earlier skills. With ChatGPT, ask for the sample space, why the method applies, why an alternative fails and what changes when an assumption changes.
+The **Career Kickstarter preset and clocks are preserved**. Item counts, proprietary score formulas, precise game selection and pass thresholds are not independently confirmed. The configured Likelihood List item limits may bind before the nominal section clock. Follow the instructions in your actual portal.
 
-An eight-hour week across the battery can start with **3h BTO, 1h15 NumberLogic, 1h15 Likelihood-list, 1h Orderbooks, 45m Intervals, 15m Zap-N and 30m general error review**. Include unfamiliar external problems and a timed probability section within BTO time. Shift time toward measured weaknesses. A full mock replaces subject time rather than adding an extra obligation.
+The official [2027 programme listing](https://www.optiver.com/join-us/jobs/trading/amsterdam/career-kickstarter-trading-2027/?gh_jid=8859789002) confirms the assessment deadline: **6 December 2026, 23:59 CET / 22:59 UK**. Recent candidate accounts and commercial sources were researched, but conflicting format claims were not treated as calibration. The detailed report separates official information, personal invitation evidence, candidate reports and broader mathematical preparation.
+
+## A clear daily workflow
+
+| Activity | What to do | Meaning of its record |
+|---|---|---|
+| Learn or repair | Ten focused questions; use ChatGPT, hints and solutions | All ten answered without skips records learning coverage; help/accuracy do not prevent coverage |
+| Mixed practice within one assessment | Ten fresh questions, independently, without the topic cue | Three qualifying cold, paced successes at a supported difficulty earn its checkpoint |
+| Review | Diagnose wrong or slow reasoning; solve cleanly later | Repair and revision, not fresh cold credit for a remembered answer |
+| Batch check | Select one assessment; receive feedback at the end | Separate check; cross-assessment mixing is optional |
+| Timed section/mock | Follow configured clocks with no outside help | Sustained accuracy and pacing, separate from learning coverage |
+| Independent unfamiliar problems | Another source, no topic label, a time budget | Evidence that the method transfers beyond this generator |
+
+Learn a few skills, then start mixing; do not wait until covering the entire catalogue. Use ChatGPT during learning to explain **why a method applies, why an alternative fails and what changes when an assumption changes**. Take cold checks and simulations independently.
+
+Across an eight-hour week, start with **3h BTO, 1h15 NumberLogic, 1h15 Likelihood List, 1h Orderbooks, 45m Intervals, 15m Zap-N and 30m general error review**. Include timed sections and external unfamiliar questions inside those hours. Shift time towards measured weaknesses. Keep Zap-N practice focused on familiarity and accurate controls.
 
 ## Verification results
 
-| Check | Current result |
+| Check | Result |
 |---|---|
-| Full JavaScript / Python / C++ suites | **1,157 / 36 / 34 passed**: 1,227 unit tests |
-| New mathematical branches | **5,376** explicit seeded JS outcome/contract checks |
-| Independent Python Fraction oracle | **1,519** cases passed |
-| Before/after all-level mathematical sample | **46,080** items verified |
-| Display rounding/presentation | **25,088** samples, all keyed choices uniquely closest |
-| Complete finite catalogues | **33 pools / 1,146 entries**, verified and reachable |
-| DOM integration | **13 scripts passed**, including 200 new-family assertions |
-| Whole learning walkthrough | **109 skills, 1,100 questions, 716 assertions**, no uncaught app errors |
-| Focused/mixed/mock/Batch regression | **5,560** questions with **zero exact repeats**, including 150 mock papers |
-| Visual QA | Desktop Chrome and a 390px iframe: saved draft/resume, completion, lessons, new variance feedback and retained synthetic progress |
+| Complete JavaScript / Python / C++ suites | **1,184 / 40 / 34 passed — 1,258 unit tests**, no JS failures or skips |
+| Before/after seeded generation | **43,648 draws, 10,912 family-verifier checks**, 174 current family-level rows |
+| Separate Python mathematical oracle | **2,176 cases checked** out of a 2,784-case exported corpus; 608 explicitly delegated to existing JS verifiers |
+| Optional backend generated corpus | **192 cases passed** |
+| Existing DOM integration | **13 scripts passed** |
+| Whole learning walkthrough | **111 skills, 1,120 questions, 728 assertions**, zero uncaught app errors |
+| New battery DOM checks | **79 assertions**; all nine game views start/clean up; three changed games completed through controls |
+| Focused/mixed/mock/Batch regression | **5,580 questions, zero exact repeats**, including 150 mock papers |
+| Visual QA | Desktop Chrome, actual new skill feedback/resume, production-generated examples and a 390px responsive iframe |
 
-Generation uses rational formulas/counting/convolution; new verification uses separately implemented finite paths, labelled subsets, Cartesian products, unique strings and centred deviations. The Python program imports no app code. These checks also cover zero probabilities, impossible arrangements, negative covariance, coefficient cancellation, complete-deck sampling and conditional-model changes.
+The Python oracle imports no application JS math code. It reconstructs exact sequence terms, supported probability/interval models, table/chart counts and signed cash/exposure. New regression tests independently enumerate endpoints, error signs, labelled records and Balloon action outcomes. The checks distinguish assumptions from consequences.
 
-See the [validation summary](evaluation/curriculum-validation.json), [before/after comparison](evaluation/curriculum-comparison.json), [question-quality results](evaluation/curriculum-question-quality.json), [Python results](evaluation/curriculum-python-oracle.json), [integration results](evaluation/curriculum-flows.json) and [browser observations](evaluation/curriculum-browser.json). Reports without the `curriculum-` prefix remain historical results for earlier releases.
+See [validation](evaluation/battery-validation.json), [before/after comparison](evaluation/battery-comparison.json), [Python oracle](evaluation/battery-python-oracle.json), [backend corpus](evaluation/battery-backend-corpus.json), [existing DOM flows](evaluation/battery-flows.json), [new DOM checks](evaluation/battery-dom-flow.json), [practice regression](evaluation/battery-assessment-regression.json) and [browser observations](evaluation/battery-browser.json). `battery-*` reports describe this release; older reports remain historical.
 
-Eleven protected files were byte-compared with the delivered baseline. Existing family IDs/levels and prior enumerated BTO prompt identities remain. Exact session repetition was already zero in the previous measured regression and remains zero here; this release improves breadth and structural contrasts.
+## What remains unverified
 
-### Reproduce
+**Mathematical correctness is stronger than external difficulty calibration.** The added models are independently checked, but the actual Optiver bank and score distribution are unavailable. Authored level labels and readiness bars are training goals.
+
+Finite numerical sequences have many conceivable continuations; the application checks its intended models and a bounded rival-rule library. Intervals' suggested error widths remain assumed models rather than measured personal uncertainty. Orderbooks uses static simplified quotes; its reference search is constrained to primitive packages, while any profitable flat package is accepted. Game familiarity is useful, but broad cognitive transfer has not been demonstrated for this app.
+
+New numerical variants are not automatically new concepts. Finite families can eventually exhaust their variants; the session history avoids repeats while fresh items can be found. **Zero repeats in the tested runs is not a lifetime guarantee.** Mastery checkpoints should be reinforced with later unaided performance on unfamiliar external questions.
+
+Use this as your main daily drill platform, combined with conceptual tutoring and held-out practice. That workflow targets mathematical understanding and accurate execution rather than memorising the generator.
+
+## Developer checks
 
 ```sh
 npm test
-node tools/mixed-question-quality.mjs evaluation/curriculum-question-quality.json
-node tools/focused-assessment-regression.mjs evaluation/curriculum-assessments.json
-python tools/curriculum-oracle.py
+
+# Requires jsdom in the developer environment; not needed for normal app use.
+node tools/curriculum-dom-regression.mjs evaluation/battery-flows.json
+node tools/battery-dom-flow.mjs
+node tools/focused-assessment-regression.mjs evaluation/battery-assessment-regression.json
+
+# Supply an unchanged 1.6.0 checkout for before/after comparisons.
+node tools/battery-evaluation.mjs /path/to/baseline
+python tools/battery-oracle.py
+python tools/battery-backend-corpus.py
 ```
 
-The [full report](docs/BTO_CURRICULUM_AUDIT.md#11-running-and-reproducing) covers jsdom, optional backend/native tests and the comparison tool, which needs the separate preserved 1.5.0 checkout. The exported Python corpus is included and runs without that checkout. Node.js alone is sufficient for ordinary app use.
+For isolated QA dependencies, set `OPTPREP_TEST_JSDOM` to an external jsdom package path. Optional backend tests require Python 3.12+ and pytest (`cd backend`, then `python -m pytest -q`). Optional engine tests need CMake 3.20+, C++20 and GoogleTest; build with `cmake -S engine -B engine/build`, `cmake --build engine/build`, then `ctest --test-dir engine/build --output-on-failure`.
 
-## Verdicts and remaining limitations
-
-| Dimension | Verdict / confidence |
-|---|---|
-| Mathematical correctness | Strong on implemented models; high confidence in tested additions |
-| Assessment realism | Useful preparation; moderate broad relevance, low confidence in exact replication |
-| Difficulty calibration | Defensible internal progression; externally uncalibrated |
-| Educational quality | Stronger assumption recognition and contrasts; moderately high confidence, no human trial |
-| Overall usefulness | Good primary question-practice application alongside tutoring and independent problems |
-
-The additions are meaningful structures, but remain authored templates. A new context alone is surface variation; changed replacement, dependence, conditions or constraints change the mathematical model. Software counts cannot establish human conceptual transfer.
-
-Poisson/exponential models have basic foundation material but no comprehensive BTO generator coverage. General no-replacement waiting, unequal-category occupancy, arbitrary densities, general Markov reachability and advanced inequalities remain outside systematic practice. The report explains worthwhile short extensions and lower-priority material before the deadline.
-
-Difficulty is not normed against Optiver. Some questions are stretch work. Correct letters are shuffled, but numerical-magnitude cues can remain. Domains are finite; bounded novelty searches do not establish infinite capacity. Unseen-only sessions do not silently recycle an unavailable question.
-
-Use this as the **primary question-practice application**, with ChatGPT for understanding and external unfamiliar problems for transfer. The objective is reasoning that survives changed assumptions, rather than collecting marks on recurring templates.
-
-![New skill completion and retained earlier records](docs/media/validation/optprep-curriculum-progress.jpg)
-
-## Licence and release history
-
-[MIT licence](LICENSE), original attribution, [LEGAL.md](LEGAL.md), [PRIVACY.md](PRIVACY.md) and previous reports remain included. `SOURCE_REVISION.txt` identifies the tested local implementation; a following metadata-only commit records its provenance. This archive does not modify Coflazo's public repository.
+`BUILD_INFO.json` and `SOURCE_REVISION.txt` record release provenance. Previous release reports and source attribution remain included.

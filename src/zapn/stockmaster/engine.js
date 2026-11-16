@@ -22,6 +22,9 @@ export function schedule(rng, o = DEFAULTS) {
       const width = rng.float(o.zoneMin, o.zoneMax);
       const z0 = rng.float(0.4, 0.9 - width);
       const end = t + 1000 / speed;
+      // Do not create a final gauge whose response opportunity is cut off by
+      // the session clock and silently excluded from the hit-rate denominator.
+      if (end > o.durationMs) break;
       out.push({ slot, spawn: t, end, speed, zone: [z0, z0 + width] });
       t = end + rng.int(o.gapMin, o.gapMax);
     }
@@ -78,7 +81,7 @@ export function createEngine(rng, opts = {}) {
       metric: 'accuracy',
       value: n ? hits / n : 0,
       detail: {
-        hits, misses, falseClicks, gauges: outcome.size,
+        hits, misses, falseClicks, gauges: outcome.size, scheduled: gauges.length,
         early: state.clicks.filter((c) => c.result === 'early').length,
         late: state.clicks.filter((c) => c.result === 'late').length,
         empty: state.clicks.filter((c) => c.result === 'empty').length,

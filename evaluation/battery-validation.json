@@ -1,0 +1,196 @@
+{
+  "edition": "1.7.0-kickstarter.1",
+  "date": "2026-11-16",
+  "baseline": "1.6.0-kickstarter.1",
+  "baselineArchiveSha256": "6263ab0230026e93d4f141f59aaa1d738cdd8fddf8d58c50b1a9ef9e623962d4",
+  "baselineArchiveRevision": "0bbeb34dd570e8cf936abac79614cc93431df7bd",
+  "unitTests": {
+    "javascript": {
+      "passed": 1184,
+      "failed": 0,
+      "skipped": 0
+    },
+    "python": {
+      "passed": 40
+    },
+    "cpp": {
+      "passed": 34
+    },
+    "totalPassed": 1258
+  },
+  "baselineJavascriptPassed": 1157,
+  "newExplicitJavascriptTests": 17,
+  "newFamilyParameterisedTests": 10,
+  "dom": {
+    "existingScripts": 13,
+    "allPassed": true,
+    "completionWalkthrough": {
+      "assertions": 728,
+      "learningFamilies": 111,
+      "learningQuestions": 1120,
+      "assessments": 5,
+      "batchChecks": 5,
+      "mockReviews": 5,
+      "uncaughtErrors": 0
+    },
+    "newBatteryAssertions": 79,
+    "gameViewsStartedAndCleaned": 9,
+    "changedGameViewsCompleted": 3
+  },
+  "mathematics": {
+    "draws": 43648,
+    "familyVerifierChecks": 10912,
+    "currentFamilyLevelRows": 174,
+    "pythonCorpus": 2784,
+    "pythonIndependentChecked": 2176,
+    "backendCorpusChecked": 192,
+    "noHumanDifficultyOrLearningCalibration": true
+  },
+  "practiceRegression": {
+    "guided": 1110,
+    "mixed": 1000,
+    "mockPapers": 150,
+    "mockQuestions": 2970,
+    "batchQuestions": 500,
+    "repeatedQuestions": 0,
+    "sectionCounts": {
+      "bto": 1300,
+      "nl": 1380,
+      "ll": 920,
+      "iv": 1000,
+      "ob": 980
+    }
+  },
+  "practiceRegressionTotal": 5580,
+  "protectedFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "5870a49cfb94ebb9dc3c192a41ad1f76205bbc81724df9461e1300d0eeef939f"
+    },
+    {
+      "path": "config/presets.js",
+      "sha256": "d4d3ccc061f5ef89a09b30bc8b3bc26081e60fb5ede25817eeb9b7a749bfe626"
+    },
+    {
+      "path": "src/core/store.js",
+      "sha256": "5e177f95cfdb9211dd18b3fe251dd3262cc31d4b08c316104b509df4657e4205"
+    },
+    {
+      "path": "src/core/migrate.js",
+      "sha256": "a07db9ee711ae10625015813ac013d880d65fe2beb1c3e2dcb7c43fb3dbdac0f"
+    },
+    {
+      "path": "src/core/questions.js",
+      "sha256": "e56c9647699fbff210e1f95b10e39ad09ea70f3067698c3b4c042db55a9ab5dd"
+    },
+    {
+      "path": "src/core/recognition.js",
+      "sha256": "0338c3c8431fce1a9b842842294b0c8c789128745a2c6644432fa552532f9226"
+    },
+    {
+      "path": "src/core/learning.js",
+      "sha256": "6566b7b41faa37145dedfc87b8b5b728ac0598645aaa692a70685e0c73488ece"
+    },
+    {
+      "path": "src/core/mixed-training.js",
+      "sha256": "cdcbcbf08233319d1c0a9cd6f3c97cb5248d8b3fe698131fe3bffe496a785060"
+    },
+    {
+      "path": "src/core/check.js",
+      "sha256": "428747a679597d54f063f228cb86bf68d312fa6b2668dfd6b525309fbbef61c6"
+    },
+    {
+      "path": "src/ui/runner.js",
+      "sha256": "4b317752f77f374b94e1a7542b433086b618e6c309907b1a7f2127c29eb0f35b"
+    }
+  ],
+  "allBtoSourceUnchangedReport": "battery-bto-preservation.json",
+  "allExamConfigurationObjectsUnchanged": true,
+  "kickstarterPresetUnchanged": true,
+  "counts": {
+    "before": {
+      "mm": {
+        "families": 8,
+        "levels": 24
+      },
+      "bto": {
+        "families": 40,
+        "levels": 98
+      },
+      "nl": {
+        "families": 30,
+        "levels": 60
+      },
+      "ll": {
+        "families": 16,
+        "levels": 43
+      },
+      "iv": {
+        "families": 15,
+        "levels": 42
+      },
+      "ob": {
+        "families": 8,
+        "levels": 22
+      }
+    },
+    "after": {
+      "mm": {
+        "families": 8,
+        "levels": 24
+      },
+      "bto": {
+        "families": 40,
+        "levels": 98
+      },
+      "nl": {
+        "families": 30,
+        "levels": 60
+      },
+      "ll": {
+        "families": 17,
+        "levels": 47
+      },
+      "iv": {
+        "families": 16,
+        "levels": 45
+      },
+      "ob": {
+        "families": 8,
+        "levels": 22
+      }
+    }
+  },
+  "httpSmokePaths": 8,
+  "visualReport": "battery-browser.json",
+  "liveGithubPagesUpdated": false,
+  "limits": [
+    "A new numerical prompt is not necessarily a new reasoning structure.",
+    "Authored branch proxies are descriptive, not independent measures of conceptual transfer.",
+    "No human learning trial, actual item-bank access, normed difficulty, Optiver score conversion or pass threshold validation.",
+    "Sample uniqueness does not prove infinite capacity or no lifetime repeats.",
+    "Python NL checks derive exact displayed values from the stated generator model; they do not prove that a finite prefix has only one conceivable continuation.",
+    "LL families not listed as checked retain their existing enumeration/recount/DP verifiers and generated-contract tests.",
+    "Orderbooks Python checks cash and exposure, while the independent JS multiset search additionally checks the best primitive package.",
+    "Error-model widths and human difficulty are not validated by answer correctness."
+  ],
+  "commands": [
+    "npm test",
+    "python -m pytest -q (from backend)",
+    "cmake -S engine -B engine/build -DOA_BUILD_TESTS=ON",
+    "cmake --build engine/build",
+    "ctest --test-dir engine/build --output-on-failure",
+    "node tools/curriculum-dom-regression.mjs evaluation/battery-flows.json",
+    "node tools/battery-dom-flow.mjs",
+    "node tools/focused-assessment-regression.mjs evaluation/battery-assessment-regression.json",
+    "node tools/battery-evaluation.mjs /path/to/1.6.0-baseline",
+    "python tools/battery-oracle.py",
+    "python tools/battery-backend-corpus.py"
+  ],
+  "environment": {
+    "os": "Linux",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14",
+    "crossPlatformCiNotRun": true
+  }
+}

@@ -72,7 +72,7 @@ const fam = {
       { say: 'Add the segments, then multiply by the bar value.', why: 'One conversion at the end avoids rounding each segment.' },
       { say: 'Use a proportional width (about ±8% per side for a multi-segment path).', why: 'Measurement error scales with length, so the interval should too.' },
     ],
-    predict: { question: 'You measure 7.5 bars and each bar is 10 m. You trust yourself to ±8%. Interval?', answer: 'About [67, 85]: 75 × e^(±0.1) with a little more room above.' },
+    predict: { question: 'You measure 7.5 bars at 10 m each. Assume a guaranteed relative error of at most 8% around 75 m. What bounds cover that range?', answer: '[69,81] = 75 × (1 ± 0.08). If 8% instead meant a lognormal standard deviation, this would be a different problem requiring a probabilistic width choice.' },
     rule: 'Length = (bars counted) × (bar value); interval = estimate × e^(±k × relative error), k ≈ 2 for 5-10% errors.',
     contrast: 'Straight-line distance from start to end is shorter than the path; the question asks for the path.',
     edge: 'Diagonal segments are the trap: a diagonal across a 3 × 4 bar box is 5 bars, not 7.',

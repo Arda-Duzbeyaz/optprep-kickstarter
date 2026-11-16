@@ -43,7 +43,7 @@ export default family({
   anchor: 'Whole-number sequences with one change: the terms carry decimals. The tests (gaps, ratios) are identical.',
   srule: 'Decimals change the arithmetic, not the method: gaps first, then ratios.',
   lesson: {
-    purpose: 'Decimal items test whether you keep the method under messier arithmetic. The calculator is allowed; use it for the multiplication, not for the pattern.',
+    purpose: 'Decimal items test whether you keep the method under messier arithmetic. In training, use a calculator only if your actual assessment instructions permit it; the reasoning still comes first.',
     anchor: 'The same difference and ratio tests as for integers, with one change: the numbers carry decimals.',
     steps: [
       { say: 'Subtract neighbours; if the gaps have a pattern, extend it.', why: 'Differences work the same with decimals.' },

@@ -144,7 +144,7 @@ export function nlExtras({ seq, k, missing, mode, view = 'diff', ruleRow, srule,
   const rising = gaps.every((g) => g.n > 0n), falling = gaps.every((g) => g.n < 0n);
   const ask = missing ? `We want the term in the blank, term ${k + 1} of ${n}.` : `We want term ${k + 1}, the one after ${L1(prev)}.`;
   const fast = `${srule.replace(/\.?$/, '.')} Here: ${String(how).replace(/\.?$/, '.')}`;
-  const order = !missing && (rising || falling) ? `Every step so far ${rising ? 'rises' : 'falls'}, so the answer is ${rising ? 'above' : 'below'} ${L1(prev)}. ` : missing && (rising || falling) ? `The terms ${rising ? 'rise' : 'fall'} throughout, so the blank lies between ${L1(seq[k - 1])} and ${L1(seq[k + 1])}. ` : '';
+  const order = !missing && (rising || falling) ? `Under the fitted rule, the next step ${rising ? 'rises' : 'falls'} from ${L1(prev)}. Past direction alone does not prove the next direction. ` : missing && (rising || falling) ? `Under the fitted rule, the blank lies between ${L1(seq[k - 1])} and ${L1(seq[k + 1])}. ` : '';
   let rows = [];
   if (view === 'table' && ruleRow) {
     for (let i = Math.max(1, (missing ? k : n - 1) - 3); i <= Math.min(n - 1, missing ? k + 1 : n - 1); i++) {

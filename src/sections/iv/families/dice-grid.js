@@ -33,7 +33,7 @@ const fam = {
       unit = 'pips';
       steps = [
         { say: 'Baseline: 100 × 3.5 = 350.', why: 'Expected pips per die is 3.5; the spread of the total from chance alone is about √(100 × 35/12) ≈ 17.' },
-        { say: 'Scan for excess high or low faces (e.g. count sixes and ones) and adjust the baseline.', why: 'Each extra six over a one shifts the total by 5; a quick scan halves the uncertainty.' },
+        { say: 'Scan for excess high or low faces (e.g. count sixes and ones) and adjust the baseline.', why: 'Replacing a one by a six adds 5. Scanning supplies information, but its benefit depends on how accurately you count.' },
         { say: `True total: ${truth}.`, why: 'Summed from the grid.' },
       ];
     }

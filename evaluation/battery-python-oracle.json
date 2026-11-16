@@ -1,0 +1,32 @@
+{
+  "corpus": 2784,
+  "checked": 2176,
+  "checkedBySection": {
+    "nl": 960,
+    "ll": 240,
+    "iv": 624,
+    "ob": 352
+  },
+  "explicitlyDelegatedToExistingJSVerifiers": {
+    "ll/conjunction": 48,
+    "ll/score-table": 48,
+    "ll/football": 32,
+    "ll/survey-bar": 48,
+    "ll/fund-returns": 48,
+    "ll/dice-events": 48,
+    "ll/card-events": 32,
+    "ll/coin-patterns": 48,
+    "ll/collisions": 32,
+    "ll/large-numbers": 48,
+    "ll/impossible-bounds": 32,
+    "ll/selection-weights": 48,
+    "iv/prob-exact": 48,
+    "iv/rates-weights": 48
+  },
+  "limitations": [
+    "Python NL checks derive exact displayed values from the stated generator model; they do not prove that a finite prefix has only one conceivable continuation.",
+    "LL families not listed as checked retain their existing enumeration/recount/DP verifiers and generated-contract tests.",
+    "Orderbooks Python checks cash and exposure, while the independent JS multiset search additionally checks the best primitive package.",
+    "Error-model widths and human difficulty are not validated by answer correctness."
+  ]
+}

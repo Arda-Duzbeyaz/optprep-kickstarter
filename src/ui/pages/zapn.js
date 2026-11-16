@@ -18,6 +18,7 @@ export function zapnHub(root, { store }) {
   mount(root,
     h('h1', {}, 'Zap-N games'),
     h('p', { class: 'lede' }, 'Short games that test speed, memory and planning. Each has a coach, a practice mode and an exam mode.'),
+    h('p', { class: 'muted small-note' }, 'These are familiarity drills with trainer rules and targets. Your invitation confirms short neuro games, not this exact game list or an Optiver pass score. Compare speed and accuracy together; extensive game practice is not established to improve general reasoning.'),
     activePreset().note ? h('p', { class: 'muted small-note' }, activePreset().note) : null,
     h('ul', { class: 'task-list' }, games.map((g) => {
       const target = ZAPN_TARGETS[g.id];
@@ -72,6 +73,7 @@ export function zapnGame(root, { store, id, mode = 'practice' }) {
     h('p', { class: 'muted' }, h('a', { href: '#/zapn' }, 'Zap-N'), ` / ${g.title} / ${mode === 'exam' ? 'Exam' : 'Practice'}`),
     h('h1', {}, g.title),
     h('p', { class: 'muted' }, g.skill),
+    h('p', { class: 'muted small-note' }, 'Trainer rules and goals; the exact Optiver game configuration and scoring are unverified.'),
     coach, h('div', { style: { height: '16px' } }), stage, resultBox);
   start();
   return () => unmount?.();

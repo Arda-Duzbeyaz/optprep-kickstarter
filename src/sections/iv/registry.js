@@ -13,6 +13,7 @@ import mentalProduct from './families/mental-product.js';
 import powersRoots from './families/powers-roots.js';
 import combinatorics from './families/combinatorics.js';
 import fermi from './families/fermi.js';
+import uncertaintyModels from './families/uncertainty-models.js';
 
 export const families = [
   probExact,
@@ -29,4 +30,5 @@ export const families = [
   powersRoots,
   combinatorics,
   fermi,
+  uncertaintyModels,
 ];

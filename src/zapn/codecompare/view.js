@@ -94,7 +94,7 @@ export function mount(container, { rng, mode = 'practice', onFinish } = {}) {
 
   function onKey(e) {
     if (!engine || engine.isOver()) return;
-    if (e.key >= '1' && e.key <= '4') { e.preventDefault(); choose(+e.key - 1); }
+    if (e.key >= '1' && e.key <= '4') { e.preventDefault(); if (!e.repeat) choose(+e.key - 1); }
   }
   doc.addEventListener('keydown', onKey);
   intro();

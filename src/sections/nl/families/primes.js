@@ -38,7 +38,7 @@ export default family({
   anchor: 'Primes are a list you already know; this family changes at most one thing: each prime may be doubled, shifted or squared.',
   srule: 'Irregular gaps that never settle → primes; undo the transform, take the next prime.',
   lesson: {
-    purpose: 'Primes have no formula, so no difference table finds them. They must be recognised, and 2p + 1 or p² disguises are common.',
+    purpose: 'Prime gaps do not follow the low-degree polynomial rules used here, so a short difference table does not identify them reliably. They must be recognised, and 2p + 1 or p² disguises are common.',
     anchor: 'The primes 2, 3, 5, 7, 11, 13, … with one optional modification applied to each (×2, +c, squared).',
     steps: [
       { say: 'If differences and ratios never settle, suspect primes.', why: 'Prime gaps are irregular by nature.' },

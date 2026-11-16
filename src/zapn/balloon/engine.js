@@ -22,7 +22,7 @@ export function solveRound(round, N = MAX_PUMPS) {
   const { balloons: n, centsPerPump: c, bankPenalty: p } = round;
   const maxBank = n * (N - 1) * c;
   let next = Float64Array.from({ length: maxBank + 1 }, (_, b) => b); // no balloons left: keep the bank
-  const policy = [null];
+  const policy = [null], values = [next];
   for (let b = 1; b <= n; b++) {
     const reach = (n - b) * (N - 1) * c; // most the bank can hold with b balloons still to play
     const cur = new Float64Array(maxBank + 1), pol = new Uint8Array(reach + 1);
@@ -36,9 +36,10 @@ export function solveRound(round, N = MAX_PUMPS) {
       cur[bank] = best; pol[bank] = bestT;
     }
     policy.push(pol);
+    values.push(cur.slice(0, reach + 1));
     next = cur;
   }
-  const out = { policy, ev: next[0] };
+  const out = { policy, values, ev: next[0] };
   solved.set(key, out);
   return out;
 }
@@ -49,7 +50,8 @@ export function optimalTarget(round, i, bank, N = MAX_PUMPS) {
   return solveRound(round, N).policy[round.balloons - i][bank];
 }
 
-// What the EV-optimal policy earns on these exact pop points (removes luck from the benchmark).
+// Realised bank of the EV-optimal policy on the same pop points. This couples
+// the outcomes but does NOT remove luck: different policies survive different K.
 export function optimalBank(round, pops, N = MAX_PUMPS) {
   let bank = 0;
   pops.forEach((k, i) => {
@@ -59,6 +61,24 @@ export function optimalBank(round, pops, N = MAX_PUMPS) {
   return bank;
 }
 
+// Conditional action values at an actually encountered state, with optimal
+// continuation afterwards. Uses the stated uniform model, never the hidden K.
+export function decisionValues(round, i, bank, pumps, N = MAX_PUMPS) {
+  const next = solveRound(round, N).values[round.balloons - i - 1];
+  const popped = next[bank - popLoss(bank, round.bankPenalty)];
+  const cash = next[bank + pumps * round.centsPerPump];
+  let pump = popped;
+  if (pumps < N - 1) {
+    let surviveBest = -Infinity;
+    for (let target = pumps + 1; target < N; target++) {
+      const v = ((N - target) * next[bank + target * round.centsPerPump] + (target - pumps - 1) * popped) / (N - pumps - 1);
+      surviveBest = Math.max(surviveBest, v);
+    }
+    pump = (popped + (N - pumps - 1) * surviveBest) / (N - pumps);
+  }
+  return { cash, pump };
+}
+
 export function createEngine(rng, opts = {}) {
   const N = opts.maxPumps ?? MAX_PUMPS;
   const rounds = opts.rounds ?? ROUNDS;
@@ -66,6 +86,7 @@ export function createEngine(rng, opts = {}) {
   const state = {
     phase: 'ready', round: 0, balloon: 0, pumps: 0,
     banks: rounds.map(() => 0), log: rounds.map(() => []), last: null, startAt: null,
+    decisions: 0, decisionLossCents: 0,
   };
   const cur = () => rounds[state.round];
 
@@ -95,6 +116,11 @@ export function createEngine(rng, opts = {}) {
     if (state.phase === 'done') return null;
     if (action.type === 'start') { if (state.phase === 'ready') { state.phase = 'play'; state.startAt = tMs; } return null; }
     if (state.phase !== 'play') return null;
+    if (action.type === 'pump' || action.type === 'cash') {
+      const v = decisionValues(cur(), state.balloon, state.banks[state.round], state.pumps, N);
+      state.decisionLossCents += Math.max(0, Math.max(v.cash, v.pump) - v[action.type]);
+      state.decisions++;
+    }
     if (action.type === 'pump') {
       state.pumps++;
       if (state.pumps >= pops[state.round][state.balloon]) return endBalloon('pop', tMs);
@@ -113,7 +139,7 @@ export function createEngine(rng, opts = {}) {
       pops: state.log[i].filter((e) => e.outcome === 'pop').length,
       meanPumps: state.log[i].length ? state.log[i].reduce((a, e) => a + e.pumps, 0) / state.log[i].length : 0,
     }));
-    return { score: bank / 100, metric: 'ratio', value: ratio, detail: { bankCents: bank, optimalCents: optimal, perRound } };
+    return { score: bank / 100, metric: 'ratio', value: ratio, detail: { bankCents: bank, optimalCents: optimal, perRound, decisions: state.decisions, decisionLossCents: state.decisionLossCents } };
   }
 
   return { state, act, isOver: () => state.phase === 'done', result, pops };

@@ -1,3 +1,4 @@
+import { conditionalRates } from '../battery-lessons.js';
 // Book: Likelihood List. An opening lesson on ranking without computing, then one lesson per
 // question family, grouped by what the prompt shows. The recognition tree goes from the prompt's
 // picture to the lesson that solves it; every family lesson is a linked answer box.
@@ -19,6 +20,7 @@ import collisions from './collisions.js';
 import largeNumbers from './large-numbers.js';
 
 const chapters = [
+  { title: 'Further reasoning', intro: 'Additional mathematical training; the exact assessment question bank is unverified.', lessons: [conditionalRates] },
   { title: 'How to rank', intro: 'Only the exact order scores. Bounds and containment order most triples for free; exact work is saved for the one close pair.', lessons: [compare, bounds] },
   { title: 'Tables', intro: 'Every statement is rows that qualify over rows in scope; the wording names the scope.', lessons: [conjunction, scoreTable, football] },
   { title: 'Charts', intro: 'Bars, dots and curves are tables in disguise: count bars or dots, or measure area.', lessons: [surveyBar, fundReturns, histogramBins, scatterRegions, densityCurves] },
@@ -27,6 +29,7 @@ const chapters = [
 ];
 
 const tree = { diagram: 'flow', caption: 'Start at the top on every item. Each answer box opens its lesson.', spec: { root: 'r', nodes: [
+  { id: 'battery-addition', text: 'Conditional rates and changing group mix', kind: 'a', link: 'll/conditional-rates' },
   { id: 'r', text: 'Every item: bounds, containment, buckets, then exact work for one pair', kind: 'note', link: 'll/compare-without-computing' },
   { id: 'q0', text: 'Is a statement impossible or certain by a count?', kind: 'q' },
   { id: 'a-ib', text: 'Max achievable, already guaranteed, parity, pigeonhole', kind: 'a', link: 'll/impossible-bounds' },
@@ -49,6 +52,7 @@ const tree = { diagram: 'flow', caption: 'Start at the top on every item. Each a
   { id: 'a-co', text: 'Shared birthdays, repeats, matches', kind: 'a', link: 'll/collisions' },
   { id: 'a-ln', text: 'The same proportion in samples of different sizes', kind: 'a', link: 'll/large-numbers' },
 ], edges: [
+  { from: 'r', to: 'battery-addition', label: 'further reasoning' },
   { from: 'r', to: 'q0' },
   { from: 'q0', to: 'a-ib', label: 'yes' },
   { from: 'q0', to: 'q1', label: 'no, or after pinning it' },

@@ -1,6 +1,6 @@
 // Exam replicas and readiness targets. Formats are third-party candidate reports
 // (QuantVault, Aptitude Test Prep, Tradermath, PracHub), so every number is editable here.
-// Targets are this trainer's bar, set above the reported pass lines, not Optiver cutoffs.
+// Targets and unverified scoring/count assumptions belong to this trainer, not published Optiver cutoffs.
 
 export const SECTIONS = {
   // 80-in-8: reported by QuantVault (verified June 2026) as a separate test for Quant Trader,
@@ -24,7 +24,7 @@ export const SECTIONS = {
     blurb: 'Find the next term. Difficulty ramps; you may skip and come back. Wrong answers cost a point.',
     exam: { count: 26, totalSeconds: 25 * 60, navigation: 'free', scoring: 'plusMinus' },
     variants: [{ label: 'Short: 6 in 5 minutes', count: 6, totalSeconds: 300 }],
-    target: { metric: 'net', value: 18, label: 'net score at least 18 of 26 (reported safe line: 15)' },
+    target: { metric: 'net', value: 18, label: 'net score at least 18 of 26 (trainer goal)' },
   },
   ll: {
     id: 'll', title: 'Likelihood List', kind: 'rank', portalOrder: 3,
@@ -53,13 +53,13 @@ export const PORTAL_ORDER = ['mm', 'bto', 'nl', 'll', 'iv', 'ob', 'zapn'];
 export const READINESS_WINDOW = 3; // last N exam runs must all meet the target
 
 export const ZAPN_TARGETS = {
-  balloon: { label: 'total bank within 85% of the EV-optimal strategy', metric: 'ratio', value: 0.85 },
+  balloon: { label: 'realised bank at least 85% of the model policy (luck remains)', metric: 'ratio', value: 0.85 },
   skyscraper: { label: 'average at most 2 moves above optimal', metric: 'movesOver', value: 2 },
   shapeshift: { label: 'accuracy at least 95%', metric: 'accuracy', value: 0.95 },
   codecompare: { label: 'accuracy at least 90%', metric: 'accuracy', value: 0.9 },
   pincode: { label: 'forward span at least 9 digits', metric: 'span', value: 9 },
   numberbox: { label: 'at least 9 of 10 targets made', metric: 'solved', value: 9 },
-  figureitout: { label: 'average at most 1 guess above optimal', metric: 'guessesOver', value: 1 },
+  figureitout: { label: 'average at most 1 guess above the optimal policy mean', metric: 'guessesOver', value: 1 },
   theswitch: { label: 'accuracy at least 95%', metric: 'accuracy', value: 0.95 },
   stockmaster: { label: 'hit rate at least 85%', metric: 'accuracy', value: 0.85 },
 };

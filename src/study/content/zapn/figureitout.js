@@ -82,7 +82,7 @@ export default {
   kind: 'game',
   game: 'figureitout',
   title: 'Figure It Out: test every property on every guess',
-  summary: 'Keep every right value, change every wrong one to an untried value: the round then lasts as long as the property with the most values.',
+  summary: 'Keep every right value, change every wrong one to an untried value: the round lasts until the last property is found.',
   prerequisites: ['prob/independence', 'prob/expectation-linearity'],
   objectives: [
     'Play the optimal strategy: keep rights, change every wrong property to an untried value',
@@ -178,7 +178,7 @@ export default {
     sec('speed'),
     { type: 'callout', tone: 'speed', text: 'Before each submit, say the count left per property ("shape 2, colour done, fill 1"). A property with one value left is not a guess: set it and move on.' },
     { type: 'check', scope: 'counting what is left', questions: [{ make: remainingQ }] },
-    { type: 'callout', tone: 'speed', text: `Keyboard: up and down pick the property, left and right change its value, Enter submits. Set every ✗ property to its next untried value in one pass, top to bottom. You go above the optimum only by retrying a wrong value or leaving a ✗ property unchanged.` },
+    { type: 'callout', tone: 'speed', text: `Keyboard: up and down pick the property, left and right change its value, Enter submits. Set every ✗ property to its next untried value in one pass, top to bottom. Even a flawless strategy can exceed its mean guess count through luck; retrying a known wrong value wastes information.` },
     { type: 'thinkaloud', problem: `Round 3 (values ${ROUNDS[2].join(', ')}). Guess 1 was circle, blue, solid, small: shape ✗, colour ✗, fill ✓, size ✗.`, lines: [
       { t: 0, say: 'Fill is solid: lock it. Shape, colour and size are wrong.' },
       { t: 3, say: `Counts left: shape ${ROUNDS[2][0] - 1}, colour ${ROUNDS[2][1] - 1}, size ${ROUNDS[2][3] - 1}. Worst case for this round is ${optimum(ROUNDS[2]).worst} guesses.` },
@@ -188,12 +188,12 @@ export default {
       { t: 12, say: 'Check before Enter: no ✓ touched, no ✗ value repeated. Submit square, orange, solid, medium.' },
     ] },
     { type: 'check', scope: 'the think-aloud and the second tip', questions: [
-      { type: 'choice', q: 'You go above the optimum only by doing what?', options: ['retrying a wrong value', 'changing every ✗ property', 'using the arrow keys'], answer: 0, traps: { 1: 'changing every ✗ property is the right move', 2: 'the keys only make you faster' }, explain: 'Every ✗ property gets its next untried value; a repeat is the only waste.' },
+      { type: 'choice', q: 'Which action wastes information on a property?', options: ['retrying a wrong value', 'changing every ✗ property', 'using the arrow keys'], answer: 0, traps: { 1: 'changing every ✗ property is the right move', 2: 'the keys only make you faster' }, explain: 'Every ✗ property gets its next untried value; a repeat is the only waste.' },
       { type: 'choice', q: 'In the think-aloud, the first idea changed only the shape. What was wrong?', options: ['the marks already say which are wrong', 'the shape was right all along', 'the size cannot change'], answer: 0, traps: { 1: 'shape was marked ✗', 2: 'size was marked ✗ too' }, explain: 'Change all three wrong properties at once: square, orange, medium.' },
     ] },
 
     sec('rule'),
-    { type: 'callout', tone: 'rule', text: 'Figure It Out: keep every ✓, move every ✗ to an untried value, every guess. The round lasts as long as the property with the most values.' },
+    { type: 'callout', tone: 'rule', text: 'Figure It Out: keep every ✓, move every ✗ to an untried value, every guess. The round lasts until the last property is found, which need not have the most values.' },
 
     sec('contrast'),
     { type: 'compare', columns: ['Game', 'Feedback', 'Best strategy'], rows: [

@@ -1,0 +1,4014 @@
+{
+  "baseline": "1.6.0-kickstarter.1",
+  "updated": "1.7.0-kickstarter.1",
+  "samplesPerLevel": 128,
+  "rows": [
+    {
+      "section": "nl",
+      "family": "arithmetic",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 122,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 96,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 122,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 96,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "geometric",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 37,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 30,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 37,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 30,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "geometric",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 38,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 38,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 38,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 38,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "second-diff",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 120,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 56,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 120,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 56,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "second-diff",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 107,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 107,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "add-index",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 74,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 36,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 74,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 36,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "add-index",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 118,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 87,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 118,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 87,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "squares-plus",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 86,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 72,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 86,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 72,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "squares-plus",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 85,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 81,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 85,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 81,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "triangular",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 12,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 12,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "triangular",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 83,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 75,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 83,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 75,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "diff-geometric",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 72,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 72,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 72,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 72,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "diff-geometric",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 110,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 106,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 110,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 106,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "affine-recurrence",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 112,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 112,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 112,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 112,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "affine-recurrence",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 123,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 123,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 123,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 123,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "fibonacci-like",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 75,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 62,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 75,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 62,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "fibonacci-like",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 109,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 92,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 109,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 92,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "multiply-index",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 22,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 18,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 22,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 18,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "multiply-index",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 63,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 58,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 63,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 58,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "interleaved",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "interleaved",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 45,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 45,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "interleaved",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 44,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 32,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "interleaved",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 119,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 48,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 123,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 18,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "alternating-ops",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 100,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 89,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 100,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 89,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "alternating-ops",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 95,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 91,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 95,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 91,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "cubes-plus",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 79,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 79,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 79,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 79,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "cubes-plus",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 102,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 101,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 102,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 101,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "pronic",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 48,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 48,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 48,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 48,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "primes",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 17,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 10,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 17,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 10,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "primes",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 63,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 39,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 63,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 39,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "powers-offset",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 56,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 56,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 56,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 56,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "powers-offset",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 84,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 84,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 84,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 84,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "decimals",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 75,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 36,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 75,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 36,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "decimals",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 15,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 15,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "alternating-signs",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 72,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 63,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 72,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 63,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "alternating-signs",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 73,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 73,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 73,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 73,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "third-diff",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 106,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 106,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "third-diff",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 101,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 101,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "tribonacci",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 83,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 48,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 83,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 48,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "tribonacci",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 119,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 92,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 119,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 92,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "weighted-two-term",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 34,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 33,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 34,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 33,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "weighted-two-term",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 77,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 76,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 77,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 76,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "weighted-two-term",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 119,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 107,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 119,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 107,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "product-recurrence",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 42,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 31,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 42,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 31,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "product-recurrence",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 90,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 88,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 90,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 88,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "prime-gaps",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 38,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 35,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 38,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 35,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "prime-gaps",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 50,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 50,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 50,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 50,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "sum-previous",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 103,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 79,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 103,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 79,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "sum-previous",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 125,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 94,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 125,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 94,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "digit-sum",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 59,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 44,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 59,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 44,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "digit-sum",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 69,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 38,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 69,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 38,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "fractions",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 93,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 90,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 93,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 90,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "fractions",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "fractions",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 31,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 18,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 31,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 18,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "fibonacci-squares",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 65,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 65,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 65,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 65,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "reverse-digits",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 38,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 11,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 38,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 11,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "reverse-digits",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 114,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 57,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 114,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 57,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "square-minus",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 17,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 17,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "square-minus",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 56,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 29,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 56,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 29,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "nl",
+      "family": "mixed-combo",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 95,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 95,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 95,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 95,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "conjunction",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 16,
+          "1,2,0": 19,
+          "1,0,2": 25,
+          "2,0,1": 22,
+          "0,1,2": 30,
+          "0,2,1": 16
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 16,
+          "1,2,0": 19,
+          "1,0,2": 25,
+          "2,0,1": 22,
+          "0,1,2": 30,
+          "0,2,1": 16
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "conjunction",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 24,
+          "0,1,2": 25,
+          "0,2,1": 17,
+          "1,2,0": 21,
+          "2,1,0": 21,
+          "1,0,2": 20
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 24,
+          "0,1,2": 25,
+          "0,2,1": 17,
+          "1,2,0": 21,
+          "2,1,0": 21,
+          "1,0,2": 20
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "conjunction",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 22,
+          "2,1,0": 27,
+          "2,0,1": 19,
+          "0,2,1": 27,
+          "0,1,2": 19,
+          "1,0,2": 14
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 22,
+          "2,1,0": 27,
+          "2,0,1": 19,
+          "0,2,1": 27,
+          "0,1,2": 19,
+          "1,0,2": 14
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "conditional-rates",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 17,
+          "2,0,1": 26,
+          "2,1,0": 16,
+          "1,0,2": 26,
+          "0,1,2": 23,
+          "0,2,1": 20
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "conditional-rates",
+      "difficulty": 3,
+      "before": null,
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 20,
+          "0,2,1": 20,
+          "2,1,0": 19,
+          "1,0,2": 28,
+          "1,2,0": 22,
+          "0,1,2": 19
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "conditional-rates",
+      "difficulty": 4,
+      "before": null,
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 29,
+          "1,2,0": 24,
+          "2,1,0": 14,
+          "1,0,2": 22,
+          "2,0,1": 20,
+          "0,2,1": 19
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "score-table",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 24,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 21,
+          "2,1,0": 20,
+          "1,0,2": 26,
+          "2,0,1": 24,
+          "1,2,0": 21,
+          "0,1,2": 16
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 24,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 21,
+          "2,1,0": 20,
+          "1,0,2": 26,
+          "2,0,1": 24,
+          "1,2,0": 21,
+          "0,1,2": 16
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "score-table",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 35,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 34,
+          "2,1,0": 16,
+          "1,0,2": 13,
+          "0,2,1": 39,
+          "2,0,1": 10,
+          "1,2,0": 16
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 35,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 34,
+          "2,1,0": 16,
+          "1,0,2": 13,
+          "0,2,1": 39,
+          "2,0,1": 10,
+          "1,2,0": 16
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "score-table",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 33,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 36,
+          "2,1,0": 15,
+          "0,2,1": 37,
+          "2,0,1": 14,
+          "1,2,0": 14,
+          "1,0,2": 12
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 33,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 36,
+          "2,1,0": 15,
+          "0,2,1": 37,
+          "2,0,1": 14,
+          "1,2,0": 14,
+          "1,0,2": 12
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "football",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 23,
+          "0,2,1": 29,
+          "1,2,0": 18,
+          "0,1,2": 17,
+          "1,0,2": 21,
+          "2,1,0": 20
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 23,
+          "0,2,1": 29,
+          "1,2,0": 18,
+          "0,1,2": 17,
+          "1,0,2": 21,
+          "2,1,0": 20
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "football",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 15,
+          "1,0,2": 24,
+          "0,1,2": 20,
+          "0,2,1": 25,
+          "2,0,1": 20,
+          "1,2,0": 24
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 15,
+          "1,0,2": 24,
+          "0,1,2": 20,
+          "0,2,1": 25,
+          "2,0,1": 20,
+          "1,2,0": 24
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "survey-bar",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 23,
+          "2,1,0": 27,
+          "1,2,0": 21,
+          "0,2,1": 21,
+          "0,1,2": 21,
+          "1,0,2": 15
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 23,
+          "2,1,0": 27,
+          "1,2,0": 21,
+          "0,2,1": 21,
+          "0,1,2": 21,
+          "1,0,2": 15
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "survey-bar",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 15,
+          "2,1,0": 28,
+          "2,0,1": 27,
+          "1,0,2": 19,
+          "1,2,0": 20,
+          "0,1,2": 19
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 15,
+          "2,1,0": 28,
+          "2,0,1": 27,
+          "1,0,2": 19,
+          "1,2,0": 20,
+          "0,1,2": 19
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "survey-bar",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 16,
+          "1,2,0": 20,
+          "1,0,2": 20,
+          "2,0,1": 20,
+          "2,1,0": 35,
+          "0,2,1": 17
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 16,
+          "1,2,0": 20,
+          "1,0,2": 20,
+          "2,0,1": 20,
+          "2,1,0": 35,
+          "0,2,1": 17
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "fund-returns",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 20,
+          "0,2,1": 19,
+          "2,0,1": 15,
+          "0,1,2": 24,
+          "2,1,0": 26,
+          "1,0,2": 24
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 20,
+          "0,2,1": 19,
+          "2,0,1": 15,
+          "0,1,2": 24,
+          "2,1,0": 26,
+          "1,0,2": 24
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "fund-returns",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 25,
+          "1,2,0": 25,
+          "2,0,1": 19,
+          "0,2,1": 24,
+          "0,1,2": 19,
+          "1,0,2": 16
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 25,
+          "1,2,0": 25,
+          "2,0,1": 19,
+          "0,2,1": 24,
+          "0,1,2": 19,
+          "1,0,2": 16
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "fund-returns",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 25,
+          "0,2,1": 18,
+          "2,0,1": 18,
+          "2,1,0": 27,
+          "0,1,2": 25,
+          "1,0,2": 15
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 25,
+          "0,2,1": 18,
+          "2,0,1": 18,
+          "2,1,0": 27,
+          "0,1,2": 25,
+          "1,0,2": 15
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "histogram-bins",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 18,
+          "2,1,0": 24,
+          "0,2,1": 29,
+          "1,0,2": 23,
+          "1,2,0": 20,
+          "0,1,2": 14
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 18,
+          "2,1,0": 24,
+          "0,2,1": 29,
+          "1,0,2": 23,
+          "1,2,0": 20,
+          "0,1,2": 14
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "histogram-bins",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 13,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 22,
+          "0,2,1": 26,
+          "1,0,2": 20,
+          "2,0,1": 19,
+          "2,1,0": 20,
+          "0,1,2": 21
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 13,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 22,
+          "0,2,1": 26,
+          "1,0,2": 20,
+          "2,0,1": 19,
+          "2,1,0": 20,
+          "0,1,2": 21
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "histogram-bins",
+      "difficulty": 4,
+      "before": null,
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 12,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 20,
+          "0,2,1": 25,
+          "0,1,2": 21,
+          "2,0,1": 17,
+          "2,1,0": 21,
+          "1,0,2": 24
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "scatter-regions",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 18,
+          "0,2,1": 22,
+          "0,1,2": 22,
+          "1,0,2": 21,
+          "1,2,0": 27,
+          "2,1,0": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 21,
+          "0,2,1": 22,
+          "2,1,0": 19,
+          "2,0,1": 25,
+          "0,1,2": 23,
+          "1,2,0": 18
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "scatter-regions",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 19,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 27,
+          "1,0,2": 15,
+          "2,0,1": 16,
+          "1,2,0": 26,
+          "0,2,1": 26,
+          "2,1,0": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 19,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 18,
+          "2,1,0": 19,
+          "0,2,1": 25,
+          "0,1,2": 33,
+          "1,2,0": 20,
+          "1,0,2": 13
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "scatter-regions",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 19,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 25,
+          "1,0,2": 24,
+          "2,0,1": 18,
+          "2,1,0": 19,
+          "1,2,0": 17,
+          "0,1,2": 25
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 19,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 18,
+          "0,2,1": 24,
+          "1,2,0": 25,
+          "2,1,0": 14,
+          "0,1,2": 22,
+          "1,0,2": 25
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "density-curves",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 23,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 26,
+          "2,1,0": 18,
+          "2,0,1": 29,
+          "0,2,1": 17,
+          "0,1,2": 16,
+          "1,2,0": 22
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 23,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 26,
+          "2,1,0": 18,
+          "2,0,1": 29,
+          "0,2,1": 17,
+          "0,1,2": 16,
+          "1,2,0": 22
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "density-curves",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 38,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 27,
+          "1,0,2": 28,
+          "2,0,1": 17,
+          "1,2,0": 14,
+          "0,1,2": 19,
+          "0,2,1": 23
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 38,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 27,
+          "1,0,2": 28,
+          "2,0,1": 17,
+          "1,2,0": 14,
+          "0,1,2": 19,
+          "0,2,1": 23
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "density-curves",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 36,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 21,
+          "2,1,0": 23,
+          "1,2,0": 22,
+          "2,0,1": 26,
+          "0,1,2": 11,
+          "1,0,2": 25
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 36,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 21,
+          "2,1,0": 23,
+          "1,2,0": 22,
+          "2,0,1": 26,
+          "0,1,2": 11,
+          "1,0,2": 25
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "markov-graph",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 17,
+          "1,0,2": 28,
+          "2,1,0": 20,
+          "2,0,1": 20,
+          "0,1,2": 30,
+          "1,2,0": 13
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 17,
+          "1,0,2": 28,
+          "2,1,0": 20,
+          "2,0,1": 20,
+          "0,1,2": 30,
+          "1,2,0": 13
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "markov-graph",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 26,
+          "2,1,0": 18,
+          "2,0,1": 21,
+          "0,2,1": 25,
+          "1,0,2": 19,
+          "0,1,2": 19
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 26,
+          "2,1,0": 18,
+          "2,0,1": 21,
+          "0,2,1": 25,
+          "1,0,2": 19,
+          "0,1,2": 19
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "markov-graph",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 31,
+          "0,1,2": 19,
+          "2,0,1": 25,
+          "1,2,0": 15,
+          "2,1,0": 20,
+          "1,0,2": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 31,
+          "0,1,2": 19,
+          "2,0,1": 25,
+          "1,2,0": 15,
+          "2,1,0": 20,
+          "1,0,2": 18
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "dice-events",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 120,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 30,
+          "0,1,2": 16,
+          "2,0,1": 20,
+          "2,1,0": 21,
+          "1,2,0": 24,
+          "1,0,2": 17
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 120,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 30,
+          "0,1,2": 16,
+          "2,0,1": 20,
+          "2,1,0": 21,
+          "1,2,0": 24,
+          "1,0,2": 17
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "dice-events",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 23,
+          "2,1,0": 16,
+          "2,0,1": 24,
+          "0,1,2": 24,
+          "0,2,1": 23,
+          "1,2,0": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 23,
+          "2,1,0": 16,
+          "2,0,1": 24,
+          "0,1,2": 24,
+          "0,2,1": 23,
+          "1,2,0": 18
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "dice-events",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 25,
+          "0,1,2": 25,
+          "1,0,2": 18,
+          "1,2,0": 25,
+          "2,1,0": 21,
+          "0,2,1": 14
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 25,
+          "0,1,2": 25,
+          "1,0,2": 18,
+          "1,2,0": 25,
+          "2,1,0": 21,
+          "0,2,1": 14
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "card-events",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 69,
+        "authoredBranchProxies": 24,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 15,
+          "2,0,1": 29,
+          "1,0,2": 25,
+          "0,1,2": 17,
+          "0,2,1": 26,
+          "1,2,0": 16
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 69,
+        "authoredBranchProxies": 24,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,1,0": 15,
+          "2,0,1": 29,
+          "1,0,2": 25,
+          "0,1,2": 17,
+          "0,2,1": 26,
+          "1,2,0": 16
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "card-events",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 114,
+        "authoredBranchProxies": 30,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 18,
+          "0,1,2": 26,
+          "2,1,0": 20,
+          "0,2,1": 20,
+          "1,0,2": 23,
+          "2,0,1": 21
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 114,
+        "authoredBranchProxies": 30,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 18,
+          "0,1,2": 26,
+          "2,1,0": 20,
+          "0,2,1": 20,
+          "1,0,2": 23,
+          "2,0,1": 21
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "coin-patterns",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 123,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 21,
+          "1,2,0": 27,
+          "2,0,1": 23,
+          "0,2,1": 14,
+          "2,1,0": 25,
+          "0,1,2": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 123,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 21,
+          "1,2,0": 27,
+          "2,0,1": 23,
+          "0,2,1": 14,
+          "2,1,0": 25,
+          "0,1,2": 18
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "coin-patterns",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 25,
+          "2,0,1": 22,
+          "0,1,2": 30,
+          "1,2,0": 19,
+          "2,1,0": 19,
+          "0,2,1": 13
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 25,
+          "2,0,1": 22,
+          "0,1,2": 30,
+          "1,2,0": 19,
+          "2,1,0": 19,
+          "0,2,1": 13
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "coin-patterns",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 121,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 22,
+          "0,2,1": 17,
+          "1,0,2": 26,
+          "1,2,0": 25,
+          "2,1,0": 17,
+          "2,0,1": 21
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 121,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 22,
+          "0,2,1": 17,
+          "1,0,2": 26,
+          "1,2,0": 25,
+          "2,1,0": 17,
+          "2,0,1": 21
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "collisions",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 123,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 20,
+          "0,1,2": 21,
+          "1,0,2": 29,
+          "2,0,1": 23,
+          "1,2,0": 11,
+          "2,1,0": 24
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 123,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 20,
+          "0,1,2": 21,
+          "1,0,2": 29,
+          "2,0,1": 23,
+          "1,2,0": 11,
+          "2,1,0": 24
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "collisions",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 21,
+          "1,2,0": 19,
+          "2,1,0": 24,
+          "2,0,1": 21,
+          "0,2,1": 25,
+          "1,0,2": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 10,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 21,
+          "1,2,0": 19,
+          "2,1,0": 24,
+          "2,0,1": 21,
+          "0,2,1": 25,
+          "1,0,2": 18
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "large-numbers",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 117,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 28,
+          "1,2,0": 29,
+          "2,0,1": 19,
+          "1,0,2": 19,
+          "2,1,0": 16,
+          "0,1,2": 17
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 117,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,2,1": 28,
+          "1,2,0": 29,
+          "2,0,1": 19,
+          "1,0,2": 19,
+          "2,1,0": 16,
+          "0,1,2": 17
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "large-numbers",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 121,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 30,
+          "0,2,1": 20,
+          "0,1,2": 17,
+          "2,0,1": 17,
+          "1,2,0": 25,
+          "2,1,0": 19
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 121,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 30,
+          "0,2,1": 20,
+          "0,1,2": 17,
+          "2,0,1": 17,
+          "1,2,0": 25,
+          "2,1,0": 19
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "large-numbers",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 122,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 19,
+          "0,1,2": 23,
+          "2,0,1": 15,
+          "0,2,1": 24,
+          "1,0,2": 30,
+          "2,1,0": 17
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 122,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 19,
+          "0,1,2": 23,
+          "2,0,1": 15,
+          "0,2,1": 24,
+          "1,0,2": 30,
+          "2,1,0": 17
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "impossible-bounds",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 24,
+          "0,1,2": 26,
+          "0,2,1": 29,
+          "1,0,2": 17,
+          "2,1,0": 14,
+          "1,2,0": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "2,0,1": 24,
+          "0,1,2": 26,
+          "0,2,1": 29,
+          "1,0,2": 17,
+          "2,1,0": 14,
+          "1,2,0": 18
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "impossible-bounds",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 67,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 16,
+          "1,2,0": 19,
+          "0,2,1": 30,
+          "2,0,1": 23,
+          "1,0,2": 19,
+          "2,1,0": 21
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 67,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "0,1,2": 16,
+          "1,2,0": 19,
+          "0,2,1": 30,
+          "2,0,1": 23,
+          "1,0,2": 19,
+          "2,1,0": 21
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "selection-weights",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 17,
+          "2,1,0": 23,
+          "0,1,2": 28,
+          "1,0,2": 21,
+          "0,2,1": 15,
+          "2,0,1": 24
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 17,
+          "2,1,0": 23,
+          "0,1,2": 28,
+          "1,0,2": 21,
+          "0,2,1": 15,
+          "2,0,1": 24
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "selection-weights",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 24,
+          "1,0,2": 21,
+          "2,1,0": 18,
+          "0,2,1": 22,
+          "2,0,1": 25,
+          "0,1,2": 18
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,2,0": 24,
+          "1,0,2": 21,
+          "2,1,0": 18,
+          "0,2,1": 22,
+          "2,0,1": 25,
+          "0,1,2": 18
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "ll",
+      "family": "selection-weights",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 19,
+          "0,2,1": 24,
+          "1,2,0": 28,
+          "2,0,1": 21,
+          "2,1,0": 19,
+          "0,1,2": 17
+        },
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 6,
+        "rankOrders": {
+          "1,0,2": 19,
+          "0,2,1": 24,
+          "1,2,0": 28,
+          "2,0,1": 21,
+          "2,1,0": 19,
+          "0,1,2": 17
+        },
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "prob-exact",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 27,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 27,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "prob-exact",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 21,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 21,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 21,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 21,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "prob-exact",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 34,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 34,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "prob-estimate",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 49,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 49,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 49,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 49,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "prob-estimate",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 26,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 26,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 26,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 26,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "prob-estimate",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 33,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 33,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 33,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 33,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "expected-dice",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 54,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 48,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 54,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 48,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "expected-dice",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "expected-dice",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 15,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 15,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "coupon",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 56,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 56,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "coupon",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 89,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 38,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 89,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 38,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "coupon",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 112,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 78,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 112,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 78,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "waiting-time",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 28,
+        "authoredBranchProxies": 14,
+        "distinctAnswers": 9,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 28,
+        "authoredBranchProxies": 14,
+        "distinctAnswers": 9,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "waiting-time",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 47,
+        "authoredBranchProxies": 14,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 47,
+        "authoredBranchProxies": 14,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "waiting-time",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 7,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 20,
+        "distinctAnswers": 7,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "dots-count",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 49,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 49,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "dots-count",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 46,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 46,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "dots-count",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 23,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "dice-grid",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 20,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 20,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "dice-grid",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 60,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 60,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "path-length",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 126,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 126,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "path-length",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "path-length",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "percentile",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 94,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 94,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "percentile",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "series",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 127,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 127,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "series",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 127,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 127,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "series",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "mental-product",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 126,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 126,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "mental-product",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 126,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 126,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "mental-product",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "powers-roots",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 72,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 72,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 72,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 72,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "powers-roots",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 128,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "powers-roots",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 87,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 87,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 87,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 87,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "combinatorics",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 42,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 27,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 42,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 27,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "combinatorics",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 63,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 59,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 63,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 59,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "combinatorics",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 44,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 44,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 44,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 44,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "fermi",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 123,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 123,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "fermi",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 125,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 125,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "uncertainty-models",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 97,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "uncertainty-models",
+      "difficulty": 3,
+      "before": null,
+      "after": {
+        "distinctPrompts": 126,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 89,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "uncertainty-models",
+      "difficulty": 4,
+      "before": null,
+      "after": {
+        "distinctPrompts": 55,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 18,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "rates-weights",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 89,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 89,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 54,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "rates-weights",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 107,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 82,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 107,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 82,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "iv",
+      "family": "rates-weights",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 112,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 92,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 112,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 92,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "crossed",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 127,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "crossed",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "bundle-rich",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "bundle-rich",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "bundle-rich",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "bundle-cheap",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "bundle-cheap",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "bundle-cheap",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "weighted",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "weighted",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "weighted",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 4,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "spread",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "spread",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "spread",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "chain",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "chain",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "chain",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "decoy",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "decoy",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "decoy",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "hidden",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    },
+    {
+      "section": "ob",
+      "family": "hidden",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      },
+      "after": {
+        "distinctPrompts": 128,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 3,
+        "rankOrders": {},
+        "verified": 32
+      }
+    }
+  ],
+  "draws": 43648,
+  "verifierChecks": 10912,
+  "mcqPositions": [
+    1484,
+    1537,
+    1540,
+    1507,
+    1612
+  ],
+  "rankOrders": {},
+  "protectedFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "5870a49cfb94ebb9dc3c192a41ad1f76205bbc81724df9461e1300d0eeef939f"
+    },
+    {
+      "path": "config/presets.js",
+      "sha256": "d4d3ccc061f5ef89a09b30bc8b3bc26081e60fb5ede25817eeb9b7a749bfe626"
+    },
+    {
+      "path": "src/core/store.js",
+      "sha256": "5e177f95cfdb9211dd18b3fe251dd3262cc31d4b08c316104b509df4657e4205"
+    },
+    {
+      "path": "src/core/migrate.js",
+      "sha256": "a07db9ee711ae10625015813ac013d880d65fe2beb1c3e2dcb7c43fb3dbdac0f"
+    },
+    {
+      "path": "src/core/questions.js",
+      "sha256": "e56c9647699fbff210e1f95b10e39ad09ea70f3067698c3b4c042db55a9ab5dd"
+    },
+    {
+      "path": "src/core/recognition.js",
+      "sha256": "0338c3c8431fce1a9b842842294b0c8c789128745a2c6644432fa552532f9226"
+    },
+    {
+      "path": "src/core/learning.js",
+      "sha256": "6566b7b41faa37145dedfc87b8b5b728ac0598645aaa692a70685e0c73488ece"
+    },
+    {
+      "path": "src/core/mixed-training.js",
+      "sha256": "cdcbcbf08233319d1c0a9cd6f3c97cb5248d8b3fe698131fe3bffe496a785060"
+    },
+    {
+      "path": "src/core/check.js",
+      "sha256": "428747a679597d54f063f228cb86bf68d312fa6b2668dfd6b525309fbbef61c6"
+    },
+    {
+      "path": "src/ui/runner.js",
+      "sha256": "4b317752f77f374b94e1a7542b433086b618e6c309907b1a7f2127c29eb0f35b"
+    }
+  ],
+  "limits": [
+    "A new numerical prompt is not necessarily a new reasoning structure.",
+    "Authored branch proxies are descriptive, not independent measures of conceptual transfer.",
+    "No human learning trial, actual item-bank access, normed difficulty, Optiver score conversion or pass threshold validation.",
+    "Sample uniqueness does not prove infinite capacity or no lifetime repeats."
+  ],
+  "invitationClockConfigurationPreserved": true,
+  "counts": {
+    "before": {
+      "mm": {
+        "families": 8,
+        "levels": 24
+      },
+      "bto": {
+        "families": 40,
+        "levels": 98
+      },
+      "nl": {
+        "families": 30,
+        "levels": 60
+      },
+      "ll": {
+        "families": 16,
+        "levels": 43
+      },
+      "iv": {
+        "families": 15,
+        "levels": 42
+      },
+      "ob": {
+        "families": 8,
+        "levels": 22
+      }
+    },
+    "after": {
+      "mm": {
+        "families": 8,
+        "levels": 24
+      },
+      "bto": {
+        "families": 40,
+        "levels": 98
+      },
+      "nl": {
+        "families": 30,
+        "levels": 60
+      },
+      "ll": {
+        "families": 17,
+        "levels": 47
+      },
+      "iv": {
+        "families": 16,
+        "levels": 45
+      },
+      "ob": {
+        "families": 8,
+        "levels": 22
+      }
+    }
+  }
+}

@@ -97,13 +97,13 @@ export default {
         visual,
         statements: pick.map((j) => ({ text: `The signal is at ${LABELS[j]}${trap ? ` (${indeg[j]} incoming arrow${indeg[j] === 1 ? '' : 's'})` : ''}.`, p: pi[j], how: `Long-run fraction of time at ${LABELS[j]} from the balance equations π = πP.` })),
         intro: [
-          { say: 'Solve the balance equations: for each node, long-run flow in = long-run flow out.', why: 'In the long run, the probability of being at each node stops changing: π = πP with Σπ = 1.' },
+          { say: 'Solve the balance equations: for each node, long-run flow in = long-run flow out.', why: 'For a finite irreducible chain, long-run time fractions solve π = πP with Σπ = 1. A periodic chain can still oscillate at fixed times.' },
           ...(trap ? [{ say: 'Ignore how many arrows point in; what matters is how much probability flows along them.', why: 'Many low-probability arrows can carry less flow than one arrow of probability 1.' }] : []),
         ],
         compare: 'Order the stationary probabilities. Incoming-arrow counts alone do not determine the ranking.',
         rule: 'Long-run frequency = stationary π with π = πP, Σπ = 1. Count probability flow, not arrows.',
         anchor: 'Flow balance (what comes in must go out), applied to probability moving between nodes.',
-        hints: ['In the long run, the chance of being at each node is constant. Write that as flow in = flow out.', 'Solve for the ratios between nodes, then normalise.', trap ? 'Do not trust the number of incoming arrows.' : 'Compare the three stationary probabilities.'],
+        hints: ['Use long-run time fractions and flow balance. Fixed-time probabilities need not converge in a periodic chain.', 'Solve for the ratios between nodes, then normalise.', trap ? 'Do not trust the number of incoming arrows.' : 'Compare the three stationary probabilities.'],
         params: { matrix: ch.P.map((r) => r.map((x) => x.toString())), targets: pick, mode: trap ? 'trap' : 'stationary', inDegree: indeg },
       });
     });

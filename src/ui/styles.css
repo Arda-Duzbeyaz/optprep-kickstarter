@@ -470,6 +470,13 @@ details > summary { cursor: pointer; }
 .rank-row.is-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
 .rank-pos { color: var(--brand-text); font-family: var(--mono); }
 .rank-move { display: flex; gap: 4px; }
+.rank-row[draggable="false"] .rank-move { display: none; }
+@media (max-width: 560px) {
+  .rank-row { grid-template-columns: 20px minmax(0, 1fr); gap: 6px 10px; }
+  .rank-text { grid-column: 2; min-width: 0; }
+  .rank-p, .rank-move { grid-column: 2; }
+  .rank-move { justify-self: end; }
+}
 /* Orderbook */
 .ob-table td, .ob-table th { vertical-align: middle; }
 .ob-trades { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }

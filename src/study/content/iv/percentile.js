@@ -81,7 +81,7 @@ export default {
     ] },
 
     sec('why'),
-    { type: 'text', text: 'This item looks like drudgery and punishes the obvious plan: anyone who starts sorting runs out of time and scores 0. The counting method gets within a few points in under a minute, which is worth about 0.7 to 0.8. It is also the only item where knowing an exact definition (which rank is the percentile?) matters as much as arithmetic.' },
+    { type: 'text', text: 'This item looks like drudgery and punishes the obvious plan: anyone who starts sorting runs out of time and scores 0. Counting sampled rows is a fast estimation method. Its actual error and score must be measured from your own attempts. It is also the only item where knowing an exact definition (which rank is the percentile?) matters as much as arithmetic.' },
 
     sec('anchor'),
     { type: 'text', text: 'The median is the middle value once sorted. **One change**: instead of sorting, turn it around. For any trial value you can count how many scores are at or below it; the median is the value where that count reaches half. Counting against one number is what you did with dots, applied to a grid of numbers.' },
@@ -105,7 +105,7 @@ export default {
     { type: 'steps', steps: [
       { answers: 'sort', say: 'Translate the statistic into a target. Median of 200: half at or below (100). p-th percentile: at least 2p at or below. "How many are ≥ t": a straight count.', why: 'Every order statistic is a question about how many values sit below a number.',
         checks: [{ make: rankQ }] },
-      { answers: 'onerow', say: 'Choose a trial value near the middle of the grid\'s range and count how many sampled values are at or below it. Sample 4 or 5 full rows.', why: 'A fraction measured on 40 to 50 values is good to a few percent, and counting against one number needs no sorting.',
+      { answers: 'onerow', say: 'Choose a trial value near the middle of the grid\'s range and count how many sampled values are at or below it. Sample 4 or 5 full rows.', why: 'A fraction from 40 to 50 values is an estimate with sampling uncertainty, not an exact fraction of all 200; counting against one number needs no sorting.',
         checks: [{ make: scaleQ }] },
       { say: 'Adjust: too few at or below means the target is higher; too many means lower. Two or three trials and a straight-line interpolation pin it down.', why: 'The fraction below rises steadily with the trial value, so the target sits between a trial that is short and one that overshoots.',
         checks: [{ make: dirQ }] },
@@ -132,7 +132,7 @@ export default {
     ] },
 
     sec('predict'),
-    { type: 'predict', question: `In ${PR.rows} rows (${PR.rows * 10} scores) you find ${PR.k} at or below ${PR.t}. Is the 90th percentile above or below ${PR.t}?`, answer: `${PR.k}/${PR.rows * 10} = ${dec((PR.k / (PR.rows * 10)) * 100, 0)}% at or below ${PR.t}, short of 90%, so the 90th percentile is above ${PR.t}.`, explain: 'Compare the fraction at or below the trial value with the percentile you want; move the trial value in the direction of the shortfall.' },
+    { type: 'predict', question: `In ${PR.rows} rows (${PR.rows * 10} scores) you find ${PR.k} at or below ${PR.t}. What does this suggest, and does it prove where the population 90th percentile lies?`, answer: `${PR.k}/${PR.rows * 10} = ${dec((PR.k / (PR.rows * 10)) * 100, 0)}% at or below ${PR.t}, short of 90% in this sample, suggesting that the population percentile may be above ${PR.t}; it does not prove that.`, explain: 'Compare the fraction at or below the trial value with the percentile you want; move the trial value in the direction of the shortfall.' },
 
     sec('traps'),
     { type: 'traps', family: 'percentile', section: 'iv', extra: [

@@ -81,7 +81,7 @@ const fam = {
       { say: 'Scale to 200 and adjust the trial value up or down.', why: 'Two or three trials pin down a percentile to a couple of points.' },
       { say: 'Width: a few points for medians and means, more for extreme percentiles.', why: 'Tails are sparser, so sampling error is larger there.' },
     ],
-    predict: { question: 'In 4 rows (40 scores) you find 34 at or below 72. Is the 90th percentile above or below 72?', answer: '34/40 = 85% at or below 72, short of 90%, so the 90th percentile is above 72.' },
+    predict: { question: 'In a sample of 40 of the 200 scores, 34 are at or below 72. Does this prove the population\'s 90th percentile is above 72?', answer: 'No. The sample suggests looking above 72, but the other 160 scores can change the fraction. Sampling supports an estimate with uncertainty, not an exact population claim.' },
     rule: 'Percentile = smallest value with at least p% at or below; find it by counting against trial values.',
     contrast: 'Mean versus median: a long upper tail pulls the mean above the median. Check the definition asked.',
     edge: 'Ties are common with integer scores, so neighbouring percentiles can share a value.',

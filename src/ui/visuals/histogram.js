@@ -14,17 +14,18 @@ export default function histogram(spec) {
   const bins = spec.bins;
   const unit = spec.unit || '';
   const total = bins.reduce((a, b) => a + b.count, 0);
-  const label = `${spec.title || 'Histogram'}. ${total} observations. ${bins.map((b) => `${b.from}${unit} to ${b.to}${unit}: ${b.count}`).join(', ')}.`;
+  const height = (b) => spec.density ? b.count / (b.to - b.from) : b.count;
+  const label = `${spec.title || 'Histogram'}. ${total} observations. ${spec.density ? 'Frequency density; count is bar area. ' : ''}${bins.map((b) => `${b.from}${unit} to ${b.to}${unit}: height ${fmtTick(height(b))}${spec.density ? ', count equals height times width' : ''}`).join(', ')}.`;
   const h = 320;
   const svg = root(W, h, label);
-  const f = frame({ h, title: spec.title, xLabel: spec.xLabel, yLabel: spec.yLabel, yLo: 0, yHi: Math.max(1, ...bins.map((b) => b.count)) });
+  const f = frame({ h, title: spec.title, xLabel: spec.xLabel, yLabel: spec.yLabel, yLo: 0, yHi: Math.max(1, ...bins.map(height)) });
   const lo = bins[0].from, hi = bins[bins.length - 1].to;
   const sx = (v) => f.x0 + ((v - lo) / (hi - lo)) * (f.x1 - f.x0);
   const out = [];
   for (const b of bins) {
-    const xa = sx(b.from), xb = sx(b.to), y = f.sy(b.count);
+    const xa = sx(b.from), xb = sx(b.to), y = f.sy(height(b));
     out.push(s('rect', { x: xa, y, width: Math.max(1, xb - xa - 1), height: Math.max(0, f.y0 - y), style: 'fill: var(--viz-1)' }));
-    if (spec.showCounts !== false) out.push(text((xa + xb) / 2, y - 5, String(b.count), { size: 12 }));
+    if (spec.showCounts !== false) out.push(text((xa + xb) / 2, y - 5, fmtTick(height(b)), { size: 12 }));
   }
   const edges = [lo, ...bins.map((b) => b.to)];
   const every = Math.ceil(edges.length / 12);

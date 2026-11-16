@@ -81,7 +81,7 @@ export default {
         explain: 'In round 1 a pop wipes out only the money on the current balloon; the bank is safe.' }),
       { make: (rng) => { const bank = 20 * rng.int(5, 40); return { type: 'number', q: `Round 2. Your round-2 bank is ${bank}c and the current balloon (5 pumps) pops. What is your round-2 bank now, in cents?`, answer: bank - halfBank(bank), hints: ['The balloon money is gone, and the pop costs half the round-2 bank.', `Half of ${bank} is ${bank / 2}.`], explain: `The balloon's ${5 * c2}c is lost and the pop takes floor(${bank} × 0.5) = ${halfBank(bank)}c of the bank: ${bank} − ${halfBank(bank)} = ${bank - halfBank(bank)}c.` }; } },
     ] },
-    { type: 'text', text: `The real pop distribution is not published. This trainer draws each balloon's pop point uniformly from 1 to ${N}; the method below works for any distribution you can estimate. You are scored against the expected-value-optimal policy on the same balloons, so luck cancels: target ${pct(TARGET)} of its bank.` },
+    { type: 'text', text: `The real pop distribution is not published. This trainer draws each balloon's pop point uniformly from 1 to ${N}; the method below works for any distribution you can estimate. You are scored against the expected-value-optimal policy on the same balloons, but luck still affects the ratio: target ${pct(TARGET)} of its bank.` },
     { type: 'check', scope: 'how the bank is scored', questions: [
       { type: 'choice', q: 'Your bank is scored against what?', options: ['the best policy on the same balloons', 'the highest bank anyone has made', 'a fixed bank of 1,000 cents'], answer: 0, traps: { 1: 'the same balloons for both cancel your luck', 2: 'the target is 85% of the best policy bank' }, explain: 'You are compared with the expected-value-optimal policy on the same balloons.' },
     ] },
@@ -163,7 +163,7 @@ export default {
       { belief: 'Fewer pumps are safer, so a low target is prudent.', fix: `Safety is not the score. Planning 3 pumps keeps the balloon ${pct((N - 3) / N)} of the time but earns ${ev(3)}c on average, about half the best ${ev(T1)}c.` },
       { belief: `Round 2 is round 1 at double the stake: pump to ${T1}.`, fix: `The bank penalty lowers the target as the bank grows: ${policyT(0)} with an empty bank, ${policyT(400)} at $4 (balloon ${POLICY_I + 1}).` },
       { belief: 'A pop in round 2 halves my whole bank.', fix: 'Only the round-2 bank is at risk; round-1 money is safe.' },
-      { belief: 'The score is mostly luck.', fix: 'You are compared with the optimal policy on the same pop points, so luck cancels.' },
+      { belief: 'The score is mostly luck.', fix: 'The same-pop comparison reduces one source of variation but does not cancel luck. Inspect the model-based decision cost as a separate diagnostic.' },
     ] },
     { type: 'erroneous', problem: `A candidate at ${T1} pumps in round 1 decides whether to pump again. One step is wrong.`, steps: [
       `The pop point is uniform on 1 to ${N}.`,

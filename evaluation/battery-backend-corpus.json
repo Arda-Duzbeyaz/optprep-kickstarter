@@ -1,0 +1,10 @@
+{
+  "checked": 192,
+  "failures": 0,
+  "families": [
+    "conditional-rates",
+    "uncertainty-models",
+    "histogram-bins",
+    "coupon"
+  ]
+}

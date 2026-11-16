@@ -51,7 +51,7 @@ export function widthStep(coach, truth) {
   const above = normal ? (o.upper - truth) / sd : Math.log(o.upper / truth) / sd;
   const spread = normal ? `±${show(sd)}` : `±${Math.round(sd * 100)}%`;
   return {
-    say: `A well-prepared estimate is uncertain by about ${spread} (one standard deviation). The expected-score-optimal interval around a spot-on estimate is about [${plain(o.lower)}, ${plain(o.upper)}], expected score ${o.score.toFixed(2)}.`,
+    say: `Illustrative model only: assume uncertainty of ${spread} (one standard deviation). If your central estimate were ${plain(truth)}, the model's approximate best interval would be [${plain(o.lower)}, ${plain(o.upper)}], expected trainer score ${o.score.toFixed(2)}. This error size has not been measured for you or Optiver candidates.`,
     math: `score if inside = ${plain(o.lower)} / ${plain(o.upper)} = ${(Number(plain(o.lower)) / Number(plain(o.upper))).toFixed(2)}`,
     why: normal
       ? `A miss scores 0 while width only costs the ratio lower/upper, so the optimum covers ${below.toFixed(1)} sd below and ${above.toFixed(1)} sd above: it leans high because a higher interval has a larger ratio.`
@@ -99,7 +99,7 @@ function ivExtras(fam, { text, truth, unit, coach, params, exact }) {
     picture: fam.picture?.(params, truth) ?? {
       diagram: 'numberline',
       spec: { min: r4(min), max: r4(max), step: r4(step), barriers: [lo, hi], target: Number(plain(truth)), marks: [{ x: lo, label: plain(o.lower) }, { x: hi, label: plain(o.upper) }] },
-      caption: `The bars are the expected-score-optimal interval for an estimate that is good to about ${normal ? `±${show(sd)}` : `±${Math.round(sd * 100)}%`}; the dot is the true value. It reaches further above than below, because a higher interval loses less to the lower/upper ratio.`,
+      caption: `Hindsight illustration using the assumed ${normal ? `±${show(sd)}` : `±${Math.round(sd * 100)}%`} error model, centred on the truth (dot). It is not a measurement of your accuracy. Use your own repeated errors to judge width; lognormal symmetry gives unequal distances on the original scale.`,
     },
   };
 }

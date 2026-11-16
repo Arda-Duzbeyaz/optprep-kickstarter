@@ -1,6 +1,6 @@
 // Expected-score-optimal interval for the Intervals scoring rule
 //   score = L/U if L <= truth <= U (and L > 0), else 0.
-// belief describes a well-prepared candidate's uncertainty about the truth around their
+// belief is an illustrative mathematical error model, not measured candidate accuracy, around a
 // point estimate `center`:
 //   { kind: 'point' }                 exact answer: zero width is optimal
 //   { kind: 'normal', sd }            truth ~ Normal(center, sd), sd in the item's unit

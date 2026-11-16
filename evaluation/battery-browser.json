@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-16",
+  "browser": "Chrome cloud browser",
+  "syntheticStateOnly": true,
+  "actualApp": [
+    "new conditional-rate skill reachable",
+    "manually ranked complete-record example: 7/10 > 1/5 > 1/10; Correct feedback",
+    "saved answered question resumes with draft and explanation"
+  ],
+  "productionRendererGallery": [
+    "hard unequal-width density histogram",
+    "new conditional-rate table",
+    "uncertainty SD task",
+    "signed 3A\u2212B orderbook",
+    "hard interleaved sequence"
+  ],
+  "responsive": {
+    "iframeCssWidth": 390,
+    "clientWidth": 373,
+    "scrollWidth": 373,
+    "answeredRankRowWidth": 341,
+    "answeredRankStatementWidth": 285,
+    "lockedMovementControlsDisplay": "none"
+  },
+  "consoleObservation": "Last 20 captured error entries were browser-extension metadata errors; no application-origin error appeared in that captured sample.",
+  "limits": [
+    "No physical phone or cross-browser visual QA",
+    "Gallery and responsive iframe are QA-only fixtures, excluded from the delivered app",
+    "Engine/DOM tests cover games; live browser visual check did not complete all games"
+  ],
+  "liveGithubPagesUpdated": false
+}

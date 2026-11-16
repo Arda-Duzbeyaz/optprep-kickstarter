@@ -30,11 +30,12 @@ export default family({
   show: (d, p) => p.show,
   missing: 2,
   params: (rng, d) => {
-    const show = d <= 3 ? rng.pick([6, 7]) : 7;
-    // the strand holding the next term has only 3 visible terms: keep it arithmetic or geometric
-    const nextKind = d === 2 ? 'arith' : rng.pick(['arith', 'geo']);
+    const show = d <= 3 ? rng.pick([6, 7]) : rng.pick([8, 9]);
+    // Hard levels must challenge the strand that actually supplies the answer.
+    // Four visible terms per strand permit a checked quadratic / two-term rule.
+    const nextKind = d === 2 ? 'arith' : d === 3 ? rng.pick(['arith', 'geo']) : d === 4 ? 'quad' : 'fib';
     const otherKind = d === 2 ? 'arith' : d === 3 ? (nextKind === 'arith' ? 'geo' : 'arith') : d === 4 ? 'quad' : 'fib';
-    const nextStrand = STRAND[nextKind](rng), other = STRAND[show === 7 || otherKind === 'arith' || otherKind === 'geo' ? otherKind : 'arith'](rng);
+    const nextStrand = STRAND[nextKind](rng), other = STRAND[otherKind](rng);
     // position show belongs to strand (show % 2)
     const strands = show % 2 === 0 ? [nextStrand, other] : [other, nextStrand];
     return { show, strands };
@@ -67,7 +68,7 @@ export default family({
   anchor: 'Each strand is an ordinary sequence you already know; the only change is that two of them are written alternately.',
   srule: 'Zigzag or unrelated neighbours → split odd and even positions, solve each, continue the right one.',
   lesson: {
-    purpose: 'Interleaving is how test writers make easy rules look hard. It is also the most common reason a clean-looking rule "almost" fits.',
+    purpose: 'Interleaving can hide two simple sequences inside one irregular-looking list. Checking alternate positions helps diagnose a rule that only fits some terms.',
     anchor: 'You already solve single sequences. Interleaving = two known sequences + one change: they take turns.',
     steps: [
       { say: 'If gaps zigzag or neighbours look unrelated, write positions 1, 3, 5, … and 2, 4, 6, … as separate lists.', why: 'Alternating rules only become regular when each strand is read alone.' },

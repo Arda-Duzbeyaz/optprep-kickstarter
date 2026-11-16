@@ -112,6 +112,8 @@ export default {
     ] },
 
     sec('derivation'),
+    { type: 'text', text: 'A negative weight reverses the trade direction. To buy the replica 2A−B, buy A twice at its ask and sell B at its bid: cost = 2 ask(A)−bid(B). To sell it, receive 2 bid(A)−ask(B). A hedge against a sold 2A−B uses buy A twice and sell B once.' },
+    { type: 'check', questions: [mc({ q: 'A is 20/21 and B is 10/12. What does buying the replica 2A−B cost?', right: '32', wrong: [['30', 'used A bids instead of asks'], ['34', 'used the B ask for a sale'], ['52', 'added B instead of selling it']], explain: 'Pay 2 × 21 and receive 10: cost 32.' })] },
     { type: 'text', text: 'Nothing in the logic changes from the plain bundle. What changes is the bookkeeping: the card is shorthand for several units, and every unit has to be priced and traded. The four moves below make that explicit, so a weight can never slip through.' },
     { type: 'steps', steps: [
       { answers: 'wrongLeg', say: 'Expand the card into units, reading each weight off the leg it stands in front of: 3A + B is A + A + A + B.', why: 'The bundle is its contents, unit by unit; weights are shorthand.',

@@ -6,10 +6,12 @@ const V = {
   minusIndex: (rng) => ({ v: 'minusIndex', k: rng.pick([2, 3]), s: rng.int(1, 4), a: rng.int(4, 9) }),
   altConst: (rng) => ({ v: 'altConst', k: rng.pick([2, 3]), c: rng.int(1, 5), a: rng.int(1, 6) }),
   indexMul: (rng) => ({ v: 'indexMul', s: rng.int(0, 1), c: nz(rng, -3, 3), a: rng.int(1, 4) }),
+  plusSquare: (rng) => ({ v: 'plusSquare', k: rng.pick([2, 3]), s: rng.int(0, 2), a: rng.int(1, 5) }),
+  plusGeometric: (rng) => ({ v: 'plusGeometric', k: 3, r: 2, c: rng.int(1, 3), a: rng.int(1, 5) }),
 };
-const extra = (p, i) => (p.v === 'plusIndex' ? i + p.s : p.v === 'minusIndex' ? -(i + p.s) : p.v === 'altConst' ? (i % 2 ? p.c : -p.c) : p.c);
+const extra = (p, i) => (p.v === 'plusIndex' ? i + p.s : p.v === 'minusIndex' ? -(i + p.s) : p.v === 'plusSquare' ? (i + p.s) ** 2 : p.v === 'plusGeometric' ? p.c * p.r ** (i - 1) : p.v === 'altConst' ? (i % 2 ? p.c : -p.c) : p.c);
 const mult = (p, i) => (p.v === 'indexMul' ? i + p.s : p.k);
-const describeExtra = (p) => (p.v === 'plusIndex' ? `add ${1 + p.s}, ${2 + p.s}, ${3 + p.s}, …` : p.v === 'minusIndex' ? `subtract ${1 + p.s}, ${2 + p.s}, ${3 + p.s}, …` : p.v === 'altConst' ? `alternately add ${p.c} and subtract ${p.c}` : `${p.c < 0 ? 'subtract' : 'add'} ${Math.abs(p.c)}`);
+const describeExtra = (p) => (p.v === 'plusIndex' ? `add ${1 + p.s}, ${2 + p.s}, ${3 + p.s}, …` : p.v === 'minusIndex' ? `subtract ${1 + p.s}, ${2 + p.s}, ${3 + p.s}, …` : p.v === 'plusSquare' ? `add consecutive squares ${(1 + p.s) ** 2}, ${(2 + p.s) ** 2}, …` : p.v === 'plusGeometric' ? `add ${p.c}, ${p.c * p.r}, ${p.c * p.r ** 2}, …` : p.v === 'altConst' ? `alternately add ${p.c} and subtract ${p.c}` : `${p.c < 0 ? 'subtract' : 'add'} ${Math.abs(p.c)}`);
 
 export default family({
   id: 'mixed-combo',
@@ -26,7 +28,7 @@ export default family({
     const left = shown.slice(1).map((v, i) => v.sub(shown[i].mul(q(mult(p, i + 1)))));
     return [
       { say: `The terms grow by roughly ×${p.v === 'indexMul' ? `${1 + p.s}, ×${2 + p.s}, …` : p.k}. Subtract that multiple of the previous term: leftovers ${left.map(L).join(', ')}.`, why: 'The multiplier dominates the growth; removing it exposes the second rule.' },
-      { say: `The leftovers ${p.v === 'plusIndex' || p.v === 'minusIndex' ? 'count steadily' : p.v === 'altConst' ? 'alternate in sign' : 'are constant'}: ${describeExtra(p)}.`, why: 'The leftover sequence is simple on its own, so the full rule is multiplier + leftover.' },
+      { say: `The leftovers ${p.v === 'plusIndex' || p.v === 'minusIndex' ? 'count steadily' : p.v === 'plusSquare' ? 'are consecutive squares' : p.v === 'plusGeometric' ? 'double' : p.v === 'altConst' ? 'alternate in sign' : 'are constant'}: ${describeExtra(p)}.`, why: 'The leftover sequence is simple on its own, so the full rule is multiplier + leftover.' },
     ];
   },
   compute: (p, all, k) => `Term ${k + 1} = ${mult(p, k)} × ${L(all[k - 1])} ${signed(extra(p, k))} = ${L(all[k])}.`,
@@ -44,7 +46,7 @@ export default family({
   anchor: 'The affine rule k·a(n−1) + c, with one change: the added part c is itself a small sequence (n, ±c, …) or the multiplier counts up.',
   srule: 'Two rules → remove the dominant multiplier, solve the leftover sequence, recombine.',
   lesson: {
-    purpose: 'The last items of the test stack two simple rules. The method is to peel them apart, not to guess a formula.',
+    purpose: 'Combined-rule sequences stack two simpler patterns. Peel them apart, check both against every shown term, and then recombine.',
     anchor: 'a(n) = k·a(n−1) + c, where the only change is that c now varies with the position.',
     steps: [
       { say: 'Estimate the multiplier from the ratios (they approach k).', why: 'Multiplication dominates growth, so it is visible first.' },

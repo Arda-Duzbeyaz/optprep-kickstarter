@@ -1,3 +1,4 @@
+import { uncertaintyModels } from '../battery-lessons.js';
 // Book: Intervals. Two opening lessons (the scoring rule and width, estimation tricks), then one
 // lesson per question family, and a recognition tree from "what does the question look like"
 // to the lesson that solves it.
@@ -19,6 +20,7 @@ import combinatorics from './combinatorics.js';
 import fermi from './fermi.js';
 
 const chapters = [
+  { title: 'Further reasoning', intro: 'Additional mathematical training; the exact assessment question bank is unverified.', lessons: [uncertaintyModels] },
   { title: 'Scoring and estimation', intro: 'How lower ÷ upper works, how wide to go for a given accuracy, and the arithmetic tricks every estimate relies on.', lessons: [scoringAndWidth, estimationTricks] },
   { title: 'Probabilities', intro: 'Exact when the setup is small, so a point or a tight bracket; estimated with a known error when it is not.', lessons: [probExact, probEstimate] },
   { title: 'Expected values and waiting times', intro: 'Exact answers built from averages and geometric waits: dice expectations, collecting every item, waiting for a run.', lessons: [expectedDice, coupon, waitingTime] },
@@ -27,6 +29,7 @@ const chapters = [
 ];
 
 const tree = { diagram: 'flow', caption: 'Start at the top and answer each question about the item in front of you; every answer box opens its lesson. Whatever the box, the last step is the same: a point or bracket if exact, a band sized to your error if estimated.', spec: { root: 'start', nodes: [
+  { id: 'battery-addition', text: 'Uncertainty: bounds and shared errors', kind: 'a', link: 'iv/uncertainty-models' },
   { id: 'start', text: 'An Intervals question: type lower and upper', kind: 'q' },
   { id: 'a-score', text: 'How the score works and how wide to go', kind: 'a', link: 'iv/scoring-and-width' },
   { id: 'q1', text: 'Is there a picture to read?', kind: 'q' },
@@ -53,6 +56,7 @@ const tree = { diagram: 'flow', caption: 'Start at the top and answer each quest
   { id: 'a-comb2', text: 'A count too big to finish', kind: 'a', link: 'iv/combinatorics' },
   { id: 'a-fermi', text: 'A word problem of given rates and times', kind: 'a', link: 'iv/fermi' },
 ], edges: [
+  { from: 'start', to: 'battery-addition', label: 'further reasoning' },
   { from: 'start', to: 'a-score', label: 'first time' },
   { from: 'start', to: 'q1' },
   { from: 'q1', to: 'q2', label: 'yes' },

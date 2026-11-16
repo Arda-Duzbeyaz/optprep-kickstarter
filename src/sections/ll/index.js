@@ -16,9 +16,11 @@ import collisions from './families/collisions.js';
 import largeNumbers from './families/large-numbers.js';
 import impossibleBounds from './families/impossible-bounds.js';
 import bank from './bank.js';
+import conditionalRates from './families/conditional-rates.js';
 
 export const families = [
   conjunction,
+  conditionalRates,
   scoreTable,
   football,
   surveyBar,
