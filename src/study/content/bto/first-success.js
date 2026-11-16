@@ -194,6 +194,12 @@ export default {
       principle: { type: 'choice', q: 'Which idea carried over from dice to orders and connections?', options: ['Every trial before the first success is a forced miss', 'Each trial has the same chance, so position is irrelevant', 'Waiting k trials always means k − 1 misses', 'Add the success chances of the trials up to k'], answer: 0, traps: { 1: 'the position fixes how many misses come first', 2: '"more than k" needs k misses; only "first on k" has k − 1', 3: 'adding overlapping chances does not give a first-success event' }, explain: 'Write the forced path: the misses that must come first, then (if the question fixes it) the one hit. Multiply along it.' },
     },
 
+    { type: 'text', text: 'Two extensions stop this becoming a first-hit template. After a known run of failures, independent constant-p trials start a fresh geometric wait: P(T>u+v | T>u)=(1−p)^v. This fails for changing composition or an unknown shared success rate. For the rth success on trial k, the last trial must succeed and the first k−1 must contain r−1 successes: C(k−1,r−1)p^r(1−p)^(k−r). The mean time to r successes is r/p, by adding r first-success stage waits.' },
+    { type: 'check', scope: 'memorylessness and later successes', questions: [
+      { type: 'number', q: 'Independent attempts succeed with chance 1/3. After 5 observed failures, P(more than 2 further attempts before success)?', answer: 4/9, explain: 'Only the next two failures are uncertain: (2/3)²=4/9. The observed five failures are not multiplied again.' },
+      { type: 'number', q: 'Independent attempts succeed with chance 1/2. P(the second success occurs on attempt 3)?', answer: 1/4, explain: 'H T H or T H H: two patterns of weight 1/8. Exactly two successes in three attempts would also include H H T, which stops earlier.' },
+      { type: 'number', q: 'Independent attempts succeed with chance 1/4. Expected attempts to obtain three successes, counting all attempts?', answer: 12, explain: 'Three geometric stage waits, each with mean 4: total mean 3×4=12. They are not required to be consecutive successes.' },
+    ] },
     S('tryit'),
     { type: 'tryit', family: 'first-success', section: 'bto', count: 3 },
   ],

@@ -1,5 +1,5 @@
 // Full entry-point walkthrough with isolated storage, synthetic answers and time.
-// Exercises every one of the 103 learning families through the real form controls.
+// Exercises every current learning family through the real form controls.
 // OPTPREP_TEST_JSDOM=/path/to/jsdom node tools/learning-completion-flow.mjs
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -84,8 +84,8 @@ try {
   await route('#/s/bto', 'Beat the Odds');
   const row = [...root.querySelectorAll('.grid-row')].find((r) => r.textContent.includes('Two dice: sum events'));
   ok(row?.classList.contains('is-done'), 'completed learning row is visibly done'); ok(!row.classList.contains('is-current'), 'completed skill is no longer suggested');
-  ok(root.textContent.includes('1/34 skills covered'));
-  await route('#/', 'Today'); ok(root.querySelector('a[href="#/s/bto"]').textContent.includes('1/34 covered'));
+  ok(root.textContent.includes(`1/${PRACTICE_FAMILIES.bto.length} skills covered`));
+  await route('#/', 'Today'); ok(root.querySelector('a[href="#/s/bto"]').textContent.includes(`1/${PRACTICE_FAMILIES.bto.length} covered`));
   await learn('bto', 'two-dice-sum'); ok(button('Finish'), 'last feedback still resumes');
   eq(state().stats, before.stats); eq(state().activity.days, before.activity.days, 'no duplicate XP on feedback resume');
   button('Finish').click(); ok(root.textContent.includes('Learning complete and saved to Progress'));
@@ -133,7 +133,7 @@ try {
     }
     console.log(`Walkthrough: ${section} ${PRACTICE_FAMILIES[section].length} learning families completed.`);
   }
-  eq(families, 103); eq(state().recognition, cold, '101 further guided blocks cannot inflate cold mastery');
+  eq(families, ['bto','nl','ll','iv','ob'].reduce((n,sid)=>n+PRACTICE_FAMILIES[sid].length,0)); eq(state().recognition, cold, 'further guided blocks cannot inflate cold mastery');
 
   // Skip completion and explicit repair remain honest even after earlier coverage.
   await learn('bto', 'two-dice-sum'); button('Mark for learning').click(); finishLearning('bto', { skip: true }); button('Finish').click();

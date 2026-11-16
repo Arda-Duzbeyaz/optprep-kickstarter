@@ -37,7 +37,9 @@ for (const section of Object.values(PRACTICE_MODULES)) for (const f of section.f
       const verified = f.verify(item, makeRng(`catalogue-check:${questionKey(item)}`));
       assert.ok(verified.ok, `${item.prompt.text}: ${verified.detail}`);
     }
-    for (let seed = 0; seed < 2048; seed++) {
+    // Larger catalogues require more random draws to exercise their rare inputs.
+    // Keep exact equality with the complete enumerated domain; do not drop cases.
+    for (let seed = 0; seed < Math.max(2048, variants.length * 64); seed++) {
       const item = f.generate(makeRng(`catalogue-membership:${f.id}:${difficulty}:${seed}`), { difficulty });
       const key = questionKey(item); assert.ok(keys.has(key), `${f.id}: unenumerated input`); reached.add(key);
     }

@@ -150,7 +150,7 @@ export default {
   },
 
   lesson: {
-    purpose: '"At least one" appears in half of all quick probability questions. Adding the chances is the classic mistake; the complement makes it one multiplication.',
+    purpose: '"At least one" is an important event structure. Adding trial probabilities double counts overlap; the complement often turns the calculation into one product.',
     anchor: 'You know P(not A) = 1 − P(A). "At least one success" is that rule with one change: "not A" is "every trial fails", which is a product.',
     steps: [
       { say: 'Name the complement: "no success at all".', why: 'It is a single outcome pattern, while "at least one" is a union of overlapping events.' },

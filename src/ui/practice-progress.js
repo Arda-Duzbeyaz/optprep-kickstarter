@@ -5,6 +5,7 @@ import { recognitionProgress } from '../core/recognition.js';
 import { practiceHref } from '../core/practice.js';
 import { practiceFamilyTitle as familyTitle, PRACTICE_FAMILIES as FAMILIES } from '../practice/catalog.js';
 import { SECTIONS } from '../../config/sections.js';
+import { checkpointAvailability, availabilityText } from '../practice/availability.js';
 
 export function levelLabel(m) {
   const p = levelProgress(m);
@@ -43,10 +44,12 @@ export function skillProgress(store, section, family, { budgetMs, notice, learni
   const key = `${section}:${family}`, root = h('section', { class: 'skill-progress', 'aria-label': 'Skill progress' });
   function render() {
     const p = skillCheckpoint(store, section, family), coverage = store.coverage(section, family);
+    const availability = checkpointAvailability(section, family, p, store.recentQuestionKeys?.(section));
     const cold = h('div', {},
       h('div', { class: 'row' }, bubbles(p.levels.length, p.verified.length), checkpointLabel(p)),
       h('p', { class: 'small-note' }, `Difficulty ${p.target} · ${p.streak}/3 cold successes${p.review.length ? ' · recheck due' : ''}`),
-      h('p', { class: 'small-note muted' }, `Three consecutive cold successes on this skill, each within the ${Number((budgetMs / 1000).toFixed(2))} s training budget. Other skills can appear between them. Hints, outside help, slow or interrupted answers cannot qualify.`));
+      h('p', { class: 'small-note muted' }, `Three consecutive cold successes on this skill, each within the ${Number((budgetMs / 1000).toFixed(2))} s training budget. Other skills can appear between them. Hints, outside help, slow or interrupted answers cannot qualify.`),
+      availability?.blocked ? h('p', { class: 'small-note muted checkpoint-availability', role: 'status' }, availabilityText(availability)) : null);
     mount(root,
       h('div', { class: 'row skill-progress-head' }, h('strong', {}, familyTitle(section, family)),
         p.complete ? h('span', { class: 'stamp stamp-mastered' }, 'Mixed checks complete') : null),
@@ -74,7 +77,8 @@ export function levelGuide() {
     h('p', {}, 'Mix covered skills after learning a few topics. Mixed batches hide the skill and difficulty until submission. Three fresh, correct, unaided, uninterrupted answers at the current supported difficulty, within the displayed training budget, verify that difficulty and move the next draw to the next supported level.'),
     h('p', {}, 'Each skill has its own counter. A failed, aided, paused or slow eligible attempt resets its streak. A later miss on a verified difficulty marks it for recheck; the earlier pass remains recorded. Questions on other skills do not reset it.'),
     h('p', {}, 'Fresh means first recorded exposure in this browser, not a guaranteed unfamiliar mathematical structure. Use “Used outside help” in a mixed batch if you consult assistance. Extra-time practice, repeats, named-topic practice, mocks and batch checks cannot earn these checkpoints.'),
-    h('p', {}, 'Some generators have a small finite pool at a difficulty. Learning can use those instances up: later repeats remain revision and cannot fill a fresh-question checkpoint. Revision attempts are recorded in Progress. Do not make every cold bubble a completion requirement; use independent unfamiliar problems to test broader reasoning.'),
+    h('p', {}, 'Small configured pools can run out of unseen questions. New learning and mixed draws stop rather than repeat; older saved revision items cannot earn cold credit. A known shortage is labelled Fresh checkpoint evidence unavailable. It does not undo learning or earlier passes. Use independent unfamiliar problems to test broader reasoning.'),
+    h('p', {}, 'Mixed practice alternates rolling coverage with weakness turns across block boundaries. Weakness turns consider accuracy, pace failures and rechecks. A ten-question block does not have to include every covered skill.'),
     h('p', {}, 'Supported levels belong to the existing generators. A dice skill with levels 1 and 2 has two checkpoints; there are no invented levels 3–5. The budgets and difficulty labels are training choices, not independently calibrated Optiver limits.'),
     h('p', { class: 'small-note muted' }, 'Old five-level practice records and mixed streaks are preserved as history. Batch check uses the same practice library but withholds feedback until the end and keeps its results separate.'));
 }

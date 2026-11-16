@@ -1,0 +1,18 @@
+{
+  "javascriptFilesParsed": 455,
+  "relativeModuleImportsChecked": 1232,
+  "missingImports": [],
+  "precacheFiles": 467,
+  "newRequiredModulesIncluded": [
+    "src/sections/bto/families/event-algebra.js",
+    "src/sections/bto/families/success-counts.js",
+    "src/sections/bto/families/payout-models.js",
+    "src/sections/bto/families/restricted-counting.js",
+    "src/sections/bto/families/variance-dependence.js",
+    "src/sections/bto/families/discrete-sums.js",
+    "src/sections/bto/curriculum/verify.js",
+    "src/study/content/bto/curriculum.js"
+  ],
+  "assembledLikeGitHubPages": true,
+  "deploymentPerformed": false
+}

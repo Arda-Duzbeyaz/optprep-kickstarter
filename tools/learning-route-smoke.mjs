@@ -15,6 +15,7 @@ globalThis.requestAnimationFrame=f=>{frames.set(++frame,f);return frame;};global
 const origInterval=globalThis.setInterval;globalThis.setInterval=(...a)=>{const id=origInterval(...a);intervals.push(id);return id;};
 const origNow=Date.now;Date.now=()=>Date.UTC(2026,10,13,12)+now;
 const {blankV2}=await import('../src/core/migrate.js');
+const {PRACTICE_FAMILIES}=await import('../src/practice/catalog.js');
 const initial=blankV2();initial.settings.preset={id:'kickstarter'};
 initial.mastery={'bto:legacy':{lv:4,prun:2}};initial.mixedEvidence={'bto:legacy':{run:3}};
 localStorage.setItem('optprep:v2',JSON.stringify(initial));
@@ -39,7 +40,7 @@ try{
  const mixedAction=root.querySelector('[data-action="mixed-practice"]');
  eq(mixedAction.textContent,'Start mixed practice · 10 questions');eq(mixedAction.getAttribute('href'),'#/run/bto/mixed/all');
  ok(!mixedAction.closest('details'),'the main mixed action is not hidden in optional tools');
- const poolChoice=root.querySelector('[aria-label="Mixed practice question pool"]');eq(poolChoice.options[0].textContent,'All 34 skills');
+ const poolChoice=root.querySelector('[aria-label="Mixed practice question pool"]');eq(poolChoice.options[0].textContent,`All ${PRACTICE_FAMILIES.bto.length} skills`);
  ok(root.textContent.includes('How was the information obtained?'),'extended maths is in the main skill list');
  for(const family of ['two-dice-sum','die-repeats']){
   await practice(`#/run/bto/practice/${family}`);ok(root.textContent.includes('Learning only · help allowed'));

@@ -16,7 +16,7 @@ function build(kind, rng) {
         { value: q(1, n), misconception: 'Answered the chance that one particular person gets their hat, not the expected count.' },
         { value: q(n, 2), misconception: 'Assumed about half get their own hat.' },
         { value: 0, misconception: 'Assumed dependence between people makes matches cancel out.' },
-        { value: n * Math.exp(-1), misconception: `Multiplied n by 1/e; 1/e is the probability that NO one matches, not a per-person chance.` },
+        { value: n * Math.exp(-1), misconception: `Multiplied n by 1/e; 1/e approximates the probability that NO one matches for large n, not a per-person chance. For a finite group use the exact derangement count.` },
         { value: q(n - 1, n), misconception: 'Computed the chance a given person does not match.' },
       ],
       steps: [

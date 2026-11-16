@@ -1,5 +1,5 @@
 // Recognition tree for the Beat the Odds book: from what the question looks like to its lesson.
-// Every one of the 32 family lessons is a linked answer box; no path asks more than four questions.
+// The main family lessons are linked answer boxes; this is a training navigation aid.
 const q = (id, text) => ({ id, text, kind: 'q' });
 const a = (id, text, family) => ({ id, text, kind: 'a', link: `bto/${family}` });
 
@@ -10,6 +10,12 @@ const nodes = [
   q('qE', 'An average or a price: of what?'),
   q('qM', 'Something moves step by step: how?'),
   q('qP', 'A probability: what is random?'),
+  a('a-events','Overlapping events, exactly one or independence','event-algebra'),
+  a('a-counts','Success counts: choose the sampling model','success-counts'),
+  a('a-payouts','Weighted or conditional payoffs','payout-models'),
+  a('a-counting','Roles, restrictions or repeated copies','restricted-counting'),
+  a('a-variance','Variance, covariance or shared risk','variance-dependence'),
+  a('a-sums','Weighted sums or a random horizon','discrete-sums'),
   // Information
   a('a-cd', 'A plain fact about the dice', 'conditional-dice'),
   a('a-bt', 'A test or signal with error rates', 'bayes-test'),
@@ -60,6 +66,7 @@ const nodes = [
 
 const e = (from, to, label) => (label ? { from, to, label } : { from, to });
 const edges = [
+  e('q1','a-variance','spread or covariance'),e('qP','a-events'),e('qC','a-counts'),e('qE','a-payouts'),e('qP','a-counting'),e('qP','a-sums'),
   e('q1', 'qI', 'given …'), e('q1', 'qE', 'expected value'), e('q1', 'qM', 'a walk or total'), e('q1', 'qP', 'a probability'),
   e('qI', 'a-cd'), e('qI', 'a-bt'), e('qI', 'qH'), e('qH', 'a-bb'), e('qH', 'a-mh'),
   e('qE', 'a-li'), e('qE', 'a-ex'), e('qE', 'qT', 'a wait'), e('qE', 'qG', 'a game'),

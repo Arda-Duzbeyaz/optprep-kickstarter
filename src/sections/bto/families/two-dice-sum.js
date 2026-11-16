@@ -8,6 +8,10 @@ import { Q } from '../../../core/rational.js';
 import { askFrom, diceGrid, withMath } from '../lib.js';
 
 const ways = (s) => (s < 2 || s > 12 ? 0 : 6 - Math.abs(s - 7)); // ordered pairs summing to s
+export const SUM_PAIRS = Array.from({ length: 11 }, (_, i) => i + 2)
+  .flatMap((a) => Array.from({ length: 12 - a }, (_, i) => [a, a + i + 1])).filter(([a, b]) => b > a + 1);
+export const SUM_INTERVALS = Array.from({ length: 7 }, (_, i) => i + 3)
+  .flatMap((a) => Array.from({ length: 11 - a }, (_, i) => [a, a + i + 1]));
 
 const EVENTS = [
   // difficulty 1: a single sum or a pair of sums
@@ -30,7 +34,13 @@ export default {
   levels: [1, 2],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const ev = (difficulty === 1 ? rng.pick(EVENTS.slice(0, 2)) : rng.pick(EVENTS.slice(2)))(rng);
+    const union = (rng) => { const sums = rng.pick(SUM_PAIRS); return { text: `the sum is ${sums[0]} or ${sums[1]}`, sums, kind: 'set' }; };
+    const interval = (outside) => (rng) => {
+      const [a, b] = rng.pick(SUM_INTERVALS);
+      return { text: outside ? `the sum is less than ${a} or greater than ${b}` : `the sum is between ${a} and ${b}, inclusive`,
+        sums: range(2, 12).filter((s) => outside ? s < a || s > b : s >= a && s <= b), kind: outside ? 'outside' : 'between' };
+    };
+    const ev = (difficulty === 1 ? rng.pick([...EVENTS.slice(0, 2), union]) : rng.pick([...EVENTS.slice(2), interval(false), interval(true)]))(rng);
     const count = ev.sums.reduce((n, s) => n + ways(s), 0);
     const exact = Q.of(count, 36);
     const p = exact.toNumber();
@@ -73,7 +83,7 @@ export default {
         `Favourable ordered pairs: ${count}.`,
       ],
       // Structured inputs: the event is "sum of two fair six-sided dice lies in sums".
-      params: { family: 'two-dice-sum', dice: 2, sides: 6, sums: ev.sums },
+      params: { family: 'two-dice-sum', dice: 2, sides: 6, sums: ev.sums, eventKind: ev.kind },
     };
   },
 
@@ -105,6 +115,8 @@ export default {
 
 function parseEvent(text) {
   let m;
+  if ((m = text.match(/sum is between (\d+) and (\d+), inclusive/))) return (s) => s >= +m[1] && s <= +m[2];
+  if ((m = text.match(/sum is less than (\d+) or greater than (\d+)/))) return (s) => s < +m[1] || s > +m[2];
   if ((m = text.match(/sum is exactly (\d+)/))) return (s) => s === +m[1];
   if ((m = text.match(/sum is (\d+) or (\d+)/))) return (s) => s === +m[1] || s === +m[2];
   if ((m = text.match(/sum is at least (\d+)/))) return (s) => s >= +m[1];

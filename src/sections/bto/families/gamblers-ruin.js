@@ -37,7 +37,7 @@ export default {
           { value: q(i, 2 * N), misconception: 'Halved i/N, as if only half the paths counted.' },
         ],
         steps: [
-          { say: 'In a fair game your expected wealth never changes, including at the moment you stop.', why: 'A fair game is a martingale; stopping at a bounded time keeps the expectation.' },
+          { say: 'Between finite absorbing walls, the final expected wealth in this fair game equals the starting wealth.', why: 'Wealth is bounded and absorption occurs almost surely. The absorption time itself has no fixed upper bound; alternatively solve the finite first-step equations.' },
           { say: `So N × P(hit ${N}) + 0 × P(hit 0) = ${i}.`, why: 'Expected final wealth = starting wealth.' },
           { say: `P = ${i}/${N}${v.toString() !== `${i}/${N}` ? ` = ${v}` : ''} ≈ ${v.toNumber().toFixed(3)}.`, why: 'Solve.' },
         ],

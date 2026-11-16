@@ -1,0 +1,29 @@
+{
+  "browser": "Chrome, managed development preview",
+  "data": "Synthetic QA profile retained from 1.5.0; no real user profile accessed",
+  "priorCompletedBlocksRetained": 3,
+  "priorColdCheckpointRecordsRetained": true,
+  "newEventLearningQuestions": 10,
+  "newEventLearningCorrect": 9,
+  "coverageTickedWithoutColdCredit": true,
+  "savedQuestionAndSelectedAnswerResumed": true,
+  "newStudyLessonOpened": true,
+  "responsiveIframeWidth": 390,
+  "responsiveBodyClientWidth": 375,
+  "responsiveBodyScrollWidth": 375,
+  "responsiveVarianceAnswer": "175/64, independently calculated from visible distribution",
+  "theme": "light",
+  "physicalPhoneAndOtherBrowsersTested": false,
+  "applicationErrorsObserved": false,
+  "consoleLimit": "Queried errors were Chrome-extension metadata errors, so this is not a claim that the entire browser console was empty.",
+  "browserSetup": "Local browser plugin blocked by app configuration; initial preview stopped during inactivity and was restarted through the supported preview command.",
+  "screenshots": [
+    "docs/media/validation/optprep-curriculum-mobile.jpg",
+    "docs/media/validation/optprep-curriculum-complete.jpg",
+    "docs/media/validation/optprep-curriculum-lesson.jpg",
+    "docs/media/validation/optprep-curriculum-progress.jpg",
+    "docs/media/validation/optprep-curriculum-skills.jpg",
+    "docs/media/validation/optprep-curriculum-mobile-solution.jpg"
+  ],
+  "mobileSolutionTableInspected": true
+}

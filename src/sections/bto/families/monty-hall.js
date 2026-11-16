@@ -30,16 +30,16 @@ export default {
       text = `${setup} The host, who knows where the car is, opens ${m === 1 ? 'another door' : `${m} other doors`} showing ${m === 1 ? 'a goat' : 'goats'} and offers a switch. You stay. What is the probability that you win the car?`;
       steps = [
         { say: `Your door had probability 1/${n} when you picked it.`, why: 'The car is placed uniformly.' },
-        { say: 'The host can always show a goat, whatever is behind your door, so his action carries no information about your door.', why: 'An event that happens with certainty under every hypothesis cannot shift their probabilities.' },
+        { say: 'A goat reveal is guaranteed by this policy, so staying wins precisely when your original pick was the car.', why: 'We are averaging over reveals, not conditioning on the identities of particular opened doors. Those identities could be informative under a biased host policy.' },
         { say: `P(stay wins) = 1/${n}.`, why: 'Unchanged prior.' },
       ];
     } else {
       value = q(n - 1, n * closedOthers);
       text = `${setup} The host, who knows where the car is, opens ${m === 1 ? 'another door' : `${m} other doors`} showing ${m === 1 ? 'a goat' : 'goats'}. You switch to ${closedOthers === 1 ? 'the remaining closed door' : 'one of the other closed doors, chosen at random'}. What is the probability that you win the car?`;
       steps = [
-        { say: `P(car behind your door) stays 1/${n}.`, why: 'The host can always open goat doors, so his action says nothing about your door.' },
-        { say: `The remaining ${n - 1}/${n} is spread evenly over the ${closedOthers} other closed door${closedOthers > 1 ? 's' : ''}.`, why: 'The host never opens the car, so the opened doors have probability 0 and the other closed doors are symmetric.' },
-        { say: `P = (${n - 1}/${n}) / ${closedOthers} = ${value} ≈ ${value.toNumber().toFixed(3)}.`, why: 'Your share is one of those doors.' },
+        { say: `Your initial pick is wrong with probability ${n-1}/${n}.`, why: 'The host always reveals goats; we are not given a specific labelled reveal to condition on.' },
+        { say: `If your initial pick is wrong, exactly one of the ${closedOthers} other closed doors has the car.`, why: 'A uniformly random switch selects that car with probability 1/'+closedOthers+', regardless of how the knowing host chose the goats.' },
+        { say: `P = (${n - 1}/${n}) / ${closedOthers} = ${value} ≈ ${value.toNumber().toFixed(3)}.`, why: 'Multiply the chance the car is elsewhere by the chance your random switch selects it. Labelled doors need not have identical posteriors under an unspecified host policy.' },
       ];
     }
     const distractors = [
@@ -47,7 +47,7 @@ export default {
       { value: q(1, n), misconception: 'Assumed switching cannot beat the original 1/n: that is the staying probability.' },
       { value: q(n - 1, n), misconception: 'Gave the switch all of the other doors\' probability. With several closed doors left, you move to only one of them.' },
       { value: 0.5, misconception: 'Reasoned "two outcomes, car or goat, so 1/2".' },
-      { value: q(1 + m, n), misconception: 'Moved only the opened doors\' probability onto the door you switch to. It is shared by all the other closed doors.' },
+      { value: q(1 + m, n), misconception: 'Used the number of opened doors instead of conditioning on whether the first pick was wrong and then selecting uniformly among the remaining alternatives.' },
     ];
     distractors.push(variant === 'stay'
       ? { value: 0, misconception: 'Believed staying can never win. It wins whenever your first pick was the car: 1/n of the time.' }
@@ -55,20 +55,20 @@ export default {
     if (variant === 'random') distractors.unshift({ value: q(n - 1, n * closedOthers), misconception: 'Used the knowing-host answer. A host who opens doors at random, and happens to show goats, does not move probability onto the other doors.' });
     const random = variant === 'random';
     const mine = random ? q(1, n - m) : q(1, n), other = random ? q(1, n - m) : q(n - 1, n * closedOthers);
-    const picture = table(['Doors', 'How many', 'Each, before', 'Each, after the reveal'], [
-      ['your door', 1, `1/${n}`, mine.toString()],
-      [m === 1 ? 'opened door' : 'opened doors', m, `1/${n}`, '0'],
-      [closedOthers === 1 ? 'other closed door' : 'other closed doors', closedOthers, `1/${n}`, other.toString()],
+    const picture = table(['Strategy / event', 'Probability'], [
+      ['Stay with original pick', mine.toString()],
+      ['Car elsewhere among closed alternatives', q(1).sub(mine).toString()],
+      [`Uniform random choice among ${closedOthers} alternatives wins`, other.toString()],
     ], random
       ? `A host who opens doors blindly and happens to show goats only eliminates them: the ${n - m} unopened doors stay equal at 1/${n - m} each.`
-      : `A host who knows avoids the car, so your door keeps 1/${n} and the opened doors' share moves to the ${closedOthers} other closed door${closedOthers > 1 ? 's' : ''}: ${other} each.`);
-    const fast = random ? `Blind host: the ${n - m} unopened doors are equal, 1/${n - m}.` : variant === 'stay' ? `Your door keeps its 1/${n}.` : `(1 − 1/${n}) spread over ${closedOthers} closed door${closedOthers > 1 ? 's' : ''}: ${value}.`;
-    const check = `After the reveal the closed doors must add to 1: ${mine} + ${closedOthers} × ${other} = 1. ${random ? 'Here every closed door is equal.' : `Switching beats staying (1/${n}) whenever the host knows.`}`;
+      : `These are strategy win rates averaged over the host's reveals. The uniform random switch has probability ${other}; this does not assert identical posteriors for every labelled door under a biased host policy.`);
+    const fast = random ? `Blind host: the ${n - m} unopened doors are equal, 1/${n - m}.` : variant === 'stay' ? `Staying wins on the original car pick: 1/${n}.` : `Initially wrong (${n-1}/${n}), then choose the car among ${closedOthers} alternatives: ${value}.`;
+    const check = `The original-pick and elsewhere cases add to 1. ${random ? 'A blind uniform reveal makes every unopened door equally likely.' : `A random switch wins with (1−1/${n})/${closedOthers}. A posterior after particular door identities are revealed would require the host's selection policy.`}`;
     return mcqItem(ID, rng, difficulty, {
       value, text, distractors, steps, picture, fast, check,
-      rule: 'Knowing host: your door keeps 1/n; the other closed doors share (n−1)/n. Random host who happens to show goats: all unopened doors are equal.',
+      rule: 'Knowing host, averaged over reveals: stay wins 1/n; a uniform switch among k alternatives wins (n−1)/(nk). A blind uniform reveal conditioned on goats leaves all unopened doors equally likely.',
       anchor: 'Conditioning on new information (the opened doors), with one change: what the information means depends on whether the host could have revealed the car.',
-      hints: ['Could the host have shown the car? What does his choice tell you about your own door?', 'Your door\'s probability does not move with a knowing host.', 'Split the rest over the other closed doors.'],
+      hints: ['Could the host have shown the car? Are particular door identities specified?', 'Condition on whether your initial choice was correct.', 'If the car is elsewhere, a uniform switch picks it with probability 1/(number of alternatives).'],
       data: { n, m, variant },
     });
   },
@@ -98,7 +98,7 @@ export default {
     anchor: 'Bayes updating with one change: the likelihood of the evidence depends on the host\'s rule, not only on where the car is.',
     steps: [
       { say: 'Ask: could the host\'s action have come out differently depending on where the car is?', why: 'Evidence that is certain under every hypothesis carries no information.' },
-      { say: 'Knowing host: your door keeps 1/n; the opened doors drop to 0; the rest share (n − 1)/n.', why: 'He always can show goats, so your door is untouched; he never shows the car, so it concentrates elsewhere.' },
+      { say: 'Knowing host: averaged over reveals, staying wins 1/n and a uniform switch among k alternatives wins (n−1)/(nk).', why: 'The car is elsewhere initially with chance (n−1)/n. If it is, a uniform choice among k doors finds it with chance 1/k. Specific labelled posteriors require a host selection policy.' },
       { say: 'Random host who happens to show goats: every unopened door is equally likely.', why: 'His choice ignored the car, so the reveal is plain elimination.' },
     ],
     predict: { question: '100 doors, knowing host opens 98 goats. Switch: roughly what chance?', answer: '99/100. Your door kept 1/100 and the one other closed door collected the rest.' },

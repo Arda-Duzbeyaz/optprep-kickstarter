@@ -1,0 +1,174 @@
+{
+  "edition": "1.5.0-kickstarter.1",
+  "date": "2026-11-16",
+  "baselineEdition": "1.4.0-kickstarter.1",
+  "baselineArchiveSha256": "e9858874f6e9f8f01b3d615ad72eebee913fd309fd5c97c1fc668320f347d970",
+  "baselineImplementationRevision": "41b529d64fa56cde2182d6e5d89d666811f7f51b",
+  "javascript": {
+    "passed": 1077,
+    "failed": 0,
+    "skipped": 0,
+    "command": "npm test"
+  },
+  "python": {
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0,
+    "command": "python -m pytest -q (backend/; compiled engine available)"
+  },
+  "cpp": {
+    "passed": 34,
+    "failed": 0,
+    "command": "ctest --test-dir engine/build --output-on-failure"
+  },
+  "unitTestTotal": 1147,
+  "domIntegration": {
+    "scripts": 12,
+    "allExitCodes": 0,
+    "report": "evaluation/mixed-improvement-flows.json",
+    "newMixedAssertions": 143,
+    "focusedLearningAssertions": 76,
+    "freshnessAssertions": 247,
+    "fullWalkthrough": {
+      "learningFamilies": 103,
+      "questions": 1040,
+      "assertions": 680,
+      "uncaughtErrors": 0
+    }
+  },
+  "selectionComparison": {
+    "runsPerCondition": 80,
+    "questionsPerRelease": 16000,
+    "blockSize": 10,
+    "stableInitialTargets": true,
+    "branchClassifierSameForBothReleases": true,
+    "all34CoveredWithin68InBothUpdatedConditions": true,
+    "exactRepeatsBefore": 0,
+    "exactRepeatsAfter": 0,
+    "report": "evaluation/mixed-improvement-results.json"
+  },
+  "questionQuality": {
+    "sampledItems": 20992,
+    "uniqueClosestLabels": 20992,
+    "sampledVerifierChecks": 328,
+    "completeCataloguePools": 33,
+    "completeCatalogueEntries": 971,
+    "reachabilitySeedsPerPool": 4096,
+    "errors": 0,
+    "report": "evaluation/mixed-question-quality.json"
+  },
+  "assessmentRegression": {
+    "guided": 1030,
+    "mixed": 1000,
+    "mockPapers": 150,
+    "mockQuestions": 2970,
+    "batchQuestions": 500,
+    "repeatedQuestions": 0,
+    "sectionCounts": {
+      "bto": 1240,
+      "nl": 1380,
+      "ll": 910,
+      "iv": 990,
+      "ob": 980
+    }
+  },
+  "browser": {
+    "browser": "Chrome, managed preview",
+    "account": "synthetic QA data from earlier release; no real user profile accessed",
+    "savedFocusedQuestionAndSelectedAnswerPreserved": true,
+    "existingThreeLearningBlocksRetained": true,
+    "mixedQuestions": 10,
+    "distinctVisiblePrompts": 10,
+    "correctAnswersIndependentlyCalculatedFromVisiblePrompts": 10,
+    "rawCorrect": 10,
+    "independentWithinPace": 8,
+    "helped": 1,
+    "interrupted": 1,
+    "overBudget": 0,
+    "checkpointAdvancedForQualifyingAnswers": true,
+    "progressPaceAndSkillsVerified": true,
+    "desktopScreenshotDimensions": [
+      1348,
+      926
+    ],
+    "responsiveIframeWidth": 390,
+    "responsiveBodyClientWidth": 375,
+    "responsiveBodyScrollWidth": 375,
+    "themes": [
+      "dark desktop",
+      "dark responsive iframe",
+      "light responsive iframe"
+    ],
+    "physicalPhoneOrOtherBrowsersTested": false,
+    "applicationErrorsObserved": false,
+    "consoleLimit": "Queried warning/error output was dominated by unrelated Chrome-extension metadata errors; no claim that the entire browser console was empty.",
+    "localExtensionPreview": "Connection refused; completed checks in cloud Chrome with the managed preview instead.",
+    "screenshots": [
+      "docs/media/validation/optprep-mixed-results.jpg",
+      "docs/media/validation/optprep-mixed-progress.jpg",
+      "docs/media/validation/optprep-mixed-mobile.jpg",
+      "docs/media/validation/optprep-mixed-mobile-light.jpg"
+    ]
+  },
+  "preservedFiles": [
+    {
+      "path": "config/presets.js",
+      "unchangedFrom1_4_0": true,
+      "sha256": "d4d3ccc061f5ef89a09b30bc8b3bc26081e60fb5ede25817eeb9b7a749bfe626"
+    },
+    {
+      "path": "config/sections.js",
+      "unchangedFrom1_4_0": true,
+      "sha256": "d2cc53cbd7c5fb26f3e7defe64e6e4948207eec7f87ebe09f0b4a854ad6b946f"
+    },
+    {
+      "path": "src/core/questions.js",
+      "unchangedFrom1_4_0": true,
+      "sha256": "e56c9647699fbff210e1f95b10e39ad09ea70f3067698c3b4c042db55a9ab5dd"
+    },
+    {
+      "path": "src/core/recognition.js",
+      "unchangedFrom1_4_0": true,
+      "sha256": "0338c3c8431fce1a9b842842294b0c8c789128745a2c6644432fa552532f9226"
+    },
+    {
+      "path": "src/core/learning.js",
+      "unchangedFrom1_4_0": true,
+      "sha256": "6566b7b41faa37145dedfc87b8b5b728ac0598645aaa692a70685e0c73488ece"
+    },
+    {
+      "path": "src/core/check.js",
+      "unchangedFrom1_4_0": true,
+      "sha256": "428747a679597d54f063f228cb86bf68d312fa6b2668dfd6b525309fbbef61c6"
+    },
+    {
+      "path": "LICENSE",
+      "unchangedFrom1_4_0": true,
+      "sha256": "5870a49cfb94ebb9dc3c192a41ad1f76205bbc81724df9461e1300d0eeef939f"
+    }
+  ],
+  "pagesAssembly": {
+    "method": "Executed the unchanged Pages workflow static assembly and placeholder replacement locally, without publication",
+    "cacheEntries": 458,
+    "relativeImportsResolved": 1205,
+    "newModulesPrecached": [
+      "src/core/mixed-training.js",
+      "src/practice/availability.js",
+      "src/sections/bto/structures.js",
+      "src/ui/mixed-evidence.js"
+    ],
+    "serviceWorkerSyntaxPassed": true,
+    "remoteGithubActionsRun": false,
+    "published": false
+  },
+  "limits": [
+    "No human learning, pass probability, applicant percentile or actual Optiver difficulty calibration.",
+    "Fresh coverage bounds assume stable eligible pools with sufficient unseen supply.",
+    "Three cold successes remain fresh-instance evidence, not a distinct-method or delayed-transfer requirement.",
+    "Some configured pools can still exhaust; known shortages are labelled.",
+    "Physical phones, other browser engines, real user progress and a live Pages deployment were not tested.",
+    "No original public repository mutation."
+  ],
+  "implementation_revision": "8c4690dc869af573fbc309d9c692e89b4cfbcb7d",
+  "source_revision_meaning": "Local commit containing the tested implementation; a following metadata-only commit records this provenance."
+}

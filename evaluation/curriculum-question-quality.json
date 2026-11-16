@@ -1,0 +1,474 @@
+{
+  "samplesPerLevel": 256,
+  "familyLevels": 98,
+  "items": 25088,
+  "closestLabels": 25088,
+  "probabilityOptions": 17928,
+  "verifierChecks": 392,
+  "answerPositions": [
+    4964,
+    5059,
+    4927,
+    5041,
+    5097
+  ],
+  "sortedAnswerRanks": [
+    1699,
+    5332,
+    9079,
+    5725,
+    3253
+  ],
+  "perFamily": {
+    "event-algebra": {
+      "samples": 512,
+      "answerPositions": [
+        102,
+        112,
+        101,
+        100,
+        97
+      ],
+      "maximumAnswer": 153
+    },
+    "two-dice-sum": {
+      "samples": 512,
+      "answerPositions": [
+        99,
+        99,
+        104,
+        98,
+        112
+      ],
+      "maximumAnswer": 60
+    },
+    "die-repeats": {
+      "samples": 512,
+      "answerPositions": [
+        102,
+        98,
+        118,
+        100,
+        94
+      ],
+      "maximumAnswer": 33
+    },
+    "dice-order-stats": {
+      "samples": 512,
+      "answerPositions": [
+        100,
+        105,
+        96,
+        110,
+        101
+      ],
+      "maximumAnswer": 40
+    },
+    "three-dice": {
+      "samples": 512,
+      "answerPositions": [
+        91,
+        105,
+        114,
+        111,
+        91
+      ],
+      "maximumAnswer": 14
+    },
+    "at-least-one": {
+      "samples": 768,
+      "answerPositions": [
+        153,
+        161,
+        143,
+        171,
+        140
+      ],
+      "maximumAnswer": 202
+    },
+    "first-success": {
+      "samples": 512,
+      "answerPositions": [
+        106,
+        115,
+        104,
+        99,
+        88
+      ],
+      "maximumAnswer": 42
+    },
+    "success-counts": {
+      "samples": 768,
+      "answerPositions": [
+        143,
+        174,
+        140,
+        159,
+        152
+      ],
+      "maximumAnswer": 110
+    },
+    "conditional-dice": {
+      "samples": 512,
+      "answerPositions": [
+        82,
+        103,
+        113,
+        110,
+        104
+      ],
+      "maximumAnswer": 107
+    },
+    "card-symmetry": {
+      "samples": 512,
+      "answerPositions": [
+        104,
+        98,
+        119,
+        98,
+        93
+      ],
+      "maximumAnswer": 46
+    },
+    "card-draws": {
+      "samples": 768,
+      "answerPositions": [
+        135,
+        166,
+        150,
+        153,
+        164
+      ],
+      "maximumAnswer": 57
+    },
+    "urn-draws": {
+      "samples": 512,
+      "answerPositions": [
+        100,
+        119,
+        95,
+        85,
+        113
+      ],
+      "maximumAnswer": 50
+    },
+    "restricted-counting": {
+      "samples": 512,
+      "answerPositions": [
+        112,
+        88,
+        103,
+        93,
+        116
+      ],
+      "maximumAnswer": 110
+    },
+    "coin-sequences": {
+      "samples": 768,
+      "answerPositions": [
+        154,
+        160,
+        139,
+        150,
+        165
+      ],
+      "maximumAnswer": 3
+    },
+    "race-to-k": {
+      "samples": 512,
+      "answerPositions": [
+        98,
+        108,
+        106,
+        90,
+        110
+      ],
+      "maximumAnswer": 111
+    },
+    "pattern-waiting": {
+      "samples": 512,
+      "answerPositions": [
+        95,
+        91,
+        102,
+        118,
+        106
+      ],
+      "maximumAnswer": 67
+    },
+    "bayes-test": {
+      "samples": 768,
+      "answerPositions": [
+        149,
+        136,
+        139,
+        174,
+        170
+      ],
+      "maximumAnswer": 128
+    },
+    "bayes-boxes": {
+      "samples": 512,
+      "answerPositions": [
+        98,
+        113,
+        105,
+        98,
+        98
+      ],
+      "maximumAnswer": 96
+    },
+    "monty-hall": {
+      "samples": 512,
+      "answerPositions": [
+        108,
+        98,
+        107,
+        107,
+        92
+      ],
+      "maximumAnswer": 0
+    },
+    "pigeonhole": {
+      "samples": 512,
+      "answerPositions": [
+        121,
+        98,
+        84,
+        111,
+        98
+      ],
+      "maximumAnswer": 341
+    },
+    "birthday": {
+      "samples": 512,
+      "answerPositions": [
+        86,
+        112,
+        114,
+        92,
+        108
+      ],
+      "maximumAnswer": 144
+    },
+    "derangements": {
+      "samples": 512,
+      "answerPositions": [
+        95,
+        91,
+        115,
+        101,
+        110
+      ],
+      "maximumAnswer": 0
+    },
+    "expected-waiting": {
+      "samples": 768,
+      "answerPositions": [
+        175,
+        141,
+        124,
+        162,
+        166
+      ],
+      "maximumAnswer": 30
+    },
+    "coupon-collector": {
+      "samples": 512,
+      "answerPositions": [
+        112,
+        103,
+        83,
+        117,
+        97
+      ],
+      "maximumAnswer": 0
+    },
+    "linearity": {
+      "samples": 768,
+      "answerPositions": [
+        145,
+        148,
+        157,
+        167,
+        151
+      ],
+      "maximumAnswer": 18
+    },
+    "payout-models": {
+      "samples": 768,
+      "answerPositions": [
+        144,
+        153,
+        173,
+        144,
+        154
+      ],
+      "maximumAnswer": 62
+    },
+    "variance-dependence": {
+      "samples": 768,
+      "answerPositions": [
+        180,
+        142,
+        140,
+        144,
+        162
+      ],
+      "maximumAnswer": 93
+    },
+    "discrete-sums": {
+      "samples": 768,
+      "answerPositions": [
+        136,
+        168,
+        162,
+        163,
+        139
+      ],
+      "maximumAnswer": 256
+    },
+    "expected-extremes": {
+      "samples": 768,
+      "answerPositions": [
+        153,
+        160,
+        172,
+        151,
+        132
+      ],
+      "maximumAnswer": 51
+    },
+    "dice-duel": {
+      "samples": 512,
+      "answerPositions": [
+        112,
+        99,
+        106,
+        88,
+        107
+      ],
+      "maximumAnswer": 35
+    },
+    "dice-games-ev": {
+      "samples": 768,
+      "answerPositions": [
+        154,
+        147,
+        151,
+        161,
+        155
+      ],
+      "maximumAnswer": 11
+    },
+    "card-stopping": {
+      "samples": 512,
+      "answerPositions": [
+        110,
+        110,
+        82,
+        109,
+        101
+      ],
+      "maximumAnswer": 3
+    },
+    "running-sum": {
+      "samples": 512,
+      "answerPositions": [
+        97,
+        104,
+        95,
+        106,
+        110
+      ],
+      "maximumAnswer": 33
+    },
+    "random-walk-line": {
+      "samples": 512,
+      "answerPositions": [
+        102,
+        105,
+        101,
+        98,
+        106
+      ],
+      "maximumAnswer": 0
+    },
+    "polygon-walk": {
+      "samples": 768,
+      "answerPositions": [
+        153,
+        162,
+        157,
+        146,
+        150
+      ],
+      "maximumAnswer": 40
+    },
+    "gamblers-ruin": {
+      "samples": 768,
+      "answerPositions": [
+        146,
+        154,
+        138,
+        159,
+        171
+      ],
+      "maximumAnswer": 229
+    },
+    "clt-estimates": {
+      "samples": 512,
+      "answerPositions": [
+        108,
+        98,
+        89,
+        110,
+        107
+      ],
+      "maximumAnswer": 94
+    },
+    "uniform-geometry": {
+      "samples": 768,
+      "answerPositions": [
+        147,
+        166,
+        135,
+        153,
+        167
+      ],
+      "maximumAnswer": 107
+    },
+    "information-protocols": {
+      "samples": 768,
+      "answerPositions": [
+        157,
+        140,
+        160,
+        136,
+        175
+      ],
+      "maximumAnswer": 119
+    },
+    "shared-source": {
+      "samples": 1024,
+      "answerPositions": [
+        200,
+        209,
+        191,
+        199,
+        225
+      ],
+      "maximumAnswer": 158
+    }
+  },
+  "errors": [],
+  "cataloguePools": 33,
+  "catalogueEntries": 1146,
+  "reachabilitySeedsPerPool": 4096,
+  "limits": [
+    "Position counts test presentation, not conceptual novelty or mathematical understanding.",
+    "Sorted-answer magnitude biases in existing families remain possible; no distractor redesign is claimed.",
+    "New-logic independent branch checks are in tests/sections/mixed-reasoning.test.js and tests/sections/bto-curriculum.test.js."
+  ],
+  "reachabilityRule": "max(4096, 64 \u00d7 catalogue size) random draws per pool; exact generated-domain equality remains required"
+}

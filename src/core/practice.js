@@ -2,6 +2,7 @@
 // existing runner and clocks. Untrusted imports must not restore broken controls.
 import { validateItem } from './contract.js';
 import { checkItem } from './check.js';
+import { validMixedRow } from './mixed-training.js';
 
 export const PRACTICE_BLOCK_SIZE = 10;
 export const DRILL_COUNT = 10;
@@ -48,9 +49,10 @@ export function validPractice(s, section = s?.section) {
       typeof c.fresh !== 'boolean' || typeof c.done !== 'boolean' || !finite(c.elapsedMs) ||
       (c.interrupted !== undefined && typeof c.interrupted !== 'boolean') ||
       (c.aided !== undefined && typeof c.aided !== 'boolean') ||
+      (c.structureStatus !== undefined && !['unseen','seen','legacy-unknown'].includes(c.structureStatus)) ||
       !Number.isInteger(c.hints) || c.hints < 0 || c.hints > item.hints.length ||
       !Number.isFinite(c.budgetMs) || c.budgetMs <= 0 || !validResponse(item, c.draft, { draft: true }) ||
-      s.log.length !== s.index + Number(c.done) || s.log.some((r) => !record(r) || typeof r.family !== 'string' ||
+      s.log.length !== s.index + Number(c.done) || s.log.some((r) => !record(r) || !validMixedRow(r) || typeof r.family !== 'string' ||
         typeof r.correct !== 'boolean' || !Number.isFinite(r.score) || !finite(r.ms) || !Number.isInteger(r.hints) || r.hints < 0 ||
         r.skipped !== undefined && typeof r.skipped !== 'boolean')) return false;
     if (c.done) {

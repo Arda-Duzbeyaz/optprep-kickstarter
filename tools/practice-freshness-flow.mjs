@@ -13,6 +13,8 @@ const { makeStore, memoryBackend } = await import('../src/core/store.js');
 const { questionKey } = await import('../src/core/questions.js');
 const { runFeedbackSession } = await import('../src/ui/runner.js');
 const { activatePreset } = await import('../config/presets.js');
+const { finiteVariants } = await import('../src/practice/finite-variants.js');
+const { PRACTICE_MODULES } = await import('../src/practice/index.js');
 activatePreset({ id: 'kickstarter' });
 const root = document.getElementById('view'), button = (label) => [...root.querySelectorAll('button')].find((b) => b.textContent === label);
 function ok(value, label) { assert.ok(value, label); checks++; }
@@ -25,12 +27,13 @@ function answer(store) {
 try {
   const backend = memoryBackend(); let store = makeStore(backend); const seen = new Set();
   start(store, 'two-dice-sum');
-  for (let index = 0; index < 21; index++) {
+  const total = finiteVariants(PRACTICE_MODULES.bto.families.find((f) => f.id === 'two-dice-sum'), 1).length;
+  for (let index = 0; index < total; index++) {
     const current = store.practiceSession('bto').current, key = questionKey(current.item);
-    eq(seen.has(key), false, 'all 21 easy sum events are fresh, including across finished blocks');
+    eq(seen.has(key), false, 'all configured easy sum events are fresh, including across finished blocks');
     const note = root.querySelector('.practice-repeat-note');
     eq(!!note, false); ok(!root.querySelector('.revision-notice'), 'no prominent revision banner');
-    if (index === 12 || index === 20) {
+    if (index === 12 || index === total - 1) {
       const prompt = root.querySelector('.prompt').textContent, previousFresh = current.fresh;
       stop(); stop = () => {}; store = makeStore(backend); start(store, 'two-dice-sum');
       eq(root.querySelector('.prompt').textContent, prompt); eq(store.practiceSession('bto').current.fresh, previousFresh);
@@ -43,9 +46,9 @@ try {
       button('Start another 10 questions').click();
     }
   }
-  eq(seen.size, 21); eq(store.stats()['bto:two-dice-sum'].n, 21); eq(store.recognition(), {}, 'focused learning cannot manufacture a cold pass');
-  eq(store.practiceSession('bto'), null); ok(root.textContent.includes('All 21 variants'));
-  eq(store.coverage('bto', 'two-dice-sum').completedBlocks, 2); eq(store.runs('bto', 'practice').at(-1).max, 1);
+  eq(seen.size, total); eq(store.stats()['bto:two-dice-sum'].n, total); eq(store.recognition(), {}, 'focused learning cannot manufacture a cold pass');
+  eq(store.practiceSession('bto'), null); ok(root.textContent.includes(`All ${total} variants`));
+  eq(store.coverage('bto', 'two-dice-sum').completedBlocks, Math.floor(total/10)); eq(store.runs('bto', 'practice').at(-1).max, total%10);
   eq(store.runs('bto', 'practice').at(-1).completed, false); eq(button('Start another 10 questions'), undefined);
   stop(); stop = () => {}; store = makeStore(memoryBackend()); start(store, 'die-repeats');
   const sequence = [];

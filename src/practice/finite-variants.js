@@ -1,11 +1,11 @@
 // Enumerate complete discrete inputs for the small configured question pools.
 // The actual family generators still calculate every answer and explanation.
 // Their complete visible domains can therefore be checked before any repeat.
-import twoDice from '../sections/bto/families/two-dice-sum.js';
+import twoDice, { SUM_PAIRS, SUM_INTERVALS } from '../sections/bto/families/two-dice-sum.js';
 import repeatedDie, { repeatInputs } from '../sections/bto/families/die-repeats.js';
 import orderStats, { orderInputs } from '../sections/bto/families/dice-order-stats.js';
 import threeDice, { threeDiceBasics } from '../sections/bto/families/three-dice.js';
-import cards, { cardBasics } from '../sections/bto/families/card-draws.js';
+import cards, { cardBasics, cardHandInputs } from '../sections/bto/families/card-draws.js';
 import monty from '../sections/bto/families/monty-hall.js';
 import race from '../sections/bto/families/race-to-k.js';
 import coupon from '../sections/bto/families/coupon-collector.js';
@@ -35,12 +35,14 @@ function plans(family, difficulty) {
     if (difficulty === 1) return [
       ...range(2, 12).map((sum) => ({ picks: [0], ints: [sum] })),
       ...range(2, 11).map((sum) => ({ picks: [1], ints: [sum] })),
+      ...SUM_PAIRS.map((_, i) => ({ picks: [2, i] })),
     ];
     if (difficulty === 2) return [
       ...range(4, 11).map((bound) => ({ picks: [0], ints: [bound] })),
       ...range(3, 10).map((bound) => ({ picks: [1], ints: [bound] })),
       ...[true, false].map((odd) => ({ picks: [2], chances: [odd] })),
       ...[0, 1, 2].map((divisor) => ({ picks: [3, divisor] })),
+      ...[4, 5].flatMap((kind) => SUM_INTERVALS.map((_, i) => ({ picks: [kind, i] }))),
     ];
   }
   if (family === repeatedDie) {
@@ -50,9 +52,7 @@ function plans(family, difficulty) {
   if (family === threeDice && difficulty === 2) return threeDiceBasics.map((_, index) => ({ picks: [index] }));
   if (family === cards) {
     if (difficulty === 1) return cardBasics.map((_, index) => ({ picks: [index] }));
-    if (difficulty === 2) return [0, 1, 2].flatMap((kind) => range(2, kind === 2 ? 6 : 5).map((k) => ({ picks: [kind], ints: [k] })));
-    if (difficulty === 3) return [{ picks: [0] }, ...range(3, 5).map((k) => ({ picks: [1], ints: [k] })),
-      ...[2, 3].flatMap((kind) => range(2, kind === 3 ? 6 : 5).map((k) => ({ picks: [kind], ints: [k] })))];
+    if ([2, 3].includes(difficulty)) return cardHandInputs(difficulty).map((_, index) => ({ picks: [index] }));
   }
   if (family === monty) {
     if (difficulty === 2) return range(3, 12).flatMap((n) => [0, 2].map((variant) => ({ ints: [n], picks: [variant] })));
@@ -90,7 +90,11 @@ function plans(family, difficulty) {
   }
   if (family === firstSuccess) {
     if (difficulty === 1) return range(0, 2).flatMap((kind) => range(2, 6).map((k) => ({ picks: [kind], ints: [k] })));
-    if (difficulty === 2) return [...range(0, 4).flatMap((p) => range(2, 5).map((k) => ({ picks: [0, p], ints: [k] }))), { picks: [1] }, { picks: [2] }];
+    if (difficulty === 2) return [
+      ...range(0, 4).flatMap((p) => range(2, 5).map((k) => ({ picks: [0, p], ints: [k] }))), { picks: [1] }, { picks: [2] },
+      ...range(0,4).flatMap(p=>range(1,6).flatMap(past=>range(1,4).map(m=>({picks:[3,p],ints:[past,m]})))),
+      ...range(0,4).flatMap(p=>range(2,3).flatMap(r=>range(r,7).map(k=>({picks:[4,p],ints:[r,k]})))),
+    ];
   }
   if (family === coins && difficulty === 1) return range(3, 6).flatMap((n) => [{ picks: [0], ints: [n] }, ...range(1, n - 1).map((k) => ({ picks: [1], ints: [n, k] }))]);
   if (family === geometry) {

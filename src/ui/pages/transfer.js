@@ -90,6 +90,7 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
     const result = checkItem(row.item, response); responses[index] = response;
     records[index] = { section: row.item.section, family: row.item.family, difficulty: row.item.difficulty, key: row.key, structure: row.structure,
       repeat: row.repeat, newStructure: row.newStructure, correct: result.correct, score: result.score, skipped: !!result.skipped,
+      structureStatus: row.structureStatus,
       ms: Math.round(performance.now() - current.started), prompt: row.item.prompt.text };
   }
   function advance(skip = false) { if (finished || settleExpiry()) return; saveCurrent(skip); index++; show(); }
@@ -123,8 +124,8 @@ export function runTransfer(root, { store, seed = Date.now(), timed = true, item
       h('p', {}, `${completed ? 'Completed' : 'Partial session'} · ${timed ? `timed${extra > 1 ? ` ×${extra}` : ''}` : 'untimed'} · ${scoreLine(summary.all)}.`),
       h('p', { class: 'muted' }, 'Additional-training results stay separate from revision and exam targets. Different score types are not combined into an invented pass mark.'),
       h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Recorded exposure'), h('th', {}, 'Displayed'), h('th', {}, 'Performance'))),
-        h('tbody', {}, [['Unseen questions', summary.unseen], ['New recorded structures', summary.newStructure], ['Familiar recorded structures', summary.familiarStructure], ['Repeated questions', summary.review]].map(([label, s]) => h('tr', {}, h('td', {}, label), h('td', {}, String(s.displayed)), h('td', {}, scoreLine(s)))))),
-      h('p', { class: 'small-note muted' }, 'The two structure rows partition unseen questions. Signatures track known generator branches, not proof of conceptual novelty or Optiver calibration.'),
+        h('tbody', {}, [['Unseen questions', summary.unseen], ['New recorded structures', summary.newStructure], ['Familiar recorded structures', summary.familiarStructure], ['Earlier structure unknown', summary.unknownStructure], ['Repeated questions', summary.review]].map(([label, s]) => h('tr', {}, h('td', {}, label), h('td', {}, String(s.displayed)), h('td', {}, scoreLine(s)))))),
+      h('p', { class: 'small-note muted' }, 'The three structure rows partition unseen questions. Earlier coarse labels cannot establish which authored branch was seen. Signatures are not proof of conceptual novelty or Optiver calibration.'),
       ...rows.flatMap((row, i) => {
         if (!displayed.has(i)) return [];
         const result = checkItem(row.item, responses[i] || { skip: true });

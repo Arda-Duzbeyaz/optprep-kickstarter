@@ -9,6 +9,30 @@ const ID = 'card-symmetry';
 const ord = (k) => `${k}${k % 10 === 1 && k !== 11 ? 'st' : k % 10 === 2 && k !== 12 ? 'nd' : k % 10 === 3 && k !== 13 ? 'rd' : 'th'}`;
 
 function build(kind, rng) {
+  if (kind === 'seenRed' || kind === 'seenAce') {
+    const d = rng.int(2, 10), good = kind === 'seenRed' ? 26 : 4;
+    const seen = rng.int(0, Math.min(good, d)), what = kind === 'seenRed' ? 'red cards' : 'aces';
+    const value = q(good - seen, 52 - d);
+    return { value, data: { kind, d, seen },
+      text: `A standard 52-card deck is shuffled. The top ${d} cards are inspected and discarded. Exactly ${seen} of those cards are ${what}; the rest are not. What is the probability that the next card is ${kind === 'seenRed' ? 'red' : 'an ace'}?`,
+      distractors: [
+        { value: q(good, 52), misconception: 'Ignored the observed composition as if the discarded cards had been unseen.' },
+        { value: q(good, 52 - d), misconception: 'Removed discarded cards from the deck but kept the original qualifying-card count.' },
+        { value: q(good - seen, 52), misconception: 'Removed the known qualifying cards but left the full deck size.' },
+        { value: q(1).sub(value), misconception: 'Answered the complement: the next card is not in the specified group.' },
+        { value: q(Math.max(0, good - d), 52 - d), misconception: 'Treated all discarded cards as qualifying instead of using the inspected count.' },
+      ],
+      steps: [
+        { say: `After inspection, ${52 - d} cards remain, including ${good - seen} ${what}.`, why: 'Unlike unseen discards, the observed composition changes the information available.' },
+        { say: 'Every remaining card is equally likely to be next.', why: 'Conditional on the observed discards, the remaining deck is still uniformly shuffled.' },
+        { say: `P = ${good - seen}/${52 - d} = ${value}.`, why: 'Use the known remaining count over the known remaining deck size.' },
+      ],
+      hints: ['Were the discarded cards unseen or inspected?', 'Subtract the known qualifying cards from their group and all discarded cards from the deck.'],
+      picture: pic('table', { columns: ['Quantity','Before','Discarded','Remaining'], rows: [['Cards','52',String(d),String(52 - d)],[what,String(good),String(seen),String(good - seen)]] }, 'Observed counts must be removed from both numerator and denominator.'),
+      fast: `Known counts: (${good} − ${seen})/(52 − ${d}) = ${value}.`,
+      check: `If the discards were not inspected, their unknown composition would average back to ${good}/52. Here their actual composition is given.`,
+    };
+  }
   if (kind === 'discardRed' || kind === 'discardAce') {
     const d = rng.int(3, 20);
     const red = kind === 'discardRed';
@@ -114,7 +138,7 @@ export default {
   levels: [1, 2],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const kind = difficulty === 1 ? rng.pick(['discardRed', 'discardAce']) : rng.pick(['sameSuit', 'heartBottom', 'aceBeforeKing', 'aceFirstOfSuit']);
+    const kind = difficulty === 1 ? rng.pick(['discardRed', 'discardAce']) : rng.pick(['sameSuit', 'heartBottom', 'aceBeforeKing', 'aceFirstOfSuit', 'seenRed', 'seenAce']);
     const b = build(kind, rng);
     return mcqItem(ID, rng, difficulty, {
       ...b,
@@ -127,6 +151,16 @@ export default {
   // probability), or count ordered pairs / relative orders directly.
   verify(item) {
     const d = item.params;
+    if (d.kind === 'seenRed' || d.kind === 'seenAce') {
+      // Label all cards, remove a representative inspected set, enumerate the
+      // remaining positions. No aggregate numerator formula is reused.
+      const qualifies = (card) => d.kind === 'seenRed' ? card < 26 : card % 13 === 0;
+      const good = Array.from({ length: 52 }, (_, i) => i).filter(qualifies);
+      const other = Array.from({ length: 52 }, (_, i) => i).filter((i) => !qualifies(i));
+      const removed = new Set([...good.slice(0, d.seen), ...other.slice(0, d.d - d.seen)]);
+      const remaining = Array.from({ length: 52 }, (_, i) => i).filter((i) => !removed.has(i));
+      return agree(item, remaining.filter(qualifies).length / remaining.length);
+    }
     if (d.kind === 'discardRed' || d.kind === 'discardAce') {
       const good = d.kind === 'discardRed' ? 26 : 4;
       let p = q(0);

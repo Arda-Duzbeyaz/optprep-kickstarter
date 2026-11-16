@@ -28,6 +28,9 @@ import { timingOf } from '../../config/presets.js';
 import { PRACTICE_BLOCK_SIZE, DRILL_COUNT, PRACTICE_VERSION, practiceHref } from '../core/practice.js';
 import { skillProgress, skillCheckpoint, checkpointLabel, checkpointText, learningStatus, learningEvidence } from './practice-progress.js';
 import { recognitionProgress } from '../core/recognition.js';
+import { structureKey, structureStatus, structureOperations } from '../transfer/profile.js';
+import { MIXED_EVIDENCE_VERSION } from '../core/mixed-training.js';
+import { mixedEvidence } from './mixed-evidence.js';
 
 const VIEWS = { mcq: mcqView, rank: rankView, interval: intervalView, orderbook: orderbookView };
 // Sure/unsure buttons. Not the 80-in-8: one tap answers there, so there is no second button to press.
@@ -117,6 +120,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     return { version: PRACTICE_VERSION, section: sectionId, family: family || null, scope, familyPool, difficulty: focusedDifficulty, seed, rngState: rng.getState(),
       index: idx, count: limit, log: structuredClone(log), xp0, lv0, savedAt: Date.now(),
       current: { item: current.item, fresh: current.fresh, hints: current.hints, budgetMs: current.budgetMs, interrupted: !!current.interrupted, aided: !!current.aided,
+        structureStatus: current.structureStatus,
         elapsedMs: elapsed(), done: !!current.done, response: current.response || null,
         draft: current.body?.view.draftResponse?.() ?? current.body?.view.response() ?? null } };
   }
@@ -148,7 +152,8 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     for (const row of log) { if (round.size === familyPool.length) round.clear(); if (familyPool.includes(row.family)) round.add(row.family); }
     return practiceItem(section, rng, store.stats(), { family, familyPool, difficulty: focusedDifficulty, targets, avoidFamilies: [...round],
       excludeKeys: store.recentQuestionKeys?.(sectionId) || [], preferStructures: store.recentStructureKeys?.(sectionId) || [], shuffleOptions: true,
-      requireFresh: mixedAttempt || !!family, minFreshFamilies: mixedAttempt ? 2 : 1 });
+      requireFresh: mixedAttempt || !!family, minFreshFamilies: mixedAttempt ? 2 : 1,
+      ...(mixedAttempt ? { mixedTraining: store.mixedTraining?.(sectionId), recognition: store.recognition(), spreadStructures: true } : {}) });
   }
 
   function show() {
@@ -164,6 +169,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     if (!item) return summary();
     const fresh = resumed ? resumed.fresh : setNumber == null && !questionSeen(store.recentQuestionKeys?.(sectionId) || new Set(), item);
     current = { item, start: performance.now() - (resumed?.elapsedMs || 0), hints: resumed?.hints || 0, fresh,
+      structureStatus: resumed?.structureStatus || structureStatus(store.recentStructureKeys?.(sectionId), item),
       budgetMs: resumed?.budgetMs || perItemMs(item), done: false, interrupted: !!resumed?.interrupted || !!resumed && !resumed.done, aided: !!resumed?.aided };
     if (!resumed) store.rememberQuestion?.(item);
     setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
@@ -262,7 +268,10 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0 && !current.aided;
     log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, skipped: !!response.skip, ms,
       levelBefore: store.mastery()[`${sectionId}:${item.family}`]?.lv || 0,
-      recognitionBefore: [...(store.recognition()[`${sectionId}:${item.family}`]?.passed || [])] });
+      recognitionBefore: [...(store.recognition()[`${sectionId}:${item.family}`]?.passed || [])],
+      ...(mixedAttempt ? { evidenceVersion: MIXED_EVIDENCE_VERSION, section: sectionId, key: questionKey(item), difficulty: item.difficulty,
+        structure: structureKey(item), operations: structureOperations(item), structureStatus: current.structureStatus,
+        fresh: current.fresh, aided: !!current.aided, interrupted: !!current.interrupted, budgetMs: current.budgetMs, standardTime } : {}) });
     store.recordAnswer(sectionId, item.family, {
       correct: correctNoHelp, covered: result.correct, ms, confidence: response.skip ? undefined : confidence, difficulty: item.difficulty, score: item.kind === 'interval' ? result.score : undefined,
       hints: current.hints, mode, fresh: current.fresh, budgetMs: current.budgetMs,
@@ -371,6 +380,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
         h('span', {}, h('span', { class: 'num big' }, `${Math.floor(spentS / 60)}:${String(spentS % 60).padStart(2, '0')}`), ' on questions'))
         : h('p', { class: 'muted' }, mode === 'mistakes' ? 'Nothing is due for review in this task right now.' : 'No questions answered.'),
       n ? h('ol', { class: 'summary-list' }, famRows) : null,
+      mixedAttempt && n ? mixedEvidence(log) : null,
       h('div', { class: 'row' },
         suggestMixed ? h('a', { class: 'btn primary', href: `#/run/${sectionId}/mixed/covered` }, 'Test in mixed practice') : null,
         nextSkill ? h('a', { class: `btn${suggestMixed ? '' : ' primary'}`, href: `#/run/${sectionId}/practice/${nextSkill.id}` }, `Next skill: ${nextSkill.title}`) : null,

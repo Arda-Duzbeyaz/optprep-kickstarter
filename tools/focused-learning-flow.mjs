@@ -54,7 +54,7 @@ try {
   for (const item of finiteVariants(f, 1).slice(3)) store.rememberQuestion(item);
   start(store, 'two-dice-sum');
   for (let i = 0; i < 3; i++) { eq(store.practiceSession('bto').current.fresh, true); answer(store); button('Next (Enter)').click(); }
-  eq(store.practiceSession('bto'), null); ok(root.textContent.includes('All 21 variants'));
+  eq(store.practiceSession('bto'), null); ok(root.textContent.includes(`All ${finiteVariants(f,1).length} variants`));
   eq(store.runs('bto', 'practice').at(-1).max, 3); eq(store.runs('bto', 'practice').at(-1).completed, false);
   eq(store.coverage('bto', 'two-dice-sum').covered, false); eq(store.coverage('bto', 'two-dice-sum').completedBlocks, 0);
   eq(store.recognition(), {}); eq(root.querySelector('.prompt'), null);
@@ -64,7 +64,7 @@ try {
   PRACTICE_MODULES.bto = { ...original, families: [{ ...f, generate: () => structuredClone(only) }] };
   try {
     store = makeStore(memoryBackend()); store.rememberQuestion(only); start(store, 'two-dice-sum');
-    ok(root.textContent.includes('More variants may exist')); ok(!root.textContent.includes('All 21 variants'));
+    ok(root.textContent.includes('More variants may exist')); ok(!root.textContent.includes(`All ${finiteVariants(f,1).length} variants`));
     eq(store.practiceSession('bto'), null); eq(store.state.runs.length, 0); eq(store.xpTotal(), 0);
   } finally { stop(); stop = () => {}; PRACTICE_MODULES.bto = original; }
   console.log(`${checks} focused-learning assertions passed: unique ten-question user example, saved-question resume, assisted coverage without cold credit, frozen level, honest finite exhaustion and unknown search failure.`);

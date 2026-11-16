@@ -8,7 +8,7 @@ import { questionKey } from '../../src/core/questions.js';
 import { structureKey } from '../../src/transfer/profile.js';
 import { validateItem } from '../../src/core/contract.js';
 
-const domains = [['two-dice-sum', 1, 21], ['two-dice-sum', 2, 21], ['die-repeats', 1, 48], ['die-repeats', 2, 60]];
+const domains = [['two-dice-sum', 1, 66], ['two-dice-sum', 2, 91], ['die-repeats', 1, 48], ['die-repeats', 2, 60]];
 const generator = (id) => PRACTICE_MODULES.bto.families.find((f) => f.id === id);
 const remember = (history, item) => { const key = questionKey(item); history.delete(key); history.add(key); return key; };
 

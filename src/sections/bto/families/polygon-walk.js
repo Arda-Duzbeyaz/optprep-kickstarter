@@ -171,7 +171,7 @@ export default {
   },
 
   lesson: {
-    purpose: 'Random walks on a hexagon or octagon are a reported Beat the Odds staple. Three facts (return time, hitting time, last vertex) answer almost every variant in seconds.',
+    purpose: 'Finite-cycle walks develop state-based reasoning. Return times, hitting times and visit order require different arguments; check reachability and movement rules before using a shortcut.',
     anchor: 'Gambler\'s ruin on a line (win probability i/N, duration a·b) with one change: the ends of the line are glued into a circle.',
     steps: [
       { say: 'Return time: the walk spends 1/n of its time at each vertex, so returns take n steps on average.', why: 'Mean return time = 1/(long-run frequency).' },

@@ -1,0 +1,141 @@
+{
+  "edition": "1.6.0-kickstarter.1",
+  "date": "2026-11-16",
+  "baseline": "1.5.0-kickstarter.1",
+  "javascript": {
+    "passed": 1157,
+    "failed": 0,
+    "skipped": 0
+  },
+  "pythonBackend": {
+    "passed": 36,
+    "failed": 0
+  },
+  "cpp": {
+    "passed": 34,
+    "failed": 0
+  },
+  "unitTestsTotal": 1227,
+  "newTaskBranches": 42,
+  "explicitSeedsPerTask": 128,
+  "newTaskOutcomeChecks": 5376,
+  "independentPythonCases": 1519,
+  "beforeAfterVerifiedItems": 46080,
+  "presentationItems": 25088,
+  "closestLabels": 25088,
+  "answerPositions": [
+    4964,
+    5059,
+    4927,
+    5041,
+    5097
+  ],
+  "finiteCataloguePools": 33,
+  "finiteCatalogueEntries": 1146,
+  "domScriptsPassed": 13,
+  "learningWalkthrough": {
+    "families": 109,
+    "questions": 1100,
+    "assertions": 716,
+    "uncaughtErrors": 0
+  },
+  "newFamilyDomAssertions": 200,
+  "assessmentRegression": {
+    "guided": 1090,
+    "mixed": 1000,
+    "mockPapers": 150,
+    "mockQuestions": 2970,
+    "batchQuestions": 500,
+    "repeatedQuestions": 0,
+    "sectionCounts": {
+      "bto": 1300,
+      "nl": 1380,
+      "ll": 910,
+      "iv": 990,
+      "ob": 980
+    }
+  },
+  "preservedFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "5870a49cfb94ebb9dc3c192a41ad1f76205bbc81724df9461e1300d0eeef939f",
+      "unchanged": true
+    },
+    {
+      "path": "config/presets.js",
+      "sha256": "d4d3ccc061f5ef89a09b30bc8b3bc26081e60fb5ede25817eeb9b7a749bfe626",
+      "unchanged": true
+    },
+    {
+      "path": "config/sections.js",
+      "sha256": "d2cc53cbd7c5fb26f3e7defe64e6e4948207eec7f87ebe09f0b4a854ad6b946f",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/store.js",
+      "sha256": "5e177f95cfdb9211dd18b3fe251dd3262cc31d4b08c316104b509df4657e4205",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/migrate.js",
+      "sha256": "a07db9ee711ae10625015813ac013d880d65fe2beb1c3e2dcb7c43fb3dbdac0f",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/questions.js",
+      "sha256": "e56c9647699fbff210e1f95b10e39ad09ea70f3067698c3b4c042db55a9ab5dd",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/recognition.js",
+      "sha256": "0338c3c8431fce1a9b842842294b0c8c789128745a2c6644432fa552532f9226",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/learning.js",
+      "sha256": "6566b7b41faa37145dedfc87b8b5b728ac0598645aaa692a70685e0c73488ece",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/mixed-training.js",
+      "sha256": "cdcbcbf08233319d1c0a9cd6f3c97cb5248d8b3fe698131fe3bffe496a785060",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/check.js",
+      "sha256": "428747a679597d54f063f228cb86bf68d312fa6b2668dfd6b525309fbbef61c6",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/runner.js",
+      "sha256": "4b317752f77f374b94e1a7542b433086b618e6c309907b1a7f2127c29eb0f35b",
+      "unchanged": true
+    }
+  ],
+  "browserReport": "evaluation/curriculum-browser.json",
+  "reportsHistoricalUnlessPrefixedCurriculum": true,
+  "remainingLimits": [
+    "No actual Optiver item-bank or difficulty calibration",
+    "No human learning/outcome trial",
+    "No physical mobile or other-browser QA this release",
+    "Finite template domains and possible magnitude cues remain"
+  ],
+  "staticPagesAssembly": {
+    "javascriptFilesParsed": 455,
+    "relativeModuleImportsChecked": 1232,
+    "missingImports": [],
+    "precacheFiles": 467,
+    "newRequiredModulesIncluded": [
+      "src/sections/bto/families/event-algebra.js",
+      "src/sections/bto/families/success-counts.js",
+      "src/sections/bto/families/payout-models.js",
+      "src/sections/bto/families/restricted-counting.js",
+      "src/sections/bto/families/variance-dependence.js",
+      "src/sections/bto/families/discrete-sums.js",
+      "src/sections/bto/curriculum/verify.js",
+      "src/study/content/bto/curriculum.js"
+    ],
+    "assembledLikeGitHubPages": true,
+    "deploymentPerformed": false
+  }
+}

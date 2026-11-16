@@ -28,6 +28,52 @@ export const cardBasics = [
     .map((mode) => ({ kind: 'group', group, mode }))),
 ];
 
+export function cardHandInputs(difficulty) {
+  const legacy = difficulty === 2 ? ['atLeastAce','allRed','atLeastHeart'].flatMap((kind) =>
+    Array.from({ length: kind === 'atLeastHeart' ? 5 : 4 }, (_, i) => ({ kind, k: i + 2 })))
+    : [{ kind: 'flush' }, ...Array.from({ length: 3 }, (_, i) => ({ kind: 'allDiffRanks', k: i + 3 })),
+      ...['atLeastAce','atLeastHeart'].flatMap((kind) => Array.from({ length: kind === 'atLeastHeart' ? 5 : 4 }, (_, i) => ({ kind, k: i + 2 })))];
+  const extra = Object.keys(GROUPS).flatMap((group) => [3,4,5].flatMap((k) =>
+    (difficulty === 2 ? ['none','all','atLeast'] : ['exactOne','exactTwo']).filter((mode) =>
+      !(mode === 'all' && GROUPS[group].good < k) &&
+      !(mode === 'all' && group === 'red') && !(mode === 'atLeast' && ['aces','hearts'].includes(group)))
+      .map((mode) => ({ kind: 'handGroup', group, k, mode }))));
+  return [...legacy, ...extra];
+}
+
+function handGroup(data) {
+  const { group, k, mode } = data, g = GROUPS[group], denominator = C(52, k);
+  const wanted = mode === 'exactOne' ? 1 : mode === 'exactTwo' ? 2 : mode === 'all' ? k : 0;
+  const term = ratio(C(g.good, wanted) * C(52 - g.good, k - wanted), denominator);
+  const none = ratio(C(52 - g.good, k), denominator), value = mode === 'atLeast' ? q(1).sub(none) : term;
+  const event = mode === 'all' ? `all ${k} cards are ${g.label}` : mode === 'none' ? `none of the cards are ${g.label}`
+    : mode === 'atLeast' ? `at least one card is among the ${g.label}` : `exactly ${wanted} of the cards are ${g.label}`;
+  const p = q(g.good, 52);
+  const replaced = mode === 'atLeast' ? q(1).sub(qpow(q(1).sub(p), k))
+    : new Q(C(k, wanted), 1n).mul(qpow(p, wanted)).mul(qpow(q(1).sub(p), k - wanted));
+  return { value, data,
+    text: `A shuffled standard 52-card deck deals you a hand of ${k} cards, without replacement. What is the probability that ${event}?`,
+    distractors: [
+      { value: replaced, misconception: 'Used independent draws with replacement, so the deck composition never changed.' },
+      { value: p, misconception: 'Computed only the single-card marginal, not the event for the whole hand.' },
+      { value: q(1).sub(value), misconception: 'Answered the complement of the specified hand event.' },
+      { value: value.mul(q(2)), misconception: 'Doubled an unordered hand count to add an order that was already counted.' },
+      { value: none, misconception: 'Computed the event with no qualifying cards without checking the requested count.' },
+    ],
+    steps: [
+      { say: `There are ${g.good} ${g.label} and ${52 - g.good} other cards. All C(52,${k}) hands are equally likely.`, why: 'Identify the actual group; every unordered hand is counted once.' },
+      { say: mode === 'atLeast' ? `P(none) = C(${52 - g.good},${k})/C(52,${k}) = ${none}.`
+        : `Choose ${wanted} qualifying and ${k - wanted} other cards: C(${g.good},${wanted})C(${52 - g.good},${k - wanted}).`, why: mode === 'atLeast' ? 'The complement has one count.' : 'Choose the two parts of the hand, then multiply their numbers of choices.' },
+      { say: `P = ${value}.`, why: mode === 'atLeast' ? 'Subtract the no-card probability from one.' : 'Divide the favourable hand count by the total hand count; do not add another ordering factor.' },
+    ],
+    hints: [`Count how many ${g.label} exist in a standard deck.`, mode === 'atLeast' ? 'Use the complement with no qualifying cards.' : `Choose ${wanted} qualifying cards and ${k - wanted} others.`],
+    picture: table(['Quantity','Count'], [['Qualifying cards',g.good],['Other cards',52 - g.good],['Hand size',k]], 'Count hands without replacement, not independent draws.'),
+    fast: mode === 'atLeast' ? `1 − C(${52 - g.good},${k})/C(52,${k}) = ${value}.`
+      : `C(${g.good},${wanted})C(${52 - g.good},${k - wanted})/C(52,${k}) = ${value}.`,
+    check: `Exactly 0 through ${k} qualifying cards partition the possible hands, so their probabilities sum to one.`,
+  };
+}
+
 function groupDraw(data) {
   const { group, mode } = data, g = GROUPS[group];
   const counts = mode === 'both' ? [g.good, g.good - 1]
@@ -234,7 +280,7 @@ function build(kind, rng) {
       hints: ['How many cards avoid the first card\'s rank?', 'Each new card loses 4 good cards; the deck loses 1.', `Product of ${k} factors.`],
       picture: draws(Array.from({ length: k }, (_, i) => 52 - 4 * i), 'Cards of an unused rank', 'Each new card must avoid every rank already in the hand: 4 fewer good cards each draw, 1 fewer card in the deck.'),
       fast: `${Array.from({ length: k }, (_, i) => `${52 - 4 * i}/${52 - i}`).join(' × ')} = ${v}.`,
-      check: `Each factor shrinks faster than the one before (52/52, 48/51, 44/50, …), so the answer falls quickly with ${k}; it must be below 48/51 × 44/50 = ${q(48 * 44, 51 * 50)}.`,
+      check: `Each factor shrinks faster than the one before (52/52, 48/51, 44/50, …), so the answer falls with ${k}; it is at most 48/51 × 44/50 = ${q(48 * 44, 51 * 50)}, with equality for three cards.`,
     };
   }
   // Flush (five of one suit, straight flushes included).
@@ -267,8 +313,9 @@ export default {
   levels: [1, 2, 3],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const input = difficulty === 1 ? rng.pick(cardBasics) : { kind: difficulty === 2 ? rng.pick(['atLeastAce', 'allRed', 'atLeastHeart']) : rng.pick(['flush', 'allDiffRanks', 'atLeastAce', 'atLeastHeart']) };
-    const b = input.kind === 'group' ? groupDraw(input) : build(input.kind, rng);
+    const input = rng.pick(difficulty === 1 ? cardBasics : cardHandInputs(difficulty));
+    const b = input.kind === 'group' ? groupDraw(input) : input.kind === 'handGroup' ? handGroup(input)
+      : build(input.kind, { ...rng, int: input.k ? () => input.k : rng.int });
     return mcqItem(ID, rng, difficulty, {
       ...b,
       rule: 'Without replacement: multiply (good left)/(cards left) at each draw. "At least one" = 1 − P(none).',
@@ -279,6 +326,22 @@ export default {
   // Independent check: sequential products or ordered-pair enumeration, not binomial coefficients.
   verify(item) {
     const d = item.params;
+    if (d.kind === 'handGroup') {
+      // Count ordered labelled-card draws by the number of qualifying cards seen.
+      const good = Array.from({ length: 52 }, (_, card) => Number(GROUPS[d.group].has(card))).reduce((a, b) => a + b, 0);
+      let ways = [1]; let total = 1;
+      for (let draw = 0; draw < d.k; draw++) {
+        const next = Array(draw + 2).fill(0);
+        for (let hits = 0; hits < ways.length; hits++) {
+          next[hits + 1] += ways[hits] * (good - hits);
+          next[hits] += ways[hits] * (52 - good - (draw - hits));
+        }
+        ways = next; total *= 52 - draw;
+      }
+      const wanted = d.mode === 'exactOne' ? 1 : d.mode === 'exactTwo' ? 2 : d.mode === 'all' ? d.k : 0;
+      const hits = d.mode === 'atLeast' ? ways.slice(1).reduce((a, b) => a + b, 0) : ways[wanted];
+      return agree(item, hits / total);
+    }
     const seq = (good, k) => { let p = 1; for (let i = 0; i < k; i++) p *= (good - i) / (52 - i); return p; };
     if (['twoAces', 'sameSuit', 'sameColour', 'pair', 'group'].includes(d.kind)) {
       // card c: rank = c % 13, suit = floor(c / 13), red = suit < 2

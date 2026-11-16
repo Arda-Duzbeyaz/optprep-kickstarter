@@ -1,7 +1,7 @@
 import { makeRng } from '../core/rng.js';
 import { nearestLevel, practiceItem } from '../core/draw.js';
 import { questionKey, questionSeen } from '../core/questions.js';
-import { structureKey } from './profile.js';
+import { structureKey, structureStatus } from './profile.js';
 import { TRANSFER_FAMILIES } from './index.js';
 import { presentation } from '../core/presentation.js';
 export { presentation } from '../core/presentation.js';
@@ -39,8 +39,8 @@ export function transferItems(modules, { seed, questionHistory = {}, structureHi
         best = { item, key: questionKey(item), structure: structureKey(item), repeat: false };
       }
       exactSeen.add(best.key); runStructures.add(best.structure); runFamilies.add(best.item.family);
-      const newStructure = !structureSeen.has(best.structure); structureSeen.add(best.structure);
-      out.push({ item: presentation(best.item, rng), key: best.key, structure: best.structure, repeat: best.repeat, newStructure, extended: extras.some((f) => f.id === best.item.family) });
+      const status = structureStatus(structureSeen, best.item), newStructure = status === 'unseen'; structureSeen.add(best.structure);
+      out.push({ item: presentation(best.item, rng), key: best.key, structure: best.structure, repeat: best.repeat, newStructure, structureStatus: status, extended: extras.some((f) => f.id === best.item.family) });
     }
   }
   return rng.shuffle(out);
@@ -53,6 +53,8 @@ export function transferSummary(records) {
       intervalN: intervals.length, intervalMean: intervals.length ? intervals.reduce((s, r) => s + r.score, 0) / intervals.length : null };
   };
   return { all: summary(records), unseen: summary(records.filter((r) => !r.repeat)),
-    newStructure: summary(records.filter((r) => !r.repeat && r.newStructure)),
-    familiarStructure: summary(records.filter((r) => !r.repeat && !r.newStructure)), review: summary(records.filter((r) => r.repeat)) };
+    newStructure: summary(records.filter((r) => !r.repeat && r.newStructure && r.structureStatus !== 'legacy-unknown')),
+    familiarStructure: summary(records.filter((r) => !r.repeat && !r.newStructure && r.structureStatus !== 'legacy-unknown')),
+    unknownStructure: summary(records.filter((r) => !r.repeat && r.structureStatus === 'legacy-unknown')),
+    review: summary(records.filter((r) => r.repeat)) };
 }

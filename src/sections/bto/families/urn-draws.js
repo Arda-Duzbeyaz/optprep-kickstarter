@@ -57,7 +57,7 @@ export default {
       hints: ['Does the order of the drawn balls matter for the colour count?', `Count sets: choose ${jj} of ${r} reds and ${k - jj} of ${b} blues.`, `${termText} over C(${n},${k}).`],
       picture: table(['Reds in the hand', 'Sets', `Out of C(${n},${k}) = ${nCr(n, k)}`], Array.from({ length: k + 1 }, (_, t) => [`${t}${terms.includes(t) ? ' (wanted)' : ''}`, `C(${r},${t}) × C(${b},${k - t}) = ${nCr(r, t) * nCr(b, k - t)}`, hyper(r, b, k, t).toString()]), `Every hand of ${k} balls has some number of reds, so the column adds to 1. The wanted row${terms.length > 1 ? 's add' : ' gives'} ${value}.`),
       fast: `${termText} = ${value.mul(new Q(nCr(n, k), 1n))} sets out of ${nCr(n, k)}: ${value}.`,
-      check: `The rows for 0 to ${k} reds add to 1. With replacement the answer would be ${withRep}; drawing without replacement moves it, so an option equal to that used the wrong model.`,
+      check: `The rows for 0 to ${k} reds add to 1. With replacement the answer would be ${withRep}. The models differ, although their answers can coincide for a particular event; identify the model from the assumptions, not the numerical answer alone.`,
       data: { r, b, k, j: jj, atLeast },
     });
   },
@@ -80,7 +80,7 @@ export default {
     anchor: 'Binomial = k independent draws with the same p. Hypergeometric = the same question with one change: draws do not go back, so p changes, and counting subsets replaces multiplying fixed p.',
     steps: [
       { say: 'Count subsets: C(r + b, k) equally likely hands.', why: 'Without replacement, every k-subset is equally likely.' },
-      { say: 'Favourable: C(r, j) ways to pick the reds × C(b, k − j) ways to pick the blues.', why: 'Independent choices inside the hand multiply.' },
+      { say: 'Favourable: C(r, j) ways to pick the reds × C(b, k − j) ways to pick the blues.', why: 'Each choice of a red subset pairs with each choice of a blue subset; this counting product does not require independent draws.' },
       { say: 'If you prefer a sequential product (reds first), multiply by C(k, j) orders.', why: 'Every order of the same colours has the same probability.' },
     ],
     predict: { question: 'Urn with 5 red, 5 blue; draw 2. Is P(one of each) above or below the binomial 1/2?', answer: 'Above: 25/45 = 5/9. Taking a red makes blue more likely next.' },

@@ -1,0 +1,2374 @@
+{
+  "baseline": "1.5.0-kickstarter.1",
+  "updated": "1.6.0-kickstarter.1",
+  "samplesPerLevel": 256,
+  "rows": [
+    {
+      "family": "event-algebra",
+      "difficulty": 1,
+      "before": null,
+      "after": {
+        "distinctPrompts": 250,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 116,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "complement",
+          "inclusion-exclusion",
+          "partition"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "event-algebra",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 204,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 92,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "inclusion-exclusion",
+          "independence",
+          "sample-space",
+          "three-events"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "two-dice-sum",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 60,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 11,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "disjoint-union",
+          "ordered-outcome-counting"
+        ],
+        "completeCatalogue": 66
+      },
+      "after": {
+        "distinctPrompts": 60,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 11,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "disjoint-union",
+          "ordered-outcome-counting"
+        ],
+        "completeCatalogue": 66
+      }
+    },
+    {
+      "family": "two-dice-sum",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 71,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 28,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "complement",
+          "disjoint-union",
+          "ordered-outcome-counting"
+        ],
+        "completeCatalogue": 91
+      },
+      "after": {
+        "distinctPrompts": 71,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 28,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "complement",
+          "disjoint-union",
+          "ordered-outcome-counting"
+        ],
+        "completeCatalogue": 91
+      }
+    },
+    {
+      "family": "die-repeats",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 48,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 48
+      },
+      "after": {
+        "distinctPrompts": 48,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 48
+      }
+    },
+    {
+      "family": "die-repeats",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 60,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 58,
+        "zeroAnswers": 2,
+        "oneAnswers": 4,
+        "operationTags": [],
+        "completeCatalogue": 60
+      },
+      "after": {
+        "distinctPrompts": 60,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 58,
+        "zeroAnswers": 2,
+        "oneAnswers": 4,
+        "operationTags": [],
+        "completeCatalogue": 60
+      }
+    },
+    {
+      "family": "dice-order-stats",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 26,
+        "authoredBranchProxies": 8,
+        "distinctAnswers": 13,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 26
+      },
+      "after": {
+        "distinctPrompts": 26,
+        "authoredBranchProxies": 8,
+        "distinctAnswers": 13,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 26
+      }
+    },
+    {
+      "family": "dice-order-stats",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 36,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 19,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 36
+      },
+      "after": {
+        "distinctPrompts": 36,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 19,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 36
+      }
+    },
+    {
+      "family": "three-dice",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 17,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 7,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 17
+      },
+      "after": {
+        "distinctPrompts": 17,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 7,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 17
+      }
+    },
+    {
+      "family": "three-dice",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 19,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 12,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 19,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 12,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "at-least-one",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 30,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 30
+      },
+      "after": {
+        "distinctPrompts": 30,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 30
+      }
+    },
+    {
+      "family": "at-least-one",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 117,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 46,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 117,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 46,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "at-least-one",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 27,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 27,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 27
+      },
+      "after": {
+        "distinctPrompts": 27,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 27,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 27
+      }
+    },
+    {
+      "family": "first-success",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      },
+      "after": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      }
+    },
+    {
+      "family": "first-success",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 21,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 19,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 22
+      },
+      "after": {
+        "distinctPrompts": 89,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 52,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 197
+      }
+    },
+    {
+      "family": "success-counts",
+      "difficulty": 1,
+      "before": null,
+      "after": {
+        "distinctPrompts": 179,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 87,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "binomial"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "success-counts",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 228,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 171,
+        "zeroAnswers": 8,
+        "oneAnswers": 6,
+        "operationTags": [
+          "binomial",
+          "hypergeometric",
+          "tail-sum"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "success-counts",
+      "difficulty": 3,
+      "before": null,
+      "after": {
+        "distinctPrompts": 251,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 143,
+        "zeroAnswers": 17,
+        "oneAnswers": 0,
+        "operationTags": [
+          "binomial",
+          "binomial-hypergeometric-transfer",
+          "conditioning",
+          "distribution-recursion",
+          "independence",
+          "position-counting",
+          "unequal-bernoulli"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "conditional-dice",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 52,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 8,
+        "zeroAnswers": 0,
+        "oneAnswers": 9,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 52,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 8,
+        "zeroAnswers": 0,
+        "oneAnswers": 9,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "conditional-dice",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 73,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 28,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 73,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 28,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "card-symmetry",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 36,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 2,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "exchangeability"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 36,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 2,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "exchangeability"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "card-symmetry",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 93,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 54,
+        "zeroAnswers": 5,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "exchangeability",
+          "relative-order-symmetry",
+          "without-replacement"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 93,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 54,
+        "zeroAnswers": 5,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "exchangeability",
+          "relative-order-symmetry",
+          "without-replacement"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "card-draws",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 21,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 19,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditional-chain",
+          "without-replacement"
+        ],
+        "completeCatalogue": 21
+      },
+      "after": {
+        "distinctPrompts": 21,
+        "authoredBranchProxies": 7,
+        "distinctAnswers": 19,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditional-chain",
+          "without-replacement"
+        ],
+        "completeCatalogue": 21
+      }
+    },
+    {
+      "family": "card-draws",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 57,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 54,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "combinatorial-counting",
+          "complement",
+          "conditional-chain",
+          "without-replacement"
+        ],
+        "completeCatalogue": 57
+      },
+      "after": {
+        "distinctPrompts": 57,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 54,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "combinatorial-counting",
+          "complement",
+          "conditional-chain",
+          "without-replacement"
+        ],
+        "completeCatalogue": 57
+      }
+    },
+    {
+      "family": "card-draws",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 49,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 48,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "combinatorial-counting",
+          "complement",
+          "conditional-chain",
+          "exclusion",
+          "without-replacement"
+        ],
+        "completeCatalogue": 49
+      },
+      "after": {
+        "distinctPrompts": 49,
+        "authoredBranchProxies": 5,
+        "distinctAnswers": 48,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "combinatorial-counting",
+          "complement",
+          "conditional-chain",
+          "exclusion",
+          "without-replacement"
+        ],
+        "completeCatalogue": 49
+      }
+    },
+    {
+      "family": "urn-draws",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 98,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 45,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 98,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 45,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "urn-draws",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 187,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 123,
+        "zeroAnswers": 0,
+        "oneAnswers": 3,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 187,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 123,
+        "zeroAnswers": 0,
+        "oneAnswers": 3,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "restricted-counting",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 121,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 53,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "block-method",
+          "complement",
+          "conditional-product",
+          "multivariate-hypergeometric",
+          "ordered-counting",
+          "permutation",
+          "unordered-counting"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "restricted-counting",
+      "difficulty": 3,
+      "before": null,
+      "after": {
+        "distinctPrompts": 64,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 47,
+        "zeroAnswers": 9,
+        "oneAnswers": 0,
+        "operationTags": [
+          "combination",
+          "conditioning",
+          "gap-method",
+          "impossibility",
+          "multiset-permutation",
+          "multivariate-hypergeometric",
+          "overcounting",
+          "restricted-counting"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "coin-sequences",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 18
+      },
+      "after": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 18
+      }
+    },
+    {
+      "family": "coin-sequences",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 47,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 23,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 47,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 23,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "coin-sequences",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 27,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 27,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "race-to-k",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 11,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      },
+      "after": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 11,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      }
+    },
+    {
+      "family": "race-to-k",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 30,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 27,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 30
+      },
+      "after": {
+        "distinctPrompts": 30,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 27,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 30
+      }
+    },
+    {
+      "family": "pattern-waiting",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 28,
+        "authoredBranchProxies": 9,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "self-overlap",
+          "state-dependent-waiting"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 28,
+        "authoredBranchProxies": 9,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "self-overlap",
+          "state-dependent-waiting"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "pattern-waiting",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 61,
+        "authoredBranchProxies": 27,
+        "distinctAnswers": 21,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "competing-patterns",
+          "cross-overlap",
+          "self-overlap",
+          "state-dependent-waiting"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 61,
+        "authoredBranchProxies": 27,
+        "distinctAnswers": 21,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "competing-patterns",
+          "cross-overlap",
+          "self-overlap",
+          "state-dependent-waiting"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "bayes-test",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 24,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 24,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 6,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "bayes-test",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 198,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 97,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 198,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 97,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "bayes-test",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 223,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 150,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 223,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 150,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "bayes-boxes",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 149,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 110,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 149,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 110,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "bayes-boxes",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 116,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 92,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 116,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 92,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "monty-hall",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 20,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 20
+      },
+      "after": {
+        "distinctPrompts": 20,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 20
+      }
+    },
+    {
+      "family": "monty-hall",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 28,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 19,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 28
+      },
+      "after": {
+        "distinctPrompts": 28,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 19,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 28
+      }
+    },
+    {
+      "family": "pigeonhole",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 92,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 1,
+        "zeroAnswers": 0,
+        "oneAnswers": 256,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 92,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 1,
+        "zeroAnswers": 0,
+        "oneAnswers": 256,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "pigeonhole",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 119,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 62,
+        "zeroAnswers": 0,
+        "oneAnswers": 81,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 119,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 62,
+        "zeroAnswers": 0,
+        "oneAnswers": 81,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "birthday",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 16,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 16,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "birthday",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 21,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 21,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 21,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 21,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "derangements",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 6,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 6,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "derangements",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 64,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 16,
+        "zeroAnswers": 70,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 64,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 16,
+        "zeroAnswers": 70,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "expected-waiting",
+      "difficulty": 1,
+      "before": {
+        "distinctPrompts": 14,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 14,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "expected-waiting",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 33,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 24,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 33,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 24,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "expected-waiting",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 16,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 16,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "coupon-collector",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 19,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 19
+      },
+      "after": {
+        "distinctPrompts": 19,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 9,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 19
+      }
+    },
+    {
+      "family": "coupon-collector",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 32,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 41
+      },
+      "after": {
+        "distinctPrompts": 41,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 32,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 41
+      }
+    },
+    {
+      "family": "linearity",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 17,
+        "zeroAnswers": 0,
+        "oneAnswers": 102,
+        "operationTags": [
+          "linearity-of-expectation",
+          "overlapping-indicators",
+          "symmetry"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 23,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 17,
+        "zeroAnswers": 0,
+        "oneAnswers": 102,
+        "operationTags": [
+          "linearity-of-expectation",
+          "overlapping-indicators",
+          "symmetry"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "linearity",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 25,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "complement",
+          "linearity-of-expectation",
+          "symmetry"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 25,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "complement",
+          "linearity-of-expectation",
+          "symmetry"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "linearity",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 22,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 21,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "complement",
+          "linearity-of-expectation",
+          "symmetry"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 22,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 21,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "complement",
+          "linearity-of-expectation",
+          "symmetry"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "payout-models",
+      "difficulty": 1,
+      "before": null,
+      "after": {
+        "distinctPrompts": 255,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 165,
+        "zeroAnswers": 4,
+        "oneAnswers": 14,
+        "operationTags": [
+          "expected-value",
+          "net-versus-gross"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "payout-models",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 226,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 147,
+        "zeroAnswers": 5,
+        "oneAnswers": 4,
+        "operationTags": [
+          "break-even",
+          "expected-value",
+          "payoff-transformation"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "payout-models",
+      "difficulty": 3,
+      "before": null,
+      "after": {
+        "distinctPrompts": 253,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 165,
+        "zeroAnswers": 0,
+        "oneAnswers": 1,
+        "operationTags": [
+          "bayes",
+          "conditional-expectation",
+          "conditioning",
+          "expected-value",
+          "mixture",
+          "total-expectation"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "variance-dependence",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 251,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 219,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "affine-scaling",
+          "moments",
+          "variance"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "variance-dependence",
+      "difficulty": 3,
+      "before": null,
+      "after": {
+        "distinctPrompts": 212,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 175,
+        "zeroAnswers": 36,
+        "oneAnswers": 0,
+        "operationTags": [
+          "covariance",
+          "independence",
+          "independent-sum",
+          "joint-distribution",
+          "shared-randomness",
+          "variance",
+          "variance-of-sum",
+          "without-replacement"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "variance-dependence",
+      "difficulty": 4,
+      "before": null,
+      "after": {
+        "distinctPrompts": 177,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 78,
+        "zeroAnswers": 0,
+        "oneAnswers": 2,
+        "operationTags": [
+          "bayes",
+          "independent-mixture",
+          "shared-source-dependence",
+          "total-variance"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "discrete-sums",
+      "difficulty": 2,
+      "before": null,
+      "after": {
+        "distinctPrompts": 199,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 3,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "convolution",
+          "joint-distribution"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "discrete-sums",
+      "difficulty": 3,
+      "before": null,
+      "after": {
+        "distinctPrompts": 256,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 183,
+        "zeroAnswers": 0,
+        "oneAnswers": 9,
+        "operationTags": [
+          "convolution",
+          "joint-distribution",
+          "random-horizon",
+          "strict-comparison",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "discrete-sums",
+      "difficulty": 4,
+      "before": null,
+      "after": {
+        "distinctPrompts": 256,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 94,
+        "zeroAnswers": 4,
+        "oneAnswers": 71,
+        "operationTags": [
+          "conditional-dependence",
+          "conditioning",
+          "convolution",
+          "independence",
+          "shared-randomness",
+          "sum-event"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "expected-extremes",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 20,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 20
+      },
+      "after": {
+        "distinctPrompts": 20,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 20
+      }
+    },
+    {
+      "family": "expected-extremes",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 29,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 26,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 29
+      },
+      "after": {
+        "distinctPrompts": 29,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 26,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 29
+      }
+    },
+    {
+      "family": "expected-extremes",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 13,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 10,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 13
+      },
+      "after": {
+        "distinctPrompts": 13,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 10,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 13
+      }
+    },
+    {
+      "family": "dice-duel",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 16
+      },
+      "after": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 16
+      }
+    },
+    {
+      "family": "dice-duel",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 10,
+        "zeroAnswers": 6,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 18
+      },
+      "after": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 10,
+        "zeroAnswers": 6,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 18
+      }
+    },
+    {
+      "family": "dice-games-ev",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 22,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 22,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "dice-games-ev",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 25,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 25
+      },
+      "after": {
+        "distinctPrompts": 25,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 25
+      }
+    },
+    {
+      "family": "dice-games-ev",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      },
+      "after": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 15,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      }
+    },
+    {
+      "family": "card-stopping",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 13,
+        "zeroAnswers": 29,
+        "oneAnswers": 21,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 13,
+        "zeroAnswers": 29,
+        "oneAnswers": 21,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "card-stopping",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 15,
+        "zeroAnswers": 14,
+        "oneAnswers": 26,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 16,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 15,
+        "zeroAnswers": 14,
+        "oneAnswers": 26,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "running-sum",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 14,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 14,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "running-sum",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 57,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 57,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 57,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 57,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "random-walk-line",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 106,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 38,
+        "zeroAnswers": 63,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 106,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 38,
+        "zeroAnswers": 63,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "random-walk-line",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 46,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 33,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 46,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 33,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "polygon-walk",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 11,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 18,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 11,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "polygon-walk",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 54,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 26,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 54,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 26,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "polygon-walk",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 29,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 13,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 29,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 13,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "gamblers-ruin",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 206,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 90,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 206,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 90,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "gamblers-ruin",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 188,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 59,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 188,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 59,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "gamblers-ruin",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 217,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 165,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 217,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 165,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "clt-estimates",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 20,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 20,
+        "authoredBranchProxies": 1,
+        "distinctAnswers": 20,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "clt-estimates",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 46,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 46,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 46,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 46,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "uniform-geometry",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      },
+      "after": {
+        "distinctPrompts": 15,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 15
+      }
+    },
+    {
+      "family": "uniform-geometry",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 14,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 14
+      },
+      "after": {
+        "distinctPrompts": 14,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 14,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 14
+      }
+    },
+    {
+      "family": "uniform-geometry",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 26,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 27
+      },
+      "after": {
+        "distinctPrompts": 26,
+        "authoredBranchProxies": 4,
+        "distinctAnswers": 25,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [],
+        "completeCatalogue": 27
+      }
+    },
+    {
+      "family": "information-protocols",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 80,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 43,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "independence",
+          "observation-selection"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 80,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 43,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "independence",
+          "observation-selection"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "information-protocols",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 164,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 44,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "dependent-sampling",
+          "independence",
+          "observation-selection"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 164,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 44,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "dependent-sampling",
+          "independence",
+          "observation-selection"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "information-protocols",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 187,
+        "authoredBranchProxies": 8,
+        "distinctAnswers": 83,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "dependent-sampling",
+          "independence",
+          "observation-error",
+          "observation-selection",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 187,
+        "authoredBranchProxies": 8,
+        "distinctAnswers": 83,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "conditioning",
+          "dependent-sampling",
+          "independence",
+          "observation-error",
+          "observation-selection",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 2,
+      "before": {
+        "distinctPrompts": 166,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 119,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "independence",
+          "mixture-dependence",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 166,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 119,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "independence",
+          "mixture-dependence",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 3,
+      "before": {
+        "distinctPrompts": 238,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 166,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "counting",
+          "independence",
+          "mixture-dependence",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 238,
+        "authoredBranchProxies": 2,
+        "distinctAnswers": 166,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "counting",
+          "independence",
+          "mixture-dependence",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 4,
+      "before": {
+        "distinctPrompts": 237,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 138,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "bayes",
+          "independence",
+          "mixture-dependence",
+          "posterior-prediction",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 237,
+        "authoredBranchProxies": 6,
+        "distinctAnswers": 138,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "bayes",
+          "independence",
+          "mixture-dependence",
+          "posterior-prediction",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      }
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 5,
+      "before": {
+        "distinctPrompts": 245,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 173,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "bayes",
+          "independence",
+          "mixture-dependence",
+          "posterior-prediction",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      },
+      "after": {
+        "distinctPrompts": 245,
+        "authoredBranchProxies": 3,
+        "distinctAnswers": 173,
+        "zeroAnswers": 0,
+        "oneAnswers": 0,
+        "operationTags": [
+          "bayes",
+          "independence",
+          "mixture-dependence",
+          "posterior-prediction",
+          "total-probability"
+        ],
+        "completeCatalogue": null
+      }
+    }
+  ],
+  "itemsVerified": 46080,
+  "optionPositions": [
+    5089,
+    5065,
+    4944,
+    5008,
+    4982
+  ],
+  "preservedFiles": [
+    {
+      "path": "LICENSE",
+      "sha256": "5870a49cfb94ebb9dc3c192a41ad1f76205bbc81724df9461e1300d0eeef939f",
+      "unchanged": true
+    },
+    {
+      "path": "config/presets.js",
+      "sha256": "d4d3ccc061f5ef89a09b30bc8b3bc26081e60fb5ede25817eeb9b7a749bfe626",
+      "unchanged": true
+    },
+    {
+      "path": "config/sections.js",
+      "sha256": "d2cc53cbd7c5fb26f3e7defe64e6e4948207eec7f87ebe09f0b4a854ad6b946f",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/store.js",
+      "sha256": "5e177f95cfdb9211dd18b3fe251dd3262cc31d4b08c316104b509df4657e4205",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/migrate.js",
+      "sha256": "a07db9ee711ae10625015813ac013d880d65fe2beb1c3e2dcb7c43fb3dbdac0f",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/questions.js",
+      "sha256": "e56c9647699fbff210e1f95b10e39ad09ea70f3067698c3b4c042db55a9ab5dd",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/recognition.js",
+      "sha256": "0338c3c8431fce1a9b842842294b0c8c789128745a2c6644432fa552532f9226",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/learning.js",
+      "sha256": "6566b7b41faa37145dedfc87b8b5b728ac0598645aaa692a70685e0c73488ece",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/mixed-training.js",
+      "sha256": "cdcbcbf08233319d1c0a9cd6f3c97cb5248d8b3fe698131fe3bffe496a785060",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/check.js",
+      "sha256": "428747a679597d54f063f228cb86bf68d312fa6b2668dfd6b525309fbbef61c6",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/runner.js",
+      "sha256": "4b317752f77f374b94e1a7542b433086b618e6c309907b1a7f2127c29eb0f35b",
+      "unchanged": true
+    }
+  ],
+  "limits": [
+    "Sampled distinct prompts measure visible variation, not conceptual transfer.",
+    "Authored branches and operation tags are review aids, not independent measures of reasoning.",
+    "No human trial, actual Optiver item-bank access, score calibration or pass-rate validation.",
+    "Finite domains remain finite; bounded novelty searches do not prove infinite capacity."
+  ],
+  "before": {
+    "btoPracticeFamilies": 34,
+    "btoFamilyLevels": 82
+  },
+  "after": {
+    "btoMainFamilies": 38,
+    "btoPracticeFamilies": 40,
+    "btoFamilyLevels": 98
+  }
+}

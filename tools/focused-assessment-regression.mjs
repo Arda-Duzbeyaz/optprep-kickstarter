@@ -11,11 +11,14 @@ import { recognitionStep, recognitionProgress } from '../src/core/recognition.js
 import { transferItems } from '../src/transfer/draw.js';
 import { SECTIONS } from '../config/sections.js';
 import { activatePreset } from '../config/presets.js';
+import { recordMixedAttempt } from '../src/core/mixed-training.js';
+import { resolve } from 'node:path';
 activatePreset({ id: 'kickstarter' });
 const report = { guided: 0, mixed: 0, mockPapers: 0, mockQuestions: 0, batchQuestions: 0, repeatedQuestions: 0, sectionCounts: {} };
 const allHistory = {}, allStructures = {};
 for (const sectionId of ['bto', 'nl', 'll', 'iv', 'ob']) {
   const section = PRACTICE_MODULES[sectionId], history = allHistory[sectionId] = new Set(), structures = allStructures[sectionId] = new Set(), recognition = {};
+  let ledger = { turn: 0, families: {} };
   const remember = (item) => { assert.equal(history.has(questionKey(item)), false, `${sectionId}/${item.family}: repeated question`); history.add(questionKey(item)); structures.add(structureKey(item)); };
   for (const f of section.families) {
     const rng = makeRng(`regression-learning:${sectionId}:${f.id}`);
@@ -26,10 +29,12 @@ for (const sectionId of ['bto', 'nl', 'll', 'iv', 'ob']) {
     for (let i = 0; i < 10; i++) {
       const targets = Object.fromEntries(section.families.map((f) => [f.id, recognitionProgress(recognition[f.id], f.levels).target]));
       const item = practiceItem(section, rng, {}, { familyPool: section.families.map((f) => f.id), targets, requireFresh: true, minFreshFamilies: 2,
-        excludeKeys: history, preferStructures: structures, avoidFamilies: [...round], shuffleOptions: true });
+        excludeKeys: history, preferStructures: structures, avoidFamilies: [...round], shuffleOptions: true,
+        mixedTraining: ledger, recognition: Object.fromEntries(Object.entries(recognition).map(([id,e]) => [`${sectionId}:${id}`,e])), spreadStructures: true });
       remember(item); report.mixed++; round.add(item.family); if (round.size === section.families.length) round.clear();
       const f = section.families.find((f) => f.id === item.family);
       recognition[f.id] = recognitionStep(recognition[f.id], { key: questionKey(item), difficulty: item.difficulty, levels: f.levels, correct: true, ms: 1000, budgetMs: 90000 });
+      ledger = recordMixedAttempt(ledger, f.id, { key: questionKey(item), difficulty: item.difficulty, correct: true, fresh: true, standardTime: true, hints: 0, aided: false, uninterrupted: true, ms: 1000, budgetMs: 90000 });
     }
   }
   for (let paper = 0; paper < 30; paper++) {
@@ -43,6 +48,7 @@ for (const sectionId of ['bto', 'nl', 'll', 'iv', 'ob']) {
   }
   report.sectionCounts[sectionId] = history.size;
 }
-assert.equal(report.guided, 1030); assert.equal(report.mixed, 1000); assert.equal(report.mockQuestions, 2970); assert.equal(report.batchQuestions, 500);
-writeFileSync(new URL('../evaluation/focused-assessment-regression.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
+assert.equal(report.guided, ['bto','nl','ll','iv','ob'].reduce((n,sid)=>n+10*PRACTICE_MODULES[sid].families.length,0));
+assert.equal(report.mixed, 1000); assert.equal(report.mockQuestions, 2970); assert.equal(report.batchQuestions, 500);
+writeFileSync(process.argv[2] ? resolve(process.argv[2]) : new URL('../evaluation/focused-assessment-regression.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report, null, 2));

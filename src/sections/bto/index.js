@@ -1,5 +1,5 @@
 // Beat the Odds: every family below is a generator + independent verifier + lesson.
-// Order follows the rough difficulty ramp of the real test (symmetry and counting first, EV and walks later).
+// This is a training curriculum order, not an official Optiver syllabus or difficulty calibration.
 import twoDiceSum from './families/two-dice-sum.js';
 import dieRepeats from './families/die-repeats.js';
 import diceOrderStats from './families/dice-order-stats.js';
@@ -32,19 +32,28 @@ import polygonWalk from './families/polygon-walk.js';
 import gamblersRuin from './families/gamblers-ruin.js';
 import cltEstimates from './families/clt-estimates.js';
 import uniformGeometry from './families/uniform-geometry.js';
+import eventAlgebra from './families/event-algebra.js';
+import successCounts from './families/success-counts.js';
+import payoutModels from './families/payout-models.js';
+import restrictedCounting from './families/restricted-counting.js';
+import varianceDependence from './families/variance-dependence.js';
+import discreteSums from './families/discrete-sums.js';
 import bank from './bank.js';
 
 export const families = [
+  eventAlgebra,
   twoDiceSum,
   dieRepeats,
   diceOrderStats,
   threeDice,
   atLeastOne,
   firstSuccess,
+  successCounts,
   conditionalDice,
   cardSymmetry,
   cardDraws,
   urnDraws,
+  restrictedCounting,
   coinSequences,
   raceToK,
   patternWaiting,
@@ -57,6 +66,9 @@ export const families = [
   expectedWaiting,
   couponCollector,
   linearity,
+  payoutModels,
+  varianceDependence,
+  discreteSums,
   expectedExtremes,
   diceDuel,
   diceGamesEv,

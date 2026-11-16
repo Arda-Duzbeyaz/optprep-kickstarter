@@ -1,0 +1,14 @@
+{
+  "method": "Executed the unchanged Pages workflow static assembly and placeholder replacement locally, without publication",
+  "cacheEntries": 458,
+  "relativeImportsResolved": 1205,
+  "newModulesPrecached": [
+    "src/core/mixed-training.js",
+    "src/practice/availability.js",
+    "src/sections/bto/structures.js",
+    "src/ui/mixed-evidence.js"
+  ],
+  "serviceWorkerSyntaxPassed": true,
+  "remoteGithubActionsRun": false,
+  "published": false
+}

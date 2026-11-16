@@ -1,0 +1,15 @@
+{
+  "guided": 1030,
+  "mixed": 1000,
+  "mockPapers": 150,
+  "mockQuestions": 2970,
+  "batchQuestions": 500,
+  "repeatedQuestions": 0,
+  "sectionCounts": {
+    "bto": 1240,
+    "nl": 1380,
+    "ll": 910,
+    "iv": 990,
+    "ob": 980
+  }
+}

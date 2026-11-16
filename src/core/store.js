@@ -12,6 +12,7 @@ import { practiceSuccess } from './check.js';
 import { addLearningBlock, learningBlock, snapshotLearningBlock } from './learning.js';
 import { questionKey, QUESTION_HISTORY_LIMIT } from './questions.js';
 import { structureKey, STRUCTURE_HISTORY_LIMIT } from '../transfer/profile.js';
+import { recordMixedAttempt, boundMixedDetails } from './mixed-training.js';
 
 export const KEY = 'optprep:v2';
 export const LEGACY_KEY = 'oa-trainer:v1';
@@ -31,6 +32,7 @@ const read = (backend, k) => { try { return backend.getItem(k); } catch { return
 
 // Trim the bulky history first so a full quota never loses lessons, stats or settings.
 export function compact(state, now = Date.now()) {
+  state.runs = boundMixedDetails(state.runs || []);
   state.mistakes = (state.mistakes || []).slice(-250);
   if (state.studyMeta?.log) state.studyMeta.log = state.studyMeta.log.slice(-2000);
   state.calibration = (state.calibration || []).slice(-1000);
@@ -87,7 +89,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     get migratedFrom() { return migratedFrom; },
     // Displayed-question history also matters: backend adoption must not erase
     // exposure tracking just because no ordinary answer has been submitted yet.
-    isEmpty() { return !Object.keys(state.learningCoverage).length && !Object.keys(state.recognition).length && !Object.keys(state.activePractice).length && !Object.keys(state.mixedEvidence).length && !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
+    isEmpty() { return !Object.keys(state.mixedTraining).length && !Object.keys(state.learningCoverage).length && !Object.keys(state.recognition).length && !Object.keys(state.activePractice).length && !Object.keys(state.mixedEvidence).length && !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
     save,
     // One answer from any mode. Updates stats, the recency trend, the skill level, XP and
     // the mistake log, then saves once.
@@ -120,6 +122,9 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
         revisionAttempts: (state.learningCoverage[k]?.revisionAttempts || 0) + Number(!fresh) };
       if (mixed && fresh && standardTime && levels?.length && ['practice', 'drill'].includes(mode))
         state.recognition[k] = recognitionStep(state.recognition[k], { key, correct, hints, ms, budgetMs, uninterrupted, difficulty, levels, aided }, now);
+      if (mixed && levels?.includes(difficulty) && key && ['practice', 'drill'].includes(mode))
+        state.mixedTraining[section] = recordMixedAttempt(state.mixedTraining[section], family,
+          { key, correct, hints, ms, budgetMs, uninterrupted, difficulty, aided, fresh, standardTime });
       addXp(xpFor({ type: 'answer', mode, correct, hints, ms }));
       if (!correct && miss) upsertMistake(state.mistakes, miss);
       if (confidence != null) {
@@ -156,10 +161,12 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       if (run?.max && (!run.blockId || !state.runs.some((r) => r.section === section && r.blockId === run.blockId))) {
         const r = { ...run, section, mode: 'practice', finishedAt: clock() }; state.runs.push(r); hooks.run?.(r);
       }
+      state.runs = boundMixedDetails(state.runs);
       save();
     },
     mixedEvidence() { return state.mixedEvidence; },
     recognition() { return state.recognition; },
+    mixedTraining(section) { return state.mixedTraining[section] || { turn: 0, families: {} }; },
     coverage(section, family) {
       const key = `${section}:${family}`;
       return coverageInfo(state.learningCoverage[key], state.mastery[key], state.recognition[key], state.stats[key]);
@@ -172,6 +179,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     recordRun(run) {
       const r = { finishedAt: clock(), ...run };
       state.runs.push(r);
+      state.runs = boundMixedDetails(state.runs);
       if (run.mode === 'exam' || run.mode === 'set') {
         addXp(xpFor({ type: 'checkpoint', net: run.score, targetMet: run.targetMet }));
         if (run.perfect) state.activity.freezes = Math.min(MAX_FREEZES, (state.activity.freezes || 0) + 1);

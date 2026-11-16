@@ -1,7 +1,18 @@
 // Conservative generator-branch proxies, not a measure of conceptual novelty.
+import { btoStructure } from '../sections/bto/structures.js';
 const FIELDS = new Set(['kind', 'mode', 'variant', 'scenario', 'structure', 'v', 'k', 'op', 'type', 't', 'key', 'task', 'protocol', 'replacement', 'shared', 'atLeast', 'minOf', 'negative', 'reroll', 'children', 'older']);
 export const STRUCTURE_HISTORY_LIMIT = 2000;
 export function structureKey(item) {
+  const authored = btoStructure(item);
+  return authored ? `${item.section}/${item.family}/authored:${authored.id}` : legacyStructureKey(item);
+}
+export function structureOperations(item) { return [...(item.transfer?.operations || btoStructure(item)?.operations || [])]; }
+export function structureStatus(history, item) {
+  const keys = new Set(history || []), key = structureKey(item), legacy = legacyStructureKey(item);
+  if (keys.has(key)) return 'seen';
+  return key !== legacy && keys.has(legacy) ? 'legacy-unknown' : 'unseen';
+}
+export function legacyStructureKey(item) {
   if (item.transfer?.structure) return `${item.section}/${item.family}/${item.transfer.structure}`;
   const tags = [];
   function visit(value, path = '', depth = 0) {

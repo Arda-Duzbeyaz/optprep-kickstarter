@@ -25,5 +25,5 @@ export function mixedPracticeAction(store, id, { primary = true } = {}) {
   update();
   return h('div', { class: 'mixed-practice-action' },
     h('label', { for: selectId }, 'Question pool', pool), start, note,
-    h('p', { class: 'small-note muted' }, 'No forced timeout. The displayed pace budget controls checkpoint credit.'));
+    h('p', { class: 'small-note muted' }, 'No forced timeout. The displayed pace budget controls checkpoint credit. Coverage carries across blocks; other turns target accuracy and pace weaknesses.'));
 }

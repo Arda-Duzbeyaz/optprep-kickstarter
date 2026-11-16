@@ -55,3 +55,8 @@ test('summary separates intervals, new structures, familiar structures and revie
   const s = transferSummary([{ section: 'bto', correct: true, score: 1, newStructure: true }, { section: 'nl', correct: false, score: -1, newStructure: false }, { section: 'iv', correct: true, score: .001, newStructure: true }, { section: 'll', correct: true, score: 1, repeat: true, newStructure: true }]);
   assert.equal(s.unseen.regularN, 2); assert.equal(s.newStructure.regularCorrect, 1); assert.equal(s.newStructure.intervalMean, .001); assert.equal(s.familiarStructure.regularN, 1); assert.equal(s.review.displayed, 1);
 });
+
+test('coarse earlier structure evidence is unknown rather than a fabricated new branch', () => {
+  const summary = transferSummary([{ section: 'bto', correct: true, score: 1, newStructure: true, structureStatus: 'legacy-unknown' }]);
+  assert.equal(summary.unknownStructure.displayed, 1); assert.equal(summary.newStructure.displayed, 0); assert.equal(summary.familiarStructure.displayed, 0);
+});

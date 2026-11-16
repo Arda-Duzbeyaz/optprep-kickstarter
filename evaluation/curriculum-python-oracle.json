@@ -1,0 +1,15 @@
+{
+  "passed": 1519,
+  "failed": 0,
+  "arithmetic": "Python fractions.Fraction",
+  "models": "explicit finite paths, labelled subsets, unique strings, centred deviations",
+  "byFamily": {
+    "event-algebra": 224,
+    "success-counts": 224,
+    "payout-models": 256,
+    "restricted-counting": 192,
+    "variance-dependence": 256,
+    "discrete-sums": 192,
+    "first-success": 175
+  }
+}

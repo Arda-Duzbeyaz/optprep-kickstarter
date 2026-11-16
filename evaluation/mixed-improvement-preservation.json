@@ -1,0 +1,37 @@
+[
+  {
+    "path": "config/presets.js",
+    "unchangedFrom1_4_0": true,
+    "sha256": "d4d3ccc061f5ef89a09b30bc8b3bc26081e60fb5ede25817eeb9b7a749bfe626"
+  },
+  {
+    "path": "config/sections.js",
+    "unchangedFrom1_4_0": true,
+    "sha256": "d2cc53cbd7c5fb26f3e7defe64e6e4948207eec7f87ebe09f0b4a854ad6b946f"
+  },
+  {
+    "path": "src/core/questions.js",
+    "unchangedFrom1_4_0": true,
+    "sha256": "e56c9647699fbff210e1f95b10e39ad09ea70f3067698c3b4c042db55a9ab5dd"
+  },
+  {
+    "path": "src/core/recognition.js",
+    "unchangedFrom1_4_0": true,
+    "sha256": "0338c3c8431fce1a9b842842294b0c8c789128745a2c6644432fa552532f9226"
+  },
+  {
+    "path": "src/core/learning.js",
+    "unchangedFrom1_4_0": true,
+    "sha256": "6566b7b41faa37145dedfc87b8b5b728ac0598645aaa692a70685e0c73488ece"
+  },
+  {
+    "path": "src/core/check.js",
+    "unchangedFrom1_4_0": true,
+    "sha256": "428747a679597d54f063f228cb86bf68d312fa6b2668dfd6b525309fbbef61c6"
+  },
+  {
+    "path": "LICENSE",
+    "unchangedFrom1_4_0": true,
+    "sha256": "5870a49cfb94ebb9dc3c192a41ad1f76205bbc81724df9461e1300d0eeef939f"
+  }
+]

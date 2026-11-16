@@ -1,0 +1,93 @@
+[
+  {
+    "script": "tools/practice-flow-smoke.mjs",
+    "output": "104 practice-flow assertions passed: all answer kinds, drafts, feedback/RNG resume, levels, completion, mixed cues, visibility, recovery, dashboards and drill checkpoints.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 2.497
+  },
+  {
+    "script": "tools/learning-route-smoke.mjs",
+    "output": "100 learning-route assertions passed: deadline, coverage, cold mixed progression, real difficulty advancement, help, resume, settings, single-section transfer and progress preservation.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 2.503
+  },
+  {
+    "script": "tools/shared-practice-flow.mjs",
+    "output": "71 shared-practice assertions passed: prominent actions, all/covered pool settings, every extended family in learning, feedback/resume, cold mixed progression and next-step guidance.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 2.219
+  },
+  {
+    "script": "tools/learning-completion-flow.mjs",
+    "output": "Walkthrough: bto 40 learning families completed.\nWalkthrough: nl 30 learning families completed.\nWalkthrough: ll 16 learning families completed.\nWalkthrough: iv 15 learning families completed.\nWalkthrough: ob 8 learning families completed.\n{\"assertions\":716,\"learningFamilies\":109,\"learningQuestions\":1100,\"assessments\":5,\"batchChecks\":5,\"mockReviews\":5,\"uncaughtErrors\":0}\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 21.322
+  },
+  {
+    "script": "tools/practice-freshness-flow.mjs",
+    "output": "247 freshness-flow assertions passed: no repeats through finite exhaustion, cross-block/reload history, quiet legacy note, expanded die pool and preserved completion/cold rules.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.963
+  },
+  {
+    "script": "tools/focused-learning-flow.mjs",
+    "output": "76 focused-learning assertions passed: unique ten-question user example, saved-question resume, assisted coverage without cold credit, frozen level, honest finite exhaustion and unknown search failure.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.496
+  },
+  {
+    "script": "tools/unseen-session-flow.mjs",
+    "output": "24 unseen-session UI assertions passed: exhausted mixed block, fresh all-skills fallback, mock and batch preflight without clock/score/history mutation, and fresh batch start.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.31
+  },
+  {
+    "script": "tools/ui-smoke.mjs",
+    "output": "DOM integration passed: both clocks, Kickstarter mock selection, interval coverage/mastery, repeat exclusion.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.501
+  },
+  {
+    "script": "tools/transfer-smoke.mjs",
+    "output": "Transfer DOM passed: all response kinds, hidden methods, isolated results, preset, both clocks, extra time, displayed-only history and cleanup.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.634
+  },
+  {
+    "script": "tools/transfer-regression.mjs",
+    "output": "PASS review restores and locks the submitted MCQ\nPASS additional-family review links into the shared ordinary-practice library\nPASS ranking review shows probabilities and retains the submitted order\nPASS interval review restores bounds and disables its controls\nPASS orderbook review restores the submitted position and locks controls\nPASS answers changed after the item deadline do not replace the last valid answer\nPASS the overall deadline is enforced before submitting or showing another item\nPASS a late skip cannot erase an answer already committed before timeout\nPASS keyboard answers after the deadline are ignored\nPASS finishing on the last displayed question records a complete session\nPASS saving an unchanged fresh battery picker preserves the active Kickstarter preset\n11/11 focused interface regressions passed\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.438
+  },
+  {
+    "script": "tools/transfer-route-smoke.mjs",
+    "output": "Full-router DOM passed: delivered entry point, old-save migration, timing dropdown, all answer controls, keyboard repeat, complete result, history/reload, cleanup and Kickstarter mock.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.392
+  },
+  {
+    "script": "tools/mixed-improvement-flow.mjs",
+    "output": "143 mixed-improvement UI assertions passed: old progress, ten-question blocks, exposure ledger reload, real cold gates, detailed results, twenty-exposure checkpoint recovery and honest finite shortage.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.773
+  },
+  {
+    "script": "tools/curriculum-flow.mjs",
+    "output": "200 curriculum integration assertions passed: six real lessons, sixty fresh focused answers, saved-question/draft reload, preserved old progress, assisted coverage and a ten-question hidden-method mixed block.\n",
+    "error": "",
+    "exit": 0,
+    "seconds": 1.988
+  }
+]

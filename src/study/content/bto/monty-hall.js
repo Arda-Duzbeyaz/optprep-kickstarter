@@ -27,7 +27,7 @@ export default {
   kind: 'family',
   family: 'monty-hall',
   title: 'Monty Hall and the host\'s knowledge',
-  summary: 'Ask whether the host could have shown the car. Knowing host: your door keeps 1/n. Random host: all closed doors are equal.',
+  summary: 'The host policy determines the evidence. Labelled-door diagrams here assume uniform choice among legal reveals; strategy win rates can also be calculated without that extra assumption.',
   prerequisites: ['bto/bayes-boxes'],
   objectives: [
     'Derive the 2/3 switching answer with a probability tree, not by memory',
@@ -41,7 +41,7 @@ export default {
       { id: 'two-left', label: 'Two doors left, so 1/2', approach: 'Two closed doors and one car: answered 1/2.', breaksAt: 'The doors are not symmetric: the host could never touch yours, but he chose which of the others to open.' },
       { id: 'still-third', label: 'Every door stays at 1/3', approach: 'Each door started at 1/3, so the other closed door is still 1/3 and switching does not matter.', breaksAt: 'The opened door drops to 0, and its share has to go somewhere: all of it lands on the other closed door.' },
     ] },
-    { type: 'text', text: 'Several doors (boxes, envelopes) hide one prize. You pick one. A **host** then opens some of the others, showing no prize, and you may **stay or switch**. The question asks your chance of winning, and the crucial detail is **whether the host knows** where the prize is.' },
+    { type: 'text', text: 'Several doors (boxes, envelopes) hide one prize. You pick one. A **host** then opens some of the others, showing no prize, and you may **stay or switch**. The host’s knowledge and selection policy determine the evidence. For calculations conditioned on particular labelled reveals in this lesson, assume a knowing host chooses uniformly among all legal goat-door sets, and a blind host uniformly among eligible door sets. Without a specified policy, use the unconditional strategy calculation: initially wrong with (n−1)/n, then a uniform switch finds the car among k alternatives with 1/k. Do not infer identical labelled-door posteriors from the knowing host’s knowledge alone.' },
     { type: 'list', items: ['"Three doors, you pick door 1, the host (who knows) opens door 3: a goat. Switch?"', '"100 doors; the host opens 98 empty ones. Probability the last closed door has the car?"', '"The host does not know where the car is and opens a door at random: a goat. Now what is your chance if you switch?"'] },
     { type: 'check', scope: 'the recognition cues above', questions: [
       { type: 'choice', q: 'Which detail matters most in a Monty Hall question?', options: ['Whether the host could have shown the prize', 'Which door number you happened to pick first', 'Whether the prize is a car or something else', 'How many goats there are behind the doors'], answer: 0, traps: { 1: 'door labels are symmetric', 2: 'the prize is irrelevant', 3: 'it matters only through the number of doors' }, explain: 'A host who avoids the prize on purpose moves probability; a host who might have shown it does not.' },

@@ -1,5 +1,7 @@
 // Geometric distribution: first six on throw k, more than k throws, first success on an even throw.
 import { mcqItem, agree, qpow, q, pic } from '../lib.js';
+import { nCr } from '../../../core/combinatorics.js';
+import { Q } from '../../../core/rational.js';
 
 // Trials until the first success, cut after k trials. mark: 'hitK' marks the success on trial k,
 // 'none' marks the path of k misses.
@@ -17,13 +19,30 @@ export default {
   id: ID,
   section: 'bto',
   title: 'Waiting for the first success',
-  skill: 'Write the path: k − 1 misses then a hit; sum a geometric series for "odd/even" races',
+  skill: 'Model first and later successes, memorylessness and alternating races',
   levels: [1, 2],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const variant = difficulty === 1 ? rng.pick(['onK', 'moreThanK', 'fairCoinOnK']) : rng.pick(['coinOnK', 'evenThrow', 'duel']);
+    const variant = difficulty === 1 ? rng.pick(['onK', 'moreThanK', 'fairCoinOnK']) : rng.pick(['coinOnK', 'evenThrow', 'duel', 'memoryless', 'rth']);
     let o;
-    if (variant === 'onK' || variant === 'coinOnK' || variant === 'fairCoinOnK' || variant === 'moreThanK') {
+    if (variant === 'memoryless' || variant === 'rth') {
+      const [a,c]=rng.pick(COINS),p=q(a,c),miss=q(1).sub(p);
+      if(variant==='memoryless') {
+        const past=rng.int(1,6),m=rng.int(1,4),value=qpow(miss,m);
+        o={value,text:`Independent attempts each succeed with probability ${p}. The first ${past} attempts all failed. What is the probability that more than ${m} additional attempts are needed to obtain the first success?`,
+          data:{variant,a,c,past,m},
+          steps:[{say:`The condition fixes the past; the next ${m} attempts remain independent with success chance ${p}.`,why:'No shared hidden source or changing composition is present.'},{say:`More than ${m} further attempts means ${m} further failures: P = (${miss})^${m} = ${value}.`,why:'Geometric waiting is memoryless under these assumptions.'}],
+          distractors:[{value:qpow(miss,past+m),misconception:'Included already observed failures in the conditional probability.'},{value:q(1).sub(value),misconception:'Answered success within the additional attempts.'},{value:p.mul(value),misconception:'Required success immediately after the additional failures.'},{value:qpow(miss,m-1),misconception:'Counted one too few further failures.'}],
+          picture:pic('table',{columns:['Block','Role'],rows:[[`${past} observed failures`,'Given: not multiplied again'],[`${m} further failures`,value.toString()]]},'The new waiting clock starts after the observed failures.'),
+          hints:['Which trials are already known?','Only the additional failures are uncertain.'],fast:`Ignore the fixed past; (${miss})^${m} = ${value}.`,check:'This conditional probability is independent of the length of the observed failure run. A hidden source or no replacement would break this argument.'};
+      }else{
+        const r=rng.int(2,3),k=rng.int(r,7),value=new Q(nCr(k-1,r-1),1n).mul(qpow(p,r)).mul(qpow(miss,k-r));
+        o={value,text:`Independent attempts each succeed with probability ${p}. What is the probability that the ${ord(r)} success occurs on attempt ${k}?`,data:{variant,a,c,r,k},
+          steps:[{say:`Attempt ${k} must succeed; among the first ${k-1} attempts there must be exactly ${r-1} successes.`,why:'The last success is fixed at the requested stopping position.'},{say:`There are C(${k-1},${r-1}) earlier success-position sets. P = C(${k-1},${r-1})(${p})^${r}(${miss})^${k-r} = ${value}.`,why:'This is a fixed-count event followed by one success, not an unrestricted count in all k attempts.'}],
+          distractors:[{value:new Q(nCr(k,r),1n).mul(qpow(p,r)).mul(qpow(miss,k-r)),misconception:'Counted exactly r successes in k attempts without fixing the last attempt as a success.'},{value:qpow(p,r).mul(qpow(miss,k-r)),misconception:'Counted just one arrangement of the earlier successes.'},{value:qpow(miss,k-1).mul(p),misconception:'Used a first-success formula for a later success.'},{value:q(1).sub(value),misconception:'Answered the complement.'}],
+          picture:pic('table',{columns:['Attempts','Requirement'],rows:[[`1 through ${k-1}`,`${r-1} successes in any positions`],[String(k),'Success']]},'Fix the terminal success before choosing the earlier successful positions.'),hints:['What must happen on the last attempt?','Choose the other success positions among the earlier attempts.'],fast:`Fix the last success; choose the other ${r-1} positions among ${k-1}: ${value}.`,check:`When k=r all attempts must succeed, giving p^r. For r=1 this reduces to the ordinary first-success formula.`};
+      }
+    } else if (variant === 'onK' || variant === 'coinOnK' || variant === 'fairCoinOnK' || variant === 'moreThanK') {
       const coin = variant === 'coinOnK' || variant === 'fairCoinOnK';
       const [a, c] = variant === 'fairCoinOnK' ? [1, 2] : variant === 'coinOnK' ? rng.pick(COINS) : [1, 6];
       const p = q(a, c), m = q(1).sub(p);
@@ -104,7 +123,7 @@ export default {
     }
     return mcqItem(ID, rng, difficulty, {
       ...o,
-      rule: 'First success on trial k: (1 − p)^(k−1) p. More than k trials: (1 − p)^k. Alternating race: first mover wins with 1/(2 − p).',
+      rule: 'First success on k: (1−p)^(k−1)p. After observed failures the independent future is unchanged. The rth success on k requires r−1 successes in k−1 attempts, then success.',
       anchor: 'A single trial succeeds with p. Waiting for the first success = the same trial repeated, with the one change that every earlier trial must fail.',
     });
   },
@@ -112,6 +131,12 @@ export default {
   // Independent check: sum the series of path probabilities term by term.
   verify(item) {
     const d = item.params;
+    if(d.variant==='rth'||d.variant==='memoryless') {
+      const p=d.a/d.c;let hit=0,den=0;
+      const n=d.variant==='rth'?d.k:d.past+d.m;
+      function visit(xs,w){if(xs.length===n){const allowed=d.variant==='rth'||xs.slice(0,d.past).every(x=>!x);if(allowed){den+=w;if(d.variant==='rth'?xs.at(-1)===1&&xs.reduce((a,b)=>a+b,0)===d.r:xs.every(x=>!x))hit+=w;}return;}visit([...xs,0],w*(1-p));visit([...xs,1],w*p);}
+      visit([],1);return agree(item,hit/den,1e-10);
+    }
     if (d.variant === 'evenThrow' || d.variant === 'duel') {
       const p = 1 / 6;
       let even = 0;
@@ -133,6 +158,7 @@ export default {
       { say: 'Multiply along the path: (1 − p)^(k−1) p.', why: 'Independent trials multiply.' },
       { say: '"More than k trials" = the first k are all failures: (1 − p)^k.', why: 'It says nothing about what happens after trial k.' },
       { say: 'For turn-taking races, compare the two chances inside one round and ignore rounds with no winner.', why: 'A round with two misses returns the game to the same state.' },
+      { say: 'Observed failures do not change independent future trials. For the rth success on k, fix the last success and choose r−1 earlier success positions.', why: 'Memorylessness needs a constant success chance; later-success waiting combines a binomial count with a terminal success.' },
     ],
     predict: { question: 'Is the first six more likely on throw 1 or on throw 2?', answer: 'Throw 1: 1/6 against 5/36. Each later throw is less likely to be the first six because it needs the earlier misses.' },
     edge: 'With p = 1, the first success is always on trial 1: (1 − p)^(k−1) p is 1 for k = 1 and 0 afterwards.',

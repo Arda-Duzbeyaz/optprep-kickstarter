@@ -1,0 +1,2128 @@
+{
+  "baselineEdition": "1.4.0-kickstarter.1",
+  "currentEdition": "1.5.0-kickstarter.1",
+  "blockSize": 10,
+  "simulationsPerCondition": 80,
+  "rawSamplesPerLevel": 512,
+  "rows": [
+    {
+      "family": "two-dice-sum",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 21,
+        "authoredBranchProxies": 2,
+        "answerValues": 9
+      },
+      "after": {
+        "sampledQuestions": 65,
+        "authoredBranchProxies": 2,
+        "answerValues": 11
+      },
+      "configuredCapacityBefore": 21,
+      "configuredCapacityAfter": 66
+    },
+    {
+      "family": "two-dice-sum",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 21,
+        "authoredBranchProxies": 4,
+        "answerValues": 12
+      },
+      "after": {
+        "sampledQuestions": 87,
+        "authoredBranchProxies": 6,
+        "answerValues": 29
+      },
+      "configuredCapacityBefore": 21,
+      "configuredCapacityAfter": 91
+    },
+    {
+      "family": "die-repeats",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 48,
+        "authoredBranchProxies": 3,
+        "answerValues": 14
+      },
+      "after": {
+        "sampledQuestions": 48,
+        "authoredBranchProxies": 3,
+        "answerValues": 14
+      },
+      "configuredCapacityBefore": 48,
+      "configuredCapacityAfter": 48
+    },
+    {
+      "family": "die-repeats",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 60,
+        "authoredBranchProxies": 5,
+        "answerValues": 58
+      },
+      "after": {
+        "sampledQuestions": 60,
+        "authoredBranchProxies": 5,
+        "answerValues": 58
+      },
+      "configuredCapacityBefore": 60,
+      "configuredCapacityAfter": 60
+    },
+    {
+      "family": "dice-order-stats",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 26,
+        "authoredBranchProxies": 8,
+        "answerValues": 13
+      },
+      "after": {
+        "sampledQuestions": 26,
+        "authoredBranchProxies": 8,
+        "answerValues": 13
+      },
+      "configuredCapacityBefore": 26,
+      "configuredCapacityAfter": 26
+    },
+    {
+      "family": "dice-order-stats",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 36,
+        "authoredBranchProxies": 7,
+        "answerValues": 19
+      },
+      "after": {
+        "sampledQuestions": 36,
+        "authoredBranchProxies": 7,
+        "answerValues": 19
+      },
+      "configuredCapacityBefore": 36,
+      "configuredCapacityAfter": 36
+    },
+    {
+      "family": "three-dice",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 17,
+        "authoredBranchProxies": 7,
+        "answerValues": 7
+      },
+      "after": {
+        "sampledQuestions": 17,
+        "authoredBranchProxies": 7,
+        "answerValues": 7
+      },
+      "configuredCapacityBefore": 17,
+      "configuredCapacityAfter": 17
+    },
+    {
+      "family": "three-dice",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 19,
+        "authoredBranchProxies": 3,
+        "answerValues": 12
+      },
+      "after": {
+        "sampledQuestions": 19,
+        "authoredBranchProxies": 3,
+        "answerValues": 12
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "at-least-one",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 30,
+        "authoredBranchProxies": 2,
+        "answerValues": 15
+      },
+      "after": {
+        "sampledQuestions": 30,
+        "authoredBranchProxies": 2,
+        "answerValues": 15
+      },
+      "configuredCapacityBefore": 30,
+      "configuredCapacityAfter": 30
+    },
+    {
+      "family": "at-least-one",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 178,
+        "authoredBranchProxies": 2,
+        "answerValues": 47
+      },
+      "after": {
+        "sampledQuestions": 178,
+        "authoredBranchProxies": 2,
+        "answerValues": 47
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "at-least-one",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 27,
+        "authoredBranchProxies": 2,
+        "answerValues": 27
+      },
+      "after": {
+        "sampledQuestions": 27,
+        "authoredBranchProxies": 2,
+        "answerValues": 27
+      },
+      "configuredCapacityBefore": 27,
+      "configuredCapacityAfter": 27
+    },
+    {
+      "family": "first-success",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 3,
+        "answerValues": 15
+      },
+      "after": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 3,
+        "answerValues": 15
+      },
+      "configuredCapacityBefore": 15,
+      "configuredCapacityAfter": 15
+    },
+    {
+      "family": "first-success",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 22,
+        "authoredBranchProxies": 3,
+        "answerValues": 20
+      },
+      "after": {
+        "sampledQuestions": 22,
+        "authoredBranchProxies": 3,
+        "answerValues": 20
+      },
+      "configuredCapacityBefore": 22,
+      "configuredCapacityAfter": 22
+    },
+    {
+      "family": "conditional-dice",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 65,
+        "authoredBranchProxies": 7,
+        "answerValues": 8
+      },
+      "after": {
+        "sampledQuestions": 65,
+        "authoredBranchProxies": 7,
+        "answerValues": 8
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "conditional-dice",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 78,
+        "authoredBranchProxies": 4,
+        "answerValues": 15
+      },
+      "after": {
+        "sampledQuestions": 78,
+        "authoredBranchProxies": 4,
+        "answerValues": 15
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "card-symmetry",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 36,
+        "authoredBranchProxies": 1,
+        "answerValues": 2
+      },
+      "after": {
+        "sampledQuestions": 36,
+        "authoredBranchProxies": 1,
+        "answerValues": 2
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "card-symmetry",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 52,
+        "authoredBranchProxies": 3,
+        "answerValues": 3
+      },
+      "after": {
+        "sampledQuestions": 129,
+        "authoredBranchProxies": 4,
+        "answerValues": 74
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "card-draws",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 21,
+        "authoredBranchProxies": 7,
+        "answerValues": 19
+      },
+      "after": {
+        "sampledQuestions": 21,
+        "authoredBranchProxies": 7,
+        "answerValues": 19
+      },
+      "configuredCapacityBefore": 21,
+      "configuredCapacityAfter": 21
+    },
+    {
+      "family": "card-draws",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 13,
+        "authoredBranchProxies": 2,
+        "answerValues": 13
+      },
+      "after": {
+        "sampledQuestions": 57,
+        "authoredBranchProxies": 3,
+        "answerValues": 54
+      },
+      "configuredCapacityBefore": 13,
+      "configuredCapacityAfter": 57
+    },
+    {
+      "family": "card-draws",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 13,
+        "authoredBranchProxies": 3,
+        "answerValues": 13
+      },
+      "after": {
+        "sampledQuestions": 49,
+        "authoredBranchProxies": 5,
+        "answerValues": 48
+      },
+      "configuredCapacityBefore": 13,
+      "configuredCapacityAfter": 49
+    },
+    {
+      "family": "urn-draws",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 107,
+        "authoredBranchProxies": 1,
+        "answerValues": 45
+      },
+      "after": {
+        "sampledQuestions": 107,
+        "authoredBranchProxies": 1,
+        "answerValues": 45
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "urn-draws",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 270,
+        "authoredBranchProxies": 2,
+        "answerValues": 168
+      },
+      "after": {
+        "sampledQuestions": 270,
+        "authoredBranchProxies": 2,
+        "answerValues": 168
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "coin-sequences",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 2,
+        "answerValues": 9
+      },
+      "after": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 2,
+        "answerValues": 9
+      },
+      "configuredCapacityBefore": 18,
+      "configuredCapacityAfter": 18
+    },
+    {
+      "family": "coin-sequences",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 48,
+        "authoredBranchProxies": 2,
+        "answerValues": 23
+      },
+      "after": {
+        "sampledQuestions": 48,
+        "authoredBranchProxies": 2,
+        "answerValues": 23
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "coin-sequences",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 27,
+        "authoredBranchProxies": 2,
+        "answerValues": 25
+      },
+      "after": {
+        "sampledQuestions": 27,
+        "authoredBranchProxies": 2,
+        "answerValues": 25
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "race-to-k",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 1,
+        "answerValues": 11
+      },
+      "after": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 1,
+        "answerValues": 11
+      },
+      "configuredCapacityBefore": 15,
+      "configuredCapacityAfter": 15
+    },
+    {
+      "family": "race-to-k",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 30,
+        "authoredBranchProxies": 2,
+        "answerValues": 27
+      },
+      "after": {
+        "sampledQuestions": 30,
+        "authoredBranchProxies": 2,
+        "answerValues": 27
+      },
+      "configuredCapacityBefore": 30,
+      "configuredCapacityAfter": 30
+    },
+    {
+      "family": "pattern-waiting",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 28,
+        "authoredBranchProxies": 9,
+        "answerValues": 9
+      },
+      "after": {
+        "sampledQuestions": 28,
+        "authoredBranchProxies": 9,
+        "answerValues": 9
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "pattern-waiting",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 64,
+        "authoredBranchProxies": 27,
+        "answerValues": 21
+      },
+      "after": {
+        "sampledQuestions": 64,
+        "authoredBranchProxies": 27,
+        "answerValues": 21
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "bayes-test",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 24,
+        "authoredBranchProxies": 1,
+        "answerValues": 6
+      },
+      "after": {
+        "sampledQuestions": 24,
+        "authoredBranchProxies": 1,
+        "answerValues": 6
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "bayes-test",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 314,
+        "authoredBranchProxies": 1,
+        "answerValues": 111
+      },
+      "after": {
+        "sampledQuestions": 314,
+        "authoredBranchProxies": 1,
+        "answerValues": 111
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "bayes-test",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 396,
+        "authoredBranchProxies": 2,
+        "answerValues": 208
+      },
+      "after": {
+        "sampledQuestions": 396,
+        "authoredBranchProxies": 2,
+        "answerValues": 208
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "bayes-boxes",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 275,
+        "authoredBranchProxies": 2,
+        "answerValues": 174
+      },
+      "after": {
+        "sampledQuestions": 275,
+        "authoredBranchProxies": 2,
+        "answerValues": 174
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "bayes-boxes",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 165,
+        "authoredBranchProxies": 2,
+        "answerValues": 111
+      },
+      "after": {
+        "sampledQuestions": 165,
+        "authoredBranchProxies": 2,
+        "answerValues": 111
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "monty-hall",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 20,
+        "authoredBranchProxies": 2,
+        "answerValues": 20
+      },
+      "after": {
+        "sampledQuestions": 20,
+        "authoredBranchProxies": 2,
+        "answerValues": 20
+      },
+      "configuredCapacityBefore": 20,
+      "configuredCapacityAfter": 20
+    },
+    {
+      "family": "monty-hall",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 28,
+        "authoredBranchProxies": 2,
+        "answerValues": 19
+      },
+      "after": {
+        "sampledQuestions": 28,
+        "authoredBranchProxies": 2,
+        "answerValues": 19
+      },
+      "configuredCapacityBefore": 28,
+      "configuredCapacityAfter": 28
+    },
+    {
+      "family": "pigeonhole",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 143,
+        "authoredBranchProxies": 3,
+        "answerValues": 1
+      },
+      "after": {
+        "sampledQuestions": 143,
+        "authoredBranchProxies": 3,
+        "answerValues": 1
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "pigeonhole",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 168,
+        "authoredBranchProxies": 4,
+        "answerValues": 74
+      },
+      "after": {
+        "sampledQuestions": 168,
+        "authoredBranchProxies": 4,
+        "answerValues": 74
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "birthday",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 1,
+        "answerValues": 16
+      },
+      "after": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 1,
+        "answerValues": 16
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "birthday",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 21,
+        "authoredBranchProxies": 2,
+        "answerValues": 21
+      },
+      "after": {
+        "sampledQuestions": 21,
+        "authoredBranchProxies": 2,
+        "answerValues": 21
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "derangements",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 2,
+        "answerValues": 6
+      },
+      "after": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 2,
+        "answerValues": 6
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "derangements",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 66,
+        "authoredBranchProxies": 3,
+        "answerValues": 16
+      },
+      "after": {
+        "sampledQuestions": 66,
+        "authoredBranchProxies": 3,
+        "answerValues": 16
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "expected-waiting",
+      "difficulty": 1,
+      "before": {
+        "sampledQuestions": 14,
+        "authoredBranchProxies": 1,
+        "answerValues": 9
+      },
+      "after": {
+        "sampledQuestions": 14,
+        "authoredBranchProxies": 1,
+        "answerValues": 9
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "expected-waiting",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 33,
+        "authoredBranchProxies": 4,
+        "answerValues": 24
+      },
+      "after": {
+        "sampledQuestions": 33,
+        "authoredBranchProxies": 4,
+        "answerValues": 24
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "expected-waiting",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 3,
+        "answerValues": 16
+      },
+      "after": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 3,
+        "answerValues": 16
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "coupon-collector",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 19,
+        "authoredBranchProxies": 1,
+        "answerValues": 9
+      },
+      "after": {
+        "sampledQuestions": 19,
+        "authoredBranchProxies": 1,
+        "answerValues": 9
+      },
+      "configuredCapacityBefore": 19,
+      "configuredCapacityAfter": 19
+    },
+    {
+      "family": "coupon-collector",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 41,
+        "authoredBranchProxies": 1,
+        "answerValues": 32
+      },
+      "after": {
+        "sampledQuestions": 41,
+        "authoredBranchProxies": 1,
+        "answerValues": 32
+      },
+      "configuredCapacityBefore": 41,
+      "configuredCapacityAfter": 41
+    },
+    {
+      "family": "linearity",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 23,
+        "authoredBranchProxies": 3,
+        "answerValues": 17
+      },
+      "after": {
+        "sampledQuestions": 23,
+        "authoredBranchProxies": 3,
+        "answerValues": 17
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "linearity",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 25,
+        "authoredBranchProxies": 3,
+        "answerValues": 25
+      },
+      "after": {
+        "sampledQuestions": 25,
+        "authoredBranchProxies": 3,
+        "answerValues": 25
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "linearity",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 22,
+        "authoredBranchProxies": 3,
+        "answerValues": 21
+      },
+      "after": {
+        "sampledQuestions": 22,
+        "authoredBranchProxies": 3,
+        "answerValues": 21
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "expected-extremes",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 20,
+        "authoredBranchProxies": 2,
+        "answerValues": 20
+      },
+      "after": {
+        "sampledQuestions": 20,
+        "authoredBranchProxies": 2,
+        "answerValues": 20
+      },
+      "configuredCapacityBefore": 20,
+      "configuredCapacityAfter": 20
+    },
+    {
+      "family": "expected-extremes",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 29,
+        "authoredBranchProxies": 3,
+        "answerValues": 26
+      },
+      "after": {
+        "sampledQuestions": 29,
+        "authoredBranchProxies": 3,
+        "answerValues": 26
+      },
+      "configuredCapacityBefore": 29,
+      "configuredCapacityAfter": 29
+    },
+    {
+      "family": "expected-extremes",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 13,
+        "authoredBranchProxies": 1,
+        "answerValues": 10
+      },
+      "after": {
+        "sampledQuestions": 13,
+        "authoredBranchProxies": 1,
+        "answerValues": 10
+      },
+      "configuredCapacityBefore": 13,
+      "configuredCapacityAfter": 13
+    },
+    {
+      "family": "dice-duel",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 2,
+        "answerValues": 14
+      },
+      "after": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 2,
+        "answerValues": 14
+      },
+      "configuredCapacityBefore": 16,
+      "configuredCapacityAfter": 16
+    },
+    {
+      "family": "dice-duel",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 3,
+        "answerValues": 10
+      },
+      "after": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 3,
+        "answerValues": 10
+      },
+      "configuredCapacityBefore": 18,
+      "configuredCapacityAfter": 18
+    },
+    {
+      "family": "dice-games-ev",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 23,
+        "authoredBranchProxies": 4,
+        "answerValues": 21
+      },
+      "after": {
+        "sampledQuestions": 23,
+        "authoredBranchProxies": 4,
+        "answerValues": 21
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "dice-games-ev",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 25,
+        "authoredBranchProxies": 1,
+        "answerValues": 25
+      },
+      "after": {
+        "sampledQuestions": 25,
+        "authoredBranchProxies": 1,
+        "answerValues": 25
+      },
+      "configuredCapacityBefore": 25,
+      "configuredCapacityAfter": 25
+    },
+    {
+      "family": "dice-games-ev",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 1,
+        "answerValues": 15
+      },
+      "after": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 1,
+        "answerValues": 15
+      },
+      "configuredCapacityBefore": 15,
+      "configuredCapacityAfter": 15
+    },
+    {
+      "family": "card-stopping",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 1,
+        "answerValues": 13
+      },
+      "after": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 1,
+        "answerValues": 13
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "card-stopping",
+      "difficulty": 5,
+      "before": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 1,
+        "answerValues": 15
+      },
+      "after": {
+        "sampledQuestions": 16,
+        "authoredBranchProxies": 1,
+        "answerValues": 15
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "running-sum",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 14,
+        "authoredBranchProxies": 1,
+        "answerValues": 14
+      },
+      "after": {
+        "sampledQuestions": 14,
+        "authoredBranchProxies": 1,
+        "answerValues": 14
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "running-sum",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 57,
+        "authoredBranchProxies": 2,
+        "answerValues": 57
+      },
+      "after": {
+        "sampledQuestions": 57,
+        "authoredBranchProxies": 2,
+        "answerValues": 57
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "random-walk-line",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 138,
+        "authoredBranchProxies": 3,
+        "answerValues": 40
+      },
+      "after": {
+        "sampledQuestions": 138,
+        "authoredBranchProxies": 3,
+        "answerValues": 40
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "random-walk-line",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 46,
+        "authoredBranchProxies": 4,
+        "answerValues": 33
+      },
+      "after": {
+        "sampledQuestions": 46,
+        "authoredBranchProxies": 4,
+        "answerValues": 33
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "polygon-walk",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 2,
+        "answerValues": 11
+      },
+      "after": {
+        "sampledQuestions": 18,
+        "authoredBranchProxies": 2,
+        "answerValues": 11
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "polygon-walk",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 54,
+        "authoredBranchProxies": 3,
+        "answerValues": 27
+      },
+      "after": {
+        "sampledQuestions": 54,
+        "authoredBranchProxies": 3,
+        "answerValues": 27
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "polygon-walk",
+      "difficulty": 5,
+      "before": {
+        "sampledQuestions": 31,
+        "authoredBranchProxies": 2,
+        "answerValues": 13
+      },
+      "after": {
+        "sampledQuestions": 31,
+        "authoredBranchProxies": 2,
+        "answerValues": 13
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "gamblers-ruin",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 319,
+        "authoredBranchProxies": 1,
+        "answerValues": 117
+      },
+      "after": {
+        "sampledQuestions": 319,
+        "authoredBranchProxies": 1,
+        "answerValues": 117
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "gamblers-ruin",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 314,
+        "authoredBranchProxies": 1,
+        "answerValues": 63
+      },
+      "after": {
+        "sampledQuestions": 314,
+        "authoredBranchProxies": 1,
+        "answerValues": 63
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "gamblers-ruin",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 401,
+        "authoredBranchProxies": 1,
+        "answerValues": 258
+      },
+      "after": {
+        "sampledQuestions": 401,
+        "authoredBranchProxies": 1,
+        "answerValues": 258
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "clt-estimates",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 20,
+        "authoredBranchProxies": 1,
+        "answerValues": 20
+      },
+      "after": {
+        "sampledQuestions": 20,
+        "authoredBranchProxies": 1,
+        "answerValues": 20
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "clt-estimates",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 47,
+        "authoredBranchProxies": 3,
+        "answerValues": 47
+      },
+      "after": {
+        "sampledQuestions": 47,
+        "authoredBranchProxies": 3,
+        "answerValues": 47
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "uniform-geometry",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 3,
+        "answerValues": 14
+      },
+      "after": {
+        "sampledQuestions": 15,
+        "authoredBranchProxies": 3,
+        "answerValues": 14
+      },
+      "configuredCapacityBefore": 15,
+      "configuredCapacityAfter": 15
+    },
+    {
+      "family": "uniform-geometry",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 14,
+        "authoredBranchProxies": 3,
+        "answerValues": 14
+      },
+      "after": {
+        "sampledQuestions": 14,
+        "authoredBranchProxies": 3,
+        "answerValues": 14
+      },
+      "configuredCapacityBefore": 14,
+      "configuredCapacityAfter": 14
+    },
+    {
+      "family": "uniform-geometry",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 27,
+        "authoredBranchProxies": 4,
+        "answerValues": 26
+      },
+      "after": {
+        "sampledQuestions": 27,
+        "authoredBranchProxies": 4,
+        "answerValues": 26
+      },
+      "configuredCapacityBefore": 27,
+      "configuredCapacityAfter": 27
+    },
+    {
+      "family": "information-protocols",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 84,
+        "authoredBranchProxies": 2,
+        "answerValues": 44
+      },
+      "after": {
+        "sampledQuestions": 84,
+        "authoredBranchProxies": 2,
+        "answerValues": 44
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "information-protocols",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 217,
+        "authoredBranchProxies": 6,
+        "answerValues": 46
+      },
+      "after": {
+        "sampledQuestions": 217,
+        "authoredBranchProxies": 6,
+        "answerValues": 46
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "information-protocols",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 311,
+        "authoredBranchProxies": 8,
+        "answerValues": 134
+      },
+      "after": {
+        "sampledQuestions": 311,
+        "authoredBranchProxies": 8,
+        "answerValues": 134
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 2,
+      "before": {
+        "sampledQuestions": 248,
+        "authoredBranchProxies": 2,
+        "answerValues": 161
+      },
+      "after": {
+        "sampledQuestions": 248,
+        "authoredBranchProxies": 2,
+        "answerValues": 161
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 3,
+      "before": {
+        "sampledQuestions": 426,
+        "authoredBranchProxies": 2,
+        "answerValues": 256
+      },
+      "after": {
+        "sampledQuestions": 426,
+        "authoredBranchProxies": 2,
+        "answerValues": 256
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 4,
+      "before": {
+        "sampledQuestions": 432,
+        "authoredBranchProxies": 6,
+        "answerValues": 208
+      },
+      "after": {
+        "sampledQuestions": 432,
+        "authoredBranchProxies": 6,
+        "answerValues": 208
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    },
+    {
+      "family": "shared-source",
+      "difficulty": 5,
+      "before": {
+        "sampledQuestions": 457,
+        "authoredBranchProxies": 3,
+        "answerValues": 280
+      },
+      "after": {
+        "sampledQuestions": 457,
+        "authoredBranchProxies": 3,
+        "answerValues": 280
+      },
+      "configuredCapacityBefore": null,
+      "configuredCapacityAfter": null
+    }
+  ],
+  "distributions": [
+    {
+      "scenario": "equal",
+      "edition": "before",
+      "questions": 8000,
+      "coverage": {
+        "20": {
+          "mean": 16.925,
+          "min": 14,
+          "max": 20
+        },
+        "40": {
+          "mean": 25.7125,
+          "min": 20,
+          "max": 29
+        },
+        "68": {
+          "mean": 30.825,
+          "min": 26,
+          "max": 34
+        },
+        "100": {
+          "mean": 32.5375,
+          "min": 29,
+          "max": 34
+        }
+      },
+      "byFamily": {
+        "two-dice-sum": {
+          "mean": 3,
+          "min": 0,
+          "max": 6
+        },
+        "die-repeats": {
+          "mean": 2.9875,
+          "min": 0,
+          "max": 6
+        },
+        "dice-order-stats": {
+          "mean": 3.1,
+          "min": 0,
+          "max": 7
+        },
+        "three-dice": {
+          "mean": 3.1625,
+          "min": 0,
+          "max": 9
+        },
+        "at-least-one": {
+          "mean": 2.8,
+          "min": 0,
+          "max": 7
+        },
+        "first-success": {
+          "mean": 2.7625,
+          "min": 1,
+          "max": 7
+        },
+        "conditional-dice": {
+          "mean": 3.05,
+          "min": 0,
+          "max": 7
+        },
+        "card-symmetry": {
+          "mean": 2.825,
+          "min": 0,
+          "max": 7
+        },
+        "card-draws": {
+          "mean": 2.825,
+          "min": 0,
+          "max": 7
+        },
+        "urn-draws": {
+          "mean": 2.575,
+          "min": 0,
+          "max": 6
+        },
+        "coin-sequences": {
+          "mean": 3.15,
+          "min": 0,
+          "max": 8
+        },
+        "race-to-k": {
+          "mean": 2.9,
+          "min": 0,
+          "max": 6
+        },
+        "pattern-waiting": {
+          "mean": 2.975,
+          "min": 0,
+          "max": 6
+        },
+        "bayes-test": {
+          "mean": 3.225,
+          "min": 0,
+          "max": 8
+        },
+        "bayes-boxes": {
+          "mean": 2.9125,
+          "min": 0,
+          "max": 7
+        },
+        "monty-hall": {
+          "mean": 2.5375,
+          "min": 0,
+          "max": 6
+        },
+        "pigeonhole": {
+          "mean": 3.0625,
+          "min": 0,
+          "max": 7
+        },
+        "birthday": {
+          "mean": 2.725,
+          "min": 0,
+          "max": 6
+        },
+        "derangements": {
+          "mean": 3,
+          "min": 0,
+          "max": 6
+        },
+        "expected-waiting": {
+          "mean": 3.0375,
+          "min": 0,
+          "max": 7
+        },
+        "coupon-collector": {
+          "mean": 2.9,
+          "min": 0,
+          "max": 7
+        },
+        "linearity": {
+          "mean": 2.725,
+          "min": 0,
+          "max": 6
+        },
+        "expected-extremes": {
+          "mean": 2.775,
+          "min": 0,
+          "max": 8
+        },
+        "dice-duel": {
+          "mean": 3.2,
+          "min": 0,
+          "max": 7
+        },
+        "dice-games-ev": {
+          "mean": 2.8375,
+          "min": 0,
+          "max": 7
+        },
+        "card-stopping": {
+          "mean": 3.075,
+          "min": 0,
+          "max": 8
+        },
+        "running-sum": {
+          "mean": 2.9375,
+          "min": 0,
+          "max": 7
+        },
+        "random-walk-line": {
+          "mean": 2.7625,
+          "min": 0,
+          "max": 6
+        },
+        "polygon-walk": {
+          "mean": 3.125,
+          "min": 0,
+          "max": 7
+        },
+        "gamblers-ruin": {
+          "mean": 2.8125,
+          "min": 0,
+          "max": 7
+        },
+        "clt-estimates": {
+          "mean": 2.975,
+          "min": 0,
+          "max": 6
+        },
+        "uniform-geometry": {
+          "mean": 3.075,
+          "min": 0,
+          "max": 7
+        },
+        "information-protocols": {
+          "mean": 3.225,
+          "min": 1,
+          "max": 7
+        },
+        "shared-source": {
+          "mean": 2.9625,
+          "min": 0,
+          "max": 7
+        }
+      }
+    },
+    {
+      "scenario": "equal",
+      "edition": "after",
+      "questions": 8000,
+      "coverage": {
+        "20": {
+          "mean": 18.25,
+          "min": 16,
+          "max": 20
+        },
+        "40": {
+          "mean": 31.15,
+          "min": 28,
+          "max": 34
+        },
+        "68": {
+          "mean": 34,
+          "min": 34,
+          "max": 34
+        },
+        "100": {
+          "mean": 34,
+          "min": 34,
+          "max": 34
+        }
+      },
+      "byFamily": {
+        "two-dice-sum": {
+          "mean": 3.1,
+          "min": 2,
+          "max": 6
+        },
+        "die-repeats": {
+          "mean": 3.1125,
+          "min": 2,
+          "max": 7
+        },
+        "dice-order-stats": {
+          "mean": 2.9875,
+          "min": 2,
+          "max": 5
+        },
+        "three-dice": {
+          "mean": 3.0375,
+          "min": 2,
+          "max": 5
+        },
+        "at-least-one": {
+          "mean": 2.95,
+          "min": 2,
+          "max": 6
+        },
+        "first-success": {
+          "mean": 2.85,
+          "min": 2,
+          "max": 6
+        },
+        "conditional-dice": {
+          "mean": 2.9125,
+          "min": 2,
+          "max": 5
+        },
+        "card-symmetry": {
+          "mean": 2.925,
+          "min": 2,
+          "max": 5
+        },
+        "card-draws": {
+          "mean": 2.7,
+          "min": 2,
+          "max": 5
+        },
+        "urn-draws": {
+          "mean": 3.025,
+          "min": 2,
+          "max": 5
+        },
+        "coin-sequences": {
+          "mean": 3.1375,
+          "min": 2,
+          "max": 6
+        },
+        "race-to-k": {
+          "mean": 2.8375,
+          "min": 2,
+          "max": 5
+        },
+        "pattern-waiting": {
+          "mean": 3.0625,
+          "min": 2,
+          "max": 6
+        },
+        "bayes-test": {
+          "mean": 2.9875,
+          "min": 2,
+          "max": 5
+        },
+        "bayes-boxes": {
+          "mean": 2.9,
+          "min": 2,
+          "max": 5
+        },
+        "monty-hall": {
+          "mean": 2.8375,
+          "min": 2,
+          "max": 5
+        },
+        "pigeonhole": {
+          "mean": 3.1375,
+          "min": 2,
+          "max": 5
+        },
+        "birthday": {
+          "mean": 2.7625,
+          "min": 2,
+          "max": 5
+        },
+        "derangements": {
+          "mean": 2.8625,
+          "min": 2,
+          "max": 6
+        },
+        "expected-waiting": {
+          "mean": 2.975,
+          "min": 2,
+          "max": 5
+        },
+        "coupon-collector": {
+          "mean": 2.85,
+          "min": 2,
+          "max": 5
+        },
+        "linearity": {
+          "mean": 2.9,
+          "min": 2,
+          "max": 6
+        },
+        "expected-extremes": {
+          "mean": 2.7875,
+          "min": 2,
+          "max": 5
+        },
+        "dice-duel": {
+          "mean": 2.975,
+          "min": 2,
+          "max": 5
+        },
+        "dice-games-ev": {
+          "mean": 2.8,
+          "min": 2,
+          "max": 5
+        },
+        "card-stopping": {
+          "mean": 2.925,
+          "min": 2,
+          "max": 5
+        },
+        "running-sum": {
+          "mean": 2.975,
+          "min": 2,
+          "max": 5
+        },
+        "random-walk-line": {
+          "mean": 2.9375,
+          "min": 2,
+          "max": 5
+        },
+        "polygon-walk": {
+          "mean": 2.975,
+          "min": 2,
+          "max": 5
+        },
+        "gamblers-ruin": {
+          "mean": 2.975,
+          "min": 2,
+          "max": 5
+        },
+        "clt-estimates": {
+          "mean": 2.85,
+          "min": 2,
+          "max": 5
+        },
+        "uniform-geometry": {
+          "mean": 2.95,
+          "min": 2,
+          "max": 6
+        },
+        "information-protocols": {
+          "mean": 2.9875,
+          "min": 2,
+          "max": 5
+        },
+        "shared-source": {
+          "mean": 3.0125,
+          "min": 2,
+          "max": 5
+        }
+      }
+    },
+    {
+      "scenario": "mixed-weakness",
+      "edition": "before",
+      "questions": 8000,
+      "coverage": {
+        "20": {
+          "mean": 15.6375,
+          "min": 12,
+          "max": 19
+        },
+        "40": {
+          "mean": 21.35,
+          "min": 18,
+          "max": 25
+        },
+        "68": {
+          "mean": 25.9375,
+          "min": 21,
+          "max": 30
+        },
+        "100": {
+          "mean": 29.55,
+          "min": 26,
+          "max": 33
+        }
+      },
+      "byFamily": {
+        "two-dice-sum": {
+          "mean": 5.8,
+          "min": 3,
+          "max": 9
+        },
+        "die-repeats": {
+          "mean": 5.45,
+          "min": 1,
+          "max": 9
+        },
+        "dice-order-stats": {
+          "mean": 5.825,
+          "min": 2,
+          "max": 10
+        },
+        "three-dice": {
+          "mean": 5.5875,
+          "min": 3,
+          "max": 9
+        },
+        "at-least-one": {
+          "mean": 6,
+          "min": 2,
+          "max": 10
+        },
+        "first-success": {
+          "mean": 6.1875,
+          "min": 3,
+          "max": 10
+        },
+        "conditional-dice": {
+          "mean": 5.875,
+          "min": 3,
+          "max": 9
+        },
+        "card-symmetry": {
+          "mean": 5.6875,
+          "min": 3,
+          "max": 9
+        },
+        "card-draws": {
+          "mean": 5.6375,
+          "min": 1,
+          "max": 9
+        },
+        "urn-draws": {
+          "mean": 5.775,
+          "min": 3,
+          "max": 10
+        },
+        "coin-sequences": {
+          "mean": 6.075,
+          "min": 3,
+          "max": 9
+        },
+        "race-to-k": {
+          "mean": 5.8875,
+          "min": 2,
+          "max": 9
+        },
+        "pattern-waiting": {
+          "mean": 1.4,
+          "min": 0,
+          "max": 5
+        },
+        "bayes-test": {
+          "mean": 1.5125,
+          "min": 0,
+          "max": 5
+        },
+        "bayes-boxes": {
+          "mean": 1.45,
+          "min": 0,
+          "max": 5
+        },
+        "monty-hall": {
+          "mean": 1.1375,
+          "min": 0,
+          "max": 4
+        },
+        "pigeonhole": {
+          "mean": 1.45,
+          "min": 0,
+          "max": 4
+        },
+        "birthday": {
+          "mean": 1.3,
+          "min": 0,
+          "max": 4
+        },
+        "derangements": {
+          "mean": 1.4375,
+          "min": 0,
+          "max": 5
+        },
+        "expected-waiting": {
+          "mean": 1.3625,
+          "min": 0,
+          "max": 5
+        },
+        "coupon-collector": {
+          "mean": 1.35,
+          "min": 0,
+          "max": 5
+        },
+        "linearity": {
+          "mean": 1.4875,
+          "min": 0,
+          "max": 5
+        },
+        "expected-extremes": {
+          "mean": 1.2125,
+          "min": 0,
+          "max": 5
+        },
+        "dice-duel": {
+          "mean": 1.675,
+          "min": 0,
+          "max": 5
+        },
+        "dice-games-ev": {
+          "mean": 1.325,
+          "min": 0,
+          "max": 4
+        },
+        "card-stopping": {
+          "mean": 1.225,
+          "min": 0,
+          "max": 4
+        },
+        "running-sum": {
+          "mean": 1.5625,
+          "min": 0,
+          "max": 5
+        },
+        "random-walk-line": {
+          "mean": 1.2,
+          "min": 0,
+          "max": 5
+        },
+        "polygon-walk": {
+          "mean": 1.4125,
+          "min": 0,
+          "max": 4
+        },
+        "gamblers-ruin": {
+          "mean": 1.5375,
+          "min": 0,
+          "max": 6
+        },
+        "clt-estimates": {
+          "mean": 1.175,
+          "min": 0,
+          "max": 4
+        },
+        "uniform-geometry": {
+          "mean": 1.4625,
+          "min": 0,
+          "max": 3
+        },
+        "information-protocols": {
+          "mean": 1.2625,
+          "min": 0,
+          "max": 4
+        },
+        "shared-source": {
+          "mean": 1.275,
+          "min": 0,
+          "max": 3
+        }
+      }
+    },
+    {
+      "scenario": "mixed-weakness",
+      "edition": "after",
+      "questions": 8000,
+      "coverage": {
+        "20": {
+          "mean": 17.9875,
+          "min": 15,
+          "max": 20
+        },
+        "40": {
+          "mean": 30.375,
+          "min": 28,
+          "max": 33
+        },
+        "68": {
+          "mean": 34,
+          "min": 34,
+          "max": 34
+        },
+        "100": {
+          "mean": 34,
+          "min": 34,
+          "max": 34
+        }
+      },
+      "byFamily": {
+        "two-dice-sum": {
+          "mean": 3.9125,
+          "min": 2,
+          "max": 6
+        },
+        "die-repeats": {
+          "mean": 3.85,
+          "min": 2,
+          "max": 7
+        },
+        "dice-order-stats": {
+          "mean": 4.0625,
+          "min": 2,
+          "max": 7
+        },
+        "three-dice": {
+          "mean": 3.95,
+          "min": 2,
+          "max": 8
+        },
+        "at-least-one": {
+          "mean": 4.0125,
+          "min": 2,
+          "max": 8
+        },
+        "first-success": {
+          "mean": 4.05,
+          "min": 2,
+          "max": 7
+        },
+        "conditional-dice": {
+          "mean": 3.875,
+          "min": 2,
+          "max": 7
+        },
+        "card-symmetry": {
+          "mean": 4.125,
+          "min": 2,
+          "max": 7
+        },
+        "card-draws": {
+          "mean": 3.775,
+          "min": 2,
+          "max": 8
+        },
+        "urn-draws": {
+          "mean": 3.7125,
+          "min": 2,
+          "max": 7
+        },
+        "coin-sequences": {
+          "mean": 3.825,
+          "min": 2,
+          "max": 8
+        },
+        "race-to-k": {
+          "mean": 4.1,
+          "min": 2,
+          "max": 7
+        },
+        "pattern-waiting": {
+          "mean": 2.3,
+          "min": 2,
+          "max": 4
+        },
+        "bayes-test": {
+          "mean": 2.525,
+          "min": 2,
+          "max": 4
+        },
+        "bayes-boxes": {
+          "mean": 2.3375,
+          "min": 2,
+          "max": 3
+        },
+        "monty-hall": {
+          "mean": 2.45,
+          "min": 2,
+          "max": 4
+        },
+        "pigeonhole": {
+          "mean": 2.45,
+          "min": 2,
+          "max": 4
+        },
+        "birthday": {
+          "mean": 2.2625,
+          "min": 2,
+          "max": 4
+        },
+        "derangements": {
+          "mean": 2.3625,
+          "min": 2,
+          "max": 4
+        },
+        "expected-waiting": {
+          "mean": 2.45,
+          "min": 2,
+          "max": 6
+        },
+        "coupon-collector": {
+          "mean": 2.45,
+          "min": 2,
+          "max": 4
+        },
+        "linearity": {
+          "mean": 2.4625,
+          "min": 2,
+          "max": 4
+        },
+        "expected-extremes": {
+          "mean": 2.35,
+          "min": 2,
+          "max": 4
+        },
+        "dice-duel": {
+          "mean": 2.4125,
+          "min": 2,
+          "max": 4
+        },
+        "dice-games-ev": {
+          "mean": 2.3875,
+          "min": 2,
+          "max": 5
+        },
+        "card-stopping": {
+          "mean": 2.35,
+          "min": 2,
+          "max": 4
+        },
+        "running-sum": {
+          "mean": 2.4375,
+          "min": 2,
+          "max": 5
+        },
+        "random-walk-line": {
+          "mean": 2.35,
+          "min": 2,
+          "max": 4
+        },
+        "polygon-walk": {
+          "mean": 2.3625,
+          "min": 2,
+          "max": 4
+        },
+        "gamblers-ruin": {
+          "mean": 2.4125,
+          "min": 2,
+          "max": 4
+        },
+        "clt-estimates": {
+          "mean": 2.3125,
+          "min": 2,
+          "max": 4
+        },
+        "uniform-geometry": {
+          "mean": 2.4875,
+          "min": 1,
+          "max": 4
+        },
+        "information-protocols": {
+          "mean": 2.425,
+          "min": 2,
+          "max": 4
+        },
+        "shared-source": {
+          "mean": 2.4125,
+          "min": 2,
+          "max": 4
+        }
+      }
+    }
+  ],
+  "repeats": 0,
+  "limits": [
+    "Prior stats and initial difficulty targets are held fixed to isolate selection.",
+    "The same authored structure classifier is used for both releases; signatures are not conceptual-novelty measures.",
+    "Coverage bounds assume stable eligible pools and sufficiently available fresh questions.",
+    "No human learning, Optiver difficulty or pass-probability calibration."
+  ],
+  "completeCataloguePools": 33,
+  "completeCatalogueEntries": 971
+}

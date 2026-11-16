@@ -42,7 +42,7 @@ function variant(kind, rng) {
       ],
       picture: pic('tree', { root: { label: 'start', children: [{ p: p.toString(), label: 'success: stop', mark: true }, { p: q(1).sub(p).toString(), label: 'miss: back to the start' }] }, showProducts: false }, `One ${ev.unit.replace(/s$/, '')} always happens. With chance ${p} you stop; otherwise you face the same wait again, so E = 1 + (1 − ${p})E and E = ${c / a}.`),
       fast: `1/p = ${c}/${a} = ${c / a}.`,
-      check: `Half the time you finish within ${med} ${ev.unit}, yet the mean is ${c / a}: the long tail of slow runs pulls the average up, so an option near ${med} is the median, not the mean.`,
+      check: `At least half the time you finish within ${med} ${ev.unit}, yet the mean is ${c / a}: the long tail of slow runs pulls the average up. The smallest integer reaching 50% is the median, not the mean.`,
     };
   }
   if (kind === 'twoFaces') {
@@ -191,12 +191,12 @@ export default {
   },
 
   lesson: {
-    purpose: 'Expected-value questions about "how long until" are the most common harder Beat the Odds items. One method, first-step analysis, solves all of them.',
+    purpose: 'Expected waiting times develop sequential reasoning. First-step analysis is useful when future progress depends on the current state; stage sums are useful when progress is retained.',
     anchor: 'Expected throws to a six = 6 (= 1/p). Everything else is that with one change: more than one stage, or progress that can reset.',
     steps: [
       { say: 'Name the states of progress (none, one six so far, done).', why: 'The future depends only on the current state.' },
       { say: 'For each state: E = 1 + Σ P(move to s)·E(s), with E(done) = 0.', why: 'One step is always spent; then you continue from wherever you land.' },
-      { say: 'Solve the linear equations, or add stages when progress can never be lost.', why: 'Linearity: independent stages add.' },
+      { say: 'Solve the linear equations, or add stages when progress can never be lost.', why: 'Linearity of expectation adds integrable stage durations; independence is not required.' },
     ],
     predict: { question: 'Which takes longer on average: two sixes in a row, or a six followed by a five?', answer: 'Two sixes in a row (42) against six-then-five (36). After a failed attempt at 66 you may lose progress; a failed 65 attempt that ends in 6 keeps it.' },
     edge: 'p = 1 gives E = 1; p → 0 makes the wait unbounded.',

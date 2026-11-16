@@ -1,0 +1,38 @@
+{
+  "browser": "Chrome, managed preview",
+  "account": "synthetic QA data from earlier release; no real user profile accessed",
+  "savedFocusedQuestionAndSelectedAnswerPreserved": true,
+  "existingThreeLearningBlocksRetained": true,
+  "mixedQuestions": 10,
+  "distinctVisiblePrompts": 10,
+  "correctAnswersIndependentlyCalculatedFromVisiblePrompts": 10,
+  "rawCorrect": 10,
+  "independentWithinPace": 8,
+  "helped": 1,
+  "interrupted": 1,
+  "overBudget": 0,
+  "checkpointAdvancedForQualifyingAnswers": true,
+  "progressPaceAndSkillsVerified": true,
+  "desktopScreenshotDimensions": [
+    1348,
+    926
+  ],
+  "responsiveIframeWidth": 390,
+  "responsiveBodyClientWidth": 375,
+  "responsiveBodyScrollWidth": 375,
+  "themes": [
+    "dark desktop",
+    "dark responsive iframe",
+    "light responsive iframe"
+  ],
+  "physicalPhoneOrOtherBrowsersTested": false,
+  "applicationErrorsObserved": false,
+  "consoleLimit": "Queried warning/error output was dominated by unrelated Chrome-extension metadata errors; no claim that the entire browser console was empty.",
+  "localExtensionPreview": "Connection refused; completed checks in cloud Chrome with the managed preview instead.",
+  "screenshots": [
+    "docs/media/validation/optprep-mixed-results.jpg",
+    "docs/media/validation/optprep-mixed-progress.jpg",
+    "docs/media/validation/optprep-mixed-mobile.jpg",
+    "docs/media/validation/optprep-mixed-mobile-light.jpg"
+  ]
+}

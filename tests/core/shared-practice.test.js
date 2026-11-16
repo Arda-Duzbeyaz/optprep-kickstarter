@@ -12,7 +12,7 @@ import { presentation } from '../../src/core/presentation.js';
 import { validateItem } from '../../src/core/contract.js';
 
 test('practice includes all extended families without mutating timed-section registries',()=>{
- const counts={bto:34,nl:30,ll:16,iv:15,ob:8,mm:8};
+ const counts={bto:40,nl:30,ll:16,iv:15,ob:8,mm:8};
  for(const [section,count] of Object.entries(counts)){
   const module=PRACTICE_MODULES[section];assert.equal(module.families.length,count,section);
   assert.equal(new Set(module.families.map(f=>f.id)).size,count);

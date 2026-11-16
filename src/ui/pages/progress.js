@@ -9,13 +9,19 @@ import { lessonForFamily } from '../../study/catalog.js';
 import { PRACTICE_FAMILIES as FAMILIES } from '../../practice/catalog.js';
 import { activePreset, presetSections } from '../../../config/presets.js';
 import { levelGuide, skillCheckpoint, learningStatus, learningEvidence, checkpointText } from '../practice-progress.js';
+import { mixedEvidence } from '../mixed-evidence.js';
+import { checkpointAvailability, availabilityText } from '../../practice/availability.js';
 
 function skillsTab(store) {
   const ids = presetSections(activePreset()).filter((id) => FAMILIES[id]);
   return h('div', {}, h('p', { class: 'lede' }, 'Coverage records what you have learned. Your completed blocks and skill records are saved below.'),
     levelGuide(),
     ids.map((id) => {
-      const rows = FAMILIES[id].map((f) => ({ family: f, ...store.coverage(id,f.id), checkpoint: skillCheckpoint(store,id,f.id), n: store.stats()[`${id}:${f.id}`]?.n || 0 }));
+      const rows = FAMILIES[id].map((f) => {
+        const checkpoint = skillCheckpoint(store,id,f.id);
+        return { family: f, ...store.coverage(id,f.id), checkpoint,
+          availability: checkpointAvailability(id, f.id, checkpoint, store.recentQuestionKeys?.(id)), n: store.stats()[`${id}:${f.id}`]?.n || 0 };
+      });
       const started = rows.filter((r) => r.started);
       const blocks = rows.reduce((sum, r) => sum + r.completedBlocks, 0);
       const count = (fn) => rows.filter(fn).length;
@@ -30,7 +36,8 @@ function skillsTab(store) {
             r.completedAt ? h('p', { class: 'small-note muted' }, `Last block: ${when(r.completedAt)}${r.lastBlock ? ` · ${r.lastBlock.correct}/${r.lastBlock.questions} correct${r.lastBlock.skipped ? ` · ${r.lastBlock.skipped} skipped` : ''}` : ''}`) : null,
             h('p', { class: 'small-note muted' }, r.revisionAttempts && !r.checkpoint.attempts
               ? `Mixed: ${r.mixedAttempts} attempts · ${r.revisionAttempts} previously seen. Revision saved; fresh cold evidence still needed.`
-              : `${r.checkpoint.attempts || r.checkpoint.passed.length ? 'Mixed: ' : ''}${checkpointText(r.checkpoint)}${r.mixedAttempts ? ` · ${r.mixedAttempts} attempts, ${r.revisionAttempts} revision` : ''}`)))))
+              : `${r.checkpoint.attempts || r.checkpoint.passed.length ? 'Mixed: ' : ''}${checkpointText(r.checkpoint)}${r.mixedAttempts ? ` · ${r.mixedAttempts} attempts, ${r.revisionAttempts} revision` : ''}`),
+            r.availability?.blocked ? h('p', { class: 'small-note muted checkpoint-availability' }, availabilityText(r.availability)) : null))))
           : h('p', { class: 'small-note muted' }, 'No learning or practice recorded for this assessment yet.'),
         h('details', { class: 'skill-records' }, h('summary', {}, 'Cold mixed-check totals'),
           h('p', { class: 'small-note muted' }, 'These measure fresh, unaided mixed performance at training pace. Learning completion is recorded above.'),
@@ -107,7 +114,14 @@ function paceTab(store) {
   const days = Array.from({ length: 14 }, (_, i) => addDays(today, i - 13));
   const mins = days.map((d) => Math.round((store.state.activity.days[d]?.ms || 0) / 60e3));
   const peak = Math.max(store.goalMin(), ...mins);
+  const mixedRuns = store.state.runs.filter((r) => ['practice','drill'].includes(r.mode) && !r.family &&
+    (['all','covered'].includes(r.scope) || r.items?.some((row) => row?.evidenceVersion === 1)));
+  const mixedSections = presetSections(activePreset()).filter((id) => SECTIONS[id]).map((id) =>
+    ({ id, rows: mixedRuns.filter((r) => r.section === id).flatMap((r) => Array.isArray(r.items) ? r.items : []).slice(-1000) })).filter((s) => s.rows.length);
   return h('div', {},
+    h('h3', {}, 'Recent independent mixed performance'),
+    mixedSections.length ? mixedSections.map((s) => h('section', {}, h('h4', {}, secTitle(s.id)), mixedEvidence(s.rows)))
+      : h('p', { class: 'muted' }, 'Complete a mixed block to record independent answers and their training pace.'),
     h('h3', {}, 'Minutes per day, last 14 days'),
     h('div', { class: 'minutes-chart', role: 'img', 'aria-label': days.map((d, i) => `${d}: ${mins[i]} minutes`).join(', ') },
       days.map((d, i) => h('div', { class: 'minutes-col' },

@@ -189,7 +189,7 @@ export default {
     anchor: 'The average roll 3.5 = Σ x/6, with one change: average the payoff, and where you have a choice, average the better of your options.',
     steps: [
       { say: 'Fair price = expected payoff = Σ payoff(x) × P(x).', why: 'Over many plays, the average profit per game converges to this.' },
-      { say: 'Nonlinear payoffs: E[f(X)] ≠ f(E[X]) (e.g. E[X²] > 3.5²).', why: 'Averaging and squaring do not commute; the gap is the variance.' },
+      { say: 'For a nonlinear payoff, E[f(X)] need not equal f(E[X]) (e.g. a nonconstant fair die has E[X²] > 3.5²).', why: 'For squaring, the difference is the variance; equality can hold for other functions or degenerate distributions.' },
       { say: 'Options: go backwards. The value of continuing is known at the last stage; keep a roll iff it beats that value.', why: 'Each decision compares a sure amount with an expectation.' },
     ],
     predict: { question: 'One reroll of a die: which rolls should you keep, and is the value above or below E[max of two dice] = 4.47?', answer: 'Keep 4, 5, 6; value 4.25, below 4.47, because a reroll must be accepted.' },

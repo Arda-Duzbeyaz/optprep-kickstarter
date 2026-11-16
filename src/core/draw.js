@@ -6,6 +6,7 @@ import { questionKey, questionSeen } from './questions.js';
 import { structureKey } from '../transfer/profile.js';
 import { presentation } from './presentation.js';
 import { finiteVariants } from '../practice/finite-variants.js';
+import { mixedWeights, isCoverageTurn, oldestCandidates } from './mixed-training.js';
 
 export const PRACTICE_FRESH_SEARCH = 256;
 const STRUCTURE_SEARCH = 16;
@@ -80,7 +81,7 @@ export function examItems(section, cfg, seed) {
   return out.map((item) => presentation(item, rng));
 }
 
-export function practiceItem(section, rng, stats, { family, difficulty, excludeKeys = [], familyPool, avoidFamilies = [], targets = {}, preferStructures, shuffleOptions = false, requireFresh = false, minFreshFamilies = 1 } = {}) {
+export function practiceItem(section, rng, stats, { family, difficulty, excludeKeys = [], familyPool, avoidFamilies = [], targets = {}, preferStructures, shuffleOptions = false, requireFresh = false, minFreshFamilies = 1, mixedTraining, recognition, spreadStructures = false } = {}) {
   const excluded = new Set(excludeKeys);
   const all = section.families.map((f) => f.id);
   const pool = family ? [family] : familyPool ? all.filter((id) => familyPool.includes(id)) : all;
@@ -90,11 +91,13 @@ export function practiceItem(section, rng, stats, { family, difficulty, excludeK
     let selected = null, available = 0;
     const groups = [unused, pool.filter((id) => avoidFamilies.includes(id))];
     for (const group of groups) {
-      const weights = familyWeights(section.id, group, stats);
+      const weights = mixedWeights(familyWeights(section.id, group, stats), mixedTraining, recognition, section.id);
       while (Object.keys(weights).length) {
-        const id = pickFamily(rng, weights); delete weights[id];
+        const ids = Object.keys(weights);
+        const id = isCoverageTurn(mixedTraining) ? rng.pick(oldestCandidates(ids, mixedTraining)) : pickFamily(rng, weights);
+        delete weights[id];
         const candidate = practiceItem(section, rng, stats, { family: id, difficulty: difficulty ?? targets[id],
-          excludeKeys: excluded, preferStructures: preferStructures ?? [] });
+          excludeKeys: excluded, preferStructures: preferStructures ?? [], spreadStructures });
         if (!candidate || questionSeen(excluded, candidate)) continue;
         selected ||= candidate; available++;
         if (available >= minFreshFamilies) return shuffleOptions ? presentation(selected, rng) : selected;
@@ -132,20 +135,28 @@ export function practiceItem(section, rng, stats, { family, difficulty, excludeK
         }
         // A branch with more number combinations must not crowd out the other
         // methods in the same topic. Pick a branch, then one unseen instance.
-        best = structuredClone(rng.pick(rng.pick([...branches.values()])));
+        let choices = [...branches.entries()];
+        if (spreadStructures && !novel.length) {
+          const order = [...structures];
+          const oldest = Math.min(...choices.map(([key]) => order.indexOf(key)));
+          choices = choices.filter(([key]) => order.indexOf(key) === oldest);
+        }
+        best = structuredClone(rng.pick(rng.pick(choices)[1]));
       } else {
         // All actual variants at this difficulty have been exposed. Revisit the
         // least recently shown one, cycling the finite pool without immediate repeats.
         best = structuredClone(variants.reduce((oldest, item) => order.get(questionKey(item)) < order.get(questionKey(oldest)) ? item : oldest));
       }
     } else {
-      let unseen = null, oldest = null, oldestIndex = Infinity;
+      let unseen = null, oldest = null, oldestIndex = Infinity, branchRank = Infinity;
+      const branchOrder = [...structures];
       for (let tries = 0; tries < PRACTICE_FRESH_SEARCH; tries++) {
         const candidate = drawItem(section, rng, { family: id, difficulty: level });
         const key = questionKey(candidate);
         if (!questionSeen(excluded, candidate)) {
-          if (!unseen || !structures.has(structureKey(candidate))) unseen = candidate;
-          if (!structures.has(structureKey(candidate))) break;
+          const rank = branchOrder.indexOf(structureKey(candidate));
+          if (!unseen || (spreadStructures ? rank < branchRank : rank < 0)) { unseen = candidate; branchRank = rank; }
+          if (rank < 0) break;
         } else if ((order.get(key) ?? 0) < oldestIndex) { oldest = candidate; oldestIndex = order.get(key) ?? 0; }
         // Structural preference must not limit the search for an unseen question.
         // Once one is found, keep the short existing window for a new branch.
