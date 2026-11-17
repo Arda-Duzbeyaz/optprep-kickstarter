@@ -83,13 +83,13 @@ export function levelGuide() {
     h('p', { class: 'small-note muted' }, 'Old five-level practice records and mixed streaks are preserved as history. Batch check uses the same practice library but withholds feedback until the end and keeps its results separate.'));
 }
 
-export function resumePracticeCards(store, ids, { compact = false } = {}) {
-  const sessions = (store.practiceSessions?.() || []).filter((s) => !ids || ids.includes(s.section));
+export function resumePracticeCards(store, ids, { compact = false, kind } = {}) {
+  const sessions = (store.practiceSessions?.() || []).filter((s) => (!ids || ids.includes(s.section)) && (!kind || (kind === 'learning' ? !!s.family : !s.family)));
   if (!sessions.length) return null;
   return h('section', { class: `resume-practice${compact ? ' resume-practice-compact' : ''}`, 'aria-label': 'Saved practice' },
-    h('h2', { class: compact ? 'visually-hidden' : null }, 'Continue practice'),
+    h('h2', { class: compact ? 'visually-hidden' : null }, kind === 'learning' ? 'Continue learning' : 'Saved learning and mixed practice'),
     sessions.map((s) => h('div', { class: 'resume-practice-card' },
       h('div', {}, compact ? null : h('strong', {}, SECTIONS[s.section].title),
-        h('p', { class: 'small-note muted' }, `${s.family ? familyTitle(s.section, s.family) : s.scope === 'covered' ? 'Mixed covered skills' : 'Mixed all skills'} · ${s.log.length}/${s.count} answered${s.current.done ? ' · feedback saved' : ' · current question saved'}`)),
-      h('a', { class: 'btn primary', href: practiceHref(s) }, 'Resume practice'))));
+        h('p', { class: 'small-note muted' }, `${s.family ? `Learning: ${familyTitle(s.section, s.family)}` : s.scope === 'covered' ? 'Mixed covered skills' : 'Mixed all skills'} · ${s.log.length}/${s.count} answered${s.current.done ? ' · feedback saved' : ' · current question saved'}`)),
+      h('a', { class: 'btn primary', href: practiceHref(s), 'aria-label': s.family ? `Resume learning: ${familyTitle(s.section, s.family)}` : `Resume mixed practice: ${SECTIONS[s.section].title}, ${s.scope === 'covered' ? 'covered skills' : 'all skills'}` }, s.family ? 'Resume learning' : 'Resume mixed practice'))));
 }

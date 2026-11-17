@@ -25,11 +25,12 @@ import { divNotation, prose } from '../core/format.js';
 import { setRail, scanSheet, bubbles, tickTo } from './sheet.js';
 import { mistakeRow } from '../core/mistakes.js';
 import { timingOf } from '../../config/presets.js';
-import { PRACTICE_BLOCK_SIZE, DRILL_COUNT, PRACTICE_VERSION, practiceHref } from '../core/practice.js';
+import { PRACTICE_BLOCK_SIZE, DRILL_COUNT, PRACTICE_VERSION } from '../core/practice.js';
 import { skillProgress, skillCheckpoint, checkpointLabel, checkpointText, learningStatus, learningEvidence } from './practice-progress.js';
 import { recognitionProgress } from '../core/recognition.js';
 import { structureKey, structureStatus, structureOperations } from '../transfer/profile.js';
 import { MIXED_EVIDENCE_VERSION } from '../core/mixed-training.js';
+import { xpFor } from '../core/progression.js';
 import { mixedEvidence } from './mixed-evidence.js';
 
 const VIEWS = { mcq: mcqView, rank: rankView, interval: intervalView, orderbook: orderbookView };
@@ -38,6 +39,7 @@ const CALIBRATED = new Set(['bto', 'nl']);
 
 // notation: 'colon' shows ÷ as : (European), the learner's setting.
 let promptSeq = 0;
+let sessionSeq = 0;
 export function itemBody(item, { onChange, preview = true, notation, keys = true, label } = {}) {
   const pid = `prompt-${++promptSeq}`;
   const view = VIEWS[item.kind](item, { onChange, showPreview: preview, keys, labelledby: pid });
@@ -68,16 +70,14 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
   const cfg = SECTIONS[sectionId];
   const resumable = mode === 'practice' && !fixedItems && setNumber == null;
   const options = { sectionId, mode, family, count, store, onDone, title, diagnose, onMiss, noHints, scope };
-  const saved = resumable ? store.practiceSession?.(sectionId) : null;
-  // One saved block per task, like Quant Sprint. Choosing another skill must
-  // never silently replace an unfinished block from the same task.
-  if (resumable && (saved && ((saved.family || null) !== (family || null) || !family && (saved.scope || 'all') !== scope) || !saved && store.state.activePractice?.[sectionId])) {
+  const saved = resumable ? store.practiceSession?.(sectionId, family || null, scope) : null;
+  if (resumable && !saved && store.rawPracticeSession?.(sectionId, family || null, scope)) {
     let nextCleanup = () => {};
     mount(root, h('h1', {}, `${cfg.title}: Practice`), h('section', { class: 'panel' },
-      h('h2', {}, saved ? 'You have a saved practice block' : 'This saved block could not be restored'),
-      h('p', {}, saved ? `${saved.log.length}/${saved.count} answered in ${saved.family ? familyTitle(section, saved.family) : 'mixed practice'}. Resume it, or start the practice you selected.` : 'Your other progress is preserved. Start a new block to replace this unreadable session.'),
-      h('div', { class: 'row' }, saved ? h('a', { class: 'btn primary', href: practiceHref(saved) }, 'Resume saved practice') : null,
-        h('button', { class: 'btn', type: 'button', onclick: () => { store.clearPractice(sectionId); nextCleanup = runFeedbackSession(root, options); } }, 'Start new 10-question block'))));
+      h('h2', {}, 'This saved block could not be restored'),
+      h('p', {}, 'Your other saved topics, mixed practice and progress are preserved. Start a new block to replace only this unreadable session.'),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn', type: 'button', onclick: () => { store.clearPractice(sectionId, family || null, scope); nextCleanup = runFeedbackSession(root, options); } }, 'Start new 10-question block'))));
     return () => nextCleanup();
   }
   const familyPool = saved?.familyPool || (family ? [family] : section.families.filter((f) => scope !== 'covered' || store.coverage(sectionId, f.id).covered).map((f) => f.id));
@@ -92,7 +92,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
   const focusedDifficulty = focusedFamily ? saved?.difficulty ?? saved?.current?.item?.difficulty ??
     recognitionProgress(store.recognition()[`${sectionId}:${family}`], focusedFamily.levels).target : undefined;
   const standardTime = !(Number(store.settings().extraTime) > 1);
-  const seed = saved?.seed ?? `${sectionId}:${mode}:${Date.now()}`;
+  const seed = saved?.seed ?? `${sectionId}:${mode}:${family || 'mixed'}:${scope}:${Date.now()}:${++sessionSeq}`;
   const rng = makeRng(seed);
   if (saved) rng.setState(saved.rngState);
   const perItemMs = drillMs(cfg);
@@ -267,6 +267,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const confidence = opts.confidence ?? (CALIBRATED.has(sectionId) && !response.skip ? 0.9 : undefined);
     const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0 && !current.aided;
     log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, skipped: !!response.skip, ms,
+      xp: xpFor({ type: 'answer', mode, correct: practiceSuccess(sectionId, { correct: correctNoHelp, score: item.kind === 'interval' ? result.score : undefined }), hints: current.hints, ms }),
       levelBefore: store.mastery()[`${sectionId}:${item.family}`]?.lv || 0,
       recognitionBefore: [...(store.recognition()[`${sectionId}:${item.family}`]?.passed || [])],
       ...(mixedAttempt ? { evidenceVersion: MIXED_EVIDENCE_VERSION, section: sectionId, key: questionKey(item), difficulty: item.difficulty,
@@ -344,7 +345,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const coveredCount = section.families.filter((f) => store.coverage(sectionId, f.id).covered).length;
     const suggestMixed = resumable && family && store.coverage(sectionId, family).covered && coveredCount >= 2;
     if (setNumber != null && n === limit) store.recordSet(sectionId, setNumber, { score: Math.round(log.reduce((s, x) => s + x.score, 0) * 100) / 100, max: n, mode: 'practice' });
-    const xpGain = store.xpTotal() - xp0;
+    const xpGain = log.reduce((sum, r) => sum + (r.xp ?? xpFor({ type: 'answer', mode, correct: practiceSuccess(sectionId, { correct: r.correct && !r.hints && !r.aided, score: sectionId === 'iv' ? r.score : undefined }), hints: r.hints, ms: r.ms })), 0);
     const spentS = Math.round(log.reduce((t, x) => t + x.ms, 0) / 1000);
     const famRows = [...byFam.entries()].map(([f, v]) => {
       const p = skillCheckpoint(store, sectionId, f);

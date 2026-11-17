@@ -43,7 +43,9 @@ async function learn(section, family) {
 }
 function advance(ms = 3000) { now += ms; const pending = [...frames.values()]; frames.clear(); pending.forEach((f) => f(now)); }
 function answer(section, { wrong = false, skip = false } = {}) {
-  const item = state().activePractice[section].current.item;
+  const route = location.hash.split('/');
+  const slot = route[3] === 'mixed' ? `${section}:mixed:${route[4]}` : route[4] ? `${section}:learn:${route[4]}` : `${section}:mixed:all`;
+  const item = state().activePractice[slot].current.item;
   if (skip) { advance(); button('Skip').click(); return item; }
   if (item.kind === 'mcq') root.querySelectorAll('[role=radio]')[wrong ? (item.answerIndex + 1) % item.options.length : item.answerIndex].click();
   else if (item.kind === 'rank') for (const si of item.answerOrder) {
@@ -94,10 +96,10 @@ try {
   await learn('bto', 'die-repeats'); finishLearning('bto'); button('Finish').click();
   eq(root.querySelector('a.btn.primary')?.textContent, 'Test in mixed practice', 'two covered skills lead to a mixed check');
   await route('#/run/bto/mixed/covered', 'Beat the Odds: Practice');
-  eq(state().activePractice.bto.familyPool, ['two-dice-sum', 'die-repeats']);
+  eq(state().activePractice['bto:mixed:covered'].familyPool, ['two-dice-sum', 'die-repeats']);
   const freshCounts = {}, revisionCounts = {};
   for (let i = 0; i < 10; i++) {
-    const current = state().activePractice.bto.current;
+    const current = state().activePractice['bto:mixed:covered'].current;
     const counts = current.fresh ? freshCounts : revisionCounts; counts[current.item.family] = (counts[current.item.family] || 0) + 1;
     if (!current.fresh) ok(root.querySelector('.practice-repeat-note'), 'repeat eligibility has a quiet note before answering');
     answer('bto'); if (i < 9) button('Next (Enter)').click();
@@ -123,7 +125,7 @@ try {
       eq(entry.completedBlocks, 1, `${section}:${family.id}: exactly one completed block`);
       eq(entry.covered, true, `${section}:${family.id}: auto coverage`);
       ok(root.textContent.includes('Learning block complete · 10/10 saved'), `${family.id}: final feedback acknowledges learning`);
-      button('Finish').click(); eq(state().activePractice[section], undefined); families++;
+      button('Finish').click(); eq(state().activePractice[`${section}:learn:${family.id}`], undefined); families++;
       ok(root.textContent.includes('Learning complete and saved to Progress'));
     }
     await route('#/progress/skills', 'Progress');

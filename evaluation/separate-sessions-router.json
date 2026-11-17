@@ -1,0 +1,52 @@
+{
+  "assertions": 171,
+  "sections": [
+    {
+      "section": "bto",
+      "topicDraft": true,
+      "topicFeedback": true,
+      "mixedDraft": true,
+      "coveredPool": true,
+      "learningTimerAbsent": true,
+      "isolatedFinish": true
+    },
+    {
+      "section": "nl",
+      "topicDraft": true,
+      "topicFeedback": true,
+      "mixedDraft": true,
+      "coveredPool": true,
+      "learningTimerAbsent": true,
+      "isolatedFinish": true
+    },
+    {
+      "section": "ll",
+      "topicDraft": true,
+      "topicFeedback": true,
+      "mixedDraft": true,
+      "coveredPool": true,
+      "learningTimerAbsent": true,
+      "isolatedFinish": true
+    },
+    {
+      "section": "iv",
+      "topicDraft": true,
+      "topicFeedback": true,
+      "mixedDraft": true,
+      "coveredPool": true,
+      "learningTimerAbsent": true,
+      "isolatedFinish": true
+    },
+    {
+      "section": "ob",
+      "topicDraft": true,
+      "topicFeedback": true,
+      "mixedDraft": true,
+      "coveredPool": true,
+      "learningTimerAbsent": true,
+      "isolatedFinish": true
+    }
+  ],
+  "syntheticStateOnly": true,
+  "uncaughtErrors": []
+}

@@ -22,15 +22,17 @@ function notationToggle(store) {
 }
 
 
-function row(r, n, id) {
+function row(r, n, id, store) {
   // One action per row; the title opens the lesson, so the row never needs two buttons.
   const titleHref = r.href;
-  const verb = r.kind === 'skill' ? (r.state === 'needs-review' ? 'Repair' : r.covered ? 'Revisit' : 'Learn') : r.kind === 'lesson' ? 'Read' : 'Start';
+  const saved = r.kind === 'skill' ? store.practiceSession?.(id, r.id) : null;
+  const verb = saved ? 'Resume learning' : r.kind === 'skill' ? (r.state === 'needs-review' ? 'Repair' : r.covered ? 'Revisit' : 'Learn') : r.kind === 'lesson' ? 'Read' : 'Start';
   const actions = [h('a', { class: `btn small${r.current ? ' primary' : ' ghost'}`, href: r.href, 'aria-label': `${verb}: ${r.title}` }, verb)];
   return h('li', { class: `grid-row${r.current ? ' is-current' : ''}${r.later ? ' is-later' : ''}${r.done ? ' is-done' : ''}`, id: r.current ? 'current-row' : null, 'aria-current': r.current ? 'step' : null },
     h('span', { class: 'grid-num num' }, String(n)),
     h('span', { class: 'grid-body' },
       h('a', { class: 'grid-title', href: titleHref }, r.title),
+      saved ? h('span', { class: 'small-note muted' }, `Saved learning · ${saved.log.length}/${saved.count} answered`) : null,
       r.kind === 'skill' && r.learning?.started ? h('span', { class: 'small-note muted' }, learningEvidence(r.learning)) : null,
       r.current && r.kind === 'skill' && r.skill ? h('span', { class: 'grid-skill' }, r.skill) : null,
       r.current ? h('span', { class: 'you-are-here' }, icon('pencil', { size: 14 }), 'Suggested next step') : null),
@@ -58,13 +60,13 @@ export function sectionPage(root, { store, id }) {
   mount(root,
     h('h1', {}, cfg.title),
     h('p', { class: 'lede' }, cfg.blurb),
-    store.practiceSession?.(id)?.family ? resumePracticeCards(store, [id], { compact: true }) : null,
+    resumePracticeCards(store, [id], { compact: true, kind: 'learning' }),
     h('section', { class: 'format-line' },
       h('p', { class: 'num-ish' }, 'Practice format · ', formatLine(cfg)),
       h('div', { class: 'training-options' },
         h('section', { class: 'training-option training-option-main' }, h('h2', {}, 'Mixed practice'),
           h('p', {}, 'Your main daily workout. Varied questions with feedback after every answer.'), mixedPracticeAction(store,id)),
-        h('section', { class: 'training-option' }, h('h2', {}, 'Learn or repair'), h('p', {}, 'Choose a skill below. Use ChatGPT or hints. A full block without skips ticks learning automatically.'),
+        h('section', { class: 'training-option' }, h('h2', {}, 'Learn or repair'), h('p', {}, 'Choose a skill below. Each topic saves its own 10-question block, separately from mixed practice. Use ChatGPT or hints. A full block without skips ticks learning automatically.'),
           h('button', { class: 'btn', type: 'button', onclick: () => root.querySelector('#skills')?.scrollIntoView({ block: 'start' }) }, 'Learn skills below')),
         h('section', { class: 'training-option' }, h('h2', {}, 'Timed section'), h('p', {}, 'Practise the full section clock. Review answers after finishing.'),
           h('a', { class: 'btn', href: `#/run/${id}/exam` }, 'Timed section'))),
@@ -86,6 +88,6 @@ export function sectionPage(root, { store, id }) {
       h('header', { class: 'unit-head' },
         h('h2', {}, u.title),
         h('span', { class: 'num muted' }, `${u.done} of ${u.total}`)),
-      h('ol', { class: 'grid', start: n + 1 }, u.rows.map((r) => row(r, ++n, id)))))),
-    map.units.some((u) => u.band === 'foundations') ? h('details', { class: 'level-guide' }, h('summary', {}, 'Optional foundation lessons'), map.units.filter((u) => u.band === 'foundations').map((u) => h('ol', { class: 'grid' }, u.rows.map((r) => row(r, ++n, id))))) : null);
+      h('ol', { class: 'grid', start: n + 1 }, u.rows.map((r) => row(r, ++n, id, store)))))),
+    map.units.some((u) => u.band === 'foundations') ? h('details', { class: 'level-guide' }, h('summary', {}, 'Optional foundation lessons'), map.units.filter((u) => u.band === 'foundations').map((u) => h('ol', { class: 'grid' }, u.rows.map((r) => row(r, ++n, id, store))))) : null);
 }

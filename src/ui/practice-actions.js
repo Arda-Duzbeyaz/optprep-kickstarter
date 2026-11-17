@@ -5,8 +5,9 @@ import { PRACTICE_FAMILIES } from '../practice/catalog.js';
 export function mixedPracticeAction(store, id, { primary = true } = {}) {
   const families = PRACTICE_FAMILIES[id], covered = families.filter((f) => store.coverage(id,f.id).covered).length;
   const saved = store.settings().mixedPool?.[id];
-  const session = store.practiceSession?.(id);
-  const selected = session && !session.family ? session.scope || 'all' : saved === 'all' ? 'all' : covered >= 2 ? 'covered' : 'all';
+  const session = store.practiceSessions?.().find((s) => s.section === id && !s.family);
+  const selected = saved === 'all' || saved === 'covered' && covered >= 2 ? saved
+    : session && (session.scope !== 'covered' || covered >= 2) ? session.scope || 'all' : covered >= 2 ? 'covered' : 'all';
   const selectId = `mixed-pool-${id}`;
   const pool = h('select', { id: selectId, 'aria-label': 'Mixed practice question pool', onchange: () => {
     store.setSetting('mixedPool',{...store.settings().mixedPool,[id]:pool.value}); update();
@@ -17,10 +18,10 @@ export function mixedPracticeAction(store, id, { primary = true } = {}) {
   const note = h('p', { class: 'small-note muted' });
   function update() {
     start.href = `#/run/${id}/mixed/${pool.value}`;
-    const block = store.practiceSession?.(id);
+    const block = store.practiceSession?.(id, null, pool.value);
     start.textContent = block && !block.family && (block.scope || 'all') === pool.value
       ? `Resume mixed practice · ${block.log.length}/${block.count} answered` : 'Start mixed practice · 10 questions';
-    note.textContent = `${pool.value === 'all' ? 'All skills, including ones you have not covered yet' : 'Only skills you marked covered'}. Questions stay within ${SECTIONS[id].title}.`;
+    note.textContent = `${pool.value === 'all' ? 'All skills, including ones you have not covered yet' : 'Only skills you marked covered'}. Questions stay within ${SECTIONS[id].title}. Saved separately from topic learning.`;
   }
   update();
   return h('div', { class: 'mixed-practice-action' },

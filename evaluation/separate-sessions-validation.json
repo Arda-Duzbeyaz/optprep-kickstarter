@@ -1,0 +1,45 @@
+{
+  "edition": "1.7.1-kickstarter.1",
+  "date": "2026-11-17",
+  "baseline": "1.7.0-kickstarter.1",
+  "inputArchive": "optprep-kickstarter-main.zip",
+  "inputSha256": "cd4a138e6d654dbbea6ff618bada59ccb34c49649bb22a49fddaf09437d9765d",
+  "javascript": {
+    "passed": 1190,
+    "failed": 0,
+    "skipped": 0
+  },
+  "python": {
+    "passed": 40,
+    "failed": 0,
+    "skipped": 0,
+    "engine": "Existing compiled binary; source byte-compared with unchanged current engine source"
+  },
+  "newCoreTests": 6,
+  "concurrentSavedContextsTested": 24,
+  "oldDomScriptsPassed": 13,
+  "newRouterAssertions": 171,
+  "wholeLearningWalkthrough": {
+    "skills": 111,
+    "questions": 1120,
+    "assertions": 728,
+    "uncaughtErrors": 0
+  },
+  "protectedSource": 425,
+  "protectedFolders": [
+    "config",
+    "src/sections",
+    "src/zapn",
+    "src/study",
+    "engine",
+    "backend"
+  ],
+  "currentCppSuiteRerun": false,
+  "visualQA": "separate-sessions-browser.json",
+  "liveGithubPagesUpdated": false,
+  "limits": [
+    "No physical-phone or cross-browser visual QA",
+    "Older overwritten sessions cannot be recovered without a backup",
+    "Browser storage quotas still apply; autosave reports storage failure rather than claiming success"
+  ]
+}

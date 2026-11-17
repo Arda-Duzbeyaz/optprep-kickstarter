@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-17",
+  "browser": "Chrome",
+  "syntheticPreviewOnly": true,
+  "verified": [
+    "constant-difference learning opened without mixed timer",
+    "learning draft \u221251 restored after switching to another topic and mixed practice",
+    "same learning draft restored after browser reload",
+    "independent mixed draft 1595 restored with its own pace display",
+    "two topic Resume learning controls coexist with Resume mixed practice on section page"
+  ],
+  "responsive": {
+    "iframeWidth": 390,
+    "clientWidth": 375,
+    "scrollWidth": 375,
+    "noHorizontalOverflow": true
+  },
+  "limits": [
+    "No physical-phone or cross-browser visual QA",
+    "No live GitHub Pages deployment"
+  ]
+}

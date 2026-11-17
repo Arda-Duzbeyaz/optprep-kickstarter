@@ -26,7 +26,7 @@ async function until(fn,label){for(let i=0;i<200;i++){if(fn())return;await new P
 async function route(hash,heading){location.hash=hash;await until(()=>root.querySelector('h1')?.textContent===heading,hash);}
 async function practice(hash){await route(hash,'Beat the Odds: Practice');if(button('Start new 10-question block'))button('Start new 10-question block').click();await until(()=>root.querySelector('.prompt'),'practice prompt');}
 function advance(ms=3000){now+=ms;const pending=[...frames.values()];frames.clear();pending.forEach(f=>f(now));}
-function correct(){const item=state().activePractice.bto.current.item;root.querySelectorAll('[role=radio]')[item.answerIndex].click();advance();button('Submit').click();return item;}
+function correct(){const item=state().activePractice['bto:mixed:covered'].current.item;root.querySelectorAll('[role=radio]')[item.answerIndex].click();advance();button('Submit').click();return item;}
 try{
  const {render:renderTree}=await import('../src/study/diagrams/tree.js');
  const spec={root:{label:'Start',children:[{label:'A',p:'1/3',mark:true},{label:'B',p:'2/3'}]},total:'1/3'};
@@ -50,10 +50,10 @@ try{
  }
  ok(root.querySelector('a[href="#/run/bto/mixed/covered"]'));
  await practice('#/run/bto/mixed/covered');
- const pool=state().activePractice.bto.familyPool;eq(pool,['two-dice-sum','die-repeats']);
+ const pool=state().activePractice['bto:mixed:covered'].familyPool;eq(pool,['two-dice-sum','die-repeats']);
  const seen=[];
  for(let i=0;i<10;i++){
-  const current=state().activePractice.bto.current.item;
+  const current=state().activePractice['bto:mixed:covered'].current.item;
   ok(!root.querySelector('.qhead').textContent.includes('sum events'),'method hidden');
   ok(!root.querySelector('.practice-level-strip').textContent,'difficulty hidden before submission');
   const item=correct();seen.push(item.family);ok(pool.includes(item.family));
@@ -64,16 +64,16 @@ try{
  eq(seen.filter(f=>f==='two-dice-sum').length,5);eq(new Set(seen.slice(0,2)).size,2,'breadth before repeating');
  for(const family of pool)eq(state().recognition[`bto:${family}`].passed,[1]);
  button('Finish').click();ok(root.textContent.includes('Block complete'));
- eq(state().activePractice.bto,undefined);eq(state().mastery,initial.mastery,'legacy counters retained');
+ eq(state().activePractice['bto:mixed:covered'],undefined);eq(state().mastery,initial.mastery,'legacy counters retained');
  eq(state().mixedEvidence,initial.mixedEvidence,'legacy mixed history retained');
- button('Start another 10 questions').click();const family=state().activePractice.bto.current.item.family;
+ button('Start another 10 questions').click();const family=state().activePractice['bto:mixed:covered'].current.item.family;
  button('Used outside help').click();correct();eq(state().recognition[`bto:${family}`].run,0);
  eq(state().recognition[`bto:${family}`].lastReason,'help');ok(root.textContent.includes('Help used: learning only'));
  button('Next (Enter)').click();const prompt=root.querySelector('.prompt').textContent;
- await route('#/','Today');ok(root.textContent.includes('Continue practice'));
+ await route('#/','Today');ok(root.textContent.includes('Saved learning and mixed practice'));
  await practice('#/run/bto/mixed/covered');eq(root.querySelector('.prompt').textContent,prompt,'same saved question');
- ok(state().activePractice.bto.current.interrupted,'unanswered resumed attempts are tainted');
- correct();eq(state().recognition[`bto:${state().activePractice.bto.current.item.family}`].lastReason,'interrupted');
+ ok(state().activePractice['bto:mixed:covered'].current.interrupted,'unanswered resumed attempts are tainted');
+ correct();eq(state().recognition[`bto:${state().activePractice['bto:mixed:covered'].current.item.family}`].lastReason,'interrupted');
  await route('#/settings','Settings');
  const hours=root.querySelector('#prep-hours');hours.value='10';button('Save preparation plan').click();eq(state().settings.weeklyPrepHours,10);
  eq(state().settings.assessmentDeadline,'2026-12-06T22:59:00.000Z');eq(state().settings.dailyGoalMin,undefined,'habit default preserved');

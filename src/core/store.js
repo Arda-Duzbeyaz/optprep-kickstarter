@@ -5,7 +5,7 @@ import { blankV2, migrate, VERSION } from './migrate.js';
 import { trendStep } from './patterns.js';
 import { xpFor, MAX_FREEZES } from './progression.js';
 import { recognitionStep, coverageInfo } from './recognition.js';
-import { validPractice } from './practice.js';
+import { validPractice, practiceSlot, practiceMatches } from './practice.js';
 import { upsertMistake } from './mistakes.js';
 import { dayKey, streak, applyFreezes } from './activity.js';
 import { practiceSuccess } from './check.js';
@@ -81,6 +81,38 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
   const day = () => (state.activity.days[today()] = state.activity.days[today()] || { ms: 0, xp: 0 });
   const addXp = (n) => { if (n > 0) day().xp += n; };
 
+  function rawPractice(section, family, scope = 'all') {
+    const key = practiceSlot(section, family, scope);
+    if (Object.hasOwn(state.activePractice, key)) return state.activePractice[key];
+    const legacy = state.activePractice[section];
+    // Old releases saved one block under the section ID. Keep that block until
+    // its own topic/pool is resumed; opening another context cannot replace it.
+    if (legacy && practiceSlot(section, legacy.family, legacy.scope) === key) return legacy;
+    return null;
+  }
+  function putPractice(snapshot) {
+    state.activePractice[practiceSlot(snapshot.section, snapshot.family, snapshot.scope)] = JSON.parse(JSON.stringify(snapshot));
+    const legacy = state.activePractice[snapshot.section];
+    if (legacy && practiceSlot(snapshot.section, legacy.family, legacy.scope) === practiceSlot(snapshot.section, snapshot.family, snapshot.scope))
+      delete state.activePractice[snapshot.section];
+  }
+  function removePractice(section, family, scope = 'all', seed) {
+    for (const key of [practiceSlot(section, family, scope), section]) {
+      const snapshot = state.activePractice[key];
+      if (snapshot && practiceSlot(section, snapshot.family, snapshot.scope) === practiceSlot(section, family, scope) &&
+        (seed === undefined || String(snapshot.seed) === String(seed))) delete state.activePractice[key];
+    }
+  }
+  function sessions() {
+    // Canonical slots take precedence over a same-context legacy alias in an import.
+    const rows = new Map();
+    for (const [key, snapshot] of Object.entries(state.activePractice)) if (validPractice(snapshot)) {
+      const slot = practiceSlot(snapshot.section, snapshot.family, snapshot.scope);
+      if (!rows.has(slot) || key === slot) rows.set(slot, snapshot);
+    }
+    return [...rows.values()].sort((a, b) => b.savedAt - a.savedAt);
+  }
+
   return {
     get state() { return state; },
     get readOnly() { return readOnly; },
@@ -98,7 +130,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       // never record the same answer a second time.
       if (practiceSnapshot) {
         if (!validPractice(practiceSnapshot, section) || !practiceSnapshot.current.done) throw new Error('Invalid answered practice snapshot');
-        const previous = state.activePractice[section];
+        const previous = rawPractice(section, practiceSnapshot.family, practiceSnapshot.scope);
         if (previous?.current?.done && previous.seed === practiceSnapshot.seed && previous.index === practiceSnapshot.index &&
           questionKey(previous.current.item) === questionKey(practiceSnapshot.current.item)) return false;
       }
@@ -132,7 +164,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
         if (state.calibration.length > 2000) state.calibration.splice(0, state.calibration.length - 2000);
       }
       if (practiceSnapshot) {
-        state.activePractice[section] = JSON.parse(JSON.stringify(practiceSnapshot));
+        putPractice(practiceSnapshot);
         const block = snapshotLearningBlock(practiceSnapshot, now);
         if (block) state.learningCoverage[k] = addLearningBlock(state.learningCoverage[k], block);
       }
@@ -141,23 +173,29 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       save();
       return true;
     },
-    practiceSession(section) {
-      const s = state.activePractice[section];
-      return validPractice(s, section) ? JSON.parse(JSON.stringify(s)) : null;
+    practiceSession(section, family, scope = 'all') {
+      // The one-argument read remains for older diagnostics. Production links
+      // always specify a topic or null plus a pool; they never resume "latest".
+      const s = family === undefined ? sessions().find((s) => s.section === section) : rawPractice(section, family, scope);
+      return validPractice(s, section) && (family === undefined || practiceMatches(s, section, family, scope)) ? JSON.parse(JSON.stringify(s)) : null;
     },
-    practiceSessions() { return Object.keys(state.activePractice).map((id) => this.practiceSession(id)).filter(Boolean).sort((a, b) => b.savedAt - a.savedAt); },
+    practiceSessions() { return JSON.parse(JSON.stringify(sessions())); },
+    rawPracticeSession(section, family = null, scope = 'all') { const s = rawPractice(section, family, scope); return s ? JSON.parse(JSON.stringify(s)) : null; },
     savePractice(snapshot) {
       if (!validPractice(snapshot)) throw new Error('Invalid practice snapshot');
-      state.activePractice[snapshot.section] = JSON.parse(JSON.stringify(snapshot)); save();
+      putPractice(snapshot); save();
     },
-    clearPractice(section) { delete state.activePractice[section]; save(); },
+    clearPractice(section, family, scope = 'all') {
+      const selected = family === undefined ? sessions().find((s) => s.section === section) : null;
+      removePractice(section, selected?.family ?? family ?? null, selected?.scope || scope); save();
+    },
     finishPractice(section, run) {
       const block = learningBlock(run, clock());
       if (block) {
         const key = `${section}:${run.family}`;
         state.learningCoverage[key] = addLearningBlock(state.learningCoverage[key], block);
       }
-      delete state.activePractice[section];
+      removePractice(section, run.family || null, run.scope, run.blockId);
       if (run?.max && (!run.blockId || !state.runs.some((r) => r.section === section && r.blockId === run.blockId))) {
         const r = { ...run, section, mode: 'practice', finishedAt: clock() }; state.runs.push(r); hooks.run?.(r);
       }

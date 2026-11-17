@@ -41,7 +41,7 @@ try{
   ok(root.querySelector('.solution'),'extended-family feedback resumes');
   // Save timestamps legitimately change on resume; answer evidence must not.
   eq(store.stats(),saved.stats,'feedback does not double-count');eq(store.state.activity,saved.activity,'XP is unchanged');eq(store.srs,saved.srs,'revision schedule is unchanged');
-  eq(store.practiceSession(family.section).current.item,saved.activePractice[family.section].current.item,'the same extended question resumes');
+  eq(store.practiceSession(family.section).current.item,saved.activePractice[`${family.section}:learn:${family.id}`].current.item,'the same extended question resumes');
   eq(store.recognition(),{},'learning extended maths is still learning-only');stop();stop=()=>{};
  }
  // Both formerly exclusive BTO families can now earn ordinary mixed checkpoints.

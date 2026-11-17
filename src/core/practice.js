@@ -10,6 +10,16 @@ export const PRACTICE_VERSION = 1;
 const record = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 const finite = (n) => Number.isFinite(n) && n >= 0;
 
+// Learning belongs to a named topic; each mixed pool has its own independent block.
+export function practiceSlot(section, family = null, scope = 'all') {
+  return family ? `${section}:learn:${family}` : `${section}:mixed:${scope || 'all'}`;
+}
+
+export function practiceMatches(snapshot, section, family = null, scope = 'all') {
+  return !!snapshot && snapshot.section === section &&
+    practiceSlot(snapshot.section, snapshot.family, snapshot.scope) === practiceSlot(section, family, scope);
+}
+
 export function practiceHref(session) {
   if (!session.family && session.scope === 'covered') return `#/run/${session.section}/mixed/covered`;
   return `#/run/${session.section}/practice${session.family ? `/${session.family}` : ''}`;
@@ -53,8 +63,9 @@ export function validPractice(s, section = s?.section) {
       !Number.isInteger(c.hints) || c.hints < 0 || c.hints > item.hints.length ||
       !Number.isFinite(c.budgetMs) || c.budgetMs <= 0 || !validResponse(item, c.draft, { draft: true }) ||
       s.log.length !== s.index + Number(c.done) || s.log.some((r) => !record(r) || !validMixedRow(r) || typeof r.family !== 'string' ||
+        r.xp !== undefined && (!Number.isSafeInteger(r.xp) || r.xp < 0) ||
         typeof r.correct !== 'boolean' || !Number.isFinite(r.score) || !finite(r.ms) || !Number.isInteger(r.hints) || r.hints < 0 ||
-        r.skipped !== undefined && typeof r.skipped !== 'boolean')) return false;
+        r.skipped !== undefined && typeof r.skipped !== 'boolean' || r.xp !== undefined && (!Number.isInteger(r.xp) || r.xp < 0))) return false;
     if (c.done) {
       if (!validResponse(item, c.response)) return false;
       const result = checkItem(item, c.response), last = s.log.at(-1);

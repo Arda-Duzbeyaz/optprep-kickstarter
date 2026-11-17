@@ -113,15 +113,14 @@ try {
   eq(store.runs('bto','practice')[0].completed,true);ok(root.textContent.includes('Block complete'));
   button('Start another 10 questions').click();ok(store.practiceSession('bto'));eq(store.practiceSession('bto').log.length,0);
   button('End session').click();eq(store.practiceSession('bto'),null);eq(store.runs('bto','practice').length,1,'zero-answer finish adds no fake history');
-  // A different selected skill requires an explicit choice; other tasks stay saved.
+  // A different topic and mixed pool start independently; other saved blocks remain.
   stop();stop=()=>{};store=makeStore(memoryBackend());start(store,'nl');stop();stop=()=>{};const nl=store.practiceSession('nl');
   eq(nl.current.interrupted,true,'leaving an unanswered question marks its pace attempt as interrupted');
-  start(store,'bto','two-dice-sum');stop();stop=()=>{};const bto=store.practiceSession('bto');
+  start(store,'bto','two-dice-sum');stop();stop=()=>{};const bto=store.practiceSession('bto','two-dice-sum');
   eq(bto.current.interrupted,true);
-  start(store,'bto');ok(root.textContent.includes('You have a saved practice block'));
-  eq(store.practiceSession('bto'),bto);eq(store.practiceSession('nl'),nl);
-  ok(root.querySelector('a[href="#/run/bto/practice/two-dice-sum"]'));
-  button('Start new 10-question block').click();eq(store.practiceSession('bto').family,null);eq(store.practiceSession('nl'),nl);
+  start(store,'bto');ok(root.querySelector('.prompt'));ok(!root.textContent.includes('You have a saved practice block'));
+  eq(store.practiceSession('bto','two-dice-sum'),bto);eq(store.practiceSession('nl'),nl);
+  eq(store.practiceSession('bto',null).family,null);eq(store.practiceSessions().length,3);
   // Autosave on pagehide, paused hidden time, and visible restoration.
   advance(2200);Object.defineProperty(document,'hidden',{value:true,configurable:true});document.dispatchEvent(new Event('visibilitychange'));
   const savedMs=store.practiceSession('bto').current.elapsedMs;advance(240000);
@@ -129,14 +128,14 @@ try {
   advance(1000);window.dispatchEvent(new Event('pagehide'));eq(store.practiceSession('bto').current.elapsedMs,savedMs+1000);
   delete document.hidden;
   // Unreadable saved sessions do not erase existing levels or other categories.
-  stop();stop=()=>{};store.state.mastery['bto:two-dice-sum']={lv:4,run:0,prun:2};store.state.activePractice.bto={version:999};
+  stop();stop=()=>{};store.state.mastery['bto:two-dice-sum']={lv:4,run:0,prun:2};store.state.activePractice['bto:mixed:all']={version:999};
   start(store);ok(root.textContent.includes('could not be restored'));eq(store.mastery()['bto:two-dice-sum'].lv,4);
   button('Start new 10-question block').click();eq(store.mastery()['bto:two-dice-sum'].prun,2);
   // Both the landing pages and skills dashboard expose resume and level criteria.
   stop();stop=()=>{};store.setSetting('preset',{id:'kickstarter'});
   sectionPage(root,{store,id:'bto'});ok(root.querySelector('[data-action="mixed-practice"]').textContent.startsWith('Resume mixed practice'));ok(root.textContent.includes('Mixed checks follow learning'),'unstarted skills explain the next stage instead of showing empty cold counters');
   eq(store.mastery()['bto:two-dice-sum'].prun,2,'legacy levels preserved');ok(root.textContent.includes('How learning and mixed checkpoints work'));
-  pathPage(root,{store});ok(root.textContent.includes('Resume practice'));
+  pathPage(root,{store});ok(root.textContent.includes('Resume mixed practice'));
   progressPage(root,{store});ok(root.textContent.includes('Skills'));ok(root.textContent.includes('all supported difficulties verified'));ok(root.textContent.includes('skills started'));
   // Storage failure is visible rather than a false promise that data was saved.
   const blocked=memoryBackend();blocked.setItem=()=>{throw Error('QuotaExceededError')};
