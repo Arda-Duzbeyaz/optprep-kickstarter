@@ -893,3 +893,19 @@ input.study-input[type=number] { width: 120px; }
 .cheat-tools { margin: 4px 0 8px; }
 @media (max-width: 760px) { .belief-plan { grid-template-columns: 1fr; } }
 @media print { .next-up, .cheat-tools { display: none; } }
+
+/* Assessment plan, reserved papers and first-attempt review. */
+.coach-focus { border-left: 3px solid var(--ink); }
+.coach-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.coach-top h2, .coach-debrief h2 { margin-top: 0; }
+.coach-time { display: flex; align-items: center; gap: 8px; color: var(--text-2); font-size: .875rem; }
+.coach-time select { max-width: 100%; }
+.coach-primary { margin: 12px 0 4px; font-size: clamp(1.3rem, 3vw, 1.75rem); }
+.coach-steps, .coach-history { padding-left: 1.4rem; }
+.coach-steps li { padding: 5px 0; }
+.coach-steps .num { display: inline-block; margin-left: .75rem; font-size: .85em; }
+.coach-metrics { display: grid; grid-template-columns: repeat(auto-fit,minmax(100px,1fr)); gap: 12px; }
+.coach-metrics strong { display: block; font-size: 1.22rem; }
+.coach-history { line-height: 1.75; }
+.check-prompt { font-size: 1.13rem; line-height: 1.55; }
+.check-last summary, .coach-focus summary { cursor: pointer; }

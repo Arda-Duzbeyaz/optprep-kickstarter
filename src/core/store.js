@@ -12,6 +12,7 @@ import { practiceSuccess } from './check.js';
 import { addLearningBlock, learningBlock, snapshotLearningBlock } from './learning.js';
 import { questionKey, QUESTION_HISTORY_LIMIT } from './questions.js';
 import { structureKey, STRUCTURE_HISTORY_LIMIT } from '../transfer/profile.js';
+import { checkActions, validCheckSessions, mergeChecks } from './check-sessions.js';
 import { recordMixedAttempt, boundMixedDetails } from './mixed-training.js';
 
 export const KEY = 'optprep:v2';
@@ -121,8 +122,15 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     get migratedFrom() { return migratedFrom; },
     // Displayed-question history also matters: backend adoption must not erase
     // exposure tracking just because no ordinary answer has been submitted yet.
-    isEmpty() { return !Object.keys(state.mixedTraining).length && !Object.keys(state.learningCoverage).length && !Object.keys(state.recognition).length && !Object.keys(state.activePractice).length && !Object.keys(state.mixedEvidence).length && !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
+    isEmpty() { return !Object.keys(state.checkSessions).length && !Object.keys(state.mixedTraining).length && !Object.keys(state.learningCoverage).length && !Object.keys(state.recognition).length && !Object.keys(state.activePractice).length && !Object.keys(state.mixedEvidence).length && !Object.keys(state.stats).length && !state.runs.length && !state.transferRuns.length && !Object.keys(state.study || {}).length && !Object.keys(state.zapn).length && !Object.values(state.recentQuestions).some((xs) => Array.isArray(xs) && xs.length) && !Object.values(state.recentStructures).some((xs) => Array.isArray(xs) && xs.length); },
     save,
+    ...checkActions({ state: () => state, save, clock, readLatest: () => {
+      if (readOnly) return null;
+      try { return JSON.parse(read(backend, KEY))?.checkSessions; } catch { return null; }
+    } }),
+    acceptCheckUpdate(sessions) {
+      if (validCheckSessions(sessions)) state.checkSessions = mergeChecks(state.checkSessions, sessions);
+    },
     // One answer from any mode. Updates stats, the recency trend, the skill level, XP and
     // the mistake log, then saves once.
     recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss, mixed = false, key, practiceSnapshot, nextSrs, uninterrupted = true, levels, standardTime = true, aided = false } = {}) {

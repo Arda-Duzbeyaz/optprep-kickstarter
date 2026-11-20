@@ -1,6 +1,6 @@
 // Hash router. Every page is a function (root, ctx) that may return a cleanup.
 import { h, mount } from './src/ui/dom.js';
-import { makeStore } from './src/core/store.js';
+import { makeStore, KEY } from './src/core/store.js';
 import { SECTIONS } from './config/sections.js';
 import { activatePreset, activePreset, presetSections } from './config/presets.js';
 import { pathPage } from './src/ui/pages/path.js';
@@ -23,6 +23,8 @@ const mockPg = () => import('./src/ui/pages/mock.js');
 const mkPg = () => import('./src/ui/pages/mk.js');
 const setsPg = () => import('./src/ui/pages/sets.js');
 const runnerPg = () => import('./src/ui/runner.js');
+const checksPg = () => import('./src/ui/pages/checks.js');
+const coachPg = () => import('./src/ui/pages/coach.js');
 const transferPg = () => import('./src/ui/pages/transfer.js');
 // Study pages carry about 3 MB of lessons, so they load the first time Study opens.
 let studyPages;
@@ -66,6 +68,8 @@ const ROUTES = [
   [/^#\/study\/cheat\/(\w+)$/, (m, pg) => pg.cheatPage(view, { id: m[1] }), study],
   [/^#\/study\/drill\/(\w+)$/, (m, pg) => pg.drillPage(view, { id: m[1] }), study],
   [/^#\/study\/mixed\/(\w+)\/(\d+)$/, (m, pg) => pg.mixedPage(view, { store, id: m[1], chapter: +m[2] }), study],
+  [/^#\/coach(?:\/(bto|nl|ll|iv|ob|zapn))?$/, (m, pg) => pg.coachPage(view, { store, id: m[1] }), coachPg],
+  [/^#\/checks\/(bto|nl|ll|iv|ob)\/(a|b|drill)$/, (m, pg) => pg.checksPage(view, { store, id: m[1], form: m[2] }), checksPg],
   [/^#\/mock$/, (m, pg) => pg.mockPage(view, { store }), mockPg],
   [/^#\/transfer\/(bto|nl|ll|iv|ob|all)$/, (m, pg) => pg.transferPage(view, { store, section: m[1] }), transferPg],
   [/^#\/transfer$/, (m, pg) => pg.transferPage(view, { store }), transferPg],
@@ -106,12 +110,13 @@ function renderNav(hash) {
     h('div', { class: 'group' }, 'Learn'),
     link('#/study', 'Study guide', due ? h('span', { class: 'nav-count' }, String(due), h('span', { class: 'visually-hidden' }, ' lessons due')) : null, 'study', (hash === '#/study' || hash.startsWith('#/study/')) && !studyOwn),
     link('#/progress', 'Progress', open ? h('span', { class: 'nav-count' }, String(open), h('span', { class: 'visually-hidden' }, ' open mistakes')) : null, 'progress', hash.startsWith('#/progress') || studyOwn),
+    activePreset().id === 'kickstarter' ? link('#/coach', 'Assessment plan', null, 'path', hash.startsWith('#/coach') || hash.startsWith('#/checks')) : null,
     link('#/mock', 'Full mock', null, 'timer'),
     link('#/transfer', 'Batch check', null, 'bolt'),
     link('#/mk', 'Market making', null, 'bolt'),
     link('#/settings', 'Settings', null, 'settings', hash === '#/settings'));
   mount(tabbar,
-    link('#/', 'Today', null, 'path', hash === '#/' || hash === '' || hash.startsWith('#/s/') || hash.startsWith('#/zapn') || hash.startsWith('#/run/')),
+    link('#/', 'Today', null, 'path', hash === '#/' || hash === '' || hash.startsWith('#/s/') || hash.startsWith('#/zapn') || hash.startsWith('#/run/') || hash.startsWith('#/coach') || hash.startsWith('#/checks/')),
     link('#/study', 'Study', null, 'study', hash.startsWith('#/study') && !studyOwn),
     link('#/progress', 'Progress', null, 'progress', hash.startsWith('#/progress') || studyOwn),
     link('#/mock', 'Mock', null, 'timer'),
@@ -161,6 +166,11 @@ async function render() {
   document.title = 'Page not found · OptPrep';
 }
 
+window.addEventListener('storage', (e) => {
+  if (e.key === KEY && e.newValue) {
+    try { store.acceptCheckUpdate(JSON.parse(e.newValue).checkSessions); } catch { /* Ignore incomplete updates. */ }
+  }
+});
 window.addEventListener('hashchange', route);
 // The skip link moves focus to the page without touching the router.
 document.querySelector('.skip')?.addEventListener('click', (e) => { e.preventDefault(); (view.querySelector('h1') || view).focus(); });
@@ -172,7 +182,7 @@ initPwa();
 
 // Active minutes: a 5 s ticker credits time only inside a session, with the tab visible and
 // input in the last 90 s. Saved on the next store write and when the page is hidden.
-const SESSION = /^#\/(run\/|s\/\w+\/(learn|sets\/\d+)|zapn\/\w+|study\/(lesson|review|drill|mixed|cheat)\/|mock|mk|transfer)/;
+const SESSION = /^#\/(run\/|s\/\w+\/(learn|sets\/\d+)|zapn\/\w+|study\/(lesson|review|drill|mixed|cheat)\/|mock|mk|transfer|checks\/)/;
 let lastTick = Date.now();
 let lastInputAt = null;
 for (const ev of ['pointerdown', 'keydown', 'input', 'wheel', 'scroll', 'touchstart']) window.addEventListener(ev, () => { lastInputAt = Date.now(); }, { passive: true, capture: true });

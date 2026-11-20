@@ -19,6 +19,7 @@ export function zapnHub(root, { store }) {
     h('h1', {}, 'Zap-N games'),
     h('p', { class: 'lede' }, 'Short games that test speed, memory and planning. Each has a coach, a practice mode and an exam mode.'),
     h('p', { class: 'muted small-note' }, 'These are familiarity drills with trainer rules and targets. Your invitation confirms short neuro games, not this exact game list or an Optiver pass score. Compare speed and accuracy together; extensive game practice is not established to improve general reasoning.'),
+    activePreset().id === 'kickstarter' ? h('p', {}, h('a', { class:'btn', href:'#/coach/zapn' }, 'Three-game familiarisation')) : null,
     activePreset().note ? h('p', { class: 'muted small-note' }, activePreset().note) : null,
     h('ul', { class: 'task-list' }, games.map((g) => {
       const target = ZAPN_TARGETS[g.id];
@@ -64,7 +65,7 @@ export function zapnGame(root, { store, id, mode = 'practice' }) {
           ok ? 'At target. ' : `Target: ${target.label}. `,
           mode === 'exam' ? (r.ready ? 'Ready: three exam runs in a row at target.' : `Readiness streak ${r.streak}/${r.needed}.`) : 'Practice runs do not count toward readiness.',
           result.detail ? h('div', { class: 'muted' }, typeof result.detail === 'string' ? result.detail : JSON.stringify(result.detail)) : null),
-        h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn primary', type: 'button', onclick: start }, 'Play again'), h('a', { class: 'btn', href: '#/zapn' }, 'All games')));
+        h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn primary', type: 'button', onclick: start }, 'Play again'), h('a', { class: 'btn', href: '#/zapn' }, 'All games'), activePreset().id === 'kickstarter' ? h('a',{class:'btn',href:'#/coach/zapn'},'Familiarisation progress') : null));
       },
     });
   }

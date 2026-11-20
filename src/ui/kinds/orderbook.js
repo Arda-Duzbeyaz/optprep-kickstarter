@@ -4,7 +4,7 @@ import { fmtNum } from '../../core/format.js';
 
 // Tap a bid to sell one unit there, an ask to buy one unit. The position panel shows
 // the net quantity per product and the locked-in profit. Correct = flat and profit > 0.
-export function orderbookView(item, { onChange } = {}) {
+export function orderbookView(item, { onChange, maxTrades = Infinity } = {}) {
   const board = item.board;
   let trades = [];
   let locked = false;
@@ -13,7 +13,7 @@ export function orderbookView(item, { onChange } = {}) {
   const priceBtn = (ins, side) => h('button', {
     class: `btn small ob-${side}`, type: 'button',
     'aria-label': `${side === 'buy' ? 'Buy' : 'Sell'} one ${ins.name || ins.id} at ${side === 'buy' ? ins.ask : ins.bid}`,
-    onclick: () => { if (locked) return; trades.push({ id: ins.id, side }); render(); onChange?.(); },
+    onclick: () => { if (locked || trades.length >= maxTrades) return; trades.push({ id: ins.id, side }); render(); onChange?.(); },
   }, fmtNum(side === 'buy' ? ins.ask : ins.bid));
   const table = h('table', { class: 'ob-table' },
     h('thead', {}, h('tr', {}, h('th', {}, 'Instrument'), h('th', {}, 'Contains'), h('th', { style: { textAlign: 'right' } }, 'Bid (you sell)'), h('th', { style: { textAlign: 'right' } }, 'Ask (you buy)'))),
@@ -23,6 +23,7 @@ export function orderbookView(item, { onChange } = {}) {
       h('td', { style: { textAlign: 'right' } }, priceBtn(ins, 'sell')),
       h('td', { style: { textAlign: 'right' } }, priceBtn(ins, 'buy'))))));
   function render() {
+    for (const btn of table.querySelectorAll('button')) btn.disabled = locked || trades.length >= maxTrades;
     tradeList.replaceChildren(...(trades.length ? trades.map((t, i) => {
       const ins = board.instruments.find((x) => x.id === t.id);
       return h('span', { class: `badge ${t.side === 'buy' ? 'warn' : ''}` },

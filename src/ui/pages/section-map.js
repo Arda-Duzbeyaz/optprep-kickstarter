@@ -3,6 +3,7 @@
 import { SECTIONS } from '../../../config/sections.js';
 import { PRACTICE_FAMILIES as FAMILIES } from '../../practice/catalog.js';
 import { roadmap } from '../../core/path.js';
+import { activePreset } from '../../../config/presets.js';
 import { readiness } from '../../core/readiness.js';
 import { lessonForFamily, bookLessons } from '../../study/catalog.js';
 import { statusOf } from '../../study/progress.js';
@@ -16,7 +17,7 @@ function checkpoints(store, id) {
   return [
     { id: 'drill', title: 'Drill: 10 questions on the clock', href: `#/run/${id}/drill`, passed: drills.some(drillPassed) },
     { id: 'set', title: 'Timed set from the library', href: `#/s/${id}/sets`, passed: sets.some((s) => s.mode === 'timed') },
-    { id: 'exam', title: `Timed practice: ${formatLine(cfg)}`, href: `#/run/${id}/exam`, passed: readiness(store.runs(id, 'exam'), cfg.target, 3, cfg.exam).ready },
+    { id: 'exam', title: `Timed practice: ${formatLine(cfg)}`, href: `#/run/${id}/exam`, passed: readiness(store.runs(id, 'exam'), cfg.target, 3, cfg.exam, activePreset().id === 'kickstarter').ready },
   ];
 }
 

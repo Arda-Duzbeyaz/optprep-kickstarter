@@ -3,6 +3,7 @@ import { SECTIONS } from '../../../config/sections.js';
 import { activePreset, presetSections } from '../../../config/presets.js';
 import { SECTION_MODULES } from '../../sections/index.js';
 import { runExam } from '../runner.js';
+import { zapSampler } from '../../core/assessment-coach.js';
 import { formatLine } from './format.js';
 
 // Full mock: the scored sections in portal order, each on its own clock,
@@ -16,7 +17,7 @@ export function mockPage(root, { store }) {
   function intro() {
     mount(root,
       h('h1', {}, 'Full mock'),
-      h('p', { class: 'muted' }, 'The scored sections back to back, in portal order, each on its own clock. Each section must be a full paper without questions in your saved history; if the fresh search fails, it stops before that section starts. Zap-N runs from its own page.'),
+      h('p', { class: 'muted' }, 'The scored sections back to back, in portal order, each on its own clock. Each section must be a full paper without questions in your saved history; if the fresh search fails, it stops before that section starts. The Kickstarter mock ends with a link to a short Zap-N practice game.'),
       h('div', { class: 'panel' }, h('table', {}, h('tbody', {}, order.map((id, i) => h('tr', {}, h('td', { class: 'num' }, String(i + 1)), h('td', {}, SECTIONS[id].title), h('td', { class: 'muted' }, formatLine(SECTIONS[id])))))),
         h('div', { class: 'row', style: { marginTop: '16px' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => next(0) }, 'Start the mock'))));
   }
@@ -40,10 +41,15 @@ export function mockPage(root, { store }) {
   }
 
   function done() {
+    const games = zapSampler(store.state.zapn);
+    const game = games.find(g=>!g.tried) || games[0];
+    const next = activePreset().id === 'kickstarter' ?
+      h('a', { class:'btn primary', href:'#/zapn/'+game.id+'/practice' }, 'Continue to Zap-N · '+game.title) :
+      h('a', { class:'btn primary', href:'#/zapn' }, 'Zap-N');
     mount(root, h('h1', {}, 'Mock results'), h('div', { class: 'panel' }, h('table', {},
       h('thead', {}, h('tr', {}, h('th', {}, 'Section'), h('th', { style: { textAlign: 'right' } }, 'Score'), h('th', {}, 'Target'))),
       h('tbody', {}, results.map((r) => h('tr', {}, h('td', {}, SECTIONS[r.id].title), h('td', { class: 'num', style: { textAlign: 'right' } }, r.id === 'iv' ? `${r.score.toFixed(2)} / ${r.max}` : `${r.score} / ${r.max}`), h('td', { class: 'muted' }, SECTIONS[r.id].target.label)))))),
-      h('div', { class: 'row', style: { marginTop: '16px' } }, h('a', { class: 'btn primary', href: '#/zapn' }, 'Zap-N'), h('a', { class: 'btn', href: '#/' }, 'Readiness')));
+      h('div', { class: 'row', style: { marginTop: '16px' } }, next, h('a', { class: 'btn', href: '#/' }, 'Readiness')));
   }
 
   intro();

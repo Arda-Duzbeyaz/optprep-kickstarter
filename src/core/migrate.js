@@ -3,6 +3,7 @@
 import { SRS_INTERVALS } from './srs.js';
 import { dayKey } from './activity.js';
 import { recoverLearningBlocks } from './learning.js';
+import { validCheckSessions } from './check-sessions.js';
 import { validMixedTraining } from './mixed-training.js';
 
 export const VERSION = 2;
@@ -13,7 +14,7 @@ export const blankV2 = () => ({
   recentQuestions: {}, recentStructures: {}, transferRuns: [], practiceRuleVersion: 1,
   activePractice: {}, mixedEvidence: {},
   learningCoverage: {}, recognition: {}, learningCompletionVersion: 1,
-  mixedTraining: {},
+  mixedTraining: {}, checkSessions: {},
 });
 
 // The exam formats v1 runs were taken under, so readiness can tell a 60 s run from a 45 s one.
@@ -80,6 +81,7 @@ function shapeOk(raw) {
     if (row.target !== undefined && (!Number.isInteger(row.target) || row.target < 1 || row.target > 5)) return false;
   }
   if (raw.mixedTraining !== undefined && !validMixedTraining(raw.mixedTraining)) return false;
+  if (raw.checkSessions !== undefined && !validCheckSessions(raw.checkSessions)) return false;
   const days = raw.activity?.days;
   return days === undefined || kind(days) === 'object';
 }

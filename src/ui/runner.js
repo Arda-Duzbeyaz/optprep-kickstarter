@@ -11,6 +11,8 @@ import { intervalView } from './kinds/interval.js';
 import { orderbookView } from './kinds/orderbook.js';
 import { feedbackBanner, solutionPanel, hintLadder, intervalCoach } from './solution.js';
 import { checkItem, practiceSuccess } from '../core/check.js';
+import { activePreset } from '../../config/presets.js';
+import { debriefPanel } from './pages/coach.js';
 import { questionKey, questionSeen } from '../core/questions.js';
 import { makeRng } from '../core/rng.js';
 import { practiceItem, examItems, examScore, drawItem, FreshQuestionsUnavailable } from '../core/draw.js';
@@ -466,6 +468,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   }, 0);
   const responses = items.map(() => null);
   const obSolved = items.map(() => false);
+  const shown = new Set();
   let idx = 0;
   let finished = false;
   let raf = 0;
@@ -490,28 +493,33 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
     if (idx >= items.length) return exam.navigation === 'free' ? endScreen() : finish();
     setRail(idx / items.length, `Question ${idx + 1} of ${items.length}`);
     const item = items[idx];
+    shown.add(idx);
     store.rememberQuestion?.(item);
     const tap = exam.autoAdvance && item.kind === 'mcq';
     let live = false; // restoring a saved answer must not advance
-    const body = itemBody(item, { preview: false, notation, keys: keysOf(store), label: `Question ${idx + 1} of ${items.length}`, onChange: tap ? () => { if (live) { save(); idx++; show(); } } : undefined });
+    const body = itemBody(item, { preview: false, notation, keys: keysOf(store), label: `Question ${idx + 1} of ${items.length}`, onChange: () => {
+      if (!live || current?.body !== body || settleExpiry()) return;
+      current.draft = body.view.response();
+      if (tap) { save(); idx++; show(); }
+    } });
     if (responses[idx] && !responses[idx].skip) body.view.setResponse?.(responses[idx]);
     live = true;
-    current = { item, body, i: idx, t: performance.now() };
+    current = { item, body, i: idx, t: performance.now(), draft: responses[idx] && !responses[idx].skip ? responses[idx] : null };
     if (exam.perItemSeconds) perItem = makeCountdown(exam.perItemSeconds * 1000);
     const free = exam.navigation === 'free';
     const palette = free ? h('div', { class: 'palette', role: 'navigation', 'aria-label': 'Questions' }, items.map((_, i) => h('button', {
       class: `btn small${i === idx ? ' primary' : ''}${responses[i] && !responses[i].skip ? ' answered' : ''}`, type: 'button',
-      onclick: () => { save(); idx = i; show(); },
+      onclick: () => { if (settleExpiry()) return; save(); idx = i; show(); },
     }, String(i + 1)))) : null;
     const note = h('div', { class: 'exam-note', role: 'status' });
     const controls = h('div', { class: 'row' },
-      free && idx > 0 ? h('button', { class: 'btn', type: 'button', onclick: () => { save(); idx--; show(); } }, 'Previous') : null,
+      free && idx > 0 ? h('button', { class: 'btn', type: 'button', onclick: () => { if (settleExpiry()) return; save(); idx--; show(); } }, 'Previous') : null,
       item.kind === 'orderbook'
         ? h('button', { class: 'btn primary', type: 'button', onclick: () => submitBoard(note) }, 'Submit position')
-        : tap ? null : h('button', { class: 'btn primary', type: 'button', onclick: () => { save(); idx++; show(); } }, 'Next'),
-      (item.kind === 'mcq' || item.kind === 'orderbook') && canSkip ? h('button', { class: 'btn', type: 'button', onclick: () => { if (!free || !responses[idx]) responses[idx] = { skip: true }; idx++; show(); } }, free ? 'Skip for now' : 'Skip') : null,
+        : tap ? null : h('button', { class: 'btn primary', type: 'button', onclick: () => { if (settleExpiry()) return; save(); idx++; show(); } }, 'Next'),
+      (item.kind === 'mcq' || item.kind === 'orderbook') && canSkip ? h('button', { class: 'btn', type: 'button', onclick: () => { if (settleExpiry()) return; if (!free || !responses[idx]) responses[idx] = { skip: true }; idx++; show(); } }, free ? 'Skip for now' : 'Skip') : null,
       h('span', { style: { flex: 1 } }),
-      h('button', { class: 'btn', type: 'button', onclick: () => { if (confirm('Finish the exam now? Unanswered questions score 0.')) { save(); finish(); } } }, 'Finish exam'));
+      h('button', { class: 'btn', type: 'button', onclick: () => { if (settleExpiry()) return; if (confirm('Finish the exam now? Unanswered questions score 0.') && !settleExpiry()) { save(); finish('manual'); } } }, 'Finish exam'));
     mount(root, h('h1', { class: 'visually-hidden' }, `${base.title}: exam`), h('div', { class: 'panel exam' },
       h('div', { class: 'qhead' }, h('span', {}, `${base.title} · Exam${mock ? ' (mock)' : ''} · Question ${idx + 1} of ${items.length}`), timerDisplay),
       palette, body.el, note, controls));
@@ -525,19 +533,20 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
     mount(root, h('div', { class: 'panel exam' },
       h('div', { class: 'qhead' }, h('span', {}, `${base.title} · Exam · end of questions`), timerDisplay),
       h('p', {}, open.length ? `${open.length} question(s) skipped or unanswered. Go back to any of them, or finish.` : 'Every question has an answer.'),
-      h('div', { class: 'palette' }, open.map((i) => h('button', { class: 'btn small', type: 'button', onclick: () => { idx = i; show(); } }, String(i + 1)))),
-      h('div', { class: 'row', style: { marginTop: '12px' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => finish() }, 'Finish exam'))));
+      h('div', { class: 'palette' }, open.map((i) => h('button', { class: 'btn small', type: 'button', onclick: () => { if (settleExpiry()) return; idx = i; show(); } }, String(i + 1)))),
+      h('div', { class: 'row', style: { marginTop: '12px' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => { if (!settleExpiry()) finish('manual'); } }, 'Finish exam'))));
   }
 
-  function save() {
+  function save(acceptDisplayed = true) {
     if (!current) return;
-    const r = current.body.view.response();
+    const r = current.draft ?? (acceptDisplayed ? current.body.view.response() : null);
     if (current.item.kind === 'orderbook') return; // boards are scored by submission
     if (r) responses[idx] = r;
     else if (!responses[idx]) responses[idx] = { skip: true };
   }
 
   function submitBoard(note) {
+    if (settleExpiry()) return;
     const r = current.body.view.response();
     if (!r) { note.textContent = 'Tap prices to build a position first.'; return; }
     const res = checkItem(current.item, r);
@@ -548,23 +557,30 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
     note.textContent = `Not a flat, profitable position. −${pen} s. Adjust and resubmit, or skip.`;
   }
 
+  function settleExpiry() {
+    if (finished) return true;
+    const expired = examClockStatus(total, perItem).expired;
+    if (!expired) return false;
+    save(false); // only a response entered while both clocks were running
+    if (expired === 'total') {
+      const live = document.getElementById('live');
+      if (live) live.textContent = 'Time is up. Your exam is finished.';
+      finish('time');
+    } else { idx++; show(); }
+    return true;
+  }
+
   function tick() {
     if (finished) return;
     const clock = examClockStatus(total, perItem);
     paintTimer(t, total ? total.remaining() : clock.remaining);
     if (itemTimer) paintTimer(itemTimer, perItem?.remaining() || 0);
-    if (clock.expired === 'total') { save(); const live = document.getElementById('live'); if (live) live.textContent = 'Time is up. Your exam is finished.'; return finish(); }
-    if (clock.expired === 'item') {
-      // per-item clock ran out: keep whatever is on screen (rank order, a full interval), else skip
-      const r = current.body.view.response();
-      responses[idx] = r || { skip: true };
-      idx++; show();
-    }
-    raf = requestAnimationFrame(tick);
+    settleExpiry();
+    if (!finished) raf = requestAnimationFrame(tick);
   }
 
   const onKey = (e) => {
-    if (!current || finished) return;
+    if (!current || finished || settleExpiry()) return;
     const tap = exam.autoAdvance && current.item.kind === 'mcq';
     if (tap && e.repeat) return; // a held key must not answer a run of questions
     current.body.view.keyHandler?.(e);
@@ -573,14 +589,14 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   };
   document.addEventListener('keydown', onKey);
 
-  function finish() {
+  function finish(reason = 'complete') {
     if (finished) return;
     finished = true;
     leave();
     cancelAnimationFrame(raf);
     document.removeEventListener('keydown', onKey);
     const results = items.map((it, i) => {
-      if (it.kind === 'orderbook') return obSolved[i] ? { correct: true, score: 1 } : { correct: false, score: 0, skipped: !responses[i] };
+      if (it.kind === 'orderbook') return obSolved[i] ? { correct: true, score: 1 } : { correct: false, score: 0, skipped: !responses[i] || !!responses[i].skip };
       return checkItem(it, responses[i] || { skip: true });
     });
     const { score, max } = examScore(sectionId, results.map((r) => r.score));
@@ -594,24 +610,38 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
         store.srs = srsRecord(store.srs, `${sectionId}:${it.family}`, practiceSuccess(sectionId, results[i]));
       }
     });
-    const run = { section: sectionId, mode: 'exam', mock, repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: items.map((it, i) => ({ family: it.family, score: results[i].score, ms: Math.round(spent[i]) })) };
+    const completePaper = reason !== 'manual' || shown.size === items.length;
+    const itemDetails = items.map((it,i) => {
+      const r = results[i], response = responses[i];
+      let outcome = r.correct ? 'right' : 'wrong';
+      if (!shown.has(i)) outcome = 'unreached';
+      else if (r.skipped) outcome = 'skipped';
+      else if (it.kind === 'interval') {
+        if (r.correct && !practiceSuccess('iv',r)) outcome = 'wide';
+        else if (!r.correct && response?.lower > 0 && response.upper >= response.lower)
+          outcome = it.truth > response.upper ? 'above' : 'below';
+      }
+      return { family:it.family, score:r.score, ms:Math.round(spent[i]), outcome };
+    });
+    const run = { section: sectionId, mode: 'exam', mock, completePaper, finishReason:reason, repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: itemDetails };
     // Only fresh full-length replicas count toward readiness; numbered sets and
     // short variants are practice (a set can be memorised on a second attempt).
     const official = !variant && setNumber == null && extra === 1 && repeatCount === 0;
     if (setNumber != null) store.recordSet(sectionId, setNumber, { score, max, mode: 'timed' });
     else if (official) store.recordRun(run);
     else store.recordRun({ ...run, mode: 'exam-variant' });
-    review(results, score, max, official);
-    onDone?.({ score, max, repeatCount });
+    review(results, score, max, official, run);
+    onDone?.({ score, max, repeatCount, completePaper });
   }
 
-  function review(results, score, max, official) {
+  function review(results, score, max, official, run) {
     const target = base.target;
     const meets = runMeetsTarget({ score, max }, target);
-    const ready = readiness(store.runs(sectionId, 'exam'), target, 3, base.exam);
+    const separateDays = activePreset().id === 'kickstarter';
+    const ready = readiness(store.runs(sectionId, 'exam'), target, 3, base.exam, separateDays);
     const rows = items.map((it, i) => {
       const detail = h('tr', { hidden: true }, h('td', { colspan: 5 }, h('div', { class: 'review-item' }, itemBody(it, { preview: false, notation }).el, feedbackBanner(it, results[i], responses[i] || { skip: true }), solutionPanel(it, { stepwise: false }))));
-      const toggle = h('button', { class: 'linkish', type: 'button', 'aria-label': `Solution, question ${i + 1}`, 'aria-expanded': 'false', onclick: () => { detail.hidden = !detail.hidden; toggle.textContent = detail.hidden ? 'Solution' : 'Hide'; toggle.setAttribute('aria-expanded', String(!detail.hidden)); } }, 'Solution');
+      const toggle = h('button', { class: 'linkish', type: 'button', 'aria-label': `Solution, question ${i + 1}`, 'aria-expanded': 'false', onclick: () => { detail.hidden = !detail.hidden; if (!detail.hidden && !shown.has(i)) { store.rememberQuestion?.(it); shown.add(i); } toggle.textContent = detail.hidden ? 'Solution' : 'Hide'; toggle.setAttribute('aria-expanded', String(!detail.hidden)); } }, 'Solution');
       const r = results[i];
       return [h('tr', { 'data-grade': r.skipped ? 'skip' : r.correct || r.score > 0 ? 'right' : 'wrong' },
         h('td', { class: 'num' }, String(i + 1)),
@@ -630,8 +660,9 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
       h('div', { class: 'review-head' }, h('div', { class: 'review-title' },
         h('h1', {}, `${base.title}: result`),
         h('p', {}, h('span', { class: `badge ${meets ? 'ok' : 'no'}` }, meets ? 'Target met' : 'Below target'), ` Target: ${target.label}.`),
-        setNumber != null ? h('p', { class: 'muted' }, `Set ${setNumber} is fixed practice: it does not count toward the fresh-exam target.`) : repeatCount ? h('p', { class: 'muted' }, `${repeatCount} repeated question(s): this run is review practice and does not count toward the fresh-exam target.`) : official ? h('p', { class: 'muted' }, ready.ready ? 'Practice target met: the last 3 eligible exams met this trainer’s target. This is not a prediction of your Optiver result.' : `Practice target streak ${ready.streak} of ${ready.needed}. Three fresh exams under these clocks are required.`) : h('p', { class: 'muted' }, 'Modified or extra-time practice: only fresh, full-length exams under the current clocks count toward the practice target.')),
+        setNumber != null ? h('p', { class: 'muted' }, `Set ${setNumber} is fixed practice: it does not count toward the fresh-exam target.`) : repeatCount ? h('p', { class: 'muted' }, `${repeatCount} repeated question(s): this run is review practice and does not count toward the fresh-exam target.`) : official && !run.completePaper ? h('p', {class:'muted'}, 'Ended early. This result is saved for review and is excluded from your timed baseline and streak.') : official ? h('p', { class: 'muted' }, separateDays ? 'Timed target met on '+ready.streak+' of 3 separate practice days. Today counts once.' : ready.ready ? 'Practice target met on the last three eligible exams.' : `Practice target streak ${ready.streak} of ${ready.needed}. Three fresh exams under these clocks are required.`) : h('p', { class: 'muted' }, 'Modified or extra-time practice: only fresh, full-length exams under the current clocks count toward the practice target.')),
         scoreBox),
+      activePreset().id === 'kickstarter' && sectionId !== 'mm' ? debriefPanel(sectionId, run) : null,
       h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, '#'), h('th', {}, 'Family'), h('th', {}, 'Result'), h('th', { style: { textAlign: 'right' } }, 'Points'), h('th', {}, h('span', { class: 'visually-hidden' }, 'Solution')))), h('tbody', {}, rows.flat())),
       h('div', { class: 'row', style: { marginTop: '16px' } },
         h('a', { class: 'btn primary', href: setNumber != null ? `#/s/${sectionId}/sets` : `#/s/${sectionId}` }, setNumber != null ? 'Back to sets' : 'Back to section'),

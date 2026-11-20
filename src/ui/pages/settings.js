@@ -1,7 +1,7 @@
 // Settings: theme, daily goal, battery, division sign, install, backup and storage.
 import { h, mount } from '../dom.js';
 import { getTheme, setTheme } from '../theme.js';
-import { activePreset } from '../../../config/presets.js';
+import { activePreset, activatePreset } from '../../../config/presets.js';
 import { canInstall, promptInstall } from '../pwa.js';
 import { choice, field } from '../sheet.js';
 import { presetPicker } from './path.js';
@@ -34,7 +34,7 @@ function backup(store) {
   const file = h('input', { type: 'file', accept: 'application/json', class: 'visually-hidden', id: 'import-file', onchange: async () => {
     const f = file.files?.[0];
     if (!f) return;
-    try { store.importJSON(await f.text()); status.textContent = 'Backup restored. Your sheet now shows the imported progress.'; } catch (e) { status.textContent = `That file could not be restored: ${e.message}. Pick a file exported from OptPrep.`; }
+    try { store.importJSON(await f.text()); activatePreset(store.settings().preset); status.textContent = 'Backup restored. Your sheet now shows the imported progress.'; } catch (e) { status.textContent = `That file could not be restored: ${e.message}. Pick a file exported from OptPrep.`; }
     file.value = '';
   } });
   let armed = false;

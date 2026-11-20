@@ -10,6 +10,7 @@ import { bubbles, field, choice, setRail } from '../sheet.js';
 import { icon } from '../icons.js';
 import { sectionMap } from './section-map.js';
 import { resumePracticeCards } from '../practice-progress.js';
+import { coachCard } from './coach.js';
 import { mixedPracticeAction } from '../practice-actions.js';
 
 export function presetPicker(store, { onDone, compact = false } = {}) {
@@ -31,7 +32,7 @@ function taskRow(store, id, map) {
       h('span', { class: 'task-progress num' }, `${played} of ${games.length} played`)));
   }
   const cfg = SECTIONS[id];
-  const ready = readiness(store.runs(id, 'exam'), cfg.target, 3, cfg.exam).ready;
+  const ready = readiness(store.runs(id, 'exam'), cfg.target, 3, cfg.exam, activePreset().id === 'kickstarter').ready;
   return h('li', {}, h('a', { class: 'task-row', href: `#/s/${id}` },
     h('span', { class: 'task-name' }, cfg.title),
     ready ? h('span', { class: 'stamp stamp-mastered' }, 'Practice target met') : null,
@@ -71,8 +72,9 @@ export function pathPage(root, { store }) {
       h('p', { class: 'small-note' }, `${deadlineLabel(plan.deadline)} UK · ${deadlineLabel(plan.deadline, 'Europe/Paris')} CET`),
       h('p', { class: 'small-note muted' }, `${plan.weeklyHours} hours/week · approximately ${plan.estimatedHours} preparation hours remaining.`),
       h('details', { class: 'daily-routine' }, h('summary', {}, plan.title), h('p', {}, plan.advice), h('p', { class: 'small-note muted' }, 'Planning guidance only; this app does not start or submit your real assessments.'))) : null,
+    active.id === 'kickstarter' ? coachCard(store) : null,
     resumePracticeCards(store, ids),
-    focus ? h('section', { class: 'panel daily-focus' },
+    active.id !== 'kickstarter' && focus ? h('section', { class: 'panel daily-focus' },
       h('p', { class: 'eyebrow' }, weekday === 0 ? 'Weekly benchmark' : weekday === 6 ? 'Catch-up and repair' : 'Suggested assessment today'),
       h('h2', {}, SECTIONS[focus.id].title),
       h('p', {}, focus.map.skillsDone < 2 ? 'Learn a few skills with help. A full 10-question block without skips ticks learning automatically. Then start mixed checks.' : 'Start a cold mixed batch. Review mistakes with ChatGPT, then repair one weakness.'),
