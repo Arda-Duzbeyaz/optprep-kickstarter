@@ -81,7 +81,7 @@ export function possible(values, guesses) {
 export function createEngine(rng, opts = {}) {
   const specs = opts.rounds ?? ROUNDS;
   const rounds = specs.map((values) => ({
-    values, props: PROPS.slice(0, values.length), hidden: values.map((n) => rng.int(0, n - 1)), ...optimum(values),
+    values, props: PROPS.slice(0, values.length).map(p=>({...p,values:rng.shuffle?.(p.values) ?? p.values})), hidden: values.map((n) => rng.int(0, n - 1)), ...optimum(values),
   }));
   const state = { phase: 'ready', round: 0, guesses: [], roundStart: null, results: [], rounds };
 

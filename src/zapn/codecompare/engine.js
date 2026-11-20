@@ -48,9 +48,10 @@ export function generateRound(rng, i, o = DEFAULTS) {
   // Bias toward characters that have look-alikes so swaps are genuinely confusable.
   const pool = Object.keys(LOOKALIKE);
   const target = Array.from({ length: len }, () => rng.pick(rng.chance(0.7) ? pool : ALPHABET)).join('');
+  const similarity=.25+.55*i/Math.max(1,o.rounds-1);
   const distractors = new Set();
   while (distractors.size < o.options - 1) {
-    const d = mutate(rng, target, rng.chance(0.5) ? 1 : 2);
+    const d = mutate(rng, target, rng.chance(similarity) ? 1 : 2);
     if (d !== target) distractors.add(d);
   }
   const options = rng.shuffle([target, ...distractors]);

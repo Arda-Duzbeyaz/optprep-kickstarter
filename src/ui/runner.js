@@ -13,6 +13,7 @@ import { feedbackBanner, solutionPanel, hintLadder, intervalCoach } from './solu
 import { checkItem, practiceSuccess } from '../core/check.js';
 import { composeEvent } from '../scenarios/compose.js';
 import { buildPaper, scenarioShare } from '../scenarios/paper.js';
+import { modelCatalog } from '../scenarios/composite/catalog.js';
 import { scenarioCatalog } from '../scenarios/catalog.js';
 import { activePreset } from '../../config/presets.js';
 import { debriefPanel } from './pages/coach.js';
@@ -160,16 +161,23 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const scenario = scenarioCatalog[sectionId]?.id;
     const share = scenarioShare(sectionId,store.settings().numericalMix);
     const compose = mixedAttempt && activePreset().id==='kickstarter' && scope==='all' && familyPool.includes(scenario);
-    if (compose && Math.floor((idx+1)*share)>Math.floor(idx*share)) {
+    const scenarioTurn=Math.floor((idx+1)*share)>Math.floor(idx*share);
+    const sequenceIndex=idx-Math.floor(idx*share);
+    const sequenceTurn=sectionId==='nl' && familyPool.includes('linked-sequences') && !scenarioTurn && sequenceIndex%3===1;
+    const newFamilies=(modelCatalog[sectionId] || []).map(f=>f.id).filter(id=>familyPool.includes(id));
+    const generalPool=familyPool.filter(id=>id!==scenario && !newFamilies.includes(id) && id!=='linked-sequences');
+    if (compose && (scenarioTurn || sequenceTurn)) {
+      const slotsTaken=Math.floor((idx+1)*share);
+      const preferred=sequenceTurn?['linked-sequences']:(!newFamilies.length || (slotsTaken+makeRng('block-mix:'+seed).int(0,4))%5===0)?[scenario]:newFamilies;
       try {
-        // Cold mixed credit requires a fresh alternative, even on a scheduled scenario turn.
-        practiceItem(section,rng.fork('alternate:'+idx),store.stats(),{familyPool:familyPool.filter(id=>id!==scenario),
+        // The unseen mixed gate requires a viable alternative outside this slot.
+        practiceItem(section,rng.fork('alternate:'+idx),store.stats(),{familyPool:generalPool,
           targets,requireFresh:true,excludeKeys:store.recentQuestionKeys(sectionId)});
-        return practiceItem(section,rng,store.stats(),{family:scenario,difficulty:targets[scenario],requireFresh:true,
+        return practiceItem(section,rng,store.stats(),{familyPool:preferred,targets,avoidFamilies:[...round],requireFresh:true,
           excludeKeys:store.recentQuestionKeys(sectionId),preferStructures:store.recentStructureKeys(sectionId),spreadStructures:true,shuffleOptions:true});
       } catch (error) { if (!(error instanceof FreshQuestionsUnavailable)) throw error; }
     }
-    const selectedPool=compose && familyPool.length>2 ? familyPool.filter(id=>id!==scenario) : familyPool;
+    const selectedPool=compose ? generalPool : familyPool;
     const settings = { family, familyPool:selectedPool, difficulty: focusedDifficulty, targets, avoidFamilies: [...round],
       excludeKeys: store.recentQuestionKeys?.(sectionId) || [], preferStructures: store.recentStructureKeys?.(sectionId) || [], shuffleOptions: true,
       requireFresh: mixedAttempt || !!family, minFreshFamilies: mixedAttempt ? 2 : 1,
@@ -652,7 +660,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
         ...(it.kind==='interval' && response?.lower>0 && response.upper>=response.lower ? {widthRatio:response.upper/response.lower} : {}),
         ms:Math.round(spent[i]), outcome };
     });
-    const run = { section: sectionId, mode: 'exam', mock, completePaper, finishReason:reason, ...(drawPaper===buildPaper && !fixedItems ? {generatorEdition:'1.9',...(sectionId==='nl'?{numericalMix:store.settings().numericalMix || 'balanced'}:{})} : {}), repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: itemDetails };
+    const run = { section: sectionId, mode: 'exam', mock, completePaper, finishReason:reason, ...(drawPaper===buildPaper && !fixedItems ? {generatorEdition:'2.0',...(sectionId==='nl'?{numericalMix:store.settings().numericalMix || 'balanced'}:{})} : {}), repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: itemDetails };
     // Only fresh full-length replicas count toward readiness; numbered sets and
     // short variants are practice (a set can be memorised on a second attempt).
     const official = !variant && setNumber == null && extra === 1 && repeatCount === 0;

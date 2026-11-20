@@ -1,10 +1,10 @@
 # OptPrep for Career Kickstarter Trading
 
-**Version 1.9.0 · 20 November 2026**
+**Version 2.0.0 · 20 November 2026**
 
 ## Start here
 
-1. Export your current progress from **Settings → Backup**. Extract the ZIP. In the folder containing `package.json», run `npm start» using Node.js 20 or newer. The app opens in your browser and needs no package installation for ordinary practice.
+1. Export your current progress from **Settings → Backup**. Extract the ZIP. In the folder containing `package.json`, run `npm start` using Node.js 20 or newer. The app opens in your browser and needs no package installation for ordinary practice.
 2. Use the same browser profile, protocol, hostname and port as before to pick up your saved data. If you move from GitHub Pages to the local app or change address, import the backup in **Settings → Backup**.
 3. Open **Today**, choose your available time and press the first activity button. Return to Today after completing it. A 120-minute outline is a plan for one block. You can start another block immediately.
 4. The first two assessments suggested to a new profile are Beat the Odds and NumberLogic. Seeing 25 minutes beside each means two separate timed sections totalling 50 minutes. An existing profile can start with a different recommendation based on its history.
@@ -31,9 +31,10 @@
 
 ## Release contents
 
-- [Assessment changes and research](docs/KICKSTARTER_1.9_RESEARCH.md)
-- [Generator evaluation and audit of all 40 original probability families](docs/KICKSTARTER_1.9_GENERATORS.md)
-- [Test results and limitations](docs/KICKSTARTER_1.9_TESTING.md)
-- [Machine-readable generator measurements](evaluation/kickstarter-1.9-generators.json)
+- [OptPrep 2.0 release report and worked examples](docs/OPTPREP_2.0_REPORT.md)
+- [Measured generation mix and reasoning groups by assessment](evaluation/compositional-rehearsal.json)
+- [Release validation results](evaluation/compositional-validation.json)
+- [Earlier research on the six assessments](docs/KICKSTARTER_1.9_RESEARCH.md)
+- [Earlier audit of the original probability families](docs/KICKSTARTER_1.9_GENERATORS.md)
 
-The original licence, study guides, other role presets and optional backend are included. For later hosting, the existing GitHub Pages workflow builds the static site. Local practice works through `npm start». For offline use after closing the server, first allow the browser to finish installing the service worker on localhost or HTTPS.
+The original licence, study guides, other role presets and optional backend are included. For later hosting, the existing GitHub Pages workflow builds the static site. Local practice works through `npm start`. For offline use after closing the server, first allow the browser to finish installing the service worker on localhost or HTTPS.

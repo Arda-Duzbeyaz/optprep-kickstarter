@@ -27,6 +27,18 @@ test('stockmaster: 2-minute schedule, non-overlapping per slot, zones inside the
   assert.ok(mean(late) > mean(early));
 });
 
+test('late gauges can require substantially earlier responses within a sweep', () => {
+  let lateEarlyWindows = 0;
+  for (let seed = 0; seed < 120; seed++) {
+    for (const gauge of schedule(makeRng(seed))) {
+      const fraction = gauge.spawn / DEFAULTS.durationMs;
+      if (fraction < .25) assert.ok(gauge.zone[0] >= .33);
+      if (fraction > .75 && gauge.zone[0] < .29) lateEarlyWindows++;
+    }
+  }
+  assert.ok(lateEarlyWindows > 100);
+});
+
 // Click each gauge at the fraction `aim` of its zone (0.5 = centre); skip every `skipEvery`-th.
 // Clicks are delivered in time order, as a real clock would.
 function play(e, { aim = 0.5, skipEvery = 0 } = {}) {

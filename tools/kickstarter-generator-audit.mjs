@@ -2,6 +2,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
+import { modelCatalog } from '../src/scenarios/composite/catalog.js';
 import { PRACTICE_MODULES } from '../src/practice/index.js';
 import { SECTION_MODULES } from '../src/sections/index.js';
 import { makeRng } from '../src/core/rng.js';
@@ -17,7 +18,7 @@ activatePreset({id:'kickstarter'});
 const baselineDir=process.argv[2];
 const base=baselineDir?await import(pathToFileURL(resolve(baselineDir,'src/core/draw.js')).href):null;
 const baseSections=baselineDir?await import(pathToFileURL(resolve(baselineDir,'src/sections/index.js')).href):null;
-const perFamily=PRACTICE_MODULES.bto.families.filter(f=>f.id!==scenarioFamilies.bto.id).map(f=>{
+const perFamily=PRACTICE_MODULES.bto.families.filter(f=>f.id!==scenarioFamilies.bto.id && !modelCatalog.bto.some(m=>m.id===f.id)).map(f=>{
   const branches=new Set(), composed=new Set(), visible=new Set();
   for(const level of f.levels)for(let index=0;index<30;index++){
     const rng=makeRng('inventory:'+f.id+':'+level+':'+index);

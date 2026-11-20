@@ -19,7 +19,7 @@ for(const fromPages of [false,true])test('service worker installs complete cache
   const worker=fromPages?script.replace('[/*FILES*/]',JSON.stringify(files)):script;
   runInNewContext(worker,{self:{addEventListener:(k,f)=>{if(k==='install') install=f;}},
     fetch:async path=>{assert.equal(path,'assets/offline-files.json');requests++;return {ok:true,json:async()=>files};},
-    caches:{open:async name=>{assert.equal(name,'optprep-kickstarter-1.9.0');return {addAll:async arr=>{precached=[...arr];}};}}});
+    caches:{open:async name=>{assert.equal(name,'optprep-kickstarter-2.0.0');return {addAll:async arr=>{precached=[...arr];}};}}});
   let pending;install({waitUntil:p=>{pending=p;}});await pending;
   assert.equal(requests,fromPages?0:1);
   assert.deepEqual(precached,['index.html','app.js','manifest.webmanifest',...files]);

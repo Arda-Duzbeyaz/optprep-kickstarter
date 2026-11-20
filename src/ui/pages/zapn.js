@@ -57,7 +57,7 @@ export function zapnGame(root, { store, id, mode = 'practice' }) {
     unmount = g.view.mount(stage, {
       rng: makeRng(`${id}:${Date.now()}`), mode,
       onFinish: (result) => {
-        store.recordZapn(id, { mode, ...result });
+        store.recordZapn(id, { mode, practiceEdition:'2.0', ...result });
         const ok = zapnMeets(result, target);
         const r = zapnReadiness(store.zapnRuns(id), target);
         resultBox.replaceChildren(h('div', { class: `feedback ${ok ? 'ok' : 'no'}` },

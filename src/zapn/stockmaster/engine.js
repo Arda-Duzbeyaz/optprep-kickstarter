@@ -20,7 +20,8 @@ export function schedule(rng, o = DEFAULTS) {
       const ramp = 1 + (o.rampTo - 1) * (t / o.durationMs);
       const speed = rng.float(o.speedMin, o.speedMax) * ramp; // sweeps per second
       const width = rng.float(o.zoneMin, o.zoneMax);
-      const z0 = rng.float(0.4, 0.9 - width);
+      const earliest=.24+.12*(1-t/o.durationMs);
+      const z0 = rng.float(earliest, 0.9 - width);
       const end = t + 1000 / speed;
       // Do not create a final gauge whose response opportunity is cut off by
       // the session clock and silently excluded from the hit-rate denominator.

@@ -9,9 +9,13 @@ export function createEngine(rng, opts = {}) {
   const o = { ...DEFAULTS, ...opts };
   const half = Math.floor(o.rounds / 2);
   const shapes = rng.shuffle([...Array(half).fill('circle'), ...Array(o.rounds - half).fill('square')]);
-  const trials = shapes.map((shape) => ({
-    shape, x: rng.float(0.1, 0.9), y: rng.float(0.15, 0.85), iti: rng.int(o.itiMin, o.itiMax),
-  }));
+  const quadrants=count=>rng.shuffle(Array.from({length:count},(_,i)=>i%4));
+  const positions={circle:quadrants(half),square:quadrants(o.rounds-half)};
+  const trials=shapes.map(shape=>{
+    const quadrant=positions[shape].pop();
+    return {shape,x:rng.float(.1,.5)+(quadrant%2)*.4,y:rng.float(.15,.5)+Math.floor(quadrant/2)*.35,
+      iti:rng.int(o.itiMin,o.itiMax)};
+  });
   const state = { phase: 'ready', i: 0, onsetAt: null, stimAt: null, responses: [], early: 0, trials, opts: o };
 
   function next(t) {

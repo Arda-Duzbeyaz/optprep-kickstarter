@@ -31,6 +31,21 @@ test('figureitout: closed-form optimum equals exhaustive search over all adaptiv
   }
 });
 
+test('early figures cover different selectable palettes with equal search difficulty', () => {
+  const palettes = PROPS.slice(0,3).map(() => new Set());
+  for (let seed = 0; seed < 120; seed++) {
+    const round = createEngine(makeRng(seed)).state.rounds[0];
+    assert.equal(round.expected, 3.25);
+    round.props.forEach((prop, i) => {
+      const shown = prop.values.slice(0, round.values[i]);
+      assert.equal(new Set(shown).size, round.values[i]);
+      assert.ok(PROPS[i].values.includes(shown[round.hidden[i]]));
+      palettes[i].add([...shown].sort().join(','));
+    });
+  }
+  assert.deepEqual(palettes.map(values => values.size), [5,5,4]);
+});
+
 // Exact mean guesses of a deterministic strategy over every hidden code.
 function strategyMean(values, next) {
   const codes = allCodes(values);

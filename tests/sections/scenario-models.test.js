@@ -166,7 +166,7 @@ test('timed NumberLogic applies configured shares and excludes previous exposure
     const history=new Set();
     for(let i=0;i<6;i++){
       const paper=buildPaper(SECTION_MODULES.nl,{count:26,ramp:true,excludeKeys:history},'exam'+i,mix);
-      assert.equal(paper.filter(q=>q.family==='numerical-data').length,count);
+      assert.equal(paper.filter(q=>['numerical-data','production-network','tariff'].includes(q.family)).length,count);
       for(const q of paper){const key=questionKey(q);assert.ok(!history.has(key));history.add(key);}
     }
   }

@@ -20,7 +20,7 @@ activatePreset({id:'kickstarter'});
 store.setSetting('numericalMix','broad');
 const button=label=>[...root.querySelectorAll('button')].find(b=>b.textContent===label);
 const results={};
-for(const id of ['nl','iv','ob']){
+for(const id of ['bto','nl','ll','iv','ob']){
   const seed='timed-controls-19',cfg={count:SECTIONS[id].exam.count,ramp:id==='nl',bankRatio:.2};
   const items=buildPaper(SECTION_MODULES[id],cfg,seed,'broad');
   let wrongPass=0,correctPass=0;
@@ -28,7 +28,14 @@ for(const id of ['nl','iv','ob']){
   button('Start the clock').click();
   for(const [i,q] of items.entries()){
     assert.ok(root.querySelector('.qhead').textContent.includes('Question '+(i+1)+' of '+items.length));
-    if(id==='nl'){root.querySelectorAll('[role=radio]')[q.answerIndex].click();button('Next').click();}
+    if(id==='nl'||id==='bto'){root.querySelectorAll('[role=radio]')[q.answerIndex].click();button('Next').click();}
+    if(id==='ll'){
+      for(const [target,si] of q.answerOrder.entries()){
+        while([...root.querySelectorAll('.rank-row')].findIndex(row=>Number(row.dataset.si)===si)>target)
+          root.querySelector('.rank-row[data-si="'+si+'"] [aria-label="Move up"]').click();
+      }
+      button('Next').click();
+    }
     if(id==='iv'){
       const bounds=i===0?[q.truth*2,q.truth*3]:[q.truth*.9,q.truth*1.1];
       const inputs=root.querySelectorAll('.interval input');
@@ -48,7 +55,8 @@ for(const id of ['nl','iv','ob']){
   }
   if(id==='nl') button('Finish exam').click();
   const run=store.runs(id,'exam').at(-1);
-  assert.equal(run.generatorEdition,'1.9');assert.equal(run.repeatCount,0);assert.equal(run.items.length,items.length);
+  assert.equal(run.generatorEdition,'2.0');assert.equal(run.repeatCount,0);assert.equal(run.items.length,items.length);
+  if(id==='bto'||id==='ll')assert.equal(run.score,items.length);
   if(id==='nl'){assert.equal(run.score,items.length);assert.equal(run.numericalMix,'broad');}
   if(id==='iv'){assert.equal(run.items[0].outcome,'below');assert.equal(run.items[0].widthRatio,1.5);assert.ok(run.items.slice(1).every(i=>i.outcome==='right'));}
   if(id==='ob'){assert.equal(wrongPass,1);assert.ok(correctPass>0);assert.equal(run.score,items.length-1);}

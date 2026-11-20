@@ -43,6 +43,7 @@ function fill(item) {
   if(item.kind==='mcq') root.querySelectorAll('[role=radio]')[item.answerIndex].click();
   else if(item.kind==='rank') for(const si of item.answerOrder){const target=item.answerOrder.indexOf(si);while([...root.querySelectorAll('.rank-row')].findIndex(r=>+r.dataset.si===si)>target)root.querySelector(`.rank-row[data-si="${si}"] [aria-label="Move up"]`).click();}
   else if(item.kind==='interval') for(const [i,v] of [item.truth*.999999,item.truth*1.000001].entries()){const input=root.querySelectorAll('input')[i];input.value=String(v);input.dispatchEvent(new Event('input',{bubbles:true}));}
+  else if(!item.best) root.querySelector('.ob input[type=checkbox]').click();
   else for(const t of item.best.trades){const i=item.board.instruments.findIndex(x=>x.id===t.id);root.querySelectorAll('.ob-table tbody tr')[i].querySelector(`.ob-${t.side}`).click();}
 }
 function answer(section,family=null,scope='all') {fill(saved(section,family,scope).current.item);advance();button('Submit').click();}

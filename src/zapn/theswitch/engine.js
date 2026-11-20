@@ -22,11 +22,19 @@ function arrowItem(rng, same) {
 export function generateTrials(rng, rounds) {
   const half = Math.floor((rounds - 1) / 2);
   const switches = rng.shuffle([...Array(half).fill(true), ...Array(rounds - 1 - half).fill(false)]);
+  // Balance conflicting distractors and response directions within switch
+  // and repeat trials. Draw each whole stratum in random order.
+  const patterns=count=>rng.shuffle(Array.from({length:count},(_,i)=>i%4));
+  const changed=patterns(half),stayed=patterns(rounds-half);
+  const rotation=rng.int(0,3);
   let task = rng.pick(['math', 'arrows']);
   return Array.from({ length: rounds }, (_, i) => {
     if (i > 0 && switches[i - 1]) task = task === 'math' ? 'arrows' : 'math';
-    const math = mathItem(rng, rng.chance(0.5));
-    const arrows = arrowItem(rng, rng.chance(0.5));
+    const pattern=((i>0 && switches[i-1]?changed:stayed).pop()+rotation)%4;
+    const activeYes=Boolean(pattern%2),conflict=pattern>=2;
+    const inactiveYes=conflict?!activeYes:activeYes;
+    const math=mathItem(rng,task==='math'?activeYes:inactiveYes);
+    const arrows=arrowItem(rng,task==='arrows'?activeYes:inactiveYes);
     const answer = task === 'math' ? math.value % 2 === 1 : arrows.same;
     return { task, math, arrows, answer, switch: i > 0 && switches[i - 1] };
   });

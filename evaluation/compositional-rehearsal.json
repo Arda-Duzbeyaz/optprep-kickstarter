@@ -1,0 +1,512 @@
+{
+  "v2": {
+    "bto": {
+      "papers": 24,
+      "total": 480,
+      "v2": 240,
+      "v2Percent": 50,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 250,
+      "legacyFamilies": 38,
+      "v2MethodGroups": 84,
+      "effectiveV2MethodGroups": 75.46,
+      "pass": 0,
+      "mostFrequentV2Groups": [
+        [
+          "restricted-arrangements/line/restricted/single-block/count",
+          8
+        ],
+        [
+          "restricted-arrangements/line/restricted/separate/count",
+          7
+        ],
+        [
+          "restricted-arrangements/line/restricted/single-block/probability",
+          7
+        ],
+        [
+          "restricted-arrangements/cycle/restricted/single-block/probability",
+          6
+        ],
+        [
+          "restricted-arrangements/cycle/restricted/single-block/count",
+          6
+        ]
+      ],
+      "families": {
+        "stopped-process": 49,
+        "restricted-arrangements": 75,
+        "box-experiment": 116,
+        "two-dice-sum": 5,
+        "conditional-process": 48,
+        "shared-source": 19,
+        "monty-hall": 2,
+        "card-draws": 17,
+        "discrete-sums": 5,
+        "card-symmetry": 4,
+        "success-counts": 10,
+        "payout-models": 13,
+        "at-least-one": 18,
+        "running-sum": 1,
+        "polygon-walk": 6,
+        "coin-sequences": 11,
+        "dice-order-stats": 4,
+        "expected-waiting": 15,
+        "uniform-geometry": 5,
+        "race-to-k": 3,
+        "dice-games-ev": 3,
+        "linearity": 7,
+        "bayes-test": 4,
+        "die-repeats": 4,
+        "derangements": 3,
+        "information-protocols": 2,
+        "clt-estimates": 1,
+        "pigeonhole": 7,
+        "gamblers-ruin": 2,
+        "variance-dependence": 3,
+        "expected-extremes": 4,
+        "event-algebra": 1,
+        "random-walk-line": 3,
+        "urn-draws": 1,
+        "bayes-boxes": 1,
+        "dice-duel": 1,
+        "card-stopping": 1,
+        "pattern-waiting": 2,
+        "coupon-collector": 1,
+        "first-success": 2,
+        "three-dice": 1
+      },
+      "medianBuildMs": 32.16
+    },
+    "nl": {
+      "papers": 24,
+      "total": 624,
+      "v2": 312,
+      "v2Percent": 50,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 115,
+      "legacyFamilies": 31,
+      "v2MethodGroups": 56,
+      "effectiveV2MethodGroups": 47.87,
+      "pass": 0,
+      "mostFrequentV2Groups": [
+        [
+          "sequence-machine/levels/extend",
+          17
+        ],
+        [
+          "production-network/independent/rate",
+          11
+        ],
+        [
+          "production-network/independent/hours",
+          11
+        ],
+        [
+          "production-network/independent/output",
+          11
+        ],
+        [
+          "tariff/whole-order/bill",
+          10
+        ]
+      ],
+      "families": {
+        "linked-sequences": 120,
+        "arithmetic": 10,
+        "production-network": 119,
+        "geometric": 22,
+        "tariff": 73,
+        "add-index": 18,
+        "decimals": 6,
+        "numerical-data": 24,
+        "triangular": 18,
+        "weighted-two-term": 23,
+        "fibonacci-like": 9,
+        "affine-recurrence": 8,
+        "sum-previous": 3,
+        "interleaved": 26,
+        "fractions": 27,
+        "squares-plus": 22,
+        "powers-offset": 6,
+        "alternating-ops": 8,
+        "diff-geometric": 7,
+        "square-minus": 6,
+        "second-diff": 16,
+        "alternating-signs": 8,
+        "mixed-combo": 4,
+        "cubes-plus": 4,
+        "third-diff": 4,
+        "product-recurrence": 7,
+        "digit-sum": 4,
+        "primes": 6,
+        "multiply-index": 7,
+        "tribonacci": 4,
+        "reverse-digits": 2,
+        "pronic": 1,
+        "prime-gaps": 1,
+        "fibonacci-squares": 1
+      },
+      "medianBuildMs": 57.18
+    },
+    "ll": {
+      "papers": 24,
+      "total": 360,
+      "v2": 192,
+      "v2Percent": 53.33,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 271,
+      "legacyFamilies": 18,
+      "v2MethodGroups": 134,
+      "effectiveV2MethodGroups": 113.47,
+      "pass": 0,
+      "mostFrequentV2Groups": [
+        [
+          "weighted-experiments/total/different-unfiltered/same-unfiltered/same-unfiltered",
+          6
+        ],
+        [
+          "weighted-experiments/above/different-unfiltered/same-unfiltered/same-unfiltered",
+          6
+        ],
+        [
+          "weighted-experiments/above/different-unfiltered/different-unfiltered/same-unfiltered",
+          6
+        ],
+        [
+          "weighted-experiments/adjacent/different-unfiltered/same-unfiltered/same-unfiltered",
+          5
+        ],
+        [
+          "weighted-experiments/match/different-unfiltered/same-unfiltered/same-unfiltered",
+          4
+        ]
+      ],
+      "families": {
+        "weighted-experiments": 98,
+        "selection-weights": 4,
+        "sampling-policies": 94,
+        "dice-events": 28,
+        "ranking-models": 24,
+        "conjunction": 25,
+        "markov-graph": 21,
+        "conditional-rates": 10,
+        "coin-patterns": 2,
+        "density-curves": 7,
+        "score-table": 8,
+        "fund-returns": 8,
+        "large-numbers": 5,
+        "scatter-regions": 9,
+        "survey-bar": 6,
+        "card-events": 4,
+        "football": 1,
+        "collisions": 1,
+        "histogram-bins": 3,
+        "impossible-bounds": 2
+      },
+      "medianBuildMs": 20.56
+    },
+    "iv": {
+      "papers": 24,
+      "total": 432,
+      "v2": 216,
+      "v2Percent": 50,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 105,
+      "legacyFamilies": 17,
+      "v2MethodGroups": 22,
+      "effectiveV2MethodGroups": 17.86,
+      "pass": 0,
+      "mostFrequentV2Groups": [
+        [
+          "planning-estimate/rate",
+          26
+        ],
+        [
+          "planning-estimate/time",
+          25
+        ],
+        [
+          "planning-estimate/switch",
+          25
+        ],
+        [
+          "planning-estimate/unserved",
+          24
+        ],
+        [
+          "population-survey/stratified/total",
+          7
+        ]
+      ],
+      "families": {
+        "population-survey": 65,
+        "mental-product": 23,
+        "reference-estimates": 48,
+        "prob-exact": 27,
+        "planning-estimate": 100,
+        "rates-weights": 7,
+        "powers-roots": 8,
+        "finite-meter-survey": 51,
+        "dots-count": 25,
+        "series": 18,
+        "waiting-time": 8,
+        "expected-dice": 24,
+        "fermi": 2,
+        "uncertainty-models": 6,
+        "path-length": 5,
+        "prob-estimate": 3,
+        "coupon": 6,
+        "dice-grid": 2,
+        "combinatorics": 2,
+        "percentile": 2
+      },
+      "medianBuildMs": 46.71
+    },
+    "ob": {
+      "papers": 24,
+      "total": 480,
+      "v2": 240,
+      "v2Percent": 50,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 80,
+      "legacyFamilies": 9,
+      "v2MethodGroups": 12,
+      "effectiveV2MethodGroups": 11.11,
+      "pass": 126,
+      "mostFrequentV2Groups": [
+        [
+          "portfolio-network/linear-system/1/certify-pass",
+          32
+        ],
+        [
+          "portfolio-network/nested/1/find-hedge",
+          32
+        ],
+        [
+          "portfolio-network/linear-system/1/find-hedge",
+          31
+        ],
+        [
+          "portfolio-network/exchange/1/find-hedge",
+          20
+        ],
+        [
+          "portfolio-network/basket/1/certify-pass",
+          20
+        ]
+      ],
+      "families": {
+        "portfolio-network": 240,
+        "weighted": 31,
+        "spread": 30,
+        "market-consistency": 48,
+        "chain": 22,
+        "bundle-cheap": 31,
+        "crossed": 28,
+        "bundle-rich": 31,
+        "decoy": 16,
+        "hidden": 3
+      },
+      "medianBuildMs": 180.43
+    }
+  },
+  "v19": {
+    "bto": {
+      "papers": 24,
+      "total": 480,
+      "v2": 0,
+      "v2Percent": 0,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 186,
+      "legacyFamilies": 40,
+      "v2MethodGroups": 0,
+      "effectiveV2MethodGroups": 0,
+      "pass": 0,
+      "mostFrequentV2Groups": [],
+      "families": {
+        "conditional-process": 168,
+        "at-least-one": 25,
+        "expected-waiting": 22,
+        "polygon-walk": 21,
+        "bayes-test": 6,
+        "pigeonhole": 6,
+        "shared-source": 24,
+        "payout-models": 19,
+        "linearity": 16,
+        "two-dice-sum": 4,
+        "dice-games-ev": 10,
+        "card-stopping": 4,
+        "discrete-sums": 9,
+        "information-protocols": 4,
+        "first-success": 8,
+        "expected-extremes": 9,
+        "coin-sequences": 21,
+        "running-sum": 1,
+        "success-counts": 21,
+        "card-draws": 21,
+        "gamblers-ruin": 6,
+        "dice-duel": 1,
+        "uniform-geometry": 7,
+        "variance-dependence": 8,
+        "card-symmetry": 6,
+        "die-repeats": 7,
+        "pattern-waiting": 2,
+        "clt-estimates": 1,
+        "monty-hall": 2,
+        "event-algebra": 4,
+        "urn-draws": 1,
+        "birthday": 1,
+        "bayes-boxes": 2,
+        "random-walk-line": 3,
+        "coupon-collector": 1,
+        "three-dice": 1,
+        "race-to-k": 1,
+        "derangements": 1,
+        "conditional-dice": 1,
+        "dice-order-stats": 5
+      },
+      "medianBuildMs": 31.83
+    },
+    "nl": {
+      "papers": 24,
+      "total": 624,
+      "v2": 0,
+      "v2Percent": 0,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 61,
+      "legacyFamilies": 31,
+      "v2MethodGroups": 0,
+      "effectiveV2MethodGroups": 0,
+      "pass": 0,
+      "mostFrequentV2Groups": [],
+      "families": {
+        "arithmetic": 14,
+        "geometric": 27,
+        "triangular": 24,
+        "numerical-data": 216,
+        "squares-plus": 25,
+        "second-diff": 26,
+        "add-index": 24,
+        "decimals": 7,
+        "weighted-two-term": 25,
+        "interleaved": 26,
+        "alternating-ops": 10,
+        "prime-gaps": 9,
+        "digit-sum": 8,
+        "sum-previous": 2,
+        "fractions": 27,
+        "square-minus": 19,
+        "cubes-plus": 10,
+        "alternating-signs": 7,
+        "diff-geometric": 13,
+        "primes": 9,
+        "mixed-combo": 4,
+        "pronic": 3,
+        "fibonacci-like": 11,
+        "reverse-digits": 14,
+        "affine-recurrence": 11,
+        "third-diff": 8,
+        "multiply-index": 13,
+        "tribonacci": 8,
+        "product-recurrence": 9,
+        "powers-offset": 14,
+        "fibonacci-squares": 1
+      },
+      "medianBuildMs": 50.31
+    },
+    "ll": {
+      "papers": 24,
+      "total": 360,
+      "v2": 0,
+      "v2Percent": 0,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 183,
+      "legacyFamilies": 19,
+      "v2MethodGroups": 0,
+      "effectiveV2MethodGroups": 0,
+      "pass": 0,
+      "mostFrequentV2Groups": [],
+      "families": {
+        "selection-weights": 7,
+        "card-events": 3,
+        "conditional-rates": 13,
+        "score-table": 20,
+        "ranking-models": 120,
+        "markov-graph": 27,
+        "coin-patterns": 7,
+        "dice-events": 30,
+        "large-numbers": 14,
+        "conjunction": 29,
+        "survey-bar": 17,
+        "football": 7,
+        "fund-returns": 14,
+        "density-curves": 13,
+        "impossible-bounds": 4,
+        "histogram-bins": 18,
+        "scatter-regions": 13,
+        "collisions": 3,
+        "bayes-boxes": 1
+      },
+      "medianBuildMs": 30.1
+    },
+    "iv": {
+      "papers": 24,
+      "total": 432,
+      "v2": 0,
+      "v2Percent": 0,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 104,
+      "legacyFamilies": 17,
+      "v2MethodGroups": 0,
+      "effectiveV2MethodGroups": 0,
+      "pass": 0,
+      "mostFrequentV2Groups": [],
+      "families": {
+        "mental-product": 26,
+        "dots-count": 27,
+        "rates-weights": 20,
+        "coupon": 24,
+        "combinatorics": 20,
+        "reference-estimates": 144,
+        "series": 25,
+        "expected-dice": 28,
+        "dice-grid": 5,
+        "waiting-time": 17,
+        "prob-exact": 33,
+        "prob-estimate": 14,
+        "fermi": 4,
+        "uncertainty-models": 9,
+        "path-length": 18,
+        "powers-roots": 15,
+        "percentile": 3
+      },
+      "medianBuildMs": 37.66
+    },
+    "ob": {
+      "papers": 24,
+      "total": 480,
+      "v2": 0,
+      "v2Percent": 0,
+      "distinctVisibleRepeats": 0,
+      "allSignatureCount": 32,
+      "legacyFamilies": 9,
+      "v2MethodGroups": 0,
+      "effectiveV2MethodGroups": 0,
+      "pass": 59,
+      "mostFrequentV2Groups": [],
+      "families": {
+        "spread": 44,
+        "market-consistency": 168,
+        "bundle-rich": 50,
+        "decoy": 34,
+        "hidden": 31,
+        "bundle-cheap": 43,
+        "weighted": 40,
+        "crossed": 35,
+        "chain": 35
+      },
+      "medianBuildMs": 157.89
+    }
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "edition": "2.0.0-kickstarter.1",
+  "date": "2026-11-20",
+  "unit_tests": {
+    "javascript": 1241,
+    "python_backend": 40,
+    "cpp": 34,
+    "failed": 0
+  },
+  "matched_papers_per_version": 120,
+  "fresh_release_questions": 2376,
+  "questions_from_new_generators": 1200,
+  "additional_independent_math_draws": {
+    "bto": 720,
+    "nl_applied": 720,
+    "nl_sequences": 720,
+    "ll": 720,
+    "iv": 720,
+    "ob": 720
+  },
+  "heldout_paper_source_sha256": {
+    "src/checks/independent.js": "515f689d7cd62da7b20ca0e28d09447aa9b4c221b24ba4299e7d58ced57248b6",
+    "src/checks/papers.js": "b3a5fc4a00dffeef99a57e63887f56885d802fca133825e5a69010f745116c85",
+    "src/checks/material.js": "ab7969f6c973a38fe92484e5fe025e4d31e5a1fdf766fac1f42d32ce1b723103",
+    "src/checks/drills.js": "0e2b34dfafb41a5b2d7f5f3568f5a6bdaeea1906cefd30c88a719c3982130bc6"
+  },
+  "full_timed_submissions": {
+    "bto": {
+      "submissions": 20
+    },
+    "nl": {
+      "submissions": 26
+    },
+    "ll": {
+      "submissions": 15
+    },
+    "iv": {
+      "submissions": 18
+    },
+    "ob": {
+      "submissions": 20,
+      "correctPass": 6,
+      "wrongPass": 1
+    }
+  },
+  "full_mixed_runs": {
+    "bto": {
+      "answered": 10,
+      "composite": 5,
+      "reloaded": true
+    },
+    "nl": {
+      "answered": 10,
+      "composite": 5,
+      "reloaded": true
+    },
+    "ll": {
+      "answered": 10,
+      "composite": 5,
+      "reloaded": true
+    },
+    "iv": {
+      "answered": 10,
+      "composite": 5,
+      "reloaded": true
+    },
+    "ob": {
+      "answered": 10,
+      "composite": 5,
+      "reloaded": true
+    }
+  },
+  "planner": {
+    "assertions": 657,
+    "submissions": 100
+  },
+  "save_isolation": {
+    "assertions": 171,
+    "sections": [
+      {
+        "section": "bto",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "nl",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "ll",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "iv",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "ob",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      }
+    ],
+    "syntheticStateOnly": true,
+    "uncaughtErrors": []
+  },
+  "dom_flows": [
+    {
+      "script": "tools/practice-flow-smoke.mjs",
+      "result": "104 practice-flow assertions passed: all answer kinds, drafts, feedback/RNG resume, levels, completion, mixed cues, visibility, recovery, dashboards and drill checkpoints."
+    },
+    {
+      "script": "tools/learning-route-smoke.mjs",
+      "result": "100 learning-route assertions passed: deadline, coverage, cold mixed progression, real difficulty advancement, help, resume, settings, single-section transfer and progress preservation."
+    },
+    {
+      "script": "tools/shared-practice-flow.mjs",
+      "result": "71 shared-practice assertions passed: prominent actions, all/covered pool settings, every extended family in learning, feedback/resume, cold mixed progression and next-step guidance."
+    },
+    {
+      "script": "tools/learning-completion-flow.mjs",
+      "result": "Walkthrough: bto 44 learning families completed.\nWalkthrough: nl 34 learning families completed.\nWalkthrough: ll 20 learning families completed.\nWalkthrough: iv 20 learning families completed.\nWalkthrough: ob 10 learning families completed.\n{\"assertions\":830,\"learningFamilies\":128,\"learningQuestions\":1290,\"assessments\":5,\"batchChecks\":5,\"mockReviews\":5,\"uncaughtErrors\":0}"
+    },
+    {
+      "script": "tools/practice-freshness-flow.mjs",
+      "result": "247 freshness-flow assertions passed: no repeats through finite exhaustion, cross-block/reload history, quiet legacy note, expanded die pool and preserved completion/cold rules."
+    },
+    {
+      "script": "tools/focused-learning-flow.mjs",
+      "result": "76 focused-learning assertions passed: unique ten-question user example, saved-question resume, assisted coverage without cold credit, frozen level, honest finite exhaustion and unknown search failure."
+    },
+    {
+      "script": "tools/unseen-session-flow.mjs",
+      "result": "24 unseen-session UI assertions passed: exhausted mixed block, fresh all-skills fallback, mock and batch preflight without clock/score/history mutation, and fresh batch start."
+    },
+    {
+      "script": "tools/ui-smoke.mjs",
+      "result": "DOM integration passed: both clocks, Kickstarter mock selection, interval coverage/mastery, repeat exclusion."
+    },
+    {
+      "script": "tools/transfer-smoke.mjs",
+      "result": "Transfer DOM passed: all response kinds, hidden methods, isolated results, preset, both clocks, extra time, displayed-only history and cleanup."
+    },
+    {
+      "script": "tools/transfer-regression.mjs",
+      "result": "PASS review restores and locks the submitted MCQ\nPASS additional-family review links into the shared ordinary-practice library\nPASS ranking review shows probabilities and retains the submitted order\nPASS interval review restores bounds and disables its controls\nPASS orderbook review restores the submitted position and locks controls\nPASS answers changed after the item deadline do not replace the last valid answer\nPASS the overall deadline is enforced before submitting or showing another item\nPASS a late skip cannot erase an answer already committed before timeout\nPASS keyboard answers after the deadline are ignored\nPASS finishing on the last displayed question records a complete session\nPASS saving an unchanged fresh battery picker preserves the active Kickstarter preset\n11/11 focused interface regressions passed"
+    },
+    {
+      "script": "tools/transfer-route-smoke.mjs",
+      "result": "Full-router DOM passed: delivered entry point, old-save migration, timing dropdown, all answer controls, keyboard repeat, complete result, history/reload, cleanup and Kickstarter mock."
+    },
+    {
+      "script": "tools/mixed-improvement-flow.mjs",
+      "result": "143 mixed-improvement UI assertions passed: old progress, ten-question blocks, exposure ledger reload, real cold gates, detailed results, twenty-exposure checkpoint recovery and honest finite shortage."
+    },
+    {
+      "script": "tools/curriculum-flow.mjs",
+      "result": "200 curriculum integration assertions passed: six real lessons, sixty fresh focused answers, saved-question/draft reload, preserved old progress, assisted coverage and a ten-question hidden-method mixed block."
+    }
+  ],
+  "archive_smoke": {
+    "offline_manifest_entries": 500,
+    "http_assets_verified": 505,
+    "reserved_sources_match_v19": true
+  },
+  "browser_visual_check": "Chromium launch blocked by local socket permissions. Interface QA used jsdom.",
+  "real_assessment_validation": "No candidate outcome data or Optiver item bank. Counts and difficulty are practice settings."
+}
