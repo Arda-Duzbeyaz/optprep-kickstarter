@@ -11,6 +11,9 @@ import { intervalView } from './kinds/interval.js';
 import { orderbookView } from './kinds/orderbook.js';
 import { feedbackBanner, solutionPanel, hintLadder, intervalCoach } from './solution.js';
 import { checkItem, practiceSuccess } from '../core/check.js';
+import { composeEvent } from '../scenarios/compose.js';
+import { buildPaper, scenarioShare } from '../scenarios/paper.js';
+import { scenarioCatalog } from '../scenarios/catalog.js';
 import { activePreset } from '../../config/presets.js';
 import { debriefPanel } from './pages/coach.js';
 import { questionKey, questionSeen } from '../core/questions.js';
@@ -44,12 +47,14 @@ let promptSeq = 0;
 let sessionSeq = 0;
 export function itemBody(item, { onChange, preview = true, notation, keys = true, label } = {}) {
   const pid = `prompt-${++promptSeq}`;
-  const view = VIEWS[item.kind](item, { onChange, showPreview: preview, keys, labelledby: pid });
+  const marketDecision=item.kind==='orderbook' && (activePreset().id==='kickstarter' || item.tradeOrPass);
+  const question=marketDecision ? 'Find a flat position with positive cash in up to six unit trades, or choose No opportunity. Buy at asks and sell at bids.' : item.prompt.text;
+  const view = VIEWS[item.kind](item, { onChange, allowPass:marketDecision, maxTrades:item.tradeLimit ?? (marketDecision?6:undefined), showPreview: preview, keys, labelledby: pid });
   let visual = null;
   if (item.prompt.visual) {
     try { visual = renderVisual(item.prompt.visual); } catch (e) { visual = h('p', { class: 'muted' }, `Visual unavailable: ${e.message}`); }
   }
-  const el = h('div', {}, h('p', { class: 'prompt', id: pid, tabindex: '-1' }, label ? h('span', { class: 'visually-hidden' }, `${label}. `) : null, divNotation(prose(item.prompt.text), notation)), visual, view.el);
+  const el = h('div', {}, h('p', { class: 'prompt', id: pid, tabindex: '-1' }, label ? h('span', { class: 'visually-hidden' }, `${label}. `) : null, divNotation(prose(question), notation)), visual, view.el);
   return { el, view };
 }
 const notationOf = (store) => store?.settings?.().divNotation;
@@ -152,10 +157,31 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const targets = Object.fromEntries(section.families.map((f) => [f.id, recognitionProgress(store.recognition()[`${sectionId}:${f.id}`], f.levels).target]));
     const round = new Set();
     for (const row of log) { if (round.size === familyPool.length) round.clear(); if (familyPool.includes(row.family)) round.add(row.family); }
-    return practiceItem(section, rng, store.stats(), { family, familyPool, difficulty: focusedDifficulty, targets, avoidFamilies: [...round],
+    const scenario = scenarioCatalog[sectionId]?.id;
+    const share = scenarioShare(sectionId,store.settings().numericalMix);
+    const compose = mixedAttempt && activePreset().id==='kickstarter' && scope==='all' && familyPool.includes(scenario);
+    if (compose && Math.floor((idx+1)*share)>Math.floor(idx*share)) {
+      try {
+        // Cold mixed credit requires a fresh alternative, even on a scheduled scenario turn.
+        practiceItem(section,rng.fork('alternate:'+idx),store.stats(),{familyPool:familyPool.filter(id=>id!==scenario),
+          targets,requireFresh:true,excludeKeys:store.recentQuestionKeys(sectionId)});
+        return practiceItem(section,rng,store.stats(),{family:scenario,difficulty:targets[scenario],requireFresh:true,
+          excludeKeys:store.recentQuestionKeys(sectionId),preferStructures:store.recentStructureKeys(sectionId),spreadStructures:true,shuffleOptions:true});
+      } catch (error) { if (!(error instanceof FreshQuestionsUnavailable)) throw error; }
+    }
+    const selectedPool=compose && familyPool.length>2 ? familyPool.filter(id=>id!==scenario) : familyPool;
+    const settings = { family, familyPool:selectedPool, difficulty: focusedDifficulty, targets, avoidFamilies: [...round],
       excludeKeys: store.recentQuestionKeys?.(sectionId) || [], preferStructures: store.recentStructureKeys?.(sectionId) || [], shuffleOptions: true,
       requireFresh: mixedAttempt || !!family, minFreshFamilies: mixedAttempt ? 2 : 1,
-      ...(mixedAttempt ? { mixedTraining: store.mixedTraining?.(sectionId), recognition: store.recognition(), spreadStructures: true } : {}) });
+      ...(mixedAttempt ? { mixedTraining: store.mixedTraining?.(sectionId), recognition: store.recognition(), spreadStructures: true } : {}) };
+    let selected;
+    try { selected = practiceItem(section,rng,store.stats(),settings); }
+    catch(error) {
+      if(!(error instanceof FreshQuestionsUnavailable) || !compose || share===0) throw error;
+      selected=practiceItem(section,rng,store.stats(),{...settings,familyPool});
+    }
+    if(compose && sectionId==='bto' && selected.difficulty>=2 && rng.chance(.5)) return composeEvent(selected,rng);
+    return selected;
   }
 
   function show() {
@@ -258,7 +284,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const { item, body } = current;
     let response = opts.skip ? { skip: true } : body.view.response();
     if (!response) {
-      if (!opts.timeout) return flash(current.after, { orderbook: 'Tap prices to build a position first.', interval: 'Enter a lower and an upper bound first.', rank: 'Put the statements in order first.' }[item.kind] || 'Choose an answer first, or skip.');
+      if (!opts.timeout) return flash(current.after, { orderbook: 'Tap a price or choose No opportunity if available.', interval: 'Enter a lower and an upper bound first.', rank: 'Put the statements in order first.' }[item.kind] || 'Choose an answer first, or skip.');
       response = { skip: true };
     }
     current.done = true;
@@ -268,7 +294,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     current.ms = ms; current.response = response;
     const confidence = opts.confidence ?? (CALIBRATED.has(sectionId) && !response.skip ? 0.9 : undefined);
     const correctNoHelp = practiceSuccess(sectionId, result) && current.hints === 0 && !current.aided;
-    log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, skipped: !!response.skip, ms,
+    log.push({ family: item.family, correct: result.correct, score: result.score, hints: current.hints, skipped: !!response.skip, aided:!!current.aided, interrupted:!!current.interrupted, fresh:current.fresh, ms,
       xp: xpFor({ type: 'answer', mode, correct: practiceSuccess(sectionId, { correct: correctNoHelp, score: item.kind === 'interval' ? result.score : undefined }), hints: current.hints, ms }),
       levelBefore: store.mastery()[`${sectionId}:${item.family}`]?.lv || 0,
       recognitionBefore: [...(store.recognition()[`${sectionId}:${item.family}`]?.passed || [])],
@@ -449,8 +475,9 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   const exam = extra > 1 ? { ...exam0, totalSeconds: exam0.totalSeconds && exam0.totalSeconds * extra, perItemSeconds: exam0.perItemSeconds && exam0.perItemSeconds * extra } : exam0;
   const priorQuestions = store.recentQuestionKeys?.(sectionId) || new Set();
   let items;
-  try { items = fixedItems || examItems(section, { count: exam.count, ramp: sectionId === 'nl', bankRatio: 0.2,
-    excludeKeys: priorQuestions }, seed); }
+  const drawPaper = activePreset().id === 'kickstarter' && scenarioCatalog[sectionId] ? buildPaper : examItems;
+  try { items = fixedItems || drawPaper(section, { count: exam.count, ramp: sectionId === 'nl', bankRatio: 0.2,
+    excludeKeys: priorQuestions, previousStructures:store.recentStructureKeys?.(sectionId) }, seed, store.settings().numericalMix); }
   catch (error) {
     if (!(error instanceof FreshQuestionsUnavailable)) throw error;
     mount(root, h('section', { class: 'panel fresh-questions-status', role: 'status' },
@@ -511,7 +538,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
       class: `btn small${i === idx ? ' primary' : ''}${responses[i] && !responses[i].skip ? ' answered' : ''}`, type: 'button',
       onclick: () => { if (settleExpiry()) return; save(); idx = i; show(); },
     }, String(i + 1)))) : null;
-    const note = h('div', { class: 'exam-note', role: 'status' });
+    const note = h('div', { class: 'exam-note', role: 'status' },item.kind === 'orderbook' && (item.tradeOrPass || activePreset().id === 'kickstarter') ? 'Submitting No opportunity is final.' : '');
     const controls = h('div', { class: 'row' },
       free && idx > 0 ? h('button', { class: 'btn', type: 'button', onclick: () => { if (settleExpiry()) return; save(); idx--; show(); } }, 'Previous') : null,
       item.kind === 'orderbook'
@@ -548,10 +575,10 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   function submitBoard(note) {
     if (settleExpiry()) return;
     const r = current.body.view.response();
-    if (!r) { note.textContent = 'Tap prices to build a position first.'; return; }
+    if (!r) { note.textContent = 'Tap a price or choose No opportunity if available.'; return; }
     const res = checkItem(current.item, r);
     responses[idx] = r;
-    if (res.correct) { obSolved[idx] = true; idx++; show(); return; }
+    if (res.correct || r.pass) { obSolved[idx] = res.correct; idx++; show(); return; }
     const pen = exam.wrongSubmitPenaltySeconds || 5;
     total?.penalize(pen * 1000);
     note.textContent = `Not a flat, profitable position. −${pen} s. Adjust and resubmit, or skip.`;
@@ -621,9 +648,11 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
         else if (!r.correct && response?.lower > 0 && response.upper >= response.lower)
           outcome = it.truth > response.upper ? 'above' : 'below';
       }
-      return { family:it.family, score:r.score, ms:Math.round(spent[i]), outcome };
+      return { family:it.family, score:r.score,
+        ...(it.kind==='interval' && response?.lower>0 && response.upper>=response.lower ? {widthRatio:response.upper/response.lower} : {}),
+        ms:Math.round(spent[i]), outcome };
     });
-    const run = { section: sectionId, mode: 'exam', mock, completePaper, finishReason:reason, repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: itemDetails };
+    const run = { section: sectionId, mode: 'exam', mock, completePaper, finishReason:reason, ...(drawPaper===buildPaper && !fixedItems ? {generatorEdition:'1.9',...(sectionId==='nl'?{numericalMix:store.settings().numericalMix || 'balanced'}:{})} : {}), repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: itemDetails };
     // Only fresh full-length replicas count toward readiness; numbered sets and
     // short variants are practice (a set can be memorised on a second attempt).
     const official = !variant && setNumber == null && extra === 1 && repeatCount === 0;
@@ -662,7 +691,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
         h('p', {}, h('span', { class: `badge ${meets ? 'ok' : 'no'}` }, meets ? 'Target met' : 'Below target'), ` Target: ${target.label}.`),
         setNumber != null ? h('p', { class: 'muted' }, `Set ${setNumber} is fixed practice: it does not count toward the fresh-exam target.`) : repeatCount ? h('p', { class: 'muted' }, `${repeatCount} repeated question(s): this run is review practice and does not count toward the fresh-exam target.`) : official && !run.completePaper ? h('p', {class:'muted'}, 'Ended early. This result is saved for review and is excluded from your timed baseline and streak.') : official ? h('p', { class: 'muted' }, separateDays ? 'Timed target met on '+ready.streak+' of 3 separate practice days. Today counts once.' : ready.ready ? 'Practice target met on the last three eligible exams.' : `Practice target streak ${ready.streak} of ${ready.needed}. Three fresh exams under these clocks are required.`) : h('p', { class: 'muted' }, 'Modified or extra-time practice: only fresh, full-length exams under the current clocks count toward the practice target.')),
         scoreBox),
-      activePreset().id === 'kickstarter' && sectionId !== 'mm' ? debriefPanel(sectionId, run) : null,
+      activePreset().id === 'kickstarter' && sectionId !== 'mm' ? debriefPanel(sectionId, run,store) : null,
       h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, '#'), h('th', {}, 'Family'), h('th', {}, 'Result'), h('th', { style: { textAlign: 'right' } }, 'Points'), h('th', {}, h('span', { class: 'visually-hidden' }, 'Solution')))), h('tbody', {}, rows.flat())),
       h('div', { class: 'row', style: { marginTop: '16px' } },
         h('a', { class: 'btn primary', href: setNumber != null ? `#/s/${sectionId}/sets` : `#/s/${sectionId}` }, setNumber != null ? 'Back to sets' : 'Back to section'),

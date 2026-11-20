@@ -47,6 +47,7 @@ export function examItems(section, cfg, seed) {
   });
   const nBank = Math.min(bankPool.length, Math.round(count * (cfg.bankRatio ?? 0.2)));
   const bankSlots = new Set(rng.shuffle([...Array(count).keys()]).slice(0, nBank));
+  const previousStructures=new Set(cfg.previousStructures || []);
   const famOrder = [];
   const out = [];
   const seen = new Set(excluded);
@@ -67,14 +68,14 @@ export function examItems(section, cfg, seed) {
     let it = null;
     for (const f of alternatives) {
       try {
-        it = practiceItem(section, rng, {}, { family: f.id, difficulty: target, excludeKeys: seen, requireFresh: true });
+        it = practiceItem(section, rng, {}, { family: f.id, difficulty: target, excludeKeys: seen, preferStructures:previousStructures, requireFresh: true });
         break;
       } catch (error) { if (!(error instanceof FreshQuestionsUnavailable)) throw error; }
     }
     // A remaining bank item is also a valid fresh fallback. Never return a short paper.
     if (!it) it = bankPool.find((candidate) => !questionSeen(seen, candidate));
     if (!it) throw new FreshQuestionsUnavailable(section.id);
-    seen.add(questionKey(it));
+    seen.add(questionKey(it)); previousStructures.add(structureKey(it));
     out.push(it);
   }
   if (cfg.ramp) out.sort((a, b) => a.difficulty - b.difficulty);

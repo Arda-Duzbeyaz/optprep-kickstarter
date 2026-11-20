@@ -54,7 +54,12 @@ export function checkItem(item, response) {
       return { correct: score > 0, score };
     }
     case 'orderbook': {
+      if (response.pass === true) {
+        const correct = item.tradeOrPass === true && item.best === null;
+        return {correct,score:Number(correct)};
+      }
       const trades = response.trades || [];
+      if (item.tradeLimit && trades.length>item.tradeLimit) return {correct:false,score:0};
       if (!trades.length) return { correct: false, score: 0 };
       const { flat, profit } = positionOutcome(item.board, trades);
       const ok = flat && profit > 0;

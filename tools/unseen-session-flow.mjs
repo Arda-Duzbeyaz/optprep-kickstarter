@@ -42,20 +42,18 @@ try {
   const original = SECTION_MODULES.bto, f = PRACTICE_MODULES.bto.families.find((f) => f.id === 'two-dice-sum');
   const only = finiteVariants(f, 1)[0];
   SECTION_MODULES.bto = { ...original, bank: [], families: [{ ...f, generate: () => structuredClone(only) }] };
+  const extras = TRANSFER_FAMILIES.bto;
+  TRANSFER_FAMILIES.bto = [];
   try {
     store = makeStore(memoryBackend()); store.rememberQuestion(only);
     const before = JSON.stringify(store.state), frames = frameRequests; let done = 0;
     stop = runExam(root, { sectionId: 'bto', store, mock: true, onDone: () => done++ });
     ok(root.textContent.includes('no fresh paper available')); eq(root.querySelector('.prompt'), null);
     eq(JSON.stringify(store.state), before); eq(frameRequests, frames); eq(done, 0); stop();
-    const extras = TRANSFER_FAMILIES.bto;
-    TRANSFER_FAMILIES.bto = [];
-    try {
-      stop = runTransfer(root, { section: 'bto', store, seed: 'exhausted-batch-flow', timed: true });
+    stop = runTransfer(root, { section: 'bto', store, seed: 'exhausted-batch-flow', timed: true });
       ok(root.textContent.includes('No fresh batch available')); eq(root.querySelector('.prompt'), null);
       eq(JSON.stringify(store.state), before); eq(frameRequests, frames); eq(store.transferRuns().length, 0); stop();
-    } finally { TRANSFER_FAMILIES.bto = extras; }
-  } finally { SECTION_MODULES.bto = original; }
+  } finally { SECTION_MODULES.bto = original; TRANSFER_FAMILIES.bto = extras; }
   store = makeStore(memoryBackend());
   stop = runTransfer(root, { section: 'bto', store, seed: 'new-batch-flow', timed: true });
   ok(root.querySelector('.prompt')); eq(store.transferRuns().length, 0); ok(frameRequests > 0); stop();

@@ -1,0 +1,1230 @@
+{
+  "sampling": "30 seeds per supported level in each original BTO family; 400 per level per new model; 14 complete history-aware timed papers per quantitative assessment per version. Same rehearsal seeds, default mix. Branch fingerprints describe generator decisions and can group or subdivide reasoning methods.",
+  "perFamily": [
+    {
+      "family": "event-algebra",
+      "title": "Events: overlap, complements and independence",
+      "levels": [
+        1,
+        2
+      ],
+      "sample": 60,
+      "distinctPrompts": 58,
+      "branchCount": 7,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/event-algebra/conditional",
+        "bto/event-algebra/exclusive",
+        "bto/event-algebra/independent",
+        "bto/event-algebra/neither",
+        "bto/event-algebra/overlap",
+        "bto/event-algebra/three-union",
+        "bto/event-algebra/union"
+      ],
+      "skill": "Build the sample space; distinguish disjoint events, independent events and conditional probabilities"
+    },
+    {
+      "family": "two-dice-sum",
+      "title": "Two dice: sum events",
+      "levels": [
+        1,
+        2
+      ],
+      "sample": 60,
+      "distinctPrompts": 46,
+      "branchCount": 7,
+      "secondStageSignatures": 18,
+      "branches": [
+        "bto/two-dice-sum/authored:sum:atLeast",
+        "bto/two-dice-sum/authored:sum:atMost",
+        "bto/two-dice-sum/authored:sum:between",
+        "bto/two-dice-sum/authored:sum:eq",
+        "bto/two-dice-sum/authored:sum:outside",
+        "bto/two-dice-sum/authored:sum:parity",
+        "bto/two-dice-sum/authored:sum:set"
+      ],
+      "skill": "Count equally likely ordered pairs (36), not sums (11) or unordered pairs (21)"
+    },
+    {
+      "family": "die-repeats",
+      "title": "One die, repeated throws",
+      "levels": [
+        1,
+        2
+      ],
+      "sample": 60,
+      "distinctPrompts": 45,
+      "branchCount": 7,
+      "secondStageSignatures": 17,
+      "branches": [
+        "bto/die-repeats/kind=adjacentRepeat",
+        "bto/die-repeats/kind=allDiff",
+        "bto/die-repeats/kind=allSame",
+        "bto/die-repeats/kind=allTarget",
+        "bto/die-repeats/kind=noAdjacent",
+        "bto/die-repeats/kind=returnFirst",
+        "bto/die-repeats/kind=someRepeat"
+      ],
+      "skill": "Chain conditional factors (6/6, 5/6, 4/6 …) and pick the right complement"
+    },
+    {
+      "family": "dice-order-stats",
+      "title": "Two dice: max, min, doubles, differences",
+      "levels": [
+        1,
+        2
+      ],
+      "sample": 60,
+      "distinctPrompts": 36,
+      "branchCount": 12,
+      "secondStageSignatures": 18,
+      "branches": [
+        "bto/dice-order-stats/kind=diff",
+        "bto/dice-order-stats/kind=diffAtLeast",
+        "bto/dice-order-stats/kind=diffAtMost",
+        "bto/dice-order-stats/kind=max",
+        "bto/dice-order-stats/kind=maxAtLeast",
+        "bto/dice-order-stats/kind=maxAtMost",
+        "bto/dice-order-stats/kind=min",
+        "bto/dice-order-stats/kind=minAtLeast",
+        "bto/dice-order-stats/kind=namedDouble",
+        "bto/dice-order-stats/kind=notDoubles",
+        "bto/dice-order-stats/kind=notLower",
+        "bto/dice-order-stats/kind=signedDiff"
+      ],
+      "skill": "Use P(max ≤ k) = (k/6)² and symmetry after removing ties"
+    },
+    {
+      "family": "three-dice",
+      "title": "Three dice",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 31,
+      "branchCount": 9,
+      "secondStageSignatures": 20,
+      "branches": [
+        "bto/three-dice/kind=allDiff",
+        "bto/three-dice/kind=max",
+        "bto/three-dice/kind=namedPair",
+        "bto/three-dice/kind=namedTriple",
+        "bto/three-dice/kind=oddProduct",
+        "bto/three-dice/kind=pair",
+        "bto/three-dice/kind=product",
+        "bto/three-dice/kind=sum",
+        "bto/three-dice/kind=triple"
+      ],
+      "skill": "Count 216 ordered triples; split into all different / pair / triple; max ≤ k is a cube"
+    },
+    {
+      "family": "at-least-one",
+      "title": "At least one: the complement trick",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "sample": 90,
+      "distinctPrompts": 55,
+      "branchCount": 5,
+      "secondStageSignatures": 15,
+      "branches": [
+        "bto/at-least-one/variant=demere",
+        "bto/at-least-one/variant=dieEvent",
+        "bto/at-least-one/variant=lottery",
+        "bto/at-least-one/variant=six",
+        "bto/at-least-one/variant=trades"
+      ],
+      "skill": "Turn \"at least one\" into 1 − P(none); never add overlapping chances"
+    },
+    {
+      "family": "first-success",
+      "title": "Waiting for the first success",
+      "levels": [
+        1,
+        2
+      ],
+      "sample": 60,
+      "distinctPrompts": 31,
+      "branchCount": 8,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/first-success/variant=coinOnK",
+        "bto/first-success/variant=duel",
+        "bto/first-success/variant=evenThrow",
+        "bto/first-success/variant=fairCoinOnK",
+        "bto/first-success/variant=memoryless",
+        "bto/first-success/variant=moreThanK",
+        "bto/first-success/variant=onK",
+        "bto/first-success/variant=rth"
+      ],
+      "skill": "Model first and later successes, memorylessness and alternating races"
+    },
+    {
+      "family": "success-counts",
+      "title": "Success counts: recognise the sampling model",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "sample": 90,
+      "distinctPrompts": 86,
+      "branchCount": 8,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/success-counts/band:independent",
+        "bto/success-counts/conditional:independent",
+        "bto/success-counts/exact:independent",
+        "bto/success-counts/replacement:independent",
+        "bto/success-counts/replacement:without-replacement",
+        "bto/success-counts/split:independent",
+        "bto/success-counts/tail:independent",
+        "bto/success-counts/unequal:independent"
+      ],
+      "skill": "Choose binomial, without-replacement or unequal-trial counting from the assumptions, across coins, dice, cards and urns"
+    },
+    {
+      "family": "conditional-dice",
+      "title": "Conditional probability with dice",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 32,
+      "branchCount": 8,
+      "secondStageSignatures": 26,
+      "branches": [
+        "bto/conditional-dice/cond=atLeastOne|event=both",
+        "bto/conditional-dice/cond=atLeastOne|event=sumIn",
+        "bto/conditional-dice/cond=different|event=sumIn",
+        "bto/conditional-dice/cond=firstParity|event=sumAtLeast",
+        "bto/conditional-dice/cond=sumAtLeast|event=atLeastOne",
+        "bto/conditional-dice/cond=sumIn|event=atLeastOne",
+        "bto/conditional-dice/cond=sumParity|event=bothParity",
+        "bto/conditional-dice/older=false"
+      ],
+      "skill": "Given information shrinks the sample space: P(B | A) = |A ∩ B| / |A|"
+    },
+    {
+      "family": "card-symmetry",
+      "title": "Cards: symmetry and unseen discards",
+      "levels": [
+        1,
+        2
+      ],
+      "sample": 60,
+      "distinctPrompts": 35,
+      "branchCount": 5,
+      "secondStageSignatures": 13,
+      "branches": [
+        "bto/card-symmetry/authored:conditioned-position",
+        "bto/card-symmetry/authored:first-relevant-group",
+        "bto/card-symmetry/authored:first-specific-card",
+        "bto/card-symmetry/authored:observed-discards",
+        "bto/card-symmetry/authored:unseen-marginal"
+      ],
+      "skill": "Any fixed position of a shuffled deck is a uniformly random card; unseen cards carry no information"
+    },
+    {
+      "family": "card-draws",
+      "title": "Cards without replacement",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "sample": 90,
+      "distinctPrompts": 60,
+      "branchCount": 12,
+      "secondStageSignatures": 18,
+      "branches": [
+        "bto/card-draws/authored:first-card-fixes-target",
+        "bto/card-draws/authored:hand:all",
+        "bto/card-draws/authored:hand:atLeast",
+        "bto/card-draws/authored:hand:exactOne",
+        "bto/card-draws/authored:hand:exactTwo",
+        "bto/card-draws/authored:hand:none",
+        "bto/card-draws/authored:ordered-group:both",
+        "bto/card-draws/authored:ordered-group:firstOnly",
+        "bto/card-draws/authored:ordered-group:neither",
+        "bto/card-draws/kind=pair",
+        "bto/card-draws/kind=sameColour",
+        "bto/card-draws/kind=twoAces"
+      ],
+      "skill": "Chain rule with shrinking counts; complement for \"at least one\""
+    },
+    {
+      "family": "urn-draws",
+      "title": "Urns: drawing without replacement",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 52,
+      "branchCount": 2,
+      "secondStageSignatures": 8,
+      "branches": [
+        "bto/urn-draws/atLeast=false",
+        "bto/urn-draws/atLeast=true"
+      ],
+      "skill": "Hypergeometric counting C(r,j)C(b,k−j)/C(n,k); do not forget the C(k,j) orders in a sequential product"
+    },
+    {
+      "family": "restricted-counting",
+      "title": "Restricted counting: roles, groups and arrangements",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 47,
+      "branchCount": 6,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/restricted-counting/adjacent",
+        "bto/restricted-counting/conditioned",
+        "bto/restricted-counting/gaps",
+        "bto/restricted-counting/group",
+        "bto/restricted-counting/repeated",
+        "bto/restricted-counting/roles"
+      ],
+      "skill": "Choose ordered or unordered sample spaces and count constrained arrangements without double counting"
+    },
+    {
+      "family": "coin-sequences",
+      "title": "Coin sequences",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "sample": 90,
+      "distinctPrompts": 46,
+      "branchCount": 5,
+      "secondStageSignatures": 16,
+      "branches": [
+        "bto/coin-sequences/kind=allSame",
+        "bto/coin-sequences/kind=exactlyK",
+        "bto/coin-sequences/kind=moreHeads",
+        "bto/coin-sequences/kind=noHH",
+        "bto/coin-sequences/kind=run"
+      ],
+      "skill": "Count 2^n sequences; choose positions with C(n,k); handle neighbours with a recursion"
+    },
+    {
+      "family": "race-to-k",
+      "title": "First to k wins",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 28,
+      "branchCount": 2,
+      "secondStageSignatures": 8,
+      "branches": [
+        "bto/race-to-k/mode=full",
+        "bto/race-to-k/mode=win"
+      ],
+      "skill": "Imagine all 2k − 1 games are played: the race winner is whoever wins at least k of them"
+    },
+    {
+      "family": "pattern-waiting",
+      "title": "Waiting for coin patterns",
+      "levels": [
+        3,
+        4
+      ],
+      "sample": 60,
+      "distinctPrompts": 34,
+      "branchCount": 18,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/pattern-waiting/authored:race:000>010",
+        "bto/pattern-waiting/authored:race:000>110",
+        "bto/pattern-waiting/authored:race:001>011",
+        "bto/pattern-waiting/authored:race:001>101",
+        "bto/pattern-waiting/authored:race:001>111",
+        "bto/pattern-waiting/authored:race:00>10",
+        "bto/pattern-waiting/authored:race:010>000",
+        "bto/pattern-waiting/authored:race:010>001",
+        "bto/pattern-waiting/authored:race:01>11",
+        "bto/pattern-waiting/authored:wait:overlaps=1,2",
+        "bto/pattern-waiting/authored:wait:overlaps=1,2,3",
+        "bto/pattern-waiting/authored:wait:overlaps=1,2,3,4",
+        "bto/pattern-waiting/authored:wait:overlaps=1,3",
+        "bto/pattern-waiting/authored:wait:overlaps=1,4",
+        "bto/pattern-waiting/authored:wait:overlaps=2",
+        "bto/pattern-waiting/authored:wait:overlaps=2,4",
+        "bto/pattern-waiting/authored:wait:overlaps=3",
+        "bto/pattern-waiting/authored:wait:overlaps=4"
+      ],
+      "skill": "Expected wait for a pattern = sum of 2^k over its self-overlaps; overlaps also decide Penney races"
+    },
+    {
+      "family": "bayes-test",
+      "title": "Bayes: reading a positive signal",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 77,
+      "branchCount": 3,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/bayes-test/variant=negative",
+        "bto/bayes-test/variant=pos",
+        "bto/bayes-test/variant=twoPos"
+      ],
+      "skill": "P(condition | positive) = true positives / all positives; base rates dominate when the condition is rare"
+    },
+    {
+      "family": "bayes-boxes",
+      "title": "Bayes: coins, boxes and cards",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 51,
+      "branchCount": 3,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/bayes-boxes/kind=boxes",
+        "bto/bayes-boxes/kind=cards",
+        "bto/bayes-boxes/kind=coins"
+      ],
+      "skill": "Weigh each hypothesis by prior × likelihood; count equally likely \"atoms\" (faces, balls) not objects"
+    },
+    {
+      "family": "monty-hall",
+      "title": "Monty Hall and the host's knowledge",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 34,
+      "branchCount": 3,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/monty-hall/variant=random",
+        "bto/monty-hall/variant=stay",
+        "bto/monty-hall/variant=switch"
+      ],
+      "skill": "A host who knowingly avoids the car moves probability onto the other doors; a random host does not"
+    },
+    {
+      "family": "pigeonhole",
+      "title": "Pigeonhole: when it is certain",
+      "levels": [
+        1,
+        2
+      ],
+      "sample": 60,
+      "distinctPrompts": 44,
+      "branchCount": 6,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/pigeonhole/kind=coinsSmall",
+        "bto/pigeonhole/kind=coinsSure",
+        "bto/pigeonhole/kind=pairsSum",
+        "bto/pigeonhole/kind=pairsSumMaybe",
+        "bto/pigeonhole/kind=socksMaybe",
+        "bto/pigeonhole/kind=socksSure"
+      ],
+      "skill": "Check n > k·m before estimating anything: then an overflow is guaranteed"
+    },
+    {
+      "family": "birthday",
+      "title": "Birthday collisions",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 25,
+      "branchCount": 2,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/birthday/mode=any",
+        "bto/birthday/mode=mine"
+      ],
+      "skill": "P(some pair matches) = 1 − d(d−1)…(d−n+1)/d^n; it grows with the number of pairs, not people"
+    },
+    {
+      "family": "derangements",
+      "title": "Derangements: nobody gets their own",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 37,
+      "branchCount": 4,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/derangements/kind=atLeastOne",
+        "bto/derangements/kind=exactlyK",
+        "bto/derangements/kind=nMinusOne",
+        "bto/derangements/kind=none"
+      ],
+      "skill": "D(n)/n! ≈ 1/e; exactly k fixed: C(n,k)D(n−k)/n!; exactly n−1 fixed is impossible"
+    },
+    {
+      "family": "expected-waiting",
+      "title": "Expected waiting times",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "sample": 90,
+      "distinctPrompts": 33,
+      "branchCount": 6,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/expected-waiting/kind=bothSides",
+        "bto/expected-waiting/kind=doubleSix",
+        "bto/expected-waiting/kind=first",
+        "bto/expected-waiting/kind=headRun",
+        "bto/expected-waiting/kind=repeat",
+        "bto/expected-waiting/kind=twoFaces"
+      ],
+      "skill": "Write E = 1 + Σ P(next state)·E(next state); geometric waits are 1/p"
+    },
+    {
+      "family": "coupon-collector",
+      "title": "Coupon collector",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 24,
+      "branchCount": 1,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/coupon-collector/base"
+      ],
+      "skill": "Split the wait into stages: with i types still missing, the next new one takes n/i draws on average"
+    },
+    {
+      "family": "linearity",
+      "title": "Linearity of expectation",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 43,
+      "branchCount": 7,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/linearity/authored:indicators:adjacent",
+        "bto/linearity/authored:indicators:distinct",
+        "bto/linearity/authored:indicators:empty",
+        "bto/linearity/authored:indicators:fixed",
+        "bto/linearity/authored:indicators:hh",
+        "bto/linearity/authored:indicators:records",
+        "bto/linearity/authored:indicators:runs"
+      ],
+      "skill": "Write a count as a sum of indicators; E[count] = Σ P(indicator), even when they are dependent"
+    },
+    {
+      "family": "payout-models",
+      "title": "Weighted payoffs and conditional expectation",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "sample": 90,
+      "distinctPrompts": 90,
+      "branchCount": 8,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/payout-models/bonus",
+        "bto/payout-models/cap",
+        "bto/payout-models/conditional",
+        "bto/payout-models/fair-win",
+        "bto/payout-models/information",
+        "bto/payout-models/mean",
+        "bto/payout-models/mixture",
+        "bto/payout-models/profit"
+      ],
+      "skill": "Average payoffs with their probabilities, account for costs, and update weights before pricing new information"
+    },
+    {
+      "family": "variance-dependence",
+      "title": "Variance, covariance and shared risk",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 88,
+      "branchCount": 9,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/variance-dependence/affine:",
+        "bto/variance-dependence/conditional-variance:shared",
+        "bto/variance-dependence/covariance:",
+        "bto/variance-dependence/mixture:fresh",
+        "bto/variance-dependence/mixture:shared",
+        "bto/variance-dependence/reuse:",
+        "bto/variance-dependence/sample:",
+        "bto/variance-dependence/single:",
+        "bto/variance-dependence/sum:"
+      ],
+      "skill": "Measure spread; distinguish scaling, independent sums, reused randomness and a shared hidden source"
+    },
+    {
+      "family": "discrete-sums",
+      "title": "Combining discrete random quantities",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 90,
+      "branchCount": 7,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/discrete-sums/comparison:",
+        "bto/discrete-sums/conditional:",
+        "bto/discrete-sums/exact:",
+        "bto/discrete-sums/random-total:",
+        "bto/discrete-sums/reuse:independent",
+        "bto/discrete-sums/reuse:same-draw",
+        "bto/discrete-sums/tail:"
+      ],
+      "skill": "Combine weighted distributions, distinguish independent copies from reuse, and condition on an observed total"
+    },
+    {
+      "family": "expected-extremes",
+      "title": "Expected maximum and minimum",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 37,
+      "branchCount": 3,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/expected-extremes/minOf=false|mode=dice",
+        "bto/expected-extremes/minOf=true|mode=dice",
+        "bto/expected-extremes/mode=uniform"
+      ],
+      "skill": "E[max] = Σ P(max ≥ k); for n uniforms E[max] = n/(n+1), E[min] = 1/(n+1)"
+    },
+    {
+      "family": "dice-duel",
+      "title": "Dice duels",
+      "levels": [
+        2,
+        3
+      ],
+      "sample": 60,
+      "distinctPrompts": 22,
+      "branchCount": 5,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/dice-duel/A.type=custom|B.type=custom|reroll=false",
+        "bto/dice-duel/A.type=die|B.type=die|reroll=false",
+        "bto/dice-duel/A.type=die|B.type=die|reroll=true",
+        "bto/dice-duel/A.type=max2|B.type=die|reroll=false",
+        "bto/dice-duel/A.type=sum2|B.type=sum2|reroll=false"
+      ],
+      "skill": "P(A > B) = (1 − P(tie))/2 for identical players; otherwise count the favourable pairs"
+    },
+    {
+      "family": "dice-games-ev",
+      "title": "Dice games: expected value and when to reroll",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 40,
+      "branchCount": 6,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/dice-games-ev/kind=absDiff",
+        "bto/dice-games-ev/kind=evenOdd",
+        "bto/dice-games-ev/kind=product",
+        "bto/dice-games-ev/kind=reroll",
+        "bto/dice-games-ev/kind=square",
+        "bto/dice-games-ev/kind=threeRolls"
+      ],
+      "skill": "EV = Σ payoff × probability; reroll exactly when the current roll is below the value of continuing"
+    },
+    {
+      "family": "card-stopping",
+      "title": "Optimal stopping with a deck of cards",
+      "levels": [
+        4,
+        5
+      ],
+      "sample": 60,
+      "distinctPrompts": 21,
+      "branchCount": 1,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/card-stopping/base"
+      ],
+      "skill": "Value of a state = max(stop now, expected value of drawing on); solve backwards from small decks"
+    },
+    {
+      "family": "running-sum",
+      "title": "Running totals",
+      "levels": [
+        3,
+        4
+      ],
+      "sample": 60,
+      "distinctPrompts": 34,
+      "branchCount": 2,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/running-sum/mode=hit",
+        "bto/running-sum/mode=pass"
+      ],
+      "skill": "Condition on the last step: p(n) = average of p(n − k); long-run hit chance = 1/(mean step)"
+    },
+    {
+      "family": "random-walk-line",
+      "title": "Random walk on a line",
+      "levels": [
+        3,
+        4
+      ],
+      "sample": 60,
+      "distinctPrompts": 45,
+      "branchCount": 6,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/random-walk-line/kind=below",
+        "bto/random-walk-line/kind=endAt",
+        "bto/random-walk-line/kind=everReach",
+        "bto/random-walk-line/kind=neverReturn",
+        "bto/random-walk-line/kind=parity",
+        "bto/random-walk-line/kind=returnZero"
+      ],
+      "skill": "Position after n steps = 2·(ups) − n; count up-steps with C(n, ·); reflection doubles the \"ever reached\" count"
+    },
+    {
+      "family": "polygon-walk",
+      "title": "Random walks on polygons",
+      "levels": [
+        3,
+        4,
+        5
+      ],
+      "sample": 90,
+      "distinctPrompts": 41,
+      "branchCount": 4,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/polygon-walk/kind=hit",
+        "bto/polygon-walk/kind=last",
+        "bto/polygon-walk/kind=meet",
+        "bto/polygon-walk/kind=return"
+      ],
+      "skill": "Cycle walk: return time n, hitting time k(n − k), every other vertex equally likely to be last"
+    },
+    {
+      "family": "gamblers-ruin",
+      "title": "Gambler's ruin",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 88,
+      "branchCount": 3,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/gamblers-ruin/mode=biased",
+        "bto/gamblers-ruin/mode=fairE",
+        "bto/gamblers-ruin/mode=fairP"
+      ],
+      "skill": "Fair walk: P(hit N first) = i/N, duration i(N − i). Biased: (1 − r^i)/(1 − r^N) with r = q/p"
+    },
+    {
+      "family": "clt-estimates",
+      "title": "Normal approximation (CLT)",
+      "levels": [
+        3,
+        4
+      ],
+      "sample": 60,
+      "distinctPrompts": 31,
+      "branchCount": 3,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/clt-estimates/kind=coinBand",
+        "bto/clt-estimates/kind=coinTail",
+        "bto/clt-estimates/kind=diceTail"
+      ],
+      "skill": "Standardise: z = (threshold − mean)/sd with sd = √(n·variance); a fair coin has sd √n/2"
+    },
+    {
+      "family": "uniform-geometry",
+      "title": "Uniform geometry: sticks, meetings, areas",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 29,
+      "branchCount": 7,
+      "secondStageSignatures": 0,
+      "branches": [
+        "bto/uniform-geometry/kind=disc",
+        "bto/uniform-geometry/kind=meet",
+        "bto/uniform-geometry/kind=product",
+        "bto/uniform-geometry/kind=ratio",
+        "bto/uniform-geometry/kind=semicircle",
+        "bto/uniform-geometry/kind=sum",
+        "bto/uniform-geometry/kind=triangle"
+      ],
+      "skill": "Turn independent uniform choices into a point in a square (or on a line) and measure the favourable area"
+    },
+    {
+      "family": "information-protocols",
+      "title": "How was the information obtained?",
+      "levels": [
+        2,
+        3,
+        4
+      ],
+      "sample": 90,
+      "distinctPrompts": 83,
+      "branchCount": 8,
+      "secondStageSignatures": 28,
+      "branches": [
+        "bto/information-protocols/no-replace:any-red",
+        "bto/information-protocols/no-replace:first-red",
+        "bto/information-protocols/no-replace:noisy-red",
+        "bto/information-protocols/no-replace:random-red",
+        "bto/information-protocols/replace:any-red",
+        "bto/information-protocols/replace:first-red",
+        "bto/information-protocols/replace:noisy-red",
+        "bto/information-protocols/replace:random-red"
+      ],
+      "skill": "Condition on the actual observation process"
+    },
+    {
+      "family": "shared-source",
+      "title": "One hidden source or a new source each time?",
+      "levels": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "sample": 120,
+      "distinctPrompts": 117,
+      "branchCount": 10,
+      "secondStageSignatures": 34,
+      "branches": [
+        "bto/shared-source/fresh:all:count",
+        "bto/shared-source/fresh:count:count",
+        "bto/shared-source/fresh:next:mixed-history",
+        "bto/shared-source/fresh:next:red-history",
+        "bto/shared-source/shared:all:count",
+        "bto/shared-source/shared:count:count",
+        "bto/shared-source/shared:next:mixed-history",
+        "bto/shared-source/shared:next:red-history",
+        "bto/shared-source/shared:source:mixed-history",
+        "bto/shared-source/shared:source:red-history"
+      ],
+      "skill": "Distinguish shared-source dependence and update before predicting"
+    }
+  ],
+  "sections": {
+    "bto": {
+      "rawSamples": 1200,
+      "distinctVisible": 597,
+      "modelModes": [
+        "alarm",
+        "any",
+        "covariance",
+        "exactly",
+        "one-run",
+        "payoff",
+        "posterior",
+        "predict",
+        "remaining",
+        "separated",
+        "shown",
+        "until"
+      ],
+      "structureSignatures": [
+        "alarm",
+        "any",
+        "covariance",
+        "exactly",
+        "one-run",
+        "payoff",
+        "posterior",
+        "predict",
+        "remaining",
+        "separated",
+        "shown",
+        "until"
+      ],
+      "byLevel": {
+        "1": [
+          "any",
+          "shown",
+          "until"
+        ],
+        "2": [
+          "alarm",
+          "any",
+          "covariance",
+          "exactly",
+          "one-run",
+          "payoff",
+          "posterior",
+          "predict",
+          "remaining",
+          "separated",
+          "shown",
+          "until"
+        ],
+        "3": [
+          "alarm",
+          "covariance",
+          "exactly",
+          "one-run",
+          "payoff",
+          "posterior",
+          "predict",
+          "remaining",
+          "separated"
+        ]
+      },
+      "rehearsal": {
+        "papers": 14,
+        "questions": 280,
+        "scenarios": 98,
+        "compositions": 31,
+        "noOpportunity": 0,
+        "visibleRepeats": 0,
+        "observedStructures": 135,
+        "medianBuildMs": 18,
+        "maxBuildMs": 62
+      },
+      "v18": {
+        "questions": 280,
+        "observedStructures": 116,
+        "noOpportunity": 0
+      }
+    },
+    "nl": {
+      "rawSamples": 1200,
+      "distinctVisible": 1140,
+      "modelModes": [
+        "capacity",
+        "change",
+        "convert",
+        "missing",
+        "ratio",
+        "reverse",
+        "target",
+        "weighted"
+      ],
+      "structureSignatures": [
+        "capacity",
+        "change",
+        "convert",
+        "missing",
+        "ratio",
+        "reverse",
+        "target",
+        "weighted"
+      ],
+      "byLevel": {
+        "1": [
+          "change",
+          "convert",
+          "ratio"
+        ],
+        "2": [
+          "capacity",
+          "change",
+          "convert",
+          "missing",
+          "ratio",
+          "reverse",
+          "target",
+          "weighted"
+        ],
+        "3": [
+          "capacity",
+          "missing",
+          "reverse",
+          "target",
+          "weighted"
+        ]
+      },
+      "rehearsal": {
+        "papers": 14,
+        "questions": 364,
+        "scenarios": 126,
+        "compositions": 0,
+        "noOpportunity": 0,
+        "visibleRepeats": 0,
+        "observedStructures": 53,
+        "medianBuildMs": 31,
+        "maxBuildMs": 37
+      },
+      "v18": {
+        "questions": 364,
+        "observedStructures": 55,
+        "noOpportunity": 0
+      }
+    },
+    "ll": {
+      "rawSamples": 1200,
+      "distinctVisible": 1120,
+      "modelModes": [
+        "close",
+        "density",
+        "draws",
+        "experiments",
+        "observed",
+        "pool"
+      ],
+      "structureSignatures": [
+        "close",
+        "density",
+        "draws",
+        "experiments:die-tail+pair+product",
+        "experiments:die-tail+pair+report",
+        "experiments:die-tail+pair+split",
+        "experiments:die-tail+pair+union",
+        "experiments:die-tail+product+report",
+        "experiments:die-tail+product+split",
+        "experiments:die-tail+product+union",
+        "experiments:die-tail+report+split",
+        "experiments:die-tail+report+union",
+        "experiments:die-tail+split+union",
+        "experiments:pair+product+report",
+        "experiments:pair+product+split",
+        "experiments:pair+product+union",
+        "experiments:pair+report+split",
+        "experiments:pair+report+union",
+        "experiments:pair+split+union",
+        "experiments:product+report+split",
+        "experiments:product+report+union",
+        "experiments:product+split+union",
+        "experiments:report+split+union",
+        "observed",
+        "pool"
+      ],
+      "byLevel": {
+        "1": [
+          "draws",
+          "pool"
+        ],
+        "2": [
+          "close",
+          "density",
+          "draws",
+          "experiments",
+          "observed",
+          "pool"
+        ],
+        "3": [
+          "close",
+          "density",
+          "experiments",
+          "observed"
+        ]
+      },
+      "rehearsal": {
+        "papers": 14,
+        "questions": 210,
+        "scenarios": 70,
+        "compositions": 0,
+        "noOpportunity": 0,
+        "visibleRepeats": 0,
+        "observedStructures": 122,
+        "medianBuildMs": 7,
+        "maxBuildMs": 10
+      },
+      "v18": {
+        "questions": 210,
+        "observedStructures": 124,
+        "noOpportunity": 0
+      }
+    },
+    "iv": {
+      "rawSamples": 1200,
+      "distinctVisible": 902,
+      "modelModes": [
+        "bridge",
+        "hydropower",
+        "journey",
+        "load",
+        "orbital",
+        "population",
+        "production",
+        "stratified",
+        "surface"
+      ],
+      "structureSignatures": [
+        "bridge",
+        "hydropower",
+        "journey",
+        "load",
+        "orbital",
+        "population",
+        "production",
+        "stratified",
+        "surface"
+      ],
+      "byLevel": {
+        "1": [
+          "journey",
+          "load",
+          "population"
+        ],
+        "2": [
+          "bridge",
+          "hydropower",
+          "journey",
+          "load",
+          "orbital",
+          "population",
+          "production",
+          "stratified",
+          "surface"
+        ],
+        "3": [
+          "bridge",
+          "hydropower",
+          "orbital",
+          "production",
+          "stratified",
+          "surface"
+        ]
+      },
+      "rehearsal": {
+        "papers": 14,
+        "questions": 252,
+        "scenarios": 84,
+        "compositions": 0,
+        "noOpportunity": 0,
+        "visibleRepeats": 0,
+        "observedStructures": 80,
+        "medianBuildMs": 12,
+        "maxBuildMs": 20
+      },
+      "v18": {
+        "questions": 252,
+        "observedStructures": 78,
+        "noOpportunity": 0
+      }
+    },
+    "ob": {
+      "rawSamples": 1200,
+      "distinctVisible": 1197,
+      "modelModes": [
+        "bundle-cheap",
+        "bundle-none",
+        "bundle-rich",
+        "chain-cheap",
+        "chain-none",
+        "chain-rich",
+        "overlap-cheap",
+        "overlap-none",
+        "overlap-rich",
+        "spread-cheap",
+        "spread-none",
+        "spread-rich"
+      ],
+      "structureSignatures": [
+        "bundle-cheap",
+        "bundle-none",
+        "bundle-rich",
+        "chain-cheap",
+        "chain-none",
+        "chain-rich",
+        "overlap-cheap",
+        "overlap-none",
+        "overlap-rich",
+        "spread-cheap",
+        "spread-none",
+        "spread-rich"
+      ],
+      "byLevel": {
+        "1": [
+          "bundle-cheap",
+          "bundle-none",
+          "bundle-rich",
+          "spread-cheap",
+          "spread-none",
+          "spread-rich"
+        ],
+        "2": [
+          "bundle-cheap",
+          "bundle-none",
+          "bundle-rich",
+          "chain-cheap",
+          "chain-none",
+          "chain-rich",
+          "overlap-cheap",
+          "overlap-none",
+          "overlap-rich",
+          "spread-cheap",
+          "spread-none",
+          "spread-rich"
+        ],
+        "3": [
+          "chain-cheap",
+          "chain-none",
+          "chain-rich",
+          "overlap-cheap",
+          "overlap-none",
+          "overlap-rich"
+        ]
+      },
+      "rehearsal": {
+        "papers": 14,
+        "questions": 280,
+        "scenarios": 98,
+        "compositions": 0,
+        "noOpportunity": 33,
+        "visibleRepeats": 0,
+        "observedStructures": 32,
+        "medianBuildMs": 104,
+        "maxBuildMs": 127
+      },
+      "v18": {
+        "questions": 280,
+        "observedStructures": 20,
+        "noOpportunity": 0
+      }
+    }
+  }
+}

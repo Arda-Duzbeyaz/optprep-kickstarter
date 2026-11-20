@@ -257,6 +257,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     rememberQuestion(item) {
       const key = questionKey(item);
       const entries = this.recentQuestionKeys(item.section);
+      if(item.composition?.baseKey) entries.add(item.composition.baseKey);
       entries.delete(key);
       entries.add(key);
       state.recentQuestions[item.section] = [...entries].slice(-QUESTION_HISTORY_LIMIT);

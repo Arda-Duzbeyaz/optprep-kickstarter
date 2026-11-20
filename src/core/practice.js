@@ -35,6 +35,7 @@ export function validResponse(item, response, { draft = false } = {}) {
   if (item.kind === 'interval') return ['lower', 'upper'].every((k) => draft
     ? (response[k] === '' || typeof response[k] === 'string' && Number.isFinite(Number(response[k])) || Number.isFinite(response[k]))
     : Number.isFinite(response[k]));
+  if (item.kind === 'orderbook' && response.pass === true) return true;
   if (item.kind === 'orderbook') return Array.isArray(response.trades) && response.trades.length <= 1000 && response.trades.every((t) =>
     record(t) && ['buy', 'sell'].includes(t.side) && item.board.instruments.some((ins) => ins.id === t.id));
   return false;

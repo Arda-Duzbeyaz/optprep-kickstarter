@@ -1,3 +1,4 @@
+import { repairEvidence } from './coach-evidence.js';
 import { SECTIONS } from '../../config/sections.js';
 import { dailyExams, trainingDay, runMeetsTarget } from './readiness.js';
 import { PRACTICE_FAMILIES } from '../practice/catalog.js';
@@ -10,6 +11,10 @@ export const GAME_SAMPLER = [
   { id:'theswitch', title:'The Switch', skill:'rule switching' },
 ];
 
+export function moreGames(saved) {
+  return [['balloon','Balloon'],['skyscraper','Skyscraper'],['shapeshift','ShapeShift'],['numberbox','NumberBox'],['figureitout','Figure It Out'],['stockmaster','StockMaster']]
+    .map(([id,title])=>({id,title,tried:!!saved[id]?.length}));
+}
 export function zapSampler(zapn) {
   return GAME_SAMPLER.map(g => ({ ...g, tried:!!zapn[g.id]?.length }));
 }
@@ -96,6 +101,12 @@ function sectionAction(id, ev, state, now) {
   if (weak && !repaired && !mixed) {
     const why=weakPaper ? 'The reserved paper exposed a gap after your last timed section.' :
       'Your latest timed score was '+scoreLabel(id,latest)+'.';
+    const diagnostic=!weakPaper && skill && repairEvidence(state,id,skill.id,latest,now);
+    if(diagnostic?.kind==='speed' && !state.runs.some(r=>r.section===id && r.mode==='drill' && r.completed && r.finishedAt>anchor))
+      return action(id,'pace','Paced '+title+' drill','#/run/'+id+'/drill',10,diagnostic.why,1);
+    if(diagnostic?.kind==='recognition') return action(id,'mixed',title+' mixed practice','#/run/'+id+'/mixed/all',15,diagnostic.why,1);
+    if(diagnostic?.kind==='accuracy') return action(id,'check','Check your work on '+skill.title,'#/run/'+id+'/practice/'+skill.id,10,diagnostic.why,1);
+    if(diagnostic?.kind==='knowledge') return action(id,'repair','Relearn '+skill.title,'#/run/'+id+'/practice/'+skill.id,15,diagnostic.why,1);
     if (skill) return action(id,'repair','Repair '+skill.title,'#/run/'+id+'/practice/'+skill.id,15,why,1);
     return action(id,'repair',drillTitle(id),'#/checks/'+id+'/drill',10,why,1);
   }
@@ -123,6 +134,7 @@ export function sessionPlan(state, now=Date.now(), budget=120) {
   const plan=preparationPlan(state.settings,now);
   const done=state.settings.assessmentsFinished || {};
   const sorted=rows.filter(r=>done[r.id]!==true).sort((a,b)=>a.next.priority-b.next.priority ||
+    (a.next.kind==='practice' && b.next.kind==='practice' ? (recentChecks(state.checkSessions||{},a.id,'drill')[0]?.updatedAt||0)-(recentChecks(state.checkSessions||{},b.id,'drill')[0]?.updatedAt||0) : 0) ||
     (b.evidence.gap||0)-(a.evidence.gap||0) || (a.evidence.latest?.finishedAt||0)-(b.evidence.latest?.finishedAt||0));
   const available=Math.min(budget,Math.max(0,Math.floor((plan.deadline-now)/60000)));
   const actions=[]; let minutes=0, exams=0;
@@ -153,8 +165,17 @@ export function sessionPlan(state, now=Date.now(), budget=120) {
   }
   if (!sorted.length && !done.zapn && !nextGame && available>=5) {
     actions.push(action('zapn','review','Review Zap-N familiarisation','#/coach/zapn',5,
-      'You have tried all three starter games. Revisit the controls for the one you found hardest.',5));
+      'Open the game checklist and try the next unfamiliar format.',5));
     minutes+=5;
   }
+  if(!nextGame && !done.zapn && sorted.length && available-minutes>=6) {
+    const extra=moreGames(state.zapn).find(g=>!g.tried);
+    if(extra){actions.push(action('zapn','game',extra.title,'#/zapn/'+extra.id+'/practice',6,'Try a different game format after the starter three.',5));minutes+=6;}
+  }
+  const gameIndex=actions.findIndex(a=>a.kind==='game');
+  const today=trainingDay(now);
+  const timedToday=rows.filter(r=>r.evidence.latest && trainingDay(r.evidence.latest.finishedAt)===today).length;
+  const playedToday=Object.values(state.zapn).some(runs=>runs.some(r=>Number.isFinite(r.at) && trainingDay(r.at)===today));
+  if(gameIndex>0 && timedToday>=2 && !playedToday) actions.unshift(...actions.splice(gameIndex,1));
   return { rows, actions, minutes, sampler, available, expired:plan.deadline<=now };
 }

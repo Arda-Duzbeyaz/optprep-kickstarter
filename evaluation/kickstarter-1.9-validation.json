@@ -1,0 +1,145 @@
+{
+  "unit": {
+    "passed": 1219,
+    "failed": 0
+  },
+  "uiScripts": [
+    {
+      "script": "tools/practice-flow-smoke.mjs",
+      "exit": 0,
+      "seconds": 3.819
+    },
+    {
+      "script": "tools/learning-route-smoke.mjs",
+      "exit": 0,
+      "seconds": 3.42
+    },
+    {
+      "script": "tools/shared-practice-flow.mjs",
+      "exit": 0,
+      "seconds": 4.535
+    },
+    {
+      "script": "tools/learning-completion-flow.mjs",
+      "exit": 0,
+      "seconds": 26.548
+    },
+    {
+      "script": "tools/practice-freshness-flow.mjs",
+      "exit": 0,
+      "seconds": 4.324
+    },
+    {
+      "script": "tools/focused-learning-flow.mjs",
+      "exit": 0,
+      "seconds": 1.593
+    },
+    {
+      "script": "tools/unseen-session-flow.mjs",
+      "exit": 0,
+      "seconds": 1.105
+    },
+    {
+      "script": "tools/ui-smoke.mjs",
+      "exit": 0,
+      "seconds": 1.582
+    },
+    {
+      "script": "tools/transfer-smoke.mjs",
+      "exit": 0,
+      "seconds": 1.476
+    },
+    {
+      "script": "tools/transfer-regression.mjs",
+      "exit": 0,
+      "seconds": 1.282
+    },
+    {
+      "script": "tools/transfer-route-smoke.mjs",
+      "exit": 0,
+      "seconds": 1.49
+    },
+    {
+      "script": "tools/mixed-improvement-flow.mjs",
+      "exit": 0,
+      "seconds": 1.457
+    },
+    {
+      "script": "tools/curriculum-flow.mjs",
+      "exit": 0,
+      "seconds": 1.924
+    }
+  ],
+  "separateSaves": {
+    "assertions": 171,
+    "sections": [
+      {
+        "section": "bto",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "nl",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "ll",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "iv",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      },
+      {
+        "section": "ob",
+        "topicDraft": true,
+        "topicFeedback": true,
+        "mixedDraft": true,
+        "coveredPool": true,
+        "learningTimerAbsent": true,
+        "isolatedFinish": true
+      }
+    ],
+    "syntheticStateOnly": true,
+    "uncaughtErrors": []
+  },
+  "regularTimed": {
+    "nl": {
+      "submissions": 26
+    },
+    "iv": {
+      "submissions": 18
+    },
+    "ob": {
+      "submissions": 20,
+      "correctPass": 2,
+      "wrongPass": 1
+    }
+  },
+  "assessmentPlan": {
+    "assertions": 657,
+    "submissions": 100
+  },
+  "mathSamples": 2400,
+  "offlineInventory": 484,
+  "renderedBrowser": "Unavailable: Chromium could not create its runtime socket"
+}

@@ -22,6 +22,7 @@ export const PRESETS = {
     title: 'Career Kickstarter: Trading',
     who: 'Final-year students applying to the five-day Amsterdam programme.',
     sections: ['bto', 'nl', 'll', 'iv', 'ob', 'zapn'],
+    blurbs: {nl:'Solve sequences and applied numerical reasoning problems. Settings controls the mix. In this trainer you can revisit a question.',ob:'Use the bid to sell and the ask to buy. Submit a flat profit or choose No opportunity. Submitting that decision is final.'},
     zapn: ZAPN_ALL,
     // The overall BTO limit is from the 2027 Kickstarter invitation. The count and
     // 90-second item limit remain practice assumptions, pending portal instructions.
@@ -72,13 +73,14 @@ export function resolvePreset(p) {
 // Section order for the nav, the path and the mock: the preset's order, existing tasks only.
 export const presetSections = (resolved) => resolved.sections.filter((s) => s === 'zapn' || SECTIONS[s]);
 
-const BASE = Object.fromEntries(Object.entries(SECTIONS).map(([id, s]) => [id, { exam: { ...s.exam }, target: { ...s.target } }]));
+const BASE = Object.fromEntries(Object.entries(SECTIONS).map(([id, s]) => [id, { exam: { ...s.exam }, target: { ...s.target }, blurb:s.blurb }]));
 
 // Point every SECTIONS entry at the preset's timing and targets. Pure in effect: applying
 // the same preset twice gives the same config, and switching presets starts from the base.
 export function applyPreset(resolved) {
   for (const [id, s] of Object.entries(SECTIONS)) {
-    const base = BASE[id] || { exam: { ...s.exam }, target: { ...s.target } };
+    const base = BASE[id] || { exam: { ...s.exam }, target: { ...s.target }, blurb:s.blurb };
+    s.blurb=resolved.blurbs?.[id] || base.blurb;
     s.exam = { ...base.exam, ...(resolved.timing?.[id] || {}) };
     s.target = { ...base.target, ...(resolved.targets?.[id] || {}) };
   }

@@ -3,7 +3,7 @@ import { SECTIONS } from '../../../config/sections.js';
 import { activePreset, presetSections } from '../../../config/presets.js';
 import { SECTION_MODULES } from '../../sections/index.js';
 import { runExam } from '../runner.js';
-import { zapSampler } from '../../core/assessment-coach.js';
+import { moreGames, zapSampler } from '../../core/assessment-coach.js';
 import { formatLine } from './format.js';
 
 // Full mock: the scored sections in portal order, each on its own clock,
@@ -42,7 +42,7 @@ export function mockPage(root, { store }) {
 
   function done() {
     const games = zapSampler(store.state.zapn);
-    const game = games.find(g=>!g.tried) || games[0];
+    const game = games.find(g=>!g.tried) || moreGames(store.state.zapn).find(g=>!g.tried) || games[0];
     const next = activePreset().id === 'kickstarter' ?
       h('a', { class:'btn primary', href:'#/zapn/'+game.id+'/practice' }, 'Continue to Zap-N · '+game.title) :
       h('a', { class:'btn primary', href:'#/zapn' }, 'Zap-N');

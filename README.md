@@ -1,49 +1,39 @@
-# OptPrep for the Career Kickstarter trading assessments
+# OptPrep for Career Kickstarter Trading
 
-**Version 1.8.0-kickstarter.1 · 20 November 2026**
+**Version 1.9.0 · 20 November 2026**
 
-Open **Today → Assessment plan**. A new profile starts with full timed Beat the Odds and NumberLogic sections. If you already have eligible timed results, Today uses those to pick your next session. Choose a 30-, 60- or 120-minute budget.
+## Start here
 
-## Practise the six assessments
+1. Export your current progress from **Settings → Backup**. Extract the ZIP. In the folder containing `package.json», run `npm start» using Node.js 20 or newer. The app opens in your browser and needs no package installation for ordinary practice.
+2. Use the same browser profile, protocol, hostname and port as before to pick up your saved data. If you move from GitHub Pages to the local app or change address, import the backup in **Settings → Backup**.
+3. Open **Today**, choose your available time and press the first activity button. Return to Today after completing it. A 120-minute outline is a plan for one block. You can start another block immediately.
+4. The first two assessments suggested to a new profile are Beat the Odds and NumberLogic. Seeing 25 minutes beside each means two separate timed sections totalling 50 minutes. An existing profile can start with a different recommendation based on its history.
 
-| Assessment | What to use |
-| --- | --- |
-| Beat the Odds | Take a timed section, then practise an identified weakness. The workshop uses open answers for conditional probability, sampling, shared information and expected payoffs. |
-| NumberLogic | The timed section trains sequences. The numerical reasoning workshop adds weighted averages, ratios, percentage changes, units and table interpretation. Both types appear in the reserved papers. |
-| Likelihood List | Rank closely matched outcomes, distinguish pooled rates from equally weighted groups, and use area when comparing histogram bins. |
-| Intervals | Estimate totals from partial observations in workshops. On the two reserved papers, estimate a missing real-world input and give lower and upper bounds. The review shows published values, how often your ranges covered them, and your typical width. |
-| Orderbooks | Build positions from executable bids and asks. In the workshop and reserved papers you can choose **No opportunity** when every available trade combination fails. |
-| Zap-N | Start with CodeCompare, Pincode and The Switch for visual comparison, working memory and rule switching. The game page also contains the full set of nine practice games. |
+## Which practice mode should I use?
 
-## Use a timed result
+| When | Open | What happens |
+| --- | --- | --- |
+| You cannot set up a question even after seeing the topic | Focused learning | Practise one family and read the explanation. Each topic has its own unfinished save. |
+| You can solve it once told the topic | Mixed practice | Select the method yourself. The all-skills mix includes the new generators. Each mixed pool has a separate save. |
+| You want to see what happens against the clock | Timed section | Take a fresh paper under the full section clock. Inspect incorrect, slow, skipped and unreached questions afterwards. Regular probability and numerical questions have multiple choices. |
+| You want feedback after every answer | Workshop | Work through five questions. Some use open answers so you must produce the number yourself. |
+| Today offers Paper A, B or C | Reserved paper | Five fixed questions authored separately for that assessment. Take the first attempt unaided. Review after finishing. The clock continues if you leave. |
 
-The review distinguishes errors, skipped questions, unreached questions and correct answers over pace. From **What to work on**, open the skill that cost the most points. After a repair, do a mixed block and return for a fresh timed section on another day. The planner counts the latest eligible result per London practice day. Three days at the section target are OptPrep's consistency benchmark.
+**Arda’s next session.** Start on Today. If the latest timed result is weak, follow the suggested repair, then try mixed questions to see whether you recognise the method unprompted. For example, with two dice, “at least one was a six” and “a randomly chosen die showed six” give different denominators. Explain which outcomes survive before doing the arithmetic. If your accuracy is high but you run out of time, follow the paced recommendation. On another day, open Today again for a fresh timed comparison.
 
-Each of the five quantitative sections has two reserved five-question papers. They sit outside lessons, workshops and regular exams. Pick **Paper A** for a first check and save **Paper B** for a later day. Once a paper starts, its clock continues across navigation and reloads. Your first result stays in the section history. Workshops provide worked feedback after each answer. For an independently authored cross-check, Beat the Odds and NumberLogic also have outside resources and a place to record your timed score.
+**Save the reserved papers for a check.** Today can suggest A after you meet the timed target. Later recommendations use your subsequent timed days and previous paper results before suggesting B or C. Each is also available under the section’s Assessment plan. Use regular timed sessions freely for volume. Revisiting an answer on a finished reserved paper is review. Your first score stays recorded separately. The per-section three-day target is an internal consistency measure. The days with a qualifying paper can be separated by rest days.
 
-The five full section durations follow the invitation. Question counts, detailed scoring, practice targets, short-paper clocks, the 80% interval exercise and the choice of starter games are training settings. The email describes NumberLogic broadly as numerical reasoning and leaves the game selection open.
+**NumberLogic.** Leave **Settings → NumberLogic question mix** at 35% applied for a sequence-heavy first benchmark. A full 26-question paper then contains 17 sequence questions and nine applied questions. Choose sequences only for concentrated pattern practice, or 65% applied to work on rates, percentages and tables. Compare scores under the same setting when judging progress.
 
-## Run the app and keep your progress
+**Intervals.** After a timed section, open its assessment plan and read coverage, typical upper-to-lower ratio and the direction of your misses together. Repeatedly missing high means your upper bounds were too low. Tighten a range when you can justify the inputs. Use the separate workshop calibration panel for its 80% coverage exercise.
 
-1. In your existing app, export your progress in **Settings → Backup**.
-2. Extract this ZIP. In the inner folder containing `package.json`, run the following with Node.js 20 or newer.
+**Zap-N.** Begin with CodeCompare, Pincode and The Switch. The plan lists the six remaining game formats and can suggest an untried game as you continue. Review the relevant measure for that game, such as accuracy, memory span, reaction time where shown, or excess moves.
 
-   ```sh
-   npm start
-   ```
+## Release contents
 
-3. Use the same browser profile and address as before. If your old app runs at a different address, import the backup in **Settings → Backup**. Each unfinished topic and each mixed-practice pool keeps its own save.
-4. If you normally host OptPrep on GitHub Pages, deploy the inner folder to your existing repository and keep its existing Pages address.
+- [Assessment changes and research](docs/KICKSTARTER_1.9_RESEARCH.md)
+- [Generator evaluation and audit of all 40 original probability families](docs/KICKSTARTER_1.9_GENERATORS.md)
+- [Test results and limitations](docs/KICKSTARTER_1.9_TESTING.md)
+- [Machine-readable generator measurements](evaluation/kickstarter-1.9-generators.json)
 
-The app runs locally without installing packages. The original MIT licence and attribution are included.
-
-## Developer checks
-
-```sh
-npm test
-node tools/assessment-plan-flow.mjs
-```
-
-The second command uses jsdom for simulated browser testing. Install it in the developer environment or point `OPTPREP_TEST_JSDOM` at an existing installation. The release passed 1,202 JavaScript tests, 492 assertions through the new routes, 13 existing interface scripts and 171 assertions covering separate topic and mixed saves. The new route checks submit 75 answers through the input, ranking, interval and orderbook controls.
-
-`BUILD_INFO.json` contains release details. `SOURCE_REVISION.txt` identifies the source revision of the input ZIP. Earlier curriculum work is described in [the assessment audit](docs/ASSESSMENT_BATTERY_AUDIT.md), [the probability audit](docs/BTO_CURRICULUM_AUDIT.md), and [the separate-saves report](docs/SEPARATE_PRACTICE_SAVES.md).
+The original licence, study guides, other role presets and optional backend are included. For later hosting, the existing GitHub Pages workflow builds the static site. Local practice works through `npm start». For offline use after closing the server, first allow the browser to finish installing the service worker on localhost or HTTPS.

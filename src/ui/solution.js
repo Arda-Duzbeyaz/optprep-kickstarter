@@ -36,7 +36,7 @@ export function feedbackBanner(item, result, response) {
     return h('div', { class: `feedback ${result.score >= 0.7 ? 'ok' : 'no'}` }, parts, h('div', { class: 'coach-slot' }));
   } else if (item.kind === 'orderbook') {
     const out = response?.trades?.length ? positionOutcome(item.board, response.trades) : null;
-    parts.push(h('strong', {}, 'Not a locked-in profit. '));
+    parts.push(h('strong', {}, response?.pass ? 'A profitable position was available. ' : 'Not a locked-in profit. '));
     if (out && !out.flat) parts.push('Your position is not flat: some product is left long or short, so the profit is not locked in.');
     else if (out) parts.push(`Your position is flat but makes ${fmtNum(out.profit)}: you crossed the spread the wrong way somewhere.`);
   }
@@ -73,7 +73,7 @@ export function solutionPanel(item, { stepwise = true, actions = true } = {}) {
   }
   render();
   return h('section', { class: 'solution' }, h('h3', {}, 'Solution'), ask, picture, list, h('div', { class: 'row' }, more, all),
-    best, fast, check, anchor, rule, actions ? solutionActions(item) : null);
+    best, fast, check, anchor, rule, item.reference ? h('a',{href:item.reference,target:'_blank',rel:'noopener'},'Published reference') : null, actions ? solutionActions(item) : null);
 }
 
 function pictureFigure(p) {

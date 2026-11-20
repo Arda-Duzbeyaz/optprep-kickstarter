@@ -42,7 +42,8 @@ export function validateItem(it) {
       const want = [0, 1, 2].sort((a, b) => st[b].p - st[a].p);
       if (JSON.stringify(want) !== JSON.stringify(it.answerOrder)) e.push('answerOrder must sort statements by p descending');
       const ps = want.map((i) => st[i].p);
-      if (ps[0] - ps[1] < RANK_MARGIN || ps[1] - ps[2] < RANK_MARGIN) e.push(`rank probabilities within margin ${RANK_MARGIN}`);
+      const margin = it.closeComparison === true ? 1e-10 : RANK_MARGIN;
+      if (ps[0] - ps[1] < margin || ps[1] - ps[2] < margin) e.push(`rank probabilities within margin ${RANK_MARGIN}`);
     }
   }
   if (it.kind === 'interval') {
@@ -56,7 +57,7 @@ export function validateItem(it) {
         if (i.legs?.length !== b.products.length) e.push(`instrument ${i.id} legs length`);
         if (!(i.bid < i.ask)) e.push(`instrument ${i.id} bid must be below ask`);
       });
-      if (!it.best?.trades?.length) e.push('orderbook best trade missing');
+      if (!it.best?.trades?.length) { if (!(it.tradeOrPass && it.best === null)) e.push('orderbook best trade missing'); }
       else {
         const out = positionOutcome(b, it.best.trades);
         if (!out.flat) e.push('best trade is not flat');

@@ -4,14 +4,21 @@
 // whose activate deletes every cache and calls self.registration.unregister(), and
 // which has no fetch handler, installed clients recover on their next visit.
 const BUILD = '__BUILD__';
-const CACHE = `optprep-${BUILD.startsWith('__') ? 'kickstarter-1.8.0' : BUILD}`;
+const CACHE = `optprep-${BUILD.startsWith('__') ? 'kickstarter-1.9.0' : BUILD}`;
 // The Pages workflow fills FILES with every module and asset the app can load, so an installed
 // copy works offline on every page, including the ones that load on demand.
 const FILES = [/*FILES*/];
-const PRECACHE = ['index.html', 'app.js', 'manifest.webmanifest', ...FILES];
+const SHELL = ['index.html', 'app.js', 'manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)));
+  event.waitUntil((async () => {
+    const files=FILES.length ? FILES : await fetch('assets/offline-files.json', {cache:'reload'}).then(response=>{
+      if(!response.ok) throw new Error('Offline file index unavailable');
+      return response.json();
+    });
+    const cache=await caches.open(CACHE);
+    await cache.addAll([...SHELL,...files]);
+  })());
 });
 
 self.addEventListener('activate', (event) => {

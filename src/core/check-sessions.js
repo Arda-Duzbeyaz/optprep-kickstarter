@@ -1,10 +1,10 @@
 export const CHECK_SECTIONS = ['bto','nl','ll','iv','ob'];
-export const FORM_NAMES = ['a','b'];
+export const FORM_NAMES = ['a','b','c'];
 export const CHECK_LENGTH = 5;
 const DRILLS_PER_SECTION = 30;
 const record = x => !!x && typeof x === 'object' && !Array.isArray(x);
 const time = t => Number.isSafeInteger(t) && t >= 0;
-const validKey = key => /^(bto|nl|ll|iv|ob):(a|b|drill:[\w-]{1,64})$/.test(key);
+const validKey = key => /^(bto|nl|ll|iv|ob):(a|b|c|drill:[\w-]{1,64})$/.test(key);
 const short = x => (typeof x === 'string' && x.length <= 80) || Number.isFinite(x);
 
 function validResponse(r) {

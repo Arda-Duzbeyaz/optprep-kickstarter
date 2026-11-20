@@ -141,6 +141,10 @@ export function settingsPage(root, { store }) {
       { value: 60, label: '60 minutes', hint: 'A full preparation session' }] }),
     h('p', { class: 'muted small-note' }, 'Minutes count only while you answer or read, with the tab open.')),
     field('Battery', h('p', {}, 'Currently: ', h('strong', {}, activePreset().title), '.'), presetPicker(store, { compact: true, onDone: () => settingsPage(root, { store }) })),
+    activePreset().id==='kickstarter' ? field('NumberLogic question mix',choice({legend:'Applied numerical reasoning in timed and all-skills mixed practice',name:'numerical-mix',value:store.settings().numericalMix || 'balanced',
+      onChange:v=>store.setSetting('numericalMix',v),options:[
+        {value:'sequences',label:'Sequences only'},{value:'balanced',label:'35% applied reasoning'},{value:'broad',label:'65% applied reasoning'}]}),
+      h('p',{class:'small-note'},'The remaining questions train sequences. These are practice distributions. The setting also guides all-skills mixed blocks.')) : null,
     field('Division sign', choice({ legend: 'Division sign', hideLegend: true, name: 'div', value: store.settings().divNotation || 'obelus', columns: true, onChange: (v) => store.setSetting('divNotation', v), options: [
       { value: 'obelus', label: '÷', hint: '84 ÷ 7' },
       { value: 'colon', label: ':', hint: '84 : 7, as some European tests print it' }] })),

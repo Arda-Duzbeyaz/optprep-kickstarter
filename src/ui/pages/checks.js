@@ -4,6 +4,7 @@ import { SECTIONS } from '../../../config/sections.js';
 import { CHECK_LENGTH, FORM_NAMES, paperDone, checkTotal, recentChecks } from '../../core/check-sessions.js';
 import { paperSeconds, drillTitle } from '../../core/assessment-coach.js';
 import { grade, validAnswer, answerText } from '../../checks/material.js';
+import { independent } from '../../checks/independent.js';
 import { PAPERS } from '../../checks/papers.js';
 import { drillItem } from '../../checks/drills.js';
 import { intervalView } from '../kinds/interval.js';
@@ -74,7 +75,7 @@ export function checksPage(root,{store,id,form}) {
     store.state.checkSessions[id+':'+form];
   let key=current?.key, timer, view, changedElsewhere=false;
   const session=()=>store.state.checkSessions[key];
-  const question=(s,i)=>drill?drillItem(id,s.key,i):PAPERS[id][form][i];
+  const question=(s,i)=>drill?drillItem(id,s.key,i):(form==='c'?independent[id]:PAPERS[id][form])[i];
   function clean() {
     clearInterval(timer); document.removeEventListener('keydown',keys);
     window.removeEventListener('storage',syncScreen);
@@ -96,7 +97,7 @@ export function checksPage(root,{store,id,form}) {
       h('p',{class:'lede'},drill?workshopText[id]:'Five original questions held outside regular drills and timed sections. Work unaided. Answers and explanations appear after you finish.'),
       h('section',{class:'panel'},h('h2',{},drill?'Five-question workshop':'First attempt'),
         drill?h('p',{},'Work at your own pace. Each answer is saved, with a worked explanation.'):h('p',{},'You have '+clockLabel(duration*multiplier*1000)+' for the whole paper'+(multiplier>1?' with extra time ×'+multiplier:'')+'. The clock continues if you leave or reload. Submit each answer before the deadline.'),
-        !drill && id==='iv'?h('p',{},'Estimate without looking anything up. Set bounds you expect to cover about 8 references in 10. Sources appear in the review.'):null,
+        !drill && id==='iv'?h('p',{},'Set bounds you expect to cover about 8 references in 10. '+(form==='c'?'The complete simulated totals appear in the review.':'Estimate without looking anything up. Sources appear in the review.')):null,
         !drill && id==='ob'?h('p',{},'You can pass when no combination produces a profit. Each submitted decision is final.'):null,
         h('button',{type:'button',class:'btn primary',onclick:begin},drill?'Start workshop':'Start first attempt')),
       id==='iv'?calibrationPanel(store):null);

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { blankV2 } from '../src/core/migrate.js';
 import { makeStore } from '../src/core/store.js';
+import { independent } from '../src/checks/independent.js';
 import { PAPERS } from '../src/checks/papers.js';
 import { drillItem } from '../src/checks/drills.js';
 import { grade } from '../src/checks/material.js';
@@ -83,15 +84,15 @@ try {
 
   for(const [section,forms] of Object.entries(PAPERS)){
     await go('#/coach/'+section);
-    for(const form of ['a','b','drill']) check(link('#/checks/'+section+'/'+form),'section entry '+form);
-    for(const form of ['a','b','drill']){
+    for(const form of ['a','b','c','drill']) check(link('#/checks/'+section+'/'+form),'section entry '+form);
+    for(const form of ['a','b','c','drill']){
       const hash='#/checks/'+section+'/'+form, workshop=form==='drill';
       await go(hash);
       btn(workshop?'Start workshop':'Start first attempt').click();
       const key=Object.keys(state().checkSessions).find(k=>k.startsWith(section+':'+form));
       const start=state().checkSessions[key];
       for(let i=0;i<5;i++){
-        const q=workshop?drillItem(section,key,i):forms[form][i];
+        const q=workshop?drillItem(section,key,i):(form==='c'?independent[section]:forms[form])[i];
         check(root.querySelector('.check-prompt').textContent===q.text,'correct generated question');
         if(!workshop){
           eq(root.querySelectorAll('details').length,0,'reserved answers withheld');
@@ -121,7 +122,7 @@ try {
       }
       check(root.querySelector('h1').textContent.endsWith('review'),'review shown');
       check(root.querySelectorAll('details').length>=5,'review for all five items');
-      if(section==='iv' && !workshop) eq(root.querySelectorAll('details a[target="_blank"]').length,5,'sources available in review');
+      if(section==='iv' && !workshop && form!=='c') eq(root.querySelectorAll('details a[target="_blank"]').length,5,'sources available in review');
       if(!workshop){
         const snapshot=state().checkSessions[key];
         await go('#/coach/'+section);await go(hash);
@@ -139,7 +140,7 @@ try {
   const r=state().runs.find(r=>r.mode==='outside');
   eq([r.score,r.max,r.ms],[4,5,420000],'outside result saved');
   check(root.textContent.includes('0/3'),'outside work never inflates timed streak');
-  await go('#/coach/iv');check(root.textContent.includes('15/15'),'calibration across forms and workshop');
+  await go('#/coach/iv');check(root.textContent.includes('20/20'),'calibration across forms and workshop');
   const migrated=makeStore(localStorage);
   eq(migrated.state.stats['bto:conditional-dice'],old.stats['bto:conditional-dice'],'original topic progress retained');
   eq(migrated.xpTotal(),37,'workshop and papers kept out of unfinished topic and XP');

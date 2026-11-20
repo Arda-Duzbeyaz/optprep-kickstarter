@@ -57,7 +57,8 @@ function answer(section, { wrong = false, skip = false } = {}) {
     for (const [i, value] of [item.truth - delta, item.truth + delta].entries()) {
       const input = root.querySelectorAll('input')[i]; input.value = String(value); input.dispatchEvent(new Event('input', { bubbles: true }));
     }
-  } else for (const trade of item.best.trades) {
+  } else if(item.tradeOrPass && !item.best) root.querySelector('input[type=checkbox]').click();
+  else for (const trade of item.best.trades) {
     const index = item.board.instruments.findIndex((x) => x.id === trade.id);
     root.querySelectorAll('.ob-table tbody tr')[index].querySelector(`.ob-${trade.side}`).click();
   }

@@ -1,6 +1,7 @@
 import { h, mount } from '../dom.js';
 import { SECTIONS } from '../../../config/sections.js';
-import { sessionPlan, examEvidence, debrief, scoreLabel, zapSampler, drillTitle } from '../../core/assessment-coach.js';
+import { repairEvidence, intervalTrend } from '../../core/coach-evidence.js';
+import { sessionPlan, examEvidence, debrief, scoreLabel, moreGames, zapSampler, drillTitle } from '../../core/assessment-coach.js';
 import { CHECK_SECTIONS, CHECK_LENGTH, FORM_NAMES, calibration, checkTotal, paperDone } from '../../core/check-sessions.js';
 
 const link=(label,href,primary=false)=>h('a',{class:'btn'+(primary?' primary':''),href},label);
@@ -44,6 +45,7 @@ export function coachCard(store) {
       first ? [h('h3',{class:'coach-primary'},first.title),h('p',{},first.why),
         h('div',{class:'row'},link(first.kind==='baseline'?'Start timed baseline':'Open next step',first.href,true),
           h('a',{href:'#/coach'},'Assessment plan')),
+        h('p',{class:'small-note muted'},'This budget plans a block of time. Keep practising beyond it by returning to Today.'),
         rest.length ? h('details',{class:'daily-routine'},h('summary',{},'Session outline · about '+minutes+' min'),
           h('ol',{class:'coach-steps'},actions.map(a=>h('li',{},h('a',{href:a.href},a.title),h('span',{class:'num muted'},a.minutes+' min')))),
           h('p',{class:'small-note muted'},'Return to Today after a block to see your updated recommendations.')) : null] :
@@ -53,12 +55,19 @@ export function coachCard(store) {
   draw();return box;
 }
 
-export function debriefPanel(id,run) {
+export function debriefPanel(id,run,store) {
   const d=debrief(id,run);
   const metrics=d.hasOutcomes ? [metric('Incorrect',d.wrong+d.below+d.above),metric('Skipped',d.skipped),
     metric('Unreached',d.unreached),metric('Correct over pace',d.slow)] : [];
   const fix=d.repair;
+  const slipNote=h('span',{role:'status'});
+  const evidence=store && fix && repairEvidence(store.state,id,fix.id,run,Date.now());
+  const slip=store && fix && d.wrong ? h('button',{class:'btn',type:'button',onclick:()=>{
+    store.setSetting('executionSlips',{...store.settings().executionSlips,[id+':'+fix.id]:Date.now()});
+    slipNote.textContent='Saved for your next recommendation.';
+  }},'I made a calculation or input slip in '+fix.title) : null;
   return h('section',{class:'panel coach-debrief'},h('h2',{},'What to work on'),
+    evidence?h('p',{},evidence.why):null,slip,slipNote,
     metrics.length ? h('div',{class:'coach-metrics'},metrics) : null,
     id==='iv' && d.hasOutcomes ? h('p',{class:'small-note'},d.above+' truths above your upper bound · '+d.below+' below your lower bound · '+d.wide+' hits with a score below 0.70.') : null,
     d.unreached && run.finishReason==='time' ? h('p',{},'The clock ran out with '+d.unreached+' questions still unseen. Practise moving on from a slow question in the next timed run.') : null,
@@ -124,6 +133,7 @@ export function coachPage(root,{store,id}) {
       h('ul',{class:'task-list'},games.map(g=>h('li',{},h('a',{class:'task-row',href:'#/zapn/'+g.id+'/practice'},
         h('span',{class:'task-name'},g.title,h('span',{class:'task-blurb'},g.skill)),h('span',{class:'task-progress'},g.tried?'Played':'Try game'))))),
       h('p',{class:'small-note muted'},'This is a practice selection. Your invitation leaves the actual game selection open.'),
+      h('h2',{},'After the three starter games'),h('ul',{},moreGames(store.state.zapn).map(g=>h('li',{},h('a',{href:'#/zapn/'+g.id+'/practice'},g.title+' · '+(g.tried?'Played':'Try game'))))),
       link('All nine practice games','#/zapn'),finishToggle(store,id,redraw));
   }
   if (CHECK_SECTIONS.includes(id)) {
@@ -133,12 +143,15 @@ export function coachPage(root,{store,id}) {
       h('p',{class:'lede'},'Training target · '+targetLabel(id)+'.'),
       h('div',{class:'row'},link(ev.latest?'Take a fresh timed section':'Take the baseline','#/run/'+id+'/exam',true),
         link(drillTitle(id),'#/checks/'+id+'/drill')),
-      ev.latest ? debriefPanel(id,ev.latest) : h('p',{},'A full timed run gives you a baseline and a skill to work on.'),
+      ev.latest ? debriefPanel(id,ev.latest,store) : h('p',{},'A full timed run gives you a baseline and a skill to work on.'),
       h('section',{class:'panel'},h('h2',{},'Timed results'),h('p',{},ev.streak+'/3 consecutive practice days at target. Each day uses your last eligible timed result. Days without a test are ignored.'),
-        history.length ? h('ul',{class:'coach-history'},history.map(r=>h('li',{},date(r.finishedAt)+' · '+scoreLabel(id,r)+(r.completePaper===false?' · ended early':'')))) : null),
+        history.length ? h('ul',{class:'coach-history'},history.map(r=>h('li',{},date(r.finishedAt)+' · '+scoreLabel(id,r)+(r.numericalMix?' · '+r.numericalMix+' mix':'')+(r.completePaper===false?' · ended early':'')))) : null),
       h('section',{class:'panel'},h('h2',{},'Reserved papers'),
-        h('p',{},'Five questions per paper. Each first attempt is saved once, with feedback at the end. Try the second paper on another day.'),
+        h('p',{},'Timed sections generate a fresh mix. A, B and C are separate five-question papers with one saved attempt each. Today suggests A after a timed target and later papers on other days. Feedback opens at the end.'),
         h('div',{class:'row'},FORM_NAMES.map(f=>link(formLabel(f)+' · '+paperSummary(store,id,f),'#/checks/'+id+'/'+f)))),
+      id==='iv'?h('section',{class:'panel'},h('h2',{},'Timed interval history'),
+        ...intervalTrend(store.state.runs).map(r=>h('p',{},date(r.at)+' · '+r.inside+'/'+r.n+' covered · median upper ÷ lower '+num(r.median)+'× · '+r.low+' estimates too low · '+r.high+' too high')),
+        h('p',{class:'small-note'},'Only submitted positive intervals from completed timed sections with recorded bounds count.')):null,
       id==='iv'?calibrationPanel(store):null,outsidePractice(store,id),finishToggle(store,id,redraw));
   }
   const {rows,sampler}=sessionPlan(store.state);
