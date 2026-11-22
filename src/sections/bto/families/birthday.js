@@ -46,11 +46,13 @@ export default {
     const allDiff = new Q(nPr(d, n), BigInt(d) ** BigInt(n));
     if (mine) {
       const v = q(1).sub(qpow(q(d - 1, d), n));
+      const somePair = q(1).sub(allDiff.mul(q(d-n,d)));
       return mcqItem(ID, rng, difficulty, {
         value: v,
-        text: `You are in a room with ${n} other people. ${S.ctx ? S.ctx + ' ' : ''}What is the probability that at least one of them shares your ${S.what}?`,
+        text: `You are in a room with ${n} other people. Their birthdays are independent and uniform over 365 days. What is the probability that at least one shares your birthday?`,
+        oldText: `You are in a room with ${n} other people. ${S.ctx ? S.ctx + ' ' : ''}What is the probability that at least one of them shares your ${S.what}?`,
         distractors: [
-          { value: q(1).sub(allDiff), misconception: 'Answered "some pair in the room matches". Only pairs that include you count here.' },
+          { value: somePair, misconception: 'Counted a match between any pair of people in the room, including pairs that exclude you.' },
           { value: q(n, d), misconception: `Added 1/${d} per person; two people could both share your ${S.what}.` },
           { value: qpow(q(d - 1, d), n), misconception: 'Answered the complement: nobody shares yours.' },
           { value: q(1).sub(qpow(q(d - 1, d), n + 1)), misconception: 'Counted yourself among the people who could match you.' },
@@ -60,7 +62,7 @@ export default {
           { say: `P(nobody matches) = (${d - 1}/${d})^${n} ≈ ${qpow(q(d - 1, d), n).toNumber().toFixed(4)}.`, why: 'Independent misses multiply.' },
           { say: `P = 1 − that ≈ ${v.toNumber().toFixed(4)}.`, why: 'Complement.' },
         ],
-        rule: 'Match with a fixed value: 1 − ((d−1)/d)^n ≈ n/d. Any pair: 1 − d(d−1)…/d^n ≈ 1 − e^(−n²/2d).',
+        rule: 'For a fixed target, use 1 − ((d−1)/d)^n. For any pair, subtract the probability of all different values from one.',
         anchor: 'The at-least-one complement rule, with the target fixed (your value), so each person is an independent trial.',
         hints: [`Your ${S.what} is fixed. What must each other person avoid?`, 'Complement: nobody matches.', `1 − (${d - 1}/${d})^${n}.`],
         picture: curves(d, n, 'mine'),
@@ -73,7 +75,8 @@ export default {
     const pairs = (n * (n - 1)) / 2;
     return mcqItem(ID, rng, difficulty, {
       value: v,
-      text: `${S.who(n)} ${S.ctx ? S.ctx + ' ' : ''}What is the probability that at least two of them share the same ${S.what}?`,
+      text: `${S.who(n)} ${S.ctx ? S.ctx + ' ' : ''}Treat the ${S.what==='face'?'rolls':'values'} as independent. What is the probability that at least two ${S.what==='face'?'dice show the same face':S.what==='birth week (of 52)'?'people were born in the same week of the year':'of them share the same '+S.what}?`,
+      oldText: `${S.who(n)} ${S.ctx ? S.ctx + ' ' : ''}What is the probability that at least two of them share the same ${S.what}?`,
       distractors: [
         { value: q(n, d), misconception: `Scaled the single-match chance by the number of ${S.who(n).includes('dice') ? 'dice' : 'people'}. Collisions come from pairs, and there are C(${n},2) = ${pairs} of them.` },
         { value: q(pairs, d), misconception: 'Added 1/d for every pair; pair matches overlap, so adding overcounts.' },

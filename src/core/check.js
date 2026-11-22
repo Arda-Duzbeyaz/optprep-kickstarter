@@ -37,6 +37,11 @@ export function positionOutcome(board, trades) {
   return { flat: net.every((x) => x === 0), profit };
 }
 
+export function validTrades(board, trades, limit = Infinity) {
+  return Array.isArray(trades) && trades.length > 0 && trades.length <= limit &&
+    trades.every(trade => (trade?.side === 'buy' || trade?.side === 'sell') && board.instruments.some(quote => quote.id === trade.id));
+}
+
 export function checkItem(item, response) {
   if (response?.skip) return { correct: false, score: 0, skipped: true };
   switch (item.kind) {
@@ -59,8 +64,8 @@ export function checkItem(item, response) {
         return {correct,score:Number(correct)};
       }
       const trades = response.trades || [];
-      if (item.tradeLimit && trades.length>item.tradeLimit) return {correct:false,score:0};
       if (!trades.length) return { correct: false, score: 0 };
+      if (!validTrades(item.board, trades, item.tradeLimit)) return { correct: false, score: 0, invalid: true };
       const { flat, profit } = positionOutcome(item.board, trades);
       const ok = flat && profit > 0;
       return { correct: ok, score: ok ? 1 : 0, profit, flat };

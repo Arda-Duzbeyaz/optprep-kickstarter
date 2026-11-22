@@ -1,11 +1,46 @@
 // Three dice: sums, all different, exactly a pair, triples, maximum, even product.
-import { mcqItem, agree, q, pic, table } from '../lib.js';
+import { mcqItem, agree, q, qpow, pic, range, table } from '../lib.js';
 
 const ID = 'three-dice';
-export const threeDiceBasics = [
-  ...['allDiff', 'pair', 'triple', 'product', 'oddProduct'].map((kind) => ({ kind })),
-  ...['namedTriple', 'namedPair'].flatMap((kind) => Array.from({ length: 6 }, (_, i) => ({ kind, face: i + 1 }))),
-];
+export const threeDiceInputs = {
+  1: [
+    ...['allDiff', 'triple', 'product', 'oddProduct'].map((kind) => ({ kind })),
+    ...range(1, 6).map((face) => ({ kind: 'namedTriple', face })),
+    ...range(2, 5).flatMap((face) => ['at most', 'at least'].map((relation) => ({ kind: 'allBounded', face, relation }))),
+  ],
+  2: [
+    { kind: 'pair' },
+    ...range(1, 6).map((face) => ({ kind: 'namedPair', face })),
+    ...range(4, 17).map((s) => ({ kind: 'sum', s })),
+    ...range(3, 6).map((k) => ({ kind: 'max', k })),
+  ],
+  3: range(6, 15).flatMap((s) => ['pair', 'different'].map((shape) => ({ kind: 'givenSum', s, shape }))),
+};
+
+function allBounded(input) {
+  const { face, relation } = input;
+  const allowed = relation === 'at most' ? face : 7 - face;
+  const p = q(allowed, 6), value = qpow(p, 3);
+  return {
+    value, data: input,
+    text: `You throw three fair dice. What is the probability that every die shows a face ${relation} ${face}?`,
+    distractors: [
+      { value: p, misconception: 'Checked the condition on one die only.' },
+      { value: qpow(p, 2), misconception: 'Checked the condition on two dice only.' },
+      { value: q(1).sub(value), misconception: 'Computed the probability that at least one die breaks the bound.' },
+      { value: qpow(q(allowed - 1, 6), 3), misconception: 'Excluded the boundary face even though it is allowed.' },
+      { value: q(1).sub(qpow(q(1).sub(p), 3)), misconception: 'Required at least one die to satisfy the condition.' },
+    ],
+    steps: [
+      { say: `The allowed faces include ${face}; there are ${allowed} of them on each die.`, why: 'The bound is inclusive.' },
+      { say: `P(all three satisfy the bound) = (${p})³ = ${value}.`, why: 'The same restriction applies independently to every die.' },
+    ],
+    hints: ['Count the faces allowed by the inclusive bound.', 'Apply the restriction to all three independent dice.'],
+    picture: table(['Dice checked', 'Probability'], [[1, p], [2, qpow(p, 2)], [3, value]], 'Each additional die contributes the same independent factor.'),
+    fast: `Cube the one-die probability ${p}.`,
+    check: 'Requiring every die to satisfy the bound lowers the chance below that for a single die.',
+  };
+}
 
 function namedEvent(input) {
   const { kind, face } = input;
@@ -69,9 +104,40 @@ const ways3 = (s) => { let n = 0; for (let a = 1; a <= 6; a++) for (let b = 1; b
 // Unordered multisets {a <= b <= c} summing to s.
 const multisets3 = (s) => { let n = 0; for (let a = 1; a <= 6; a++) for (let b = a; b <= 6; b++) { const c = s - a - b; if (c >= b && c <= 6) n++; } return n; };
 
-function build(kind, rng) {
+function build(input) {
+  const { kind } = input;
+  if (kind === 'givenSum') {
+    const { s, shape } = input, total = ways3(s);
+    const pairFaces = range(1, 6).filter((face) => {
+      const other = s - 2 * face;
+      return other >= 1 && other <= 6 && other !== face;
+    });
+    const pairs = 3 * pairFaces.length, triples = Number(s % 3 === 0);
+    const favourable = shape === 'pair' ? pairs : total - pairs - triples;
+    const value = q(favourable, total);
+    const goal = shape === 'pair' ? 'exactly two show the same face' : 'all three faces are different';
+    return {
+      value, data: input, text: `Three fair dice add up to ${s}. Given that sum, what is the probability that ${goal}?`,
+      distractors: [
+        { value: q(favourable, 216), misconception: 'Divided by all 216 triples, including those with a different sum.' },
+        { value: q(shape === 'pair' ? 90 : 120, 216), misconception: 'Used the unconditional probability of this dice pattern.' },
+        { value: q(1).sub(value), misconception: 'Answered the complement of the requested pattern.' },
+        { value: q(pairFaces.length, total), misconception: 'Counted each pair face once and missed the three positions for the distinct die.' },
+        { value: q(pairs + triples, total), misconception: 'Counted all repeated faces, including triples.' },
+      ],
+      steps: [
+        { say: `There are ${total} ordered triples with sum ${s}.`, why: 'Fix two faces and check whether the third is legal.' },
+        { say: `There are ${pairs} triples with one matching pair and ${triples} with all faces equal.`, why: 'Each valid pair face permits three positions for the remaining face.' },
+        { say: `P(${goal} | sum is ${s}) = ${favourable}/${total} = ${value}.`, why: 'Use only triples with the observed sum.' },
+      ],
+      hints: ['Use the sum to restrict the denominator.', 'If a face is repeated twice, what must the remaining face be?'],
+      picture: table(['Pattern with the given sum', 'Ordered triples'], [['Exactly one pair', pairs], ['All equal', triples], ['All different', total - pairs - triples]], 'Only triples that produce the stated sum enter this sample space.'),
+      fast: `Count ${favourable} qualifying triples out of ${total} with that sum.`,
+      check: 'The counts for all-different, exactly one pair, and all-equal triples add to the conditional sample size.',
+    };
+  }
   if (kind === 'sum') {
-    const s = rng.int(4, 17);
+    const { s } = input;
     const w = ways3(s);
     const value = q(w, 216);
     return {
@@ -140,7 +206,7 @@ function build(kind, rng) {
     hints: ['Is a particular face required?', 'Two dice must match the first.', '(1/6)².'],
   };
   if (kind === 'max') {
-    const k = rng.int(3, 6);
+    const { k } = input;
     const w = k ** 3 - (k - 1) ** 3;
     return {
       value: q(w, 216), data: { kind, k },
@@ -182,14 +248,15 @@ export default {
   section: 'bto',
   title: 'Three dice',
   skill: 'Count 216 ordered triples; split into all different / pair / triple; max ≤ k is a cube',
-  levels: [2, 3],
+  levels: [1, 2, 3],
 
-  generate(rng, { difficulty = 2 } = {}) {
-    const input = difficulty === 2 ? rng.pick(threeDiceBasics) : { kind: rng.pick(['sum', 'max', 'sum', 'pair']) };
-    const added = namedEvent(input), b = added || build(input.kind, rng);
+  generate(rng, { difficulty = 1 } = {}) {
+    const input = rng.pick(threeDiceInputs[difficulty]);
+    const added = input.kind === 'allBounded' ? allBounded(input) : namedEvent(input);
+    const b = added || build(input);
     return mcqItem(ID, rng, difficulty, {
       ...b,
-      ...(added ? {} : explain(b.data)),
+      ...(b.picture ? {} : explain(b.data)),
       rule: '216 ordered triples = 120 all different + 90 exactly a pair + 6 triples. P(max ≤ k) = (k/6)³.',
       anchor: 'Two dice give 36 ordered pairs; three dice are the same idea with one more factor of 6: 216 ordered triples.',
     });
@@ -198,9 +265,19 @@ export default {
   // Independent check: enumerate all 216 ordered triples.
   verify(item) {
     const d = item.params;
-    let hits = 0;
+    let hits = 0, total = 0;
     for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) for (let c = 1; c <= 6; c++) {
       const distinct = new Set([a, b, c]).size;
+      if (d.kind === 'givenSum' && a + b + c !== d.s) continue;
+      total++;
+      if (d.kind === 'givenSum') {
+        hits += Number(distinct === (d.shape === 'pair' ? 2 : 3));
+        continue;
+      }
+      if (d.kind === 'allBounded') {
+        hits += Number([a, b, c].every((x) => d.relation === 'at most' ? x <= d.face : x >= d.face));
+        continue;
+      }
       const ok = d.kind === 'sum' ? a + b + c === d.s
         : d.kind === 'allDiff' ? distinct === 3
           : d.kind === 'pair' ? distinct === 2
@@ -212,7 +289,7 @@ export default {
                       : (a * b * c) % 2 === 0;
       if (ok) hits++;
     }
-    return agree(item, hits / 216);
+    return agree(item, hits / total);
   },
 
   lesson: {

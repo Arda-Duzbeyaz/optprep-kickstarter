@@ -15,7 +15,7 @@ const family={id:ID,section:'bto',title:'Restricted counting: roles, groups and 
   skill:'Choose ordered or unordered sample spaces and count constrained arrangements without double counting',levels:[2,3],
   generate(rng,{difficulty=2,variant}={}) {
     const kind=task(rng,difficulty,COUNTING_TASKS,variant);
-    let value,text,data,work,picture,distractors,operations,ev=false,extras={};
+    let value,text,oldText,data,work,picture,distractors,operations,ev=false,extras={};
     if(kind==='roles') {
       const a=rng.int(2,6),b=rng.int(2,6),N=a+b;value=q(a*b,N*(N-1));data={kind,a,b};
       text=`A team has ${a} analysts and ${b} engineers, all distinct. A chair and a different deputy are selected uniformly from all ordered choices. What is the probability the chair is an analyst and the deputy is an engineer?`;
@@ -40,7 +40,8 @@ const family={id:ID,section:'bto',title:'Restricted counting: roles, groups and 
     } else if(kind==='adjacent'||kind==='gaps') {
       if(kind==='adjacent') {
         const n=rng.int(4,8),apart=rng.chance(.5);value=apart?q(n-2,n):q(2,n);data={kind,n,apart};
-        text=`${n} distinct people stand in a uniformly random line. Two specified people ${apart?'must not stand next to one another':'are to stand next to one another'}. What is the probability this requirement is satisfied?`;
+        oldText=`${n} distinct people stand in a uniformly random line. Two specified people ${apart?'must not stand next to one another':'are to stand next to one another'}. What is the probability this requirement is satisfied?`;
+        text=`${n} people line up in a uniformly random order. What is the probability that two named people are ${apart?'not ':''}next to each other?`;
         work=steps([`Treat the specified pair as a block: 2×(${n}-1)! adjacent orders out of ${n}! total orders.`,'The block has two internal orders.'],[`P(adjacent) = 2/${n}${apart?`; take its complement for separation = ${value}`:` = ${value}`}.`,'A block counts all positions of the neighbouring pair once.']);
         picture=table(['Case','Count'],[['All lines',`${n}!`],['Pair adjacent',`2 × ${n-1}!`]],'The same pair can appear in either internal order.');
         distractors=[wrong(apart?q(2,n):q(n-2,n),'Answered the opposite adjacency event.'),wrong(q(1,n),'Forgot the two internal orders of the pair.'),wrong(q(1,n-1),'Treated possible pair locations as equally likely pair choices.'),wrong(q(2,n-1),'Used the wrong total count.')];operations=['permutation','block-method','complement'];
@@ -61,7 +62,7 @@ const family={id:ID,section:'bto',title:'Restricted counting: roles, groups and 
       const gap=Math.max(1,Math.ceil(value.toNumber()*.15));
       extras={domain:'count',format:v=>String(v),fillers:[1,2,3,4,5,6,7,8].map(i=>wrong(value.toNumber()+i*gap,'An integer guess that does not remove the repeated-copy overcount.'))};
     }
-    return question(ID,rng,difficulty,{...extras,ev,value,text,data,steps:work,picture,distractors,structure:kind,operations,
+    return question(ID,rng,difficulty,{...extras,ev,value,text,oldText,data,steps:work,picture,distractors,structure:kind,operations,
       hints:['Does changing the order create a different elementary outcome?','Count all equally likely outcomes and then impose the restriction.'],
       rule:'Choose the sample space first. Labelled roles use ordered counts; subsets use combinations; identical copies require dividing out their internal permutations.',
       anchor:'A formula is useful only after the numerator and denominator count the same kind of object.',fast:`Count consistent objects and apply the stated restriction: ${value}.`,

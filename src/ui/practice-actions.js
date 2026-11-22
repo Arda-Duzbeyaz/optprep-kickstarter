@@ -1,6 +1,7 @@
 import { h } from './dom.js';
 import { SECTIONS } from '../../config/sections.js';
 import { PRACTICE_FAMILIES } from '../practice/catalog.js';
+import { BTO_CHECKPOINT_MS } from '../core/recognition.js';
 
 export function mixedPracticeAction(store, id, { primary = true } = {}) {
   const families = PRACTICE_FAMILIES[id], covered = families.filter((f) => store.coverage(id,f.id).covered).length;
@@ -26,5 +27,7 @@ export function mixedPracticeAction(store, id, { primary = true } = {}) {
   update();
   return h('div', { class: 'mixed-practice-action' },
     h('label', { for: selectId }, 'Question pool', pool), start, note,
-    h('p', { class: 'small-note muted' }, 'No forced timeout. The displayed pace budget controls checkpoint credit. Coverage carries across blocks; other turns target accuracy and pace weaknesses.'));
+    h('p', { class: 'small-note muted' }, id === 'bto'
+      ? `Work at your own pace. Fresh, correct, unaided answers submitted within ${BTO_CHECKPOINT_MS / 1000} seconds count towards mastery.`
+      : 'No forced timeout. The displayed pace budget controls checkpoint credit. Coverage carries across blocks; other turns target accuracy and pace weaknesses.'));
 }

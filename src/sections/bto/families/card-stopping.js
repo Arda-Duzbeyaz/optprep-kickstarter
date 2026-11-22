@@ -43,14 +43,50 @@ function hindsight(r, b) {
   return q(tot, count); // every distinct arrangement of the colours is equally likely
 }
 
+function shortGame(rng) {
+  const r = rng.int(1, 3), b = rng.int(1, 4), gain = rng.int(1, 3), loss = rng.int(1, 2);
+  const one = (red, black) => q(red * gain - black * loss, red + black);
+  const positive = (x) => x.cmp(0) > 0 ? x : q(0);
+  const afterRed = one(r - 1, b), afterBlack = one(r, b - 1);
+  const once = one(r, b);
+  const continueValue = once.add(q(r, r + b).mul(positive(afterRed))).add(q(b, r + b).mul(positive(afterBlack)));
+  const answer = positive(continueValue);
+  const distractors = [
+    { value: positive(once), misconception: 'Compared stopping now with drawing once, overlooking the optional second draw.' },
+    { value: positive(once.mul(q(2))), misconception: 'Compared stopping with committing to both draws before seeing the first card.' },
+    { value: q(r * gain, r + b), misconception: 'Counted the gain from a red but ignored the loss from a black.' },
+    { value: positive(afterBlack), misconception: 'Used the value of a draw after a black as if a black had already been removed.' },
+    { value: 0, misconception: 'Stopped immediately even if drawing first has a positive value.' },
+  ];
+  return {
+    ev: true, value: answer, minGap: () => .025,
+    text: `A shuffled pile has ${r} red and ${b} black cards. A red wins £${gain}, a black loses £${loss}. You may draw up to two cards without replacement and can stop before either draw. What is your expected net gain with optimal play?`,
+    distractors,
+    fillers: Array.from({ length: 15 }, (_, i) => ({ value: 2 * gain * i / 14, misconception: 'Recalculate the value of the second draw after each possible first card.' })),
+    steps: [
+      { say: `If the first card is red, the remaining draw is worth ${afterRed}. If it is black, the remaining draw is worth ${afterBlack}.`, why: 'After drawing once, use the numbers of red and black cards still left.' },
+      { say: `Take the second draw only if its expected gain is positive. Drawing first is then worth ${continueValue}.`, why: 'Weight both first-card branches, including each first-card payout.' },
+      { say: 'Compare drawing first with keeping the starting balance.', math: `max(0, ${continueValue}) = ${answer}`, why: 'Keeping the starting balance is worth zero additional money.' },
+    ],
+    hints: ['Evaluate the last draw after a red and after a black.', 'At each choice you can keep the balance instead.'],
+    rule: 'Compare the value of drawing with zero additional gain from stopping, starting at the final decision.',
+    anchor: 'The second card is optional and the first card changes its odds.',
+    picture: table(['First card', 'Chance', 'Expected gain from a second draw'], [['Red', q(r, r + b), afterRed], ['Black', q(b, r + b), afterBlack]], 'Decide whether to take the second card separately for each first-card result.'),
+    fast: `Compare stopping with the first draw plus whichever second draws have positive value. The best gain is ${answer}.`,
+    check: 'Stopping at once is available, so the optimal expected net gain is at least zero.',
+    params: { r, b, gain, loss, draws: 2 },
+  };
+}
+
 export default {
   id: ID,
   section: 'bto',
   title: 'Optimal stopping with a deck of cards',
   skill: 'Value of a state = max(stop now, expected value of drawing on); solve backwards from small decks',
-  levels: [4, 5],
+  levels: [3, 4, 5],
 
-  generate(rng, { difficulty = 4 } = {}) {
+  generate(rng, { difficulty = 3 } = {}) {
+    if (difficulty === 3) return mcqItem(ID, rng, difficulty, shortGame(rng));
     let r, b;
     do {
       r = difficulty === 4 ? rng.int(1, 4) : rng.int(3, 6);
@@ -87,7 +123,19 @@ export default {
 
   // Independent check: bottom-up floating-point table over decks of increasing size.
   verify(item) {
-    const { r, b } = item.params;
+    const { r, b, draws, gain, loss } = item.params;
+    if (draws === 2) {
+      const deck = [...Array(r).fill(gain), ...Array(b).fill(-loss)];
+      let best = 0;
+      for (const afterRed of [false, true]) for (const afterBlack of [false, true]) {
+        let total = 0;
+        for (const [i, first] of deck.entries()) for (const [j, second] of deck.entries()) {
+          if (i !== j) total += first + ((first > 0 ? afterRed : afterBlack) ? second : 0);
+        }
+        best = Math.max(best, total / (deck.length * (deck.length - 1)));
+      }
+      return agree(item, best);
+    }
     const T = Array.from({ length: r + 1 }, () => Array(b + 1).fill(0));
     for (let size = 1; size <= r + b; size++) {
       for (let R = Math.max(0, size - b); R <= Math.min(r, size); R++) {

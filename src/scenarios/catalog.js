@@ -1,5 +1,5 @@
 const skills={
-  bto:['conditional-process','Observations and repeated trials','Track what the report reveals and which trials share information.'],
+  bto:['conditional-process','Revealed outcomes and hidden sources','Use the report to update the sample space or infer which source produced the outcome.'],
   nl:['numerical-data','Applied numerical reasoning','Translate totals, rates and percentage changes into an equation with units.'],
   ll:['ranking-models','Compare sampling procedures','Identify the denominator, sampling unit and weights before ranking.'],
   iv:['reference-estimates','Scale and uncertainty','Estimate an unknown reference quantity, scale it, then allow room for uncertainty.'],

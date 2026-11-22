@@ -34,7 +34,8 @@ export default {
       const v = new Q(nCr(2 * k - 2, k - 1), 1n).mul(qpow(p, k - 1)).mul(qpow(r, k - 1));
       return mcqItem(ID, rng, difficulty, {
         value: v,
-        text: `${a === 1 && c === 2 ? `Two evenly matched teams play a best-of-${n} series` : `Team A wins each game against team B with probability ${p}, independently. They play a best-of-${n} series`} (first to ${k} wins). What is the probability that the series goes all ${n} games?`,
+        text: `Each game is independent. Team A wins with probability ${p}. Otherwise team B wins. The series ends when either team wins ${k} games. What is the probability that they play ${n} games?`,
+        oldText: `${a === 1 && c === 2 ? `Two evenly matched teams play a best-of-${n} series` : `Team A wins each game against team B with probability ${p}, independently. They play a best-of-${n} series`} (first to ${k} wins). What is the probability that the series goes all ${n} games?`,
         distractors: [
           { value: qpow(q(1, 2), n - 1), misconception: 'Counted one specific sequence of alternating wins; many orders give k − 1 wins each.' },
           { value: q(1, k), misconception: `Treated the ${k} possible series lengths as equally likely.` },
@@ -58,7 +59,8 @@ export default {
     const v = winRace(p, k);
     return mcqItem(ID, rng, difficulty, {
       value: v,
-      text: `Team A wins each game against team B with probability ${p}, independently. They play until one team has won ${k} games (best of ${n}). What is the probability that team A wins the series?`,
+      text: `Each game is independent. Team A wins with probability ${p}. Otherwise team B wins. The first team to win ${k} games wins the series. What is the probability that team A wins the series?`,
+      oldText: `Team A wins each game against team B with probability ${p}, independently. They play until one team has won ${k} games (best of ${n}). What is the probability that team A wins the series?`,
       distractors: [
         { value: p, misconception: 'Used the single-game probability. A series amplifies the stronger team\'s edge.' },
         { value: qpow(p, k), misconception: `Required A to win the first ${k} games straight.` },

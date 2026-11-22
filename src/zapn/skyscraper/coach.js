@@ -4,7 +4,7 @@ export default {
     'Three towers hold coloured blocks. Only the top block of a tower can move, and only onto a tower that still has room.',
     'Rebuild the target picture in as few moves as possible. Every level has a known minimum, shown after the level in practice mode.',
     '10 levels, from 3 blocks and 2 moves up to 6 blocks and 9 moves.',
-    'Move with the mouse (click a tower, then the destination) or keys 1, 2, 3 for source then destination.',
+    'Click the source tower, then the destination, or use keys 1, 2 and 3. Escape cancels the selection. R restores the starting layout and keeps the move count.',
   ],
   scoring: 'Moves above the optimum, averaged over levels. Target: at most 2 extra moves per level on average. Planning time is recorded separately, so a long pause before the first move is cheap; wasted moves are not.',
   strategy: [

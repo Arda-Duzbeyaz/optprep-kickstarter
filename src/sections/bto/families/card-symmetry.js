@@ -13,12 +13,16 @@ function build(kind, rng) {
     const d = rng.int(2, 10), good = kind === 'seenRed' ? 26 : 4;
     const seen = rng.int(0, Math.min(good, d)), what = kind === 'seenRed' ? 'red cards' : 'aces';
     const value = q(good - seen, 52 - d);
+    const target = kind === 'seenRed' ? 'red' : 'an ace';
     return { value, data: { kind, d, seen },
-      text: `A standard 52-card deck is shuffled. The top ${d} cards are inspected and discarded. Exactly ${seen} of those cards are ${what}; the rest are not. What is the probability that the next card is ${kind === 'seenRed' ? 'red' : 'an ace'}?`,
+      text: `Inspect and discard the top ${d} cards of a shuffled standard deck. You find ${seen} ${seen===1?(kind==='seenRed'?'red card':'ace'):what}. What is the probability the next card is ${target}?`,
+      oldText: `A standard 52-card deck is shuffled. The top ${d} cards are inspected and discarded. Exactly ${seen} of those cards are ${what}; the rest are not. What is the probability that the next card is ${target}?`,
       distractors: [
         { value: q(good, 52), misconception: 'Ignored the observed composition as if the discarded cards had been unseen.' },
         { value: q(good, 52 - d), misconception: 'Removed discarded cards from the deck but kept the original qualifying-card count.' },
         { value: q(good - seen, 52), misconception: 'Removed the known qualifying cards but left the full deck size.' },
+        { value: q(good - seen, 51), misconception: 'Removed the qualifying cards from the numerator but allowed for only one discard in the denominator.' },
+        { value: q(good - seen, 53 - d), misconception: 'Put one of the discarded cards back in the denominator.' },
         { value: q(1).sub(value), misconception: 'Answered the complement: the next card is not in the specified group.' },
         { value: q(Math.max(0, good - d), 52 - d), misconception: 'Treated all discarded cards as qualifying instead of using the inspected count.' },
       ],
@@ -61,7 +65,7 @@ function build(kind, rng) {
         { p: `${52 - good}/52`, label: 'discard other', children: [{ p: `${good}/51`, label: `next ${red ? 'red' : 'an ace'}`, mark: true }, { p: `${51 - good}/51`, label: 'next other' }] },
       ] }, total: `${good}/52` }, `One unseen discard, split by what it was. The two marked paths add back to ${good}/52; each of the other ${d - 1} discards averages out the same way.`),
       fast: `Unseen cards carry no information, so the ${ord(d + 1)} card is a random card: ${good}/52 = ${value}.`,
-      check: `The answer cannot depend on how many cards were burned: with ${d} or with 0 discards it is ${value}. An option that changes with ${d} uses the discards as if they were seen.`,
+      check: `With ${d} or with zero unseen discards, the answer is ${value}. The next card is a fixed position of a uniformly shuffled deck.`,
     };
   }
   if (kind === 'sameSuit' || kind === 'heartBottom') {

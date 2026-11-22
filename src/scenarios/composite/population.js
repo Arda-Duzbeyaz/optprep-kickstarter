@@ -18,12 +18,16 @@ export default function population(rng,level){
     const guesses=groups.map((g,j)=>g.marked*sum(g.samples.map(a=>a.length))/sum(observed[j]));
     const combine=ns=>goal==='share'?100*ns[0]/sum(ns):goal==='unmarked'?sum(ns)-sum(groups.map(g=>g.marked)):goal==='density'?sum(ns)/area:sum(ns);
     const asks={total:'Estimate the total population.',unmarked:'Estimate how many individuals were never tagged.',density:'Estimate the population per square kilometre over a total habitat area of '+area+' km².',share:'Estimate the percentage of the total population living in A.'};
-    const text='Simulated closed population. Tags stayed on, and individuals did not move between habitats. Within each habitat the tagged individuals mixed fully. Each survey sampled individuals uniformly without replacement; all were returned before another survey. '+asks[goal];
+    const text='The population in each habitat stays fixed and tags stay on. Each survey samples uniformly within its habitat, without replacement. All individuals are returned before the next survey. '+asks[goal];
     const visual={type:'table',columns:['Habitat','Originally tagged','Subsequent survey(s): tagged / examined'],rows:groups.map((g,j)=>['AB'[j],g.marked,g.samples.map((v,k)=>observed[j][k]+' / '+v.length).join('; ')])};
     return {mode:'population-survey',operations:[design,goal],params:{groups,design,goal,area},text,visual,
       truth:combine(groups.map(g=>g.size)),unit:goal==='share'?'percent':goal==='density'?'individuals per km²':'individuals',
-      working:'In each habitat, estimate the tagged fraction from the survey data. Divide the original tagged count by that fraction. The resulting size estimates are '+guesses.map(v=>Math.round(v)).join(' and ')+'.',
-      method:'Combine the estimated habitat sizes for the requested quantity. Small recapture counts create substantial uncertainty. The full simulated sizes were '+groups.map(g=>g.size).join(' and ')+'.'};
+      steps:[
+        {say:'Estimate the tagged share in each habitat from all its survey draws.',why:'Pool tagged and examined counts across repeated samples. Bigger surveys contribute more draws.',math:groups.map((g,j)=>`${'AB'[j]}: ${sum(observed[j])}/${sum(g.samples.map(s=>s.length))}`).join(', ')},
+        {say:'Divide each original tag count by the estimated tagged share.',why:'A fixed count divided by its share estimates the full population. A few tagged sightings give a noisy share.',math:guesses.map((v,j)=>`${'AB'[j]}: ${groups[j].marked} ÷ (${sum(observed[j])}/${sum(groups[j].samples.map(s=>s.length))}) ≈ ${Math.round(v)}`).join(', ')},
+        {say:'Combine the population estimates for the quantity asked.',why:'The simulator knows the full habitat sizes. In practice the estimates depend on who was recaptured.',math:`Sample estimate ≈ ${Number(combine(guesses).toPrecision(5))}, full population result ≈ ${Number(combine(groups.map(g=>g.size)).toPrecision(5))}`},
+      ],
+      method:'Within each habitat, divide the number tagged by the sampled tagged fraction. Then combine the resulting habitat estimates.'};
   }
   throw Error('Could not obtain informative recapture data');
 }

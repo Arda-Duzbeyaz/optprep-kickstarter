@@ -8,11 +8,11 @@ const singular = (u) => u.replace(/(x|ch|sh|ss)es$/, '$1').replace(/s$/, '');
 
 const ID = 'coupon-collector';
 const CTX = [
-  { n: (x) => x, text: (n) => `A cereal brand hides one of ${n} different toys in each box, each equally likely. What is the expected number of boxes you must buy to collect all ${n} toys?`, unit: 'boxes' },
+  { n: (x) => x, text: (n) => `Each cereal box independently contains one of ${n} equally likely toys. How many boxes do you expect to buy to collect all ${n} different toys?`, unit: 'boxes' },
   { n: () => 6, text: () => 'You throw a fair die until every face 1 to 6 has appeared at least once. What is the expected number of throws?', unit: 'throws' },
   { n: () => 2, text: () => 'You flip a fair coin until you have seen both heads and tails. What is the expected number of flips?', unit: 'flips' },
-  { n: () => 4, text: () => 'You draw cards with replacement from a shuffled deck until you have seen all four suits. What is the expected number of draws?', unit: 'draws' },
-  { n: (x) => x, text: (n) => `A trading desk assigns each incoming order to one of ${n} traders uniformly at random. What is the expected number of orders until every trader has received at least one?`, unit: 'orders' },
+  { n: () => 4, text: () => 'Draw independently from a standard 52-card deck, returning the card after every draw. How many draws do you expect to need to see all four suits?', unit: 'draws' },
+  { n: (x) => x, text: (n) => `Each new order is assigned independently to one of ${n} traders, all equally likely. How many orders do you expect until every trader has received at least one?`, unit: 'orders' },
 ];
 
 export default {

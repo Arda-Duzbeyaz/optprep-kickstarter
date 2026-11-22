@@ -197,6 +197,7 @@ export default {
     const b = build(kind, n, k, face);
     return mcqItem(ID, rng, difficulty, {
       ...b,
+      ...(k===6?{oldText:b.text,text:b.text.replace('throw one die','throw a fair six-sided die')}:{}),
       rule: 'Chain the conditionals: P(throw k is allowed | earlier throws), multiply; use 1 − P(all different) for "some repeat".',
       anchor: `A single throw has ${k} equally likely faces; several throws multiply the conditional chances, with the allowed count set by the constraint.`,
       data: { kind, n, k, ...(face ? { face } : {}) },

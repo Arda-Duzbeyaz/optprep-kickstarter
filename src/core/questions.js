@@ -39,6 +39,8 @@ export function questionKey(item) {
 // does not erase their meaning. New histories use the canonical key directly.
 export function questionSeen(history, item) {
   if (history.has(questionKey(item))) return true;
+  if (item.composition?.baseKey && history.has(item.composition.baseKey)) return true;
+  if (item.meta?.previousPromptKey && history.has(item.meta.previousPromptKey)) return true;
   if (item.section !== 'ob' || !Array.isArray(item.board?.instruments) ||
       ![...history].some((key) => !key.startsWith('ob:'))) return false;
   const order = item.board.instruments.map((_, i) => i);

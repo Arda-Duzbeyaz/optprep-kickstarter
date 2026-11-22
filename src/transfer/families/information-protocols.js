@@ -1,5 +1,5 @@
 // Additional training only: the observation mechanism changes the conditional event.
-import { mcqItem, agree, q, table } from '../../sections/bto/lib.js';
+import { mcqItem, agree, q, table, commonDenominator } from '../../sections/bto/lib.js';
 export const PROTOCOLS = ['first-red', 'any-red', 'random-red', 'noisy-red'];
 const ID = 'information-protocols';
 const fam = {
@@ -17,6 +17,23 @@ const fam = {
       ? red.mul(q(sensitivity, 100)).add(q(1).sub(red).mul(q(falsePositive, 100))) : red;
     const numerator = protocol === 'noisy-red' ? both.mul(q(sensitivity, 100)) : both;
     const value = numerator.div(observed);
+    const remaining = Number(!replacement);
+    const secondRed = `${r-remaining}/${n-remaining}`;
+    const hit = q(sensitivity, 100), falseAlarm = q(falsePositive, 100);
+    const redPair = `${r}/${n} × ${secondRed}`;
+    const matchingReport = protocol === 'noisy-red' ? `${redPair} × ${hit}` : redPair;
+    const reportTerm = {
+      'first-red': `${r}/${n}`,
+      'random-red': `${r}/${n}`,
+      'any-red': `1 − ${b}/${n} × ${b-remaining}/${n-remaining}`,
+      'noisy-red': `${r}/${n} × ${hit} + ${b}/${n} × ${falseAlarm}`,
+    }[protocol];
+    const direct = protocol === 'first-red' || protocol === 'random-red';
+    const { left, right, denominator } = commonDenominator(numerator, observed);
+    const integerRatio = direct ? secondRed : `${left}/${right}`;
+    const reduction = integerRatio===value.toString() ? integerRatio : `${integerRatio} = ${value}`;
+    const shortcut = direct ? `Cancel ${r}/${n}. The other draw is red with probability ${secondRed}.`
+      : `Write the joint and report probabilities over ${denominator}, then cancel it.`;
     const notice = {
       'first-red': 'You are told that the first token drawn is red.',
       'any-red': 'A checker inspects both tokens and reports "at least one is red" if and only if that is true. You hear that report.',
@@ -33,14 +50,16 @@ const fam = {
         { value: q(1, 2), misconception: 'Treated descriptions of possibilities as equally likely outcomes.' },
       ],
       steps: [
-        { say: `Before the report, P(both red) = ${both}.`, why: 'Multiply sequential draw probabilities under the stated replacement rule.' },
-        { say: `P(report) = ${observed}.`, why: protocol === 'any-red' ? 'One minus the probability of two blues.' : protocol === 'noisy-red' ? 'Weight true and false reports by the sampled token’s colour.' : 'A first or uniformly selected token has the original colour marginal.' },
-        { say: `P(both and report)/P(report) = (${numerator})/(${observed}) = ${value}.`, why: protocol === 'noisy-red' ? 'Two reds produce a red report only at the stated sensitivity.' : 'Two reds guarantee this truthful report.' },
+        { say: 'Divide the probability of both reds and the report by the probability of the report.',
+          why: protocol === 'any-red' ? 'The report excludes only the two-blue outcome.' : protocol === 'noisy-red' ? 'The sampled token can trigger a true red report or a false one. Two reds produce a red report at the stated sensitivity.' : 'The first or uniformly shown token is red with the original red probability.',
+          math: `P(both red | report) = (${matchingReport}) / (${reportTerm})` },
+        { say: shortcut, why: direct ? 'Revealing either position uniformly leaves the other draw with the same conditional distribution.' : 'Multiplying top and bottom by the same value leaves their ratio unchanged.',
+          math: direct ? `P(other red | shown red) = ${reduction}` : `(${numerator}) / (${observed}) = ${reduction}` },
       ],
       rule: 'P(target | observation) = P(target and observation)/P(observation). Model how information was obtained.',
       anchor: 'Conditional probability with explicit observation likelihoods.',
       hints: ['Is the message equally likely for every pair?', 'Compute its probability for each possible colour pair.'],
-      fast: `Joint probability ${numerator}; observation ${observed}; divide: ${value}.`,
+      fast: `${shortcut} The exact answer is ${value}.`,
       check: 'Random-token and first-token reports agree by exchangeability; an existence report weights mixed pairs differently.',
       picture: table(['Quantity', 'Probability'], [['Both red', both], ['Observation', observed], ['Both and observation', numerator]], 'Use the actual report as the conditioning event.'),
       data: { protocol, replacement, r, b, sensitivity, falsePositive },

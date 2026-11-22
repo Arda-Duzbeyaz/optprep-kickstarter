@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { recognitionProgress, recognitionStep, coverageInfo } from '../../src/core/recognition.js';
+import { BTO_CHECKPOINT_MS, recognitionProgress, recognitionStep, coverageInfo } from '../../src/core/recognition.js';
 import { makeStore, memoryBackend } from '../../src/core/store.js';
 import { migrate, blankV2 } from '../../src/core/migrate.js';
 import { practiceItem } from '../../src/core/draw.js';
@@ -69,6 +69,64 @@ test('per-family cold streaks survive unrelated questions, reloads and focused l
   s.recordAnswer('bto','one',{...good,correct:false,mixed:false});s=makeStore(backend);
   assert.equal(s.recognition()['bto:one'].run,2);assert.equal(s.recognition()['bto:two'].run,1);
   s.recordAnswer('bto','one',{...good,key:'d',mixed:true});assert.deepEqual(s.recognition()['bto:one'].passed,[1]);
+});
+test('Beat the Odds mixed practice and timed papers share the 75-second checkpoint at each actual difficulty', () => {
+  const family = 'two-dice-sum', skill = `bto:${family}`;
+  const backend = memoryBackend();
+  let store = makeStore(backend);
+  const mixed = (key, ms, difficulty = 1) => store.recordAnswer('bto', family, { ...good, mixed: true, key, difficulty, ms });
+  const timed = (attempts, conditions = {}) => store.recordRun({
+    section: 'bto', mode: 'exam', repeatCount: 0, completePaper: true, score: attempts.length, max: attempts.length,
+    items: attempts.map((attempt) => ({ family, outcome: attempt.correct ? 'right' : 'wrong', difficulty: attempt.difficulty })),
+    ...conditions,
+  }, { checkpointAttempts: attempts }).items.map((item) => item.checkpoint);
+  const attempt = (key, difficulty, ms = BTO_CHECKPOINT_MS, flags = {}) => ({ ...good, key, difficulty, ms, ...flags });
+  const read = () => recognitionProgress(store.recognition()[skill], good.levels);
+
+  mixed('easy-at-limit', BTO_CHECKPOINT_MS);
+  assert.deepEqual(timed([attempt('beyond-limit', 1, BTO_CHECKPOINT_MS + 0.1)]), ['pace']);
+  assert.equal(read().streak, 0);
+  mixed('easy-new', 1000);
+  assert.deepEqual(timed([attempt('medium-1', 2), attempt('medium-2', 2)]), ['qualifying', 'qualifying']);
+  store = makeStore(backend);
+  assert.deepEqual(read().streaks, { 1: 1, 2: 2 });
+  assert.deepEqual(timed([attempt('medium-unfinished', 2)], { completePaper: false }), [undefined]);
+  assert.deepEqual(timed([attempt('medium-2', 2)]), ['repeat']);
+  assert.deepEqual(timed([attempt('medium-3', 2)]), ['passed']);
+  assert.deepEqual(read().verified, [2]);
+  assert.equal(read().target, 1);
+  assert.equal(read().streak, 1);
+
+  assert.deepEqual(timed([attempt('easy-from-mock', 1)]), ['qualifying']);
+  mixed('easy-last', BTO_CHECKPOINT_MS);
+  assert.deepEqual(read().verified, [1, 2]);
+  assert.deepEqual(timed([attempt('medium-help', 2, 3000, { aided: true })]), ['help']);
+  assert.deepEqual(read().review, [2]);
+  assert.deepEqual(read().verified, [1]);
+});
+test('moving Beat the Odds composite levels keeps saved questions, proofs and pending streaks', () => {
+  const old = blankV2();
+  delete old.btoDifficultyVersion;
+  old.recognition['bto:box-experiment'] = {
+    passed: [1], review: [], target: 2, run: 1, streakKeys: ['pending'],
+    lastPassedDifficulty: 1, proofs: [{ difficulty: 1, keys: ['a', 'b', 'c'], budgetMs: 90000 }],
+  };
+  old.activePractice['bto:box-experiment'] = {
+    section: 'bto', family: 'box-experiment', difficulty: 1,
+    current: { item: { family: 'box-experiment', difficulty: 1, prompt: { text: 'Saved prompt' } }, draft: { index: 2 } },
+  };
+  const { state } = migrate(old);
+  const progress = state.recognition['bto:box-experiment'];
+  const saved = state.activePractice['bto:box-experiment'];
+  assert.deepEqual(progress.passed, [2]);
+  assert.equal(progress.proofs[0].difficulty, 2);
+  assert.equal(progress.target, 3);
+  assert.deepEqual(progress.streakKeys, ['pending']);
+  assert.equal(saved.difficulty, 2);
+  assert.equal(saved.current.item.difficulty, 2);
+  assert.deepEqual(saved.current.item.prompt, { text: 'Saved prompt' });
+  assert.deepEqual(saved.current.draft, { index: 2 });
+  assert.deepEqual(migrate(state).state, state);
 });
 test('mixed sampler respects frozen skill pools, breadth and per-family difficulty targets',()=>{
   const section=SECTION_MODULES.bto,pool=section.families.slice(0,3).map(f=>f.id),rng=makeRng('breadth');

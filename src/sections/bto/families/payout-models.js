@@ -1,7 +1,7 @@
 import { question,task,q,sum,weightedMean,wrong,table,steps,simpleLesson } from '../curriculum/common.js';
 import { verifyPayout } from '../curriculum/verify.js';
 const ID='payout-models';
-export const PAYOUT_TASKS={1:['mean','profit'],2:['fair-win','cap','bonus'],3:['conditional','mixture','information']};
+export const PAYOUT_TASKS={1:['mean','profit'],2:['fair-win','cap','bonus','conditional'],3:['mixture','information']};
 const family={id:ID,section:'bto',title:'Weighted payoffs and conditional expectation',
   skill:'Average payoffs with their probabilities, account for costs, and update weights before pricing new information',levels:[1,2,3],
   generate(rng,{difficulty=1,variant}={}) {

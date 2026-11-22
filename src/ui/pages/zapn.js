@@ -45,7 +45,6 @@ export function zapnGame(root, { store, id, mode = 'practice' }) {
   const coach = h('details', { class: 'panel', open: mode === 'practice' && !store.zapnRuns(id).length },
     h('summary', {}, h('strong', {}, 'How it works and how to play it well')),
     c.purpose ? h('p', {}, c.purpose) : null,
-    g.spec ? h('p', { class: 'muted' }, g.spec) : null,
     c.howItWorks?.length ? h('ul', {}, c.howItWorks.map((x) => h('li', {}, x))) : null,
     c.scoring ? h('p', {}, h('strong', {}, 'Scoring. '), c.scoring) : null,
     c.strategy?.length ? h('ol', { class: 'steps' }, c.strategy.map((s, i) => h('li', {}, h('span', { class: 'n' }, String(i + 1)), h('div', {}, s.say), h('div', { class: 'why' }, s.why)))) : null,

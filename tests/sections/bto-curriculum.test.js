@@ -56,7 +56,8 @@ test('curriculum: variance distinguishes reuse, independence, signs and complete
   let full=false,cancel=false,negative=false,zeroCov=false;
   for(let seed=0;seed<256;seed++) {
     for(const variant of ['sample','reuse','sum','covariance']){
-      const item=variance.generate(makeRng(`variance-edge:${variant}:${seed}`),{difficulty:3,variant}),p=item.params;
+      const difficulty = ['sum', 'reuse'].includes(variant) ? 2 : 3;
+      const item=variance.generate(makeRng(`variance-edge:${variant}:${seed}`),{difficulty,variant}),p=item.params;
       assert.ok(variance.verify(item).ok);
       if(variant==='sample'&&p.n===p.N){full=true;assert.equal(item.answer.value,0);}
       if(variant==='reuse'&&p.a+p.b===0){cancel=true;assert.equal(item.answer.value,0);}

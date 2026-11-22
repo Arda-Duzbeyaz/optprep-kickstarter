@@ -1,5 +1,5 @@
 // Bayes with physical objects: coins (one double-headed), two boxes of balls, two-sided cards.
-import { mcqItem, agree, q, qpow, pic, table } from '../lib.js';
+import { mcqItem, agree, q, qpow, pic, table, commonDenominator } from '../lib.js';
 
 const ID = 'bayes-boxes';
 
@@ -27,9 +27,9 @@ export default {
           { value: q(1, m).div(q(1, m).add(lik)), misconception: 'Forgot to weight the fair-coin likelihood by the fair coins\' prior (m − 1)/m.' },
         ],
         steps: [
-          { say: `Prior odds double-headed : fair = 1 : ${m - 1}.`, why: `One coin of ${m} is double-headed.` },
-          { say: `Likelihood of ${k} heads: 1 for the double-headed coin, 1/2^${k} = 1/${2 ** k} for a fair coin.`, why: 'Independent flips of a fair coin.' },
-          { say: `Posterior odds = 1 : ${m - 1}/${2 ** k}, so P = 1/(1 + ${m - 1}/${2 ** k}) = ${v} ≈ ${v.toNumber().toFixed(3)}.`, why: 'Posterior odds = prior odds × likelihood ratio.' },
+          { say: 'Divide the double-headed path by the sum of both paths to the observed heads.', why: 'The double-headed coin always gives heads. Independent fair flips all give heads with probability (1/2) to the power of the flip count.',
+            math: `P(double-headed | all heads) = (1/${m} × 1) / (1/${m} × 1 + ${m-1}/${m} × (1/2)^${k})` },
+          { say: `Cancel the common factor 1/${m}, then multiply top and bottom by ${2 ** k}.`, why: 'This counts equally likely combinations of a coin and a flip sequence.', math: `1 / (1 + ${m - 1}/${2 ** k}) = ${2 ** k} / (${2 ** k} + ${m - 1}) = ${v}` },
         ],
         rule: 'Posterior odds = prior odds × likelihood ratio. Double-headed vs m − 1 fair after k heads: 1 : (m − 1)/2^k.',
         anchor: 'Bayes for a test result, with one change: the "test" is the flips, and its hit rates are 1 and 1/2^k.',
@@ -38,7 +38,7 @@ export default {
           { p: `1/${m}`, label: 'double-headed', children: [{ p: '1', label: `${k} heads`, mark: true }] },
           { p: `${m - 1}/${m}`, label: 'fair', children: [{ p: lik.toString(), label: `${k} heads`, mark: true }, { p: q(1).sub(lik).toString(), label: 'some tail' }] },
         ] } }, `The two marked leaves are every way to see ${k} heads: 1/${m} from the double-headed coin and ${q(m - 1, m).mul(lik)} from a fair one. The answer is the first over their sum.`),
-        fast: `Odds 1 : (${m - 1}/${2 ** k}), so 1/(1 + ${m - 1}/${2 ** k}) = ${v}.`,
+        fast: `Weight the double-headed coin by ${2 ** k} and each fair coin by 1. Its share is ${2 ** k}/(${2 ** k} + ${m-1}) = ${v}.`,
         check: `The heads must raise the chance above the prior 1/${m}; each extra head halves the fair coins' weight, so more heads would push it closer to 1.`,
         data: { kind, m, k },
       });
@@ -48,6 +48,7 @@ export default {
       do { a = rng.int(1, 8); b = rng.int(1, 8); c = rng.int(1, 8); d = rng.int(1, 8); } while (a + b === c + d || a * (c + d) === c * (a + b));
       const la = q(a, a + b), lb = q(c, c + d);
       const v = la.div(la.add(lb));
+      const { left, right, denominator } = commonDenominator(la, lb);
       return mcqItem(ID, rng, difficulty, {
         value: v,
         text: `Box A holds ${a} red and ${b} blue balls; box B holds ${c} red and ${d} blue. You pick a box at random (each with probability 1/2) and draw one ball. It is red. What is the probability that you picked box A?`,
@@ -59,9 +60,10 @@ export default {
           { value: q(1).sub(v), misconception: 'Answered P(box B | red).' },
         ],
         steps: [
-          { say: `P(red | A) = ${la}, P(red | B) = ${lb}.`, why: 'Each box has its own red fraction.' },
-          { say: 'With equal priors the 1/2 cancels: P(A | red) = P(red | A)/(P(red | A) + P(red | B)).', why: 'Bayes with a uniform prior is a ratio of likelihoods.' },
-          { say: `P = ${la}/(${la} + ${lb}) = ${v} ≈ ${v.toNumber().toFixed(3)}.`, why: 'Substitute.' },
+          { say: 'Write both ways to draw red, including the chance of choosing each box.', why: 'Each box has its own red fraction. Both paths belong in the denominator.',
+            math: `P(A | red) = (1/2 × ${a}/${a+b}) / (1/2 × ${a}/${a+b} + 1/2 × ${c}/${c+d})` },
+          { say: 'Cancel the common factor 1/2 from the two paths.', why: 'The boxes were equally likely before the draw.', math: `(${la}) / (${la} + ${lb})` },
+          { say: `Express both red rates over ${denominator} and cancel it.`, why: 'Compare the remaining integer weights.', math: `${left} / (${left} + ${right}) = ${v}` },
         ],
         rule: 'Equal priors → posterior ∝ likelihood. Never pool balls across boxes of different sizes.',
         anchor: 'Bayes for a test result, with the change that the "test" is which colour came out and each box has its own hit rate.',
@@ -70,7 +72,7 @@ export default {
           { p: '1/2', label: 'box A', children: [{ p: la.toString(), label: 'red', mark: true }, { p: q(1).sub(la).toString(), label: 'blue' }] },
           { p: '1/2', label: 'box B', children: [{ p: lb.toString(), label: 'red', mark: true }, { p: q(1).sub(lb).toString(), label: 'blue' }] },
         ] } }, `The marked leaves are the two ways to draw red: ${la.mul(q(1, 2))} through box A and ${lb.mul(q(1, 2))} through box B. The answer is box A's share of that red total.`),
-        fast: `Equal priors cancel: ${la} : ${lb}, so ${v}.`,
+        fast: `Equal priors cancel. Compare red weights ${left} to ${right}, giving ${left}/(${left} + ${right}) = ${v}.`,
         check: `Red is ${la.cmp(lb) > 0 ? 'likelier' : 'less likely'} from box A, so the answer is ${la.cmp(lb) > 0 ? 'above' : 'below'} 1/2. Pooling all ${a + b + c + d} balls would give ${q(a, a + c)}, which ignores that the boxes differ in size.`,
         data: { kind, a, b, c, d },
       });
@@ -78,6 +80,7 @@ export default {
     // Two-sided cards: rr double red, mx mixed, bb double black; you see a red face.
     const rr = rng.int(1, 3), mx = rng.int(1, 3), bb = rng.int(0, 2);
     const v = q(2 * rr, 2 * rr + mx);
+    const faces = 2 * (rr + mx + bb);
     return mcqItem(ID, rng, difficulty, {
       value: v,
       text: `A hat holds ${rr + mx + bb} cards: ${rr} red on both sides, ${mx} red on one side and black on the other${bb ? `, and ${bb} black on both sides` : ''}. You draw a card at random and look at one random side: it is red. What is the probability that the other side is also red?`,
@@ -90,7 +93,8 @@ export default {
       steps: [
         { say: `Count red faces: ${2 * rr} on double-red cards, ${mx} on mixed cards.`, why: 'Every face is equally likely to be the one you see, so faces are the equally likely atoms.' },
         { say: `The seen face is one of these ${2 * rr + mx}; its reverse is red for the ${2 * rr} on double-red cards.`, why: 'Condition on "a red face is showing".' },
-        { say: `P = ${2 * rr}/${2 * rr + mx} = ${v} ≈ ${v.toNumber().toFixed(3)}.`, why: 'Favourable faces over red faces.' },
+        { say: 'Divide the chance of seeing red with a red back by the chance of seeing red.', why: `The factor 1/${faces} cancels because each face is equally likely to be seen.`,
+          math: `P(red back | red shown) = (${2*rr}/${faces}) / (${2*rr+mx}/${faces}) = ${2*rr}/${2*rr+mx}${v.toString()===`${2*rr}/${2*rr+mx}`?'':` = ${v}`}` },
       ],
       rule: 'Condition on what you saw: count the equally likely red faces, not the cards.',
       anchor: 'The classic three-card puzzle (answer 2/3) with one change: different numbers of each card type.',

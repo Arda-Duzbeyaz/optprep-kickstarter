@@ -3,6 +3,14 @@ import { ivItem, range } from '../lib.js';
 
 // Expected values over a few fair dice, computed exactly with rationals.
 const faces = (m) => range(1, m);
+const hintsFor = {
+  sumN: ['Pair the smallest and largest face values.', 'Multiply the mean of a single die by the number of dice.'],
+  max2: ['Count how often the maximum is at most k, or the minimum is at least k.', 'Subtract probabilities at adjacent thresholds to find the chance of each value.'],
+  product: ['Each die is rolled independently.', 'Multiply the means of the individual dice to get the expected product.'],
+  absDiff: ['A gap of d has m − d pairs in each direction.', 'Weight each positive gap by its number of ordered pairs. The zero gap adds nothing to the mean.'],
+  reroll: ['Find what an independent reroll pays on average.', 'On each first result, keep the greater of that result and the reroll average.'],
+  distinct: ['Choose one face and find the probability it appears at least once.', 'Add that chance over all six faces.'],
+};
 // Every outcome pair with its value: the expectation is the plain average of the cells.
 const valueGrid = (m, f, caption) => ({ diagram: 'grid', spec: { rows: m, cols: m, highlight: [], cellText: faces(m).map((a) => faces(m).map((b) => String(f(a, b)))), rowTitle: 'first die', colTitle: 'second die' }, caption });
 
@@ -30,7 +38,7 @@ const S = {
   product: {
     level: 2,
     make: (rng) => ({ m: rng.pick([4, 6, 8, 10, 12]), n: rng.pick([2, 3]) }),
-    text: ({ m, n }) => `${n === 2 ? 'Two' : 'Three'} fair ${m}-sided dice are thrown. What is the expected product of the numbers shown?`,
+    text: ({ m, n }) => `${n === 2 ? 'Two' : 'Three'} fair ${m}-sided dice are thrown independently. What is the expected product of the numbers shown?`,
     ev: ({ m, n }) => { let q = Q.of(1); for (let i = 0; i < n; i++) q = q.mul(Q.of(m + 1, 2)); return q; },
     steps: ({ m, n }) => [{ say: `Independent dice: E[product] = E[die]^${n} = ${(m + 1) / 2}^${n}.`, why: 'For independent variables the mean of a product is the product of the means.' }],
     brute: ({ m, n }) => { let t = 0, c = 0; const rec = (i, p) => { if (i === n) { t += p; c++; return; } for (const f of faces(m)) rec(i + 1, p * f); }; rec(0, 1); return t / c; },
@@ -50,7 +58,7 @@ const S = {
   reroll: {
     level: 3,
     make: (rng) => ({ m: rng.pick([4, 6, 8, 10, 12, 20]) }),
-    text: ({ m }) => `You roll a fair ${m}-sided die and are paid the number shown. After seeing it you may reroll once and take the second number instead. With the best strategy, what is your expected payout?`,
+    text: ({ m }) => `Roll a fair ${m}-sided die. After seeing the result, either keep it or roll independently once more and keep the second result. Your payout is the number you keep. What is your maximum expected payout?`,
     ev: ({ m }) => { const e = Q.of(m + 1, 2); return sumQ(faces(m).map((k) => (Q.of(k).cmp(e) > 0 ? Q.of(k) : e))).div(Q.of(m)); },
     steps: ({ m }) => {
       const e = (m + 1) / 2, keep = faces(m).filter((k) => k > e);
@@ -101,7 +109,7 @@ const fam = {
       text: sc.text(params), truth, unit: '', coach: { exact: true, belief: { kind: 'point' }, note: 'Exact expectation: compute it and give zero width (or a two-decimal bracket).' },
       exact: ev.toString(),
       steps: [...sc.steps(params), { say: `E = ${ev.toString()} = ${+truth.toFixed(4)}.`, why: 'Keep it as a fraction until the last step.' }],
-      hints: ['Is this a sum of simpler pieces? Linearity of expectation.', 'For max or min, find P(max ≤ k) first.'],
+      hints: hintsFor[key],
       params: { scenario: key, ...params },
     });
   },
@@ -118,7 +126,7 @@ const fam = {
       { say: 'Counts of things (distinct faces, matches): sum indicator probabilities.', why: 'Linearity works even when the indicators are dependent.' },
     ],
     predict: { question: 'Expected larger value of two six-sided dice?', answer: '161/36 ≈ 4.47: above 3.5 because the max favours high faces.' },
-    rule: 'Exact E → fractions → zero width. Sums add, independent products multiply, maxima via P(max ≤ k).',
+    rule: 'Compute the expectation as a fraction. Use equal bounds for a terminating value or round the bounds outwards around a repeating decimal.',
     contrast: 'E[max] is not max(E): two dice have E = 3.5 each but E[max] = 4.47.',
     edge: 'With the reroll option the threshold is the reroll value (m + 1)/2: keep strictly above it; a tie does not matter.',
   },

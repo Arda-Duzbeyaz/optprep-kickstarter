@@ -18,19 +18,25 @@ const plus = (a, b) => (b < 0 ? `${a} − ${-b}` : `${a} + ${b}`);
 const ID = 'random-walk-line';
 const pathsTo = (n, k) => ((n + k) % 2 !== 0 || Math.abs(k) > n ? 0n : nCr(n, (n + k) / 2)); // paths ending at k
 const tail = (n, a) => { let s = 0n; for (let k = a; k <= n; k++) s += pathsTo(n, k); return s; }; // paths ending >= a
+const WALK_TASKS = {
+  1: ['endAt', 'endAt', 'parity'],
+  2: ['below', 'returnZero'],
+  3: ['everReach'],
+  4: ['everReach', 'neverReturn'],
+};
 
 export default {
   id: ID,
   section: 'bto',
   title: 'Random walk on a line',
   skill: 'Position after n steps = 2·(ups) − n; count up-steps with C(n, ·); reflection doubles the "ever reached" count',
-  levels: [3, 4],
+  levels: [1, 2, 3, 4],
 
-  generate(rng, { difficulty = 3 } = {}) {
-    const kind = difficulty === 3 ? rng.pick(['endAt', 'endAt', 'parity', 'below']) : rng.pick(['everReach', 'returnZero', 'below']);
+  generate(rng, { difficulty = 1 } = {}) {
+    const kind = rng.pick(WALK_TASKS[difficulty]);
     const N2 = 2n;
     if (kind === 'endAt' || kind === 'parity') {
-      const n = rng.int(4, 12);
+      const n = rng.int(3, 8);
       let k = rng.int(0, Math.min(n, 6)) * (rng.chance(0.5) ? 1 : -1);
       if (kind === 'endAt' && (n + k) % 2) k += k >= 0 ? -1 : 1;
       if (kind === 'parity' && (n + k) % 2 === 0) k += k >= 0 ? 1 : -1;
@@ -97,7 +103,7 @@ export default {
       });
     }
     if (kind === 'everReach') {
-      const n = rng.pick([6, 8, 10, 12]), a = rng.int(2, 4);
+      const n = rng.pick(difficulty === 3 ? [5, 6, 7, 8, 9, 10] : [11, 12, 13, 14]), a = rng.int(2, 4);
       // Reflection: P(max_{t<=n} S_t >= a) = P(S_n >= a) + P(S_n > a)
       const v = new Q(tail(n, a) + tail(n, a + 1), N2 ** BigInt(n));
       return mcqItem(ID, rng, difficulty, {
@@ -123,9 +129,9 @@ export default {
         params: { kind, n, a },
       });
     }
-    const m = rng.int(2, 6), n = 2 * m;
+    const m = rng.int(2, difficulty === 2 ? 8 : 6), n = 2 * m;
     const v = new Q(nCr(n, m), N2 ** BigInt(n));
-    const never = rng.chance(0.5);
+    const never = kind === 'neverReturn';
     return mcqItem(ID, rng, difficulty, {
       value: v,
       text: never

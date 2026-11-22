@@ -4,7 +4,7 @@ const plant='https://www.itaipu.gov.br/wp-content/uploads/2025/11/brochure-itaip
 const ons='https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/populationandhouseholdestimatesenglandandwales/census2021unroundeddata';
 const bases=[
   {id:'residents',label:'the 2021 Census usual-resident population of England and Wales',unit:'residents',value:59597542,source:ons,what:'people to serve',rates:[2500,5000,10000],credit:'ONS Census 2021'},
-  {id:'crossing',label:'the length of the Forth rail bridge',unit:'metres',value:2467,source:bridge,what:'metres to inspect',rates:[6,12,20],credit:'Transport Scotland'},
+  {id:'crossing',label:'the full length of the Forth railway bridge, including its approach viaducts',unit:'metres',value:2467,source:bridge,what:'metres to inspect',rates:[6,12,20],credit:'Transport Scotland'},
   {id:'equator',label:'the circumference of Earth’s equator, treating the equator as circular',unit:'km',value:Math.PI*12756,source:earth,what:'kilometres to survey',rates:[40,60,80],credit:'NASA equatorial diameter of 12,756 km, multiplied by π'},
   {id:'generation',label:'one hour of electrical output at Itaipu’s full installed capacity',unit:'MWh',value:14000,source:plant,what:'MWh to distribute',rates:[20,50,100],credit:'Itaipu’s installed 14,000 MW × 1 hour'},
 ];

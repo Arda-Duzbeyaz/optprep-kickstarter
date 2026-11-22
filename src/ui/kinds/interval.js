@@ -1,6 +1,6 @@
 import { h } from '../dom.js';
 import { intervalScore } from '../../core/check.js';
-import { fmtNum } from '../../core/format.js';
+import { intervalNumber } from '../../core/format.js';
 
 // Lower and upper bound. Practice shows the score you would get if the truth is inside.
 export function intervalView(item, { onChange, showPreview = true } = {}) {
@@ -35,7 +35,7 @@ export function intervalView(item, { onChange, showPreview = true } = {}) {
     lock: () => { locked = true; lo.disabled = true; hi.disabled = true; },
     reveal: (res, r) => {
       const s = r ? intervalScore(r.lower, r.upper, item.truth) : 0;
-      preview.textContent = `True value ${fmtNum(item.truth)}${item.unit ? ` ${item.unit}` : ''}. Your score ${s.toFixed(2)}.`;
+      preview.textContent = `True value ${intervalNumber(item.truth)}${item.unit ? ` ${item.unit}` : ''}. Your score ${s.toFixed(2)}.`;
     },
     get locked() { return locked; },
   };

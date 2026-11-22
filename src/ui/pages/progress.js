@@ -8,7 +8,7 @@ import { dayKey, addDays } from '../../core/activity.js';
 import { lessonForFamily } from '../../study/catalog.js';
 import { PRACTICE_FAMILIES as FAMILIES } from '../../practice/catalog.js';
 import { activePreset, presetSections } from '../../../config/presets.js';
-import { levelGuide, skillCheckpoint, learningStatus, learningEvidence, checkpointText } from '../practice-progress.js';
+import { levelGuide, skillCheckpoint, learningStatus, learningEvidence, checkpointText, otherCheckpointText } from '../practice-progress.js';
 import { mixedEvidence } from '../mixed-evidence.js';
 import { checkpointAvailability, availabilityText } from '../../practice/availability.js';
 
@@ -36,11 +36,12 @@ function skillsTab(store) {
             r.completedAt ? h('p', { class: 'small-note muted' }, `Last block: ${when(r.completedAt)}${r.lastBlock ? ` · ${r.lastBlock.correct}/${r.lastBlock.questions} correct${r.lastBlock.skipped ? ` · ${r.lastBlock.skipped} skipped` : ''}` : ''}`) : null,
             h('p', { class: 'small-note muted' }, r.revisionAttempts && !r.checkpoint.attempts
               ? `Mixed: ${r.mixedAttempts} attempts · ${r.revisionAttempts} previously seen. Revision saved; fresh cold evidence still needed.`
-              : `${r.checkpoint.attempts || r.checkpoint.passed.length ? 'Mixed: ' : ''}${checkpointText(r.checkpoint)}${r.mixedAttempts ? ` · ${r.mixedAttempts} attempts, ${r.revisionAttempts} revision` : ''}`),
+              : `${r.checkpoint.attempts || r.checkpoint.passed.length ? id === 'bto' ? 'Mastery · ' : 'Mixed: ' : ''}${checkpointText(r.checkpoint)}${r.mixedAttempts ? ` · ${r.mixedAttempts} mixed attempts, ${r.revisionAttempts} revision` : ''}`),
+            id === 'bto' && otherCheckpointText(r.checkpoint) ? h('p', { class: 'small-note muted' }, otherCheckpointText(r.checkpoint)) : null,
             r.availability?.blocked ? h('p', { class: 'small-note muted checkpoint-availability' }, availabilityText(r.availability)) : null))))
           : h('p', { class: 'small-note muted' }, 'No learning or practice recorded for this assessment yet.'),
-        h('details', { class: 'skill-records' }, h('summary', {}, 'Cold mixed-check totals'),
-          h('p', { class: 'small-note muted' }, 'These measure fresh, unaided mixed performance at training pace. Learning completion is recorded above.'),
+        h('details', { class: 'skill-records' }, h('summary', {}, id === 'bto' ? 'Mastery checkpoint totals' : 'Cold mixed-check totals'),
+          h('p', { class: 'small-note muted' }, id === 'bto' ? 'Fresh, unaided answers in mixed practice and standard timed runs build these checkpoints.' : 'These measure fresh, unaided mixed performance at training pace. Learning completion is recorded above.'),
           h('div', { class: 'skill-overview-counts' },
             h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.verified.length > 0)}/${rows.length}`), ' with a verified difficulty'),
             h('p', {}, h('strong', { class: 'num' }, `${count((r) => r.checkpoint.complete)}/${rows.length}`), ' all supported difficulties verified')),

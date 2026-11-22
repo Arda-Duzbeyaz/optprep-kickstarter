@@ -1,16 +1,19 @@
 import { TRANSFER_FAMILIES } from '../transfer/index.js';
-import { composeEvent } from './compose.js';
 import { makeRng } from '../core/rng.js';
 import { examItems, FreshQuestionsUnavailable } from '../core/draw.js';
 import { questionKey, questionSeen } from '../core/questions.js';
 import { presentation } from '../core/presentation.js';
-import { scenarioItem, compositeItem, sequenceItem } from './index.js';
+import { scenarioItem, compositeItem, sequenceItem, scenarioFamilies, modelFamilies } from './index.js';
 import { NUMERICAL_SHARES } from './catalog.js';
+import { buildBtoPaper } from './bto-paper.js';
 
 export function scenarioShare(section,mix) {
   return section==='nl' ? NUMERICAL_SHARES[mix] ?? NUMERICAL_SHARES.balanced : .62;
 }
 export function buildPaper(section,cfg,seed,mix) {
+  if (section.id === 'bto') return buildBtoPaper({
+    ...section, families: [...section.families, ...TRANSFER_FAMILIES.bto, ...modelFamilies.bto, scenarioFamilies.bto],
+  }, cfg, seed);
   const rng=makeRng('composed:'+section.id+':'+seed), share=scenarioShare(section.id,mix);
   const count=Math.round(cfg.count*share);
   const sequences=section.id==="nl"?Math.round((cfg.count-count)*.32):0;
@@ -18,7 +21,6 @@ export function buildPaper(section,cfg,seed,mix) {
   const extra=TRANSFER_FAMILIES[section.id] || [];
   const pool=extra.length ? {...section,families:[...section.families,...extra]} : section;
   const out=examItems(pool,{...cfg,count:cfg.count-count-sequences},seed);
-  if(section.id==='bto') for(let i=0;i<out.length;i++) if(out[i].difficulty>=2 && rng.chance(.55)) out[i]=composeEvent(out[i],rng);
   const seen=new Set([...(cfg.excludeKeys||[]),...out.map(questionKey)]);
   const structures=[...(cfg.previousStructures||[])];
   for(let i=0;i<count+sequences;i++){

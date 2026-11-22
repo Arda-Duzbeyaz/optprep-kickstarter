@@ -37,7 +37,7 @@ export default {
     const keys = difficulty === 2 ? ['twoRed', 'sameSuit', 'pair', 'diffColour', 'oneAceTwo', 'topRed', 'aceSpadesTop'] : ['aceInHand', 'heartInHand', 'pairOrBetter', 'noAceBridge', 'flushFive', 'aceSpadesTop', 'diffColour'];
     return poolItem(ID, rng, difficulty, POOL, {
       keys,
-      text: (list) => `A standard 52-card deck, well shuffled. The statements concern ${list}. Rank them from most to least likely.`,
+      text: () => 'Use a freshly shuffled standard 52-card deck for each statement. Cards dealt in the same statement are not replaced. Rank the events from most to least likely.',
       compare: 'Order the computed probabilities. Watch the near misses: two different colours (26/51) sits just above 1/2, two reds (25/102) just below 1/4.',
       rule: 'Two cards: fix the first, the second has 51 options. Hands: complement ("none") as a product. Positions: uniform.',
       anchor: 'One card is uniform over 52; each statement adds one step (a second card, a complement, or a symmetry).',

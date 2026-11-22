@@ -7,6 +7,7 @@ import { Q } from '../../core/rational.js';
 import { mcqItem, q, qpow, harmonic, Phi, pic, table, diceGrid, firstSuccessTree } from './lib.js';
 import { value as stopValue } from './families/card-stopping.js';
 import { bell } from './families/clt-estimates.js';
+import { explicitMontyPolicy } from './families/monty-hall.js';
 
 // Picture helpers for the curated items. Every number is computed from the item's own inputs.
 const oneLevel = (label, yes, no, pYes, pNo) => ({ label, children: [{ p: pYes, label: yes, mark: true }, { p: pNo, label: no }] });
@@ -41,7 +42,8 @@ const SRC = {
 
 function mk(slug, family, difficulty, o, source) {
   const it = mcqItem(family, makeRng(`bank:${slug}`), difficulty, o);
-  return { ...it, id: `bto-bank-${slug}`, meta: { source } };
+  const item = { ...it, id: `bto-bank-${slug}`, meta: { source } };
+  return family === 'monty-hall' ? explicitMontyPolicy(item) : item;
 }
 const steps = (...pairs) => pairs.map(([say, why]) => ({ say, why }));
 
@@ -244,7 +246,7 @@ const bank = [
     hints: ['Compute r = q/p.', 'Plug into (1 − r^i)/(1 − r^N).'],
     params: { mode: 'biased', i: 10, N: 20, a: 9, c: 20 },
   }, SRC.prachubStats),
-  mk('price-negative', 'random-walk-line', 3, {
+  mk('price-negative', 'random-walk-line', 2, {
     value: q(37, 256),
     text: 'A price starts at 2 and each day moves up or down by 1 with equal probability (it may go negative). What is the probability that it is below 0 after 8 days?',
     picture: walk(2, [-1, -1, -1, -1, 1, -1, 1, -1], { barriers: [0] }, 'The bar marks 0. After 8 days the move is even, so a price below 0 means ending at −2 or lower; this path ends at −2.'),
@@ -506,7 +508,7 @@ const more = [
     rule: 'Broken stick triangle: 1/4.', anchor: 'Lengths on a line become areas in a square.',
     hints: ['When do three lengths make a triangle?', 'No piece may reach half the stick.'], params: { kind: 'triangle' },
   }],
-  ['meet-15', 'uniform-geometry', 3, SRC.feller, {
+  ['meet-15', 'uniform-geometry', 2, SRC.feller, {
     value: q(7, 16),
     text: 'Two traders each arrive at a random time between 9:00 and 10:00, independently. Each waits 15 minutes for the other and then leaves. What is the probability that they meet?',
     picture: square([{ points: [[0, 0], [0.25, 0], [1, 0.75], [1, 1], [0.75, 1], [0, 0.25]], area: '7/16', label: 'meet', tone: 3 }], '9:00 to 10:00', '9:00 to 10:00', 'The hour as a unit square of arrival pairs. They meet inside the band |x − y| ≤ 15 minutes; the two corner triangles with legs 3/4 are misses.'),
@@ -542,7 +544,7 @@ const more = [
     value: q(1, 2),
     text: '1% of a population has a condition. A test is positive for 99% of people with it and for 1% of people without it. A random person tests positive. What is the probability that they have the condition?',
     picture: pic('tree', { root: { label: '', children: [{ p: '1/100', label: 'has the condition', children: [{ p: '99/100', label: 'positive', mark: true }, { p: '1/100', label: 'negative' }] }, { p: '99/100', label: 'does not', children: [{ p: '1/100', label: 'positive', mark: true }, { p: '99/100', label: 'negative' }] }] } }, 'The two marked leaves are every positive: 99/10000 true and 99/10000 false. The real ones are half of them.'),
-    fast: 'True : false positives = 0.0099 : 0.0099, so 1/2.',
+    fast: 'Both products are 99/10,000. The two paths contribute equally, so the answer is 1/2.',
     check: 'Far below the 99% hit rate, because the condition is rare; above the 1% base rate, because the test is informative.',
     distractors: [
       { value: 0.99, misconception: 'Base-rate neglect: used P(positive | condition).' },
@@ -550,7 +552,12 @@ const more = [
       { value: 0.0099, misconception: 'Computed P(condition and positive) without dividing.' },
       { value: 0.0198, misconception: 'Computed P(positive).' },
     ],
-    steps: steps(['True positives: 0.01 × 0.99 = 0.0099; false positives: 0.99 × 0.01 = 0.0099.', 'Split positives by source.'], ['P = 0.0099/0.0198 = 1/2.', 'Fraction of positives that are real.']),
+    steps: [
+      { say: 'Put the true-positive path over the sum of the two positive paths.', why: 'A positive can come from either group.',
+        math: 'P(condition | positive) = (1/100 × 99/100) / (1/100 × 99/100 + 99/100 × 1/100)' },
+      { say: 'Cancel the common denominator of 10,000.', why: 'The two products have the same numerator as well.',
+        math: '99 / (99 + 99) = 1/2' },
+    ],
     rule: 'Posterior = true positives / all positives.', anchor: 'P(A | B) = P(A and B)/P(B).',
     hints: ['Imagine 10,000 people.', 'Compare true and false positives.'], params: { pv: [1, 100], sv: [99, 100], fv: [1, 100], variant: 'pos' },
   }],
@@ -566,7 +573,7 @@ const more = [
       { value: q(2, 3), misconception: 'Computed one girl and one boy.' },
       { value: q(3, 4), misconception: 'Computed P(at least one girl).' },
     ],
-    steps: steps(['Outcomes GG, GB, BG, BB; the information removes BB.', 'Ordered pairs of children.'], ['P(GG | at least one G) = 1/3.', 'Three equally likely outcomes remain.']),
+    steps: steps(['Outcomes GG, GB, BG, BB. The information removes BB.', 'Each ordered outcome has probability 1/4.'], ['P(GG | at least one G) = (1/4) / (3/4) = 1/3.', 'Cancel the common factor 1/4.']),
     rule: 'Condition by deleting outcomes, then count.', anchor: 'Favourable over total with a smaller total.',
     hints: ['List four ordered outcomes.', 'Delete BB.'], params: { kids: true, older: false },
   }],
@@ -582,7 +589,7 @@ const more = [
       { value: q(1, 4), misconception: 'Multiplied 1/2 × 1/2.' },
       { value: q(3, 4), misconception: 'Guessed high without counting.' },
     ],
-    steps: steps(['Three red faces could be showing: two on the red-red card, one on the mixed card.', 'Faces are equally likely.'], ['Two of the three have a red back: P = 2/3.', 'Condition on the seen face.']),
+    steps: steps(['There are six equally likely faces. Three show red, and two of those have a red back.', 'Each red face on the red-red card counts separately.'], ['P(red back | red shown) = (2/6) / (3/6) = 2/3.', 'Cancel the common factor 1/6.']),
     rule: 'Count the equally likely things you could have seen.', anchor: 'Bayes with counts of faces.',
     hints: ['How many red faces are there?', 'Which of them have red backs?'], params: { kind: 'cards', rr: 1, mx: 1, bb: 1 },
   }],
@@ -598,7 +605,12 @@ const more = [
       { value: q(4, 13), misconception: 'Used two heads instead of three.' },
       { value: q(8, 18), misconception: 'Counted 10 fair coins instead of 9.' },
     ],
-    steps: steps(['Prior odds 1 : 9; likelihood of HHH 1 : 1/8.', 'Double-headed always shows heads.'], ['Posterior odds 1 : 9/8 = 8 : 9, so P = 8/17 ≈ 0.47.', 'Odds form of Bayes.']),
+    steps: [
+      { say: 'Count the double-headed path over both ways to see three heads.', why: 'A fair coin gives three heads with probability 1/8.',
+        math: 'P(double-headed | heads) = (1/10 × 1) / (1/10 × 1 + 9/10 × 1/8)' },
+      { say: 'Cancel 1/10 and multiply top and bottom by 8.', why: 'The resulting odds are eight to nine.',
+        math: '1 / (1 + 9/8) = 8 / (8 + 9) = 8/17' },
+    ],
     rule: 'Posterior odds = prior odds × likelihood ratio.', anchor: 'Bayes for a test, where the test is the flips.',
     hints: ['Write prior odds.', 'Multiply by the likelihood ratio 8.'], params: { kind: 'coins', m: 10, k: 3 },
   }],
@@ -618,7 +630,7 @@ const more = [
     rule: 'Expected fixed points = 1.', anchor: 'E of a sum = sum of E.',
     hints: ['Write the count as a sum of indicators.', 'Each has probability 1/20.'], params: { kind: 'fixed', n: 20 },
   }],
-  ['running-total-6', 'running-sum', 3, SRC.opa, {
+  ['running-total-6', 'running-sum', 2, SRC.opa, {
     value: q(16807, 46656),
     text: 'You throw a die repeatedly and keep a running total. What is the probability that the total is exactly 6 at some point?',
     picture: pic('plot', { x: { min: 0, max: 12, label: 'target total m' }, y: { min: 0, max: 1, label: 'P(total ever equals m)' }, curves: [{ label: 'p(m)', points: (() => { const p = [1]; for (let m = 1; m <= 12; m++) { let s = 0; for (let k = 1; k <= 6; k++) if (m - k >= 0) s += p[m - k]; p.push(s / 6); } return p.map((v, m) => [m, v]); })() }], hlines: [{ y: 2 / 7, label: 'limit 2/7' }], markers: [{ x: 6, y: 16807 / 46656, label: 'p(6) ≈ 0.360' }] }, 'Each p(m) averages the six values before it. The curve climbs to its peak at 6 and then settles at 2/7, one landing per 3.5 units.'),
@@ -698,7 +710,7 @@ const more = [
     rule: 'Pair in two cards: 3/51.', anchor: 'One draw with shrinking counts.',
     hints: ['Fix the first card.', 'How many of its rank remain?'], params: { kind: 'pair' },
   }],
-  ['higher-die', 'dice-duel', 2, SRC.atp, {
+  ['higher-die', 'dice-duel', 1, SRC.atp, {
     value: q(15, 36),
     text: 'You and an opponent each throw one die; you win only with a strictly higher number. What is your chance of winning?',
     picture: diceGrid((a, b) => a > b, "Rows are your die, columns the opponent's. You win in the 15 cells below the diagonal; the 6 diagonal cells are ties."),
@@ -714,7 +726,7 @@ const more = [
     rule: '(1 − P(tie))/2.', anchor: '36 ordered pairs compared instead of added.',
     hints: ['Remove ties first.', 'Split the rest in half.'], params: { A: { type: 'die', k: 6 }, B: { type: 'die', k: 6 }, reroll: false },
   }],
-  ['three-dice-ten', 'three-dice', 3, SRC.atp, {
+  ['three-dice-ten', 'three-dice', 2, SRC.atp, {
     value: q(27, 216),
     text: 'Three dice are thrown. What is the probability that the total is 10?',
     picture: (() => { const highlight = [], cellText = []; for (let a = 1; a <= 6; a++) { cellText.push([]); for (let b = 1; b <= 6; b++) { const c = 10 - a - b; const ok = c >= 1 && c <= 6; cellText[a - 1].push(ok ? String(c) : ''); if (ok) highlight.push([a - 1, b - 1]); } } return pic('grid', { rows: 6, cols: 6, highlight, count: highlight.length, cellText, rowTitle: 'first die', colTitle: 'second die' }, `Each cell holds the third die needed for a total of 10. ${highlight.length} cells have a legal face, so ${highlight.length} of 216.`); })(),
@@ -762,7 +774,7 @@ const more = [
     rule: 'Flush ≈ 0.002.', anchor: 'Same-suit pair (12/51) extended to five cards.',
     hints: ['Does the first card matter?', 'Four more must match.'], params: { kind: 'flush' },
   }],
-  ['walk-back-to-zero', 'random-walk-line', 3, SRC.feller, {
+  ['walk-back-to-zero', 'random-walk-line', 2, SRC.feller, {
     value: q(252, 1024),
     text: 'A particle starts at 0 and steps +1 or −1 with equal probability. What is the probability it is back at 0 after 10 steps?',
     picture: walk(0, [1, 1, 1, 1, 1, -1, -1, -1, -1, -1], { target: 0 }, 'One of the C(10,5) = 252 paths back at 0 after 10 steps: 5 ups and 5 downs in any order.'),
@@ -890,7 +902,7 @@ const more = [
     rule: 'Knowing host concentrates (n − 1)/n on the doors he leaves.', anchor: 'The 3-door game scaled up.',
     hints: ['Does the host\'s action change your door?', 'Where does the rest go?'], params: { n: 100, m: 98, variant: 'switch' },
   }],
-  ['sum-uniforms', 'uniform-geometry', 2, SRC.green, {
+  ['sum-uniforms', 'uniform-geometry', 1, SRC.green, {
     value: q(1, 2).mul(q(3, 4)).mul(q(3, 4)),
     text: 'X and Y are independent uniform numbers on [0, 1]. What is the probability that X + Y < 3/4?',
     picture: square([{ points: [[0, 0], [0.75, 0], [0, 0.75]], area: '9/32', label: 'x + y < 3/4', tone: 3 }], 'X', 'Y', 'The part of the unit square below the line x + y = 3/4 is a triangle with legs 3/4.'),
@@ -922,7 +934,7 @@ const more = [
     rule: 'n/(n + 1).', anchor: 'Mean 1/2 = one of two gaps, generalised.',
     hints: ['How many gaps?', 'Each gap averages 1/4.'], params: { mode: 'uniform', which: 'max', n: 3 },
   }],
-  ['parity-trap', 'random-walk-line', 3, SRC.feller, {
+  ['parity-trap', 'random-walk-line', 1, SRC.feller, {
     value: q(0),
     text: 'A particle starts at 0 and steps +1 or −1 with equal probability. What is the probability that it is at position 3 after 8 steps?',
     picture: walk(0, [1, 1, 1, 1, 1, -1, -1, -1], { marks: [{ x: 3, label: '3: never' }] }, 'After 8 steps the position is always even. This path ends at 2, next to the unreachable 3.'),

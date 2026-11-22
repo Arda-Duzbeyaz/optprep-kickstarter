@@ -17,28 +17,8 @@ const sum=arr=>arr.reduce((a,b)=>a+b,0);
 const near=(x,y,msg)=>assert.ok(Math.abs(x-y)<1e-8*Math.max(1,Math.abs(y)),msg+' '+x+' ≠ '+y);
 const number=q=>q.options[q.answerIndex].value;
 function probabilityOracle(q) {
-  const {n,r,m,k,w,pay}=q.params, mode=q.transfer.structure;
+  const {n,r,m,w}=q.params, mode=q.transfer.structure;
   let num=0,den=0;
-  if(['separated','one-run'].includes(mode)){
-    const {seats,marked}=q.params;
-    for(let mask=0;mask<2**seats;mask++){
-      const bits=mask.toString(2).padStart(seats,'0');
-      if([...bits].filter(b=>b==='1').length!==marked)continue;
-      den++;num+=mode==='separated'?!bits.includes('11'):bits.includes('1'.repeat(marked));
-    }
-    return num/den;
-  }
-  if(mode==='alarm'){
-    for(let mask=0;mask<2**k;mask++){
-      const seq=mask.toString(2).padStart(k,'0'),ones=[...seq].filter(b=>b==='1').length;
-      if(((q.params.previous?'1':'0')+seq).includes('11'))num+=(r/n)**ones*(1-r/n)**(k-ones);
-    }return num;
-  }
-  if(mode==='remaining'){
-    let clear=q.params.previous?0:1,one=1-clear,expected=0;
-    for(let j=0;j<5000 && clear+one>1e-15;j++){expected+=clear+one;[clear,one]=[(clear+one)*(1-r/n),clear*r/n];}
-    return expected;
-  }
   if(['shown','any','exactly'].includes(mode)){
     for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(i!==j){
       if(mode==='exactly'){
@@ -49,13 +29,13 @@ function probabilityOracle(q) {
     }
     return num/den;
   }
-  if(mode==='until'||mode==='payoff'){
-    // Branch on the next outcome and add cash/attempts along the path.
-    const recurse=left=>{
-      if(!left)return 0;
-      if(mode==='until')return 1+(n-r)/n*recurse(left-1);
-      return -1+r/n*pay+(n-r)/n*recurse(left-1);
-    };return recurse(k);
+  if(mode==='predict-after-two'){
+    for(const [reds,weight] of [[r,w],[m,1-w]])for(let i=0;i<n;i++)for(let j=0;j<n;j++)for(let k=0;k<n;k++){
+      if(i>=reds||j>=reds)continue;
+      den+=weight/n**3;
+      if(k<reds)num+=weight/n**3;
+    }
+    return num/den;
   }
   let ex=0,ey=0,exy=0;
   for(const [reds,weight,type] of [[r,w,'A'],[m,1-w,'B']])for(let i=0;i<n;i++)for(let j=0;j<n;j++){
@@ -138,7 +118,7 @@ for(const id of ['bto','nl','ll','iv','ob'])test(id+' scenario mathematics and c
       if(q.params.direction==='none')assert.equal(verified,null);else assert.ok(verified);
     }
   }
-  assert.equal(types.size,{bto:12,nl:8,ll:6,iv:9,ob:12}[id]);
+  assert.equal(types.size,{bto:7,nl:8,ll:6,iv:9,ob:12}[id]);
 });
 
 test('composed questions preserve original evidence and agree with a branch-outcome oracle',()=>{

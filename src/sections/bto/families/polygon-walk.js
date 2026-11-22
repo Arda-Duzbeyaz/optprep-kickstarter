@@ -108,7 +108,8 @@ export default {
     return mcqItem(ID, rng, difficulty, {
       ev: true,
       value: q(v),
-      text: `Two tokens sit ${D} vertices apart on ${shape(n)}. Every second, both move at the same time, each to a neighbouring vertex with probability 1/2, independently. What is the expected number of seconds until they first land on the same vertex?`,
+      text: `Number the vertices of ${shape(n)} clockwise from 0 to ${n-1}. Two tokens start at 0 and ${D}. Every second both move one vertex, choosing clockwise or anticlockwise independently with equal probability. How many seconds do you expect before they first occupy the same vertex?`,
+      oldText: `Two tokens sit ${D} vertices apart on ${shape(n)}. Every second, both move at the same time, each to a neighbouring vertex with probability 1/2, independently. What is the expected number of seconds until they first land on the same vertex?`,
       distractors: [
         { value: j * (m - j), misconception: 'Forgot the seconds when both move the same way and the gap stays put: the gap walk is lazy, which doubles the time.' },
         { value: D * (n - D), misconception: 'Treated one token as fixed and let the other walk alone.' },
@@ -117,7 +118,7 @@ export default {
         { value: 4 * j * (m - j), misconception: 'Counted the gap in single vertices on the full n-cycle and also doubled for laziness.' },
       ],
       steps: [
-        { say: 'Track only the gap. Each second it changes by −2, 0 or +2 with probabilities 1/4, 1/2, 1/4.', why: 'Both move toward, both away, or both the same way.' },
+        { say: 'Track the clockwise gap from the first token to the second. It changes by −2, 0 or +2 with probabilities 1/4, 1/2, 1/4.', why: 'Moving in the same direction leaves the gap unchanged. Opposite directions change it by two modulo the number of vertices.' },
         { say: `The gap is always even, so measure it in pairs of vertices: a lazy fair walk on a ${m}-cycle starting ${j} away.`, why: 'Odd gaps never occur, and meeting means gap 0.' },
         { say: `Non-lazy hitting time: ${j} × (${m} − ${j}) = ${j * (m - j)}. The walk only moves half the time, so E = 2 × ${j * (m - j)} = ${v}.`, why: 'A walk that pauses with probability 1/2 takes twice as long on average.' },
       ],

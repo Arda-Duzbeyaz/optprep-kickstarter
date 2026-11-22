@@ -1,9 +1,9 @@
 export default {
   purpose: 'Measures structured arithmetic search: whether you can find a path to a number instead of trying combinations at random, the same move as backing out a price from a few quoted numbers.',
   howItWorks: [
-    'Four numbers and a target. Combine all four with +, −, ×, ÷ and brackets to hit the target exactly.',
+    'Use each of the four supplied numbers exactly once to make the target. You can reorder them, use +, −, × and ÷, and group terms with brackets.',
     'Type an expression such as (8 − 2) × (3 + 1) and press Enter, or build it with the buttons. Wrong answers can be retried.',
-    'Give up with the Skip button to see a solution and move on. 10 rounds, getting harder.',
+    'There are 10 rounds, with no time limit in this trainer. Skip to move on. Practice shows a solution on a skip, and both modes show solutions in the final review.',
   ],
   scoring: 'Number of targets made out of 10. Target: at least 9.',
   strategy: [

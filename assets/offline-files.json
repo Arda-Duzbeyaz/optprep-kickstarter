@@ -57,6 +57,7 @@
   "src/practice/catalog.js",
   "src/practice/finite-variants.js",
   "src/practice/index.js",
+  "src/scenarios/bto-paper.js",
   "src/scenarios/catalog.js",
   "src/scenarios/compose.js",
   "src/scenarios/composite/catalog.js",

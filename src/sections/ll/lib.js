@@ -1,6 +1,7 @@
 // Shared plumbing for Likelihood List families: build a rank item from three statements
 // with exact probabilities, or return null when the RANK_MARGIN gaps do not hold (callers retry).
 import { RANK_MARGIN } from '../../core/contract.js';
+import { rankDecimals } from '../../core/format.js';
 import { fmtAuto, num, plain, exactText } from '../bto/lib.js';
 
 export { fmtAuto, num, plain, exactText };
@@ -11,7 +12,7 @@ const TIPS = {
   football: 'Tally the qualifying results over the matches in scope; a team statement divides by that team\'s matches only.',
   'survey-bar': 'Same count on top, different groups underneath: the smaller the group you pick from, the bigger the fraction.',
   'fund-returns': 'Count qualifying years over the years in scope; a persistence statement counts only the years that follow a positive year.',
-  'histogram-bins': 'Add the bars in each range over the total; a conditional divides by the bars in its condition instead.',
+  'histogram-bins': 'On a frequency axis, sum bin counts. On a frequency-density axis, multiply each height by its bin width first. For a conditional probability, divide by the count in the condition.',
   'scatter-regions': 'Count the dots in each region; a region inside another can never hold more, so containment orders those pairs for free.',
   'density-curves': 'Compare areas, not heights: width times typical height, symmetry about the peak, 68% within one sd.',
   'markov-graph': 'Over a few steps, multiply along each path and add the paths that end in the same node; in the long run, follow the probability flowing into each node, not the number of arrows.',
@@ -33,11 +34,12 @@ export function rankItem(family, rng, difficulty, o) {
   const ps = order.map((i) => st[i].p);
   if (ps[0] - ps[1] < RANK_MARGIN || ps[1] - ps[2] < RANK_MARGIN) return null;
   const short = (t) => (t.length > 70 ? `${t.slice(0, 67)}…` : t);
-  const pText = (x) => `P = ${x.exact}${x.exact.startsWith('≈') || x.exact === fmtAuto(x.p) ? '' : ` ≈ ${fmtAuto(x.p)}`}`;
+  const decimals = rankDecimals(st);
+  const pText = (i) => st[i].exact.includes('/') ? `P = ${st[i].exact} ≈ ${decimals[i]}` : `P ≈ ${decimals[i]}`;
   const steps = [
     ...(o.intro || []),
-    ...order.map((i) => ({ say: `"${short(st[i].text)}"`, math: pText(st[i]), why: st[i].how })),
-    { say: 'Most to least likely.', math: order.map((i) => fmtAuto(st[i].p)).join(' > '), why: o.compare },
+    ...order.map((i) => ({ say: `"${short(st[i].text)}"`, math: pText(i), why: st[i].how })),
+    { say: 'Most to least likely.', math: order.map((i) => decimals[i]).join(' > '), why: o.compare },
   ];
   // Short names that tell the statements apart: drop the words all three start with, then trim.
   const words = st.map((x) => x.text.replace(/\.$/, '').split(/\s+/));
@@ -48,11 +50,11 @@ export function rankItem(family, rng, difficulty, o) {
   const [hi, md, lo] = order;
   const extras = {
     ask: 'We want the three statements in order, most likely first; one point needs the whole order right.',
-    fast: o.fast || `${TIPS[family] || 'Put a rough number or a bound on each statement before any exact work.'} Here ${fmtAuto(st[hi].p)} > ${fmtAuto(st[md].p)} > ${fmtAuto(st[lo].p)}.`,
+    fast: o.fast || `${TIPS[family] || 'Put a rough number or a bound on each statement before any exact work.'} Here ${decimals[hi]} > ${decimals[md]} > ${decimals[lo]}.`,
     check: o.check || `Check each neighbouring pair on its own. ${brief(hi)} beats ${brief(md)} by ${gap(hi, md)}; ${brief(md)} beats ${brief(lo)} by ${gap(md, lo)}. If an estimate cannot separate a pair, compute that pair exactly.`,
     picture: o.picture || {
       diagram: 'bar',
-      spec: { categories: ['Most likely', 'Middle', 'Least likely'], series: [{ name: 'Probability', values: order.map((i) => Math.round(st[i].p * 1000) / 1000) }], yLabel: 'Probability' },
+      spec: { categories: ['Most likely', 'Middle', 'Least likely'], series: [{ name: 'Probability', values: order.map((i) => st[i].p) }], yLabel: 'Probability' },
       caption: `Most likely ${brief(hi)}, then ${brief(md)}, then ${brief(lo)}. The bar heights show how far apart the three are.`,
     },
   };

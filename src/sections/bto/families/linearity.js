@@ -11,7 +11,8 @@ function build(kind, rng) {
     const n = rng.int(3, 7);
     return {
       value: q(1), params: { kind, n },
-      text: `${n} people drop their hats in a box and each takes one back at random. What is the expected number of people who get their own hat?`,
+      text: `${n} people put their hats in a box. Each person takes one of the remaining hats uniformly at random. How many people get their own hat on average?`,
+      oldText: `${n} people drop their hats in a box and each takes one back at random. What is the expected number of people who get their own hat?`,
       distractors: [
         { value: q(1, n), misconception: 'Answered the chance that one particular person gets their hat, not the expected count.' },
         { value: q(n, 2), misconception: 'Assumed about half get their own hat.' },

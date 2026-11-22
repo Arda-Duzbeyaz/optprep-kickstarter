@@ -9,9 +9,11 @@ import { mcqView } from './kinds/mcq.js';
 import { rankView } from './kinds/rank.js';
 import { intervalView } from './kinds/interval.js';
 import { orderbookView } from './kinds/orderbook.js';
+import { orderbookPrompt, MAX_TRADES } from '../sections/ob/lib.js';
 import { feedbackBanner, solutionPanel, hintLadder, intervalCoach } from './solution.js';
 import { checkItem, practiceSuccess } from '../core/check.js';
 import { composeEvent } from '../scenarios/compose.js';
+import { clarifyPrizeRule } from '../scenarios/composite/stopping.js';
 import { buildPaper, scenarioShare } from '../scenarios/paper.js';
 import { modelCatalog } from '../scenarios/composite/catalog.js';
 import { scenarioCatalog } from '../scenarios/catalog.js';
@@ -33,7 +35,7 @@ import { mistakeRow } from '../core/mistakes.js';
 import { timingOf } from '../../config/presets.js';
 import { PRACTICE_BLOCK_SIZE, DRILL_COUNT, PRACTICE_VERSION } from '../core/practice.js';
 import { skillProgress, skillCheckpoint, checkpointLabel, checkpointText, learningStatus, learningEvidence } from './practice-progress.js';
-import { recognitionProgress } from '../core/recognition.js';
+import { BTO_CHECKPOINT_MS, recognitionProgress } from '../core/recognition.js';
 import { structureKey, structureStatus, structureOperations } from '../transfer/profile.js';
 import { MIXED_EVIDENCE_VERSION } from '../core/mixed-training.js';
 import { xpFor } from '../core/progression.js';
@@ -42,6 +44,11 @@ import { mixedEvidence } from './mixed-evidence.js';
 const VIEWS = { mcq: mcqView, rank: rankView, interval: intervalView, orderbook: orderbookView };
 // Sure/unsure buttons. Not the 80-in-8: one tap answers there, so there is no second button to press.
 const CALIBRATED = new Set(['bto', 'nl']);
+const EXAM_CHECKPOINT_LABEL = {
+  qualifying: 'Mastery credit', passed: 'Checkpoint verified', maintained: 'Already verified',
+  pace: 'Over mastery pace', help: 'Outside help', interrupted: 'Interrupted',
+  skipped: 'Skipped', incorrect: 'Missed', repeat: 'Previously seen',
+};
 
 // notation: 'colon' shows ÷ as : (European), the learner's setting.
 let promptSeq = 0;
@@ -49,8 +56,10 @@ let sessionSeq = 0;
 export function itemBody(item, { onChange, preview = true, notation, keys = true, label } = {}) {
   const pid = `prompt-${++promptSeq}`;
   const marketDecision=item.kind==='orderbook' && (activePreset().id==='kickstarter' || item.tradeOrPass);
-  const question=marketDecision ? 'Find a flat position with positive cash in up to six unit trades, or choose No opportunity. Buy at asks and sell at bids.' : item.prompt.text;
-  const view = VIEWS[item.kind](item, { onChange, allowPass:marketDecision, maxTrades:item.tradeLimit ?? (marketDecision?6:undefined), showPreview: preview, keys, labelledby: pid });
+  const maxTrades=item.tradeLimit ?? (marketDecision?MAX_TRADES:undefined);
+  const question=item.kind==='orderbook' ? orderbookPrompt(maxTrades,marketDecision)
+    : item.family==='stopped-process' ? clarifyPrizeRule(item.prompt.text) : item.prompt.text;
+  const view = VIEWS[item.kind](item, { onChange, allowPass:marketDecision, maxTrades, showPreview: preview, keys, labelledby: pid });
   let visual = null;
   if (item.prompt.visual) {
     try { visual = renderVisual(item.prompt.visual); } catch (e) { visual = h('p', { class: 'muted' }, `Visual unavailable: ${e.message}`); }
@@ -104,6 +113,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
   const rng = makeRng(seed);
   if (saved) rng.setState(saved.rngState);
   const perItemMs = drillMs(cfg);
+  const masteryBudget = mixedAttempt && sectionId === 'bto' ? BTO_CHECKPOINT_MS : null;
   // One-tap sections (the 80-in-8): a pace line against the exam's seconds per question, and in
   // drill a tap on an option submits it, as in the exam. Practice keeps Submit, so you can rethink.
   const paceMs = cfg.exam.autoAdvance ? perItemMs() : 0;
@@ -160,7 +170,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     for (const row of log) { if (round.size === familyPool.length) round.clear(); if (familyPool.includes(row.family)) round.add(row.family); }
     const scenario = scenarioCatalog[sectionId]?.id;
     const share = scenarioShare(sectionId,store.settings().numericalMix);
-    const compose = mixedAttempt && activePreset().id==='kickstarter' && scope==='all' && familyPool.includes(scenario);
+    const compose = mixedAttempt && activePreset().id==='kickstarter' && sectionId!=='bto' && scope==='all' && familyPool.includes(scenario);
     const scenarioTurn=Math.floor((idx+1)*share)>Math.floor(idx*share);
     const sequenceIndex=idx-Math.floor(idx*share);
     const sequenceTurn=sectionId==='nl' && familyPool.includes('linked-sequences') && !scenarioTurn && sequenceIndex%3===1;
@@ -188,7 +198,10 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       if(!(error instanceof FreshQuestionsUnavailable) || !compose || share===0) throw error;
       selected=practiceItem(section,rng,store.stats(),{...settings,familyPool});
     }
-    if(compose && sectionId==='bto' && selected.difficulty>=2 && rng.chance(.5)) return composeEvent(selected,rng);
+    if (mixedAttempt && sectionId === 'bto' && selected.difficulty >= 3 && rng.chance(.25)) {
+      const composed = composeEvent(selected, rng);
+      if (!questionSeen(new Set(settings.excludeKeys), composed)) return composed;
+    }
     return selected;
   }
 
@@ -206,7 +219,8 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     const fresh = resumed ? resumed.fresh : setNumber == null && !questionSeen(store.recentQuestionKeys?.(sectionId) || new Set(), item);
     current = { item, start: performance.now() - (resumed?.elapsedMs || 0), hints: resumed?.hints || 0, fresh,
       structureStatus: resumed?.structureStatus || structureStatus(store.recentStructureKeys?.(sectionId), item),
-      budgetMs: resumed?.budgetMs || perItemMs(item), done: false, interrupted: !!resumed?.interrupted || !!resumed && !resumed.done, aided: !!resumed?.aided };
+      budgetMs: resumed?.done ? resumed.budgetMs : masteryBudget ?? resumed?.budgetMs ?? perItemMs(item),
+      done: false, interrupted: !!resumed?.interrupted || !!resumed && !resumed.done, aided: !!resumed?.aided };
     if (!resumed) store.rememberQuestion?.(item);
     setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
     const submitBtn = h('button', { class: 'btn primary', type: 'button', onclick: () => submit() }, 'Submit');
@@ -244,7 +258,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
       h('div', { class: 'panel' }, head,
         h('div', { class: 'practice-block-status' }, progressText, progress), repeatNote,
         levelStrip,
-        resumable && !family ? h('p', { class: 'small-note muted' }, `Mixed ${scope === 'covered' ? 'covered' : 'all'} skills · Topic and difficulty stay hidden until submission. ${standardTime ? 'Cold, unaided answers within training pace can verify a checkpoint.' : 'Extra-time practice does not earn checkpoints.'}`) : null,
+        resumable && !family ? h('p', { class: 'small-note muted' }, `Mixed ${scope === 'covered' ? 'covered' : 'all'} skills · Topic and difficulty stay hidden until submission. ${standardTime ? masteryBudget ? `Fresh, correct, unaided answers within ${masteryBudget / 1000} seconds count towards mastery.` : 'Cold, unaided answers within training pace can verify a checkpoint.' : 'Extra-time practice does not earn checkpoints.'}`) : null,
         tapSubmits && item.kind === 'mcq' ? h('p', { class: 'small-note muted' }, 'Tapping an option submits it.') : null,
         body.el, hints?.box, controls, saveNote, after, skillSlot));
     focusIn(root, '.prompt');
@@ -311,7 +325,7 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
         fresh: current.fresh, aided: !!current.aided, interrupted: !!current.interrupted, budgetMs: current.budgetMs, standardTime } : {}) });
     store.recordAnswer(sectionId, item.family, {
       correct: correctNoHelp, covered: result.correct, ms, confidence: response.skip ? undefined : confidence, difficulty: item.difficulty, score: item.kind === 'interval' ? result.score : undefined,
-      hints: current.hints, mode, fresh: current.fresh, budgetMs: current.budgetMs,
+      hints: current.hints, skipped: !!response.skip, mode, fresh: current.fresh, budgetMs: current.budgetMs,
       mixed: mixedAttempt, key: questionKey(item), aided: !!current.aided,
       uninterrupted: !current.interrupted, standardTime,
       levels: section.families.find((f) => f.id === item.family)?.levels,
@@ -342,6 +356,8 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
     setRail(log.length / limit, `${log.length} of ${limit} questions answered`);
     if (mode === 'practice' && !fixedItems) {
       const p = skillCheckpoint(store, sectionId, item.family);
+      const record = store.recognition()[`${sectionId}:${item.family}`];
+      const reason = record?.keys?.at(-1) === questionKey(item) ? record.lastReason : null;
       const notice = !mixedAttempt ? family && log.length === limit
         ? store.coverage(sectionId, family).covered ? 'Learning block complete · 10/10 saved. Your learning tick is recorded; cold mixed checks are the next stage.'
           : 'Block complete and saved. Work through the skipped questions before ticking learning complete.'
@@ -352,8 +368,9 @@ export function runFeedbackSession(root, { sectionId, mode, family, count, store
               : current.interrupted ? 'Paused or resumed before answering: learning only; the cold streak resets.'
                 : !practiceSuccess(sectionId, result) ? 'This cold attempt was unsuccessful. The current checkpoint streak resets.'
                   : ms > current.budgetMs ? 'Correct, but over the training pace budget. Practise efficiency and retry in mixed practice.'
-                    : store.recognition()[`${sectionId}:${item.family}`]?.lastReason === 'passed' ? `Generator difficulty ${item.difficulty} verified by three cold, paced successes. ${p.complete ? 'All supported difficulties are verified.' : `Next target: difficulty ${p.target}.`}`
-                      : 'Cold success recorded. Your checkpoint counter is updated below.';
+                    : reason === 'passed' ? `Generator difficulty ${item.difficulty} verified by three cold, paced successes. ${p.complete ? 'All supported difficulties are verified.' : `Next target: difficulty ${p.target}.`}`
+                      : reason === 'maintained' ? `Correct at pace. Difficulty ${item.difficulty} is already verified.`
+                        : 'Cold success recorded. Your checkpoint counter is updated below.';
       mount(current.skillSlot, skillProgress(store, sectionId, item.family, { budgetMs: current.budgetMs, notice, learning: !!family, onCoverage: () => mount(current.levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, learningStatus(store.coverage(sectionId, family)))) }));
       if (family) mount(current.levelStrip, h('strong', {}, 'Learning only · help allowed'), h('span', { class: 'small-note' }, learningStatus(store.coverage(sectionId, family))));
       if (mixedAttempt) mount(current.levelStrip, checkpointLabel(p), h('span', { class: 'small-note' }, checkpointText(p)));
@@ -483,7 +500,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   const exam = extra > 1 ? { ...exam0, totalSeconds: exam0.totalSeconds && exam0.totalSeconds * extra, perItemSeconds: exam0.perItemSeconds && exam0.perItemSeconds * extra } : exam0;
   const priorQuestions = store.recentQuestionKeys?.(sectionId) || new Set();
   let items;
-  const drawPaper = activePreset().id === 'kickstarter' && scenarioCatalog[sectionId] ? buildPaper : examItems;
+  const drawPaper = sectionId === 'bto' || (activePreset().id === 'kickstarter' && scenarioCatalog[sectionId]) ? buildPaper : examItems;
   try { items = fixedItems || drawPaper(section, { count: exam.count, ramp: sectionId === 'nl', bankRatio: 0.2,
     excludeKeys: priorQuestions, previousStructures:store.recentStructureKeys?.(sectionId) }, seed, store.settings().numericalMix); }
   catch (error) {
@@ -499,10 +516,15 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   const repeatCount = items.reduce((n, item) => {
     const key = questionKey(item), repeat = questionSeen(seenInRun, item);
     seenInRun.add(key);
+    if (item.composition?.baseKey) seenInRun.add(item.composition.baseKey);
     return n + Number(repeat);
   }, 0);
+  const official = !variant && setNumber == null && extra === 1 && repeatCount === 0;
+  const checkpointPaper = sectionId === 'bto' && official && !fixedItems && items.length === exam.count;
+  const checkpointLevels = checkpointPaper ? new Map(PRACTICE_MODULES.bto.families.map((f) => [f.id, f.levels])) : null;
   const responses = items.map(() => null);
   const obSolved = items.map(() => false);
+  const interrupted = new Set(), aided = new Set();
   const shown = new Set();
   let idx = 0;
   let finished = false;
@@ -521,6 +543,13 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   const budgetMs = Math.min(exam.perItemSeconds || Infinity,
     exam.totalSeconds ? exam.totalSeconds / items.length : Infinity) * 1000;
   const leave = () => { if (current?.i != null) { spent[current.i] += performance.now() - current.t; current.i = null; } };
+  const interrupt = () => { if (current?.i != null) interrupted.add(current.i); };
+  const visibility = () => { if (document.hidden) interrupt(); };
+  function detach() {
+    document.removeEventListener('keydown', onKey);
+    document.removeEventListener('visibilitychange', visibility);
+    window.removeEventListener('pagehide', interrupt);
+  }
 
   function show() {
     if (finished) return;
@@ -540,6 +569,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
     if (responses[idx] && !responses[idx].skip) body.view.setResponse?.(responses[idx]);
     live = true;
     current = { item, body, i: idx, t: performance.now(), draft: responses[idx] && !responses[idx].skip ? responses[idx] : null };
+    if (checkpointPaper && document.hidden) interrupt();
     if (exam.perItemSeconds) perItem = makeCountdown(exam.perItemSeconds * 1000);
     const free = exam.navigation === 'free';
     const palette = free ? h('div', { class: 'palette', role: 'navigation', 'aria-label': 'Questions' }, items.map((_, i) => h('button', {
@@ -547,12 +577,19 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
       onclick: () => { if (settleExpiry()) return; save(); idx = i; show(); },
     }, String(i + 1)))) : null;
     const note = h('div', { class: 'exam-note', role: 'status' },item.kind === 'orderbook' && (item.tradeOrPass || activePreset().id === 'kickstarter') ? 'Submitting No opportunity is final.' : '');
+    const helpBtn = checkpointPaper ? h('button', { class: 'btn ghost', type: 'button', onclick: () => {
+      if (settleExpiry()) return;
+      aided.add(idx);
+      helpBtn.disabled = true;
+      helpBtn.textContent = 'Help recorded';
+    } }, 'Used outside help') : null;
     const controls = h('div', { class: 'row' },
       free && idx > 0 ? h('button', { class: 'btn', type: 'button', onclick: () => { if (settleExpiry()) return; save(); idx--; show(); } }, 'Previous') : null,
       item.kind === 'orderbook'
         ? h('button', { class: 'btn primary', type: 'button', onclick: () => submitBoard(note) }, 'Submit position')
         : tap ? null : h('button', { class: 'btn primary', type: 'button', onclick: () => { if (settleExpiry()) return; save(); idx++; show(); } }, 'Next'),
       (item.kind === 'mcq' || item.kind === 'orderbook') && canSkip ? h('button', { class: 'btn', type: 'button', onclick: () => { if (settleExpiry()) return; if (!free || !responses[idx]) responses[idx] = { skip: true }; idx++; show(); } }, free ? 'Skip for now' : 'Skip') : null,
+      helpBtn,
       h('span', { style: { flex: 1 } }),
       h('button', { class: 'btn', type: 'button', onclick: () => { if (settleExpiry()) return; if (confirm('Finish the exam now? Unanswered questions score 0.') && !settleExpiry()) { save(); finish('manual'); } } }, 'Finish exam'));
     mount(root, h('h1', { class: 'visually-hidden' }, `${base.title}: exam`), h('div', { class: 'panel exam' },
@@ -623,13 +660,17 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
     if (e.key === 'Enter' && !tap && !e.target.closest?.('button') && current.item.kind !== 'orderbook') { e.preventDefault(); save(); idx++; show(); }
   };
   document.addEventListener('keydown', onKey);
+  if (checkpointPaper) {
+    document.addEventListener('visibilitychange', visibility);
+    window.addEventListener('pagehide', interrupt);
+  }
 
   function finish(reason = 'complete') {
     if (finished) return;
     finished = true;
     leave();
     cancelAnimationFrame(raf);
-    document.removeEventListener('keydown', onKey);
+    detach();
     const results = items.map((it, i) => {
       if (it.kind === 'orderbook') return obSolved[i] ? { correct: true, score: 1 } : { correct: false, score: 0, skipped: !responses[i] || !!responses[i].skip };
       return checkItem(it, responses[i] || { skip: true });
@@ -639,7 +680,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
       if (responses[i] && !responses[i].skip) {
         store.recordAnswer(sectionId, it.family, {
           correct: results[i].correct, ms: Math.round(spent[i]), difficulty: it.difficulty, score: it.kind === 'interval' ? results[i].score : undefined,
-          mode: 'exam', fresh: setNumber == null, budgetMs,
+          mode: 'exam', fresh: setNumber == null && repeatCount === 0, budgetMs,
           miss: !results[i].correct && it.kind !== 'orderbook' ? mistakeRow(it, responses[i], { mode: 'exam', ms: Math.round(spent[i]) }) : undefined,
         });
         store.srs = srsRecord(store.srs, `${sectionId}:${it.family}`, practiceSuccess(sectionId, results[i]));
@@ -656,18 +697,24 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
         else if (!r.correct && response?.lower > 0 && response.upper >= response.lower)
           outcome = it.truth > response.upper ? 'above' : 'below';
       }
-      return { family:it.family, score:r.score,
+      return { family:it.family, score:r.score, ...(sectionId === 'bto' ? { difficulty: it.difficulty } : {}),
         ...(it.kind==='interval' && response?.lower>0 && response.upper>=response.lower ? {widthRatio:response.upper/response.lower} : {}),
         ms:Math.round(spent[i]), outcome };
     });
     const run = { section: sectionId, mode: 'exam', mock, completePaper, finishReason:reason, ...(drawPaper===buildPaper && !fixedItems ? {generatorEdition:'2.0',...(sectionId==='nl'?{numericalMix:store.settings().numericalMix || 'balanced'}:{})} : {}), repeatCount, freshnessChecked: true, variant: variant?.label || null, score, max, timing: timingOf(exam), perfect: results.every((r) => r.correct), targetMet: runMeetsTarget({ score, max }, base.target), items: itemDetails };
+    const checkpointAttempts = checkpointPaper && completePaper ? items.map((it, i) => {
+      if (!shown.has(i)) return null;
+      return { key: questionKey(it), difficulty: it.difficulty, levels: checkpointLevels.get(it.family),
+        correct: results[i].correct, skipped: results[i].skipped, ms: spent[i],
+        uninterrupted: !interrupted.has(i), aided: aided.has(i) };
+    }) : undefined;
     // Only fresh full-length replicas count toward readiness; numbered sets and
     // short variants are practice (a set can be memorised on a second attempt).
-    const official = !variant && setNumber == null && extra === 1 && repeatCount === 0;
+    let savedRun = run;
     if (setNumber != null) store.recordSet(sectionId, setNumber, { score, max, mode: 'timed' });
-    else if (official) store.recordRun(run);
+    else if (official) savedRun = store.recordRun(run, { checkpointAttempts });
     else store.recordRun({ ...run, mode: 'exam-variant' });
-    review(results, score, max, official, run);
+    review(results, score, max, official, savedRun);
     onDone?.({ score, max, repeatCount, completePaper });
   }
 
@@ -680,9 +727,12 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
       const detail = h('tr', { hidden: true }, h('td', { colspan: 5 }, h('div', { class: 'review-item' }, itemBody(it, { preview: false, notation }).el, feedbackBanner(it, results[i], responses[i] || { skip: true }), solutionPanel(it, { stepwise: false }))));
       const toggle = h('button', { class: 'linkish', type: 'button', 'aria-label': `Solution, question ${i + 1}`, 'aria-expanded': 'false', onclick: () => { detail.hidden = !detail.hidden; if (!detail.hidden && !shown.has(i)) { store.rememberQuestion?.(it); shown.add(i); } toggle.textContent = detail.hidden ? 'Solution' : 'Hide'; toggle.setAttribute('aria-expanded', String(!detail.hidden)); } }, 'Solution');
       const r = results[i];
+      const entry = run.items[i];
+      const checkpointLabel = EXAM_CHECKPOINT_LABEL[entry.checkpoint];
       return [h('tr', { 'data-grade': r.skipped ? 'skip' : r.correct || r.score > 0 ? 'right' : 'wrong' },
         h('td', { class: 'num' }, String(i + 1)),
-        h('td', {}, familyTitle(section, it.family)),
+        h('td', {}, familyTitle(PRACTICE_MODULES[sectionId], it.family), checkpointPaper && shown.has(i)
+          ? h('div', { class: 'small-note muted' }, `Difficulty ${it.difficulty} · ${(entry.ms / 1000).toFixed(1)} s`, checkpointLabel ? ` · ${checkpointLabel}` : '') : null),
         h('td', {}, r.skipped ? h('span', { class: 'badge' }, canSkip ? 'Skipped' : 'Not answered') : r.correct || r.score > 0 ? h('span', { class: 'badge ok' }, it.kind === 'interval' ? r.score.toFixed(2) : 'Right') : h('span', { class: 'badge no' }, 'Wrong')),
         h('td', { class: 'num', style: { textAlign: 'right' } }, it.kind === 'interval' ? r.score.toFixed(2) : String(r.score)),
         h('td', { style: { textAlign: 'right' } }, toggle)), detail];
@@ -699,7 +749,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
         h('p', {}, h('span', { class: `badge ${meets ? 'ok' : 'no'}` }, meets ? 'Target met' : 'Below target'), ` Target: ${target.label}.`),
         setNumber != null ? h('p', { class: 'muted' }, `Set ${setNumber} is fixed practice: it does not count toward the fresh-exam target.`) : repeatCount ? h('p', { class: 'muted' }, `${repeatCount} repeated question(s): this run is review practice and does not count toward the fresh-exam target.`) : official && !run.completePaper ? h('p', {class:'muted'}, 'Ended early. This result is saved for review and is excluded from your timed baseline and streak.') : official ? h('p', { class: 'muted' }, separateDays ? 'Timed target met on '+ready.streak+' of 3 separate practice days. Today counts once.' : ready.ready ? 'Practice target met on the last three eligible exams.' : `Practice target streak ${ready.streak} of ${ready.needed}. Three fresh exams under these clocks are required.`) : h('p', { class: 'muted' }, 'Modified or extra-time practice: only fresh, full-length exams under the current clocks count toward the practice target.')),
         scoreBox),
-      activePreset().id === 'kickstarter' && sectionId !== 'mm' ? debriefPanel(sectionId, run,store) : null,
+      sectionId === 'bto' || (activePreset().id === 'kickstarter' && sectionId !== 'mm') ? debriefPanel(sectionId, run,store) : null,
       h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, '#'), h('th', {}, 'Family'), h('th', {}, 'Result'), h('th', { style: { textAlign: 'right' } }, 'Points'), h('th', {}, h('span', { class: 'visually-hidden' }, 'Solution')))), h('tbody', {}, rows.flat())),
       h('div', { class: 'row', style: { marginTop: '16px' } },
         h('a', { class: 'btn primary', href: setNumber != null ? `#/s/${sectionId}/sets` : `#/s/${sectionId}` }, setNumber != null ? 'Back to sets' : 'Back to section'),
@@ -715,6 +765,7 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
   if (mock) begin();
   else {
     const tapAll = exam.autoAdvance && items.every((it) => it.kind === 'mcq');
+    const maxChoices = Math.max(0, ...items.map((it) => it.kind === 'mcq' ? it.options.length : 0));
     const time = [exam.totalSeconds ? `${Math.round(exam.totalSeconds / 60 * 10) / 10} minutes overall` : null,
       exam.perItemSeconds ? `${exam.perItemSeconds} seconds per question` : null].filter(Boolean).join('; ');
     mount(root, h('section', { class: 'field exam-start' },
@@ -723,10 +774,11 @@ export function runExam(root, { sectionId, variant, store, seed = Date.now(), on
         h('li', {}, time, extra > 1 ? ` (with your extra time ×${extra}; this run will not count toward the practice target)` : '', '.'),
         tapAll ? h('li', {}, 'Tapping an option is your answer, and the next question appears. There is no going back.') : null,
         !canSkip ? h('li', {}, 'You cannot skip. A wrong answer costs a point.') : null,
-        keysOf(store) && items.some((it) => it.kind === 'mcq') ? h('li', {}, 'Keys 1 to 4 (or A to D) pick an option.') : null),
+        keysOf(store) && maxChoices ? h('li', {}, `Keys 1 to ${maxChoices} (or A to ${String.fromCharCode(64 + maxChoices)}) pick an option.`) : null),
       h('p', { class: 'muted small-note' }, 'This practice uses the configured clocks. Counts and scoring are practice assumptions; follow your assessment instructions. For untimed questions, use ', h('a', { href: `#/run/${sectionId}/practice` }, 'Practice'), '.'),
+      checkpointPaper ? h('p', { class: 'small-note' }, `Complete the run to record mastery evidence. Fresh, correct, unaided submissions within ${BTO_CHECKPOINT_MS / 1000} seconds count towards the same checkpoints as mixed practice.`) : null,
       h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: begin }, 'Start the clock'))));
     focusIn(root, 'h1');
   }
-  return () => { finished = true; cancelAnimationFrame(raf); document.removeEventListener('keydown', onKey); };
+  return () => { finished = true; cancelAnimationFrame(raf); detach(); };
 }

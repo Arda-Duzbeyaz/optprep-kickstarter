@@ -12,6 +12,11 @@ export function bell(mu, sd, from, to, xLabel, caption) {
 }
 
 const ID = 'clt-estimates';
+const roughOptions = (...estimates) => ({
+  minGap: (exact) => Math.max(1e-5, ...estimates.map((estimate) => 2.2 * Math.abs(exact - estimate))),
+  fillers: [.001, .005, .01, .025, .06, .12, .2, .3, .4, .5, .6, .7, .8, .9, .99]
+    .map((value) => ({ value, misconception: 'Recheck how many standard deviations the cutoff is from the mean.' })),
+});
 const DICE_CACHE = new Map();
 // Exact counts of each total for n dice (BigInt), cached per n.
 function diceCounts(n) {
@@ -49,20 +54,20 @@ export default {
       const v = coinTail(n, lo, hi);
       const zc = kind === 'coinTail' ? (lo - 0.5 - mu) / sd : (hi + 0.5 - mu) / sd;
       const noCC = kind === 'coinTail' ? 1 - Phi((lo - mu) / sd) : 2 * Phi((hi - mu) / sd) - 1;
+      const landmark = kind === 'coinTail' ? 1 - Phi(z) : 2 * Phi(z) - 1;
       const varAsSd = kind === 'coinTail' ? 1 - Phi((lo - mu) / (n / 4)) : 2 * Phi((hi - mu) / (n / 4)) - 1;
       const rootN = kind === 'coinTail' ? 1 - Phi((lo - mu) / Math.sqrt(n)) : 2 * Phi((hi - mu) / Math.sqrt(n)) - 1;
       const text = kind === 'coinTail'
         ? `You flip a fair coin ${n} times. Estimate the probability of getting at least ${lo} heads.`
         : `You flip a fair coin ${n} times. Estimate the probability that the number of heads is between ${lo} and ${hi} inclusive.`;
       return mcqItem(ID, rng, difficulty, {
-        value: v, text,
+        value: v, text, ...roughOptions(noCC, landmark),
         distractors: [
           { value: varAsSd, misconception: `Divided by the variance n/4 = ${n / 4} instead of the standard deviation √n/2 = ${sd}.` },
           { value: rootN, misconception: `Used √n = ${Math.sqrt(n)} as the standard deviation; one fair flip has sd 1/2, so the sum has sd √n/2.` },
           { value: kind === 'coinTail' ? 2 * v.toNumber() : (1 - v.toNumber()) / 2, misconception: kind === 'coinTail' ? 'Counted both tails; the question asks for one side only.' : 'Computed one tail outside the band.' },
           { value: q(1).sub(v), misconception: 'Answered the complement.' },
           { value: kind === 'coinTail' ? 0.5 - v.toNumber() : v.toNumber() / 2, misconception: kind === 'coinTail' ? 'Read the normal table as the area between the mean and z, not beyond z.' : 'Only took one half of the band.' },
-          { value: noCC, misconception: 'Used the normal curve without a continuity correction; close, but the exact answer is the one listed.' },
         ],
         steps: [
           { say: `Heads ~ Binomial(${n}, 1/2): mean ${mu}, sd = √(${n} × 1/4) = ${sd}.`, why: 'Variance of one flip is 1/4; variances of independent flips add.' },
@@ -87,7 +92,7 @@ export default {
     for (let x = t; x < c.length; x++) s += c[x];
     const v = new Q(s, 6n ** BigInt(n));
     return mcqItem(ID, rng, difficulty, {
-      value: v,
+      value: v, ...roughOptions(1 - Phi((t - mu) / sd), 1 - Phi(z)),
       text: `You throw ${n} fair dice. Estimate the probability that their total is at least ${t}.`,
       distractors: [
         { value: 1 - Phi((t - mu) / ((35 * n) / 12)), misconception: `Divided by the variance ${((35 * n) / 12).toFixed(1)} instead of the sd ${sd.toFixed(2)}.` },

@@ -1,7 +1,15 @@
 // Monty Hall with n doors: a knowing host versus a host who opens doors at random.
 import { mcqItem, agree, q, table } from '../lib.js';
+import { questionKey } from '../../../core/questions.js';
 
 const ID = 'monty-hall';
+
+export function explicitMontyPolicy(item) {
+  const text = item.prompt.text.replace('knows where the car is, opens', 'knows where the car is, always opens');
+  return text === item.prompt.text ? item : {
+    ...item, prompt: { ...item.prompt, text }, meta: { ...item.meta, previousPromptKey: questionKey(item) },
+  };
+}
 
 export default {
   id: ID,
@@ -13,7 +21,7 @@ export default {
   generate(rng, { difficulty = 2 } = {}) {
     const n = difficulty === 2 ? rng.int(3, 12) : rng.int(4, 7);
     const m = difficulty === 2 ? n - 2 : rng.int(1, n - 2);
-    const variant = difficulty === 2 ? rng.pick(['switch', 'switch', 'stay']) : rng.pick(['switch', 'switch', 'random']);
+    const variant = difficulty === 2 ? rng.pick(['switch', 'random', 'stay']) : rng.pick(['switch', 'switch', 'random']);
     const closedOthers = n - m - 1;
     let value, text, steps;
     const setup = `There are ${n} doors: one hides a car, the rest hide goats. You pick door 1.`;
@@ -64,13 +72,13 @@ export default {
       : `These are strategy win rates averaged over the host's reveals. The uniform random switch has probability ${other}; this does not assert identical posteriors for every labelled door under a biased host policy.`);
     const fast = random ? `Blind host: the ${n - m} unopened doors are equal, 1/${n - m}.` : variant === 'stay' ? `Staying wins on the original car pick: 1/${n}.` : `Initially wrong (${n-1}/${n}), then choose the car among ${closedOthers} alternatives: ${value}.`;
     const check = `The original-pick and elsewhere cases add to 1. ${random ? 'A blind uniform reveal makes every unopened door equally likely.' : `A random switch wins with (1−1/${n})/${closedOthers}. A posterior after particular door identities are revealed would require the host's selection policy.`}`;
-    return mcqItem(ID, rng, difficulty, {
+    return explicitMontyPolicy(mcqItem(ID, rng, difficulty, {
       value, text, distractors, steps, picture, fast, check,
       rule: 'Knowing host, averaged over reveals: stay wins 1/n; a uniform switch among k alternatives wins (n−1)/(nk). A blind uniform reveal conditioned on goats leaves all unopened doors equally likely.',
       anchor: 'Conditioning on new information (the opened doors), with one change: what the information means depends on whether the host could have revealed the car.',
       hints: ['Could the host have shown the car? Are particular door identities specified?', 'Condition on whether your initial choice was correct.', 'If the car is elsewhere, a uniform switch picks it with probability 1/(number of alternatives).'],
       data: { n, m, variant },
-    });
+    }));
   },
 
   // Independent check: enumerate car position, the host's allowed door sets, and your switch choice.

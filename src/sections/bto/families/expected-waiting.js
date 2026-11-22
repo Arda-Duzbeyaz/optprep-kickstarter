@@ -1,6 +1,6 @@
 // Expected waiting times: first six, two special faces, a repeat, two sixes in a row, k heads in a row.
 import { hittingTimes } from '../../../core/markov.js';
-import { mcqItem, agree, q, pic, table } from '../lib.js';
+import { mcqItem, agree, q, qpow, pic, table } from '../lib.js';
 const par = (x) => (String(x).includes('/') ? `(${x})` : String(x));
 
 const ID = 'expected-waiting';
@@ -20,6 +20,32 @@ const words = ['', 'one', 'two', 'three', 'four', 'five'];
 
 // Each variant: closed-form value + a Markov chain (rows of Q) whose hitting time is the answer.
 function variant(kind, rng) {
+  if (kind === 'capped') {
+    const c = rng.int(5, 11), a = rng.int(2, c - 2), k = rng.int(2, 4);
+    const p = q(a, c), fail = q(1).sub(p);
+    const terms = Array.from({ length: k }, (_, i) => qpow(fail, i));
+    const value = terms.reduce((sum, term) => sum.add(term), q(0));
+    const choices = [
+      { value: k, misconception: 'Counted all attempts even when the game ends early.' },
+      { value: Math.min(k, 1 / p.toNumber()), misconception: 'Capped the uncapped average instead of capping each individual wait.' },
+      { value: value.sub(terms.at(-1)).toNumber(), misconception: 'Left out the chance of reaching the final allowed attempt.' },
+      { value: 1 + (k - 1) * fail.toNumber(), misconception: 'Assumed that missing the first attempt means taking every remaining attempt.' },
+      { value: 1 + (k - 1) * terms.at(-1).toNumber(), misconception: 'Used the chance of reaching the final attempt for every later attempt.' },
+    ];
+    return {
+      value, data: { kind, a, c, k },
+      text: `Each independent attempt succeeds with probability ${a}/${c}. Stop at the first success or after ${k} attempts. How many attempts do you expect to make? Pick the closest value.`,
+      distractors: choices.filter(({ value }) => value >= 1 && value <= k),
+      fillers: Array.from({ length: 11 }, (_, i) => ({ value: 1 + i * (k - 1) / 10, misconception: 'Check which paths reach each successive attempt.' })),
+      steps: [
+        { say: 'An attempt counts if every previous attempt failed.', why: 'The game stops as soon as it succeeds.' },
+        { say: `Expected attempts = ${terms.join(' + ')} = ${value}.`, why: 'Add the probabilities of taking each allowed attempt.' },
+      ],
+      fast: `Sum the survival chances for attempts 1 through ${k}: ${value}.`,
+      check: `There is always at least one attempt and at most ${k}.`,
+      picture: table(['Attempt', 'Chance you take it'], terms.map((term, i) => [i + 1, term]), 'Each attempt contributes its chance of being reached.'),
+    };
+  }
   if (kind === 'first') {
     const ev = rng.pick(FIRST);
     const [a, c] = ev.p;
@@ -167,13 +193,14 @@ export default {
   levels: [1, 2, 3],
 
   generate(rng, { difficulty = 1 } = {}) {
-    const kind = difficulty === 1 ? 'first' : difficulty === 2 ? rng.pick(['twoFaces', 'repeat', 'bothSides', 'first']) : rng.pick(['doubleSix', 'headRun', 'twoFaces']);
+    const kind = difficulty === 1 ? 'first' : difficulty === 2 ? rng.pick(['twoFaces', 'repeat', 'bothSides', 'capped']) : rng.pick(['doubleSix', 'headRun', 'twoFaces']);
     const v = variant(kind, rng);
     return mcqItem(ID, rng, difficulty, {
       ev: true,
       value: v.value,
       text: v.text,
       distractors: v.distractors,
+      fillers: v.fillers,
       steps: v.steps,
       picture: v.picture, fast: v.fast, check: v.check, ask: v.ask,
       rule: 'Geometric wait = 1/p. Multi-stage wait = sum of stage waits. With resets, set up E_state = 1 + Σ p·E_next and solve.',
@@ -185,6 +212,13 @@ export default {
 
   // Independent check: expected hitting time of the absorbing state, solved exactly by markov.js.
   verify(item) {
+    const { kind, a, c, k } = item.params;
+    if (kind === 'capped') {
+      const miss = 1 - a / c;
+      let expected = k * miss ** (k - 1);
+      for (let i = 1; i < k; i++) expected += i * miss ** (i - 1) * a / c;
+      return agree(item, expected);
+    }
     const P = chain(item.params);
     const h = hittingTimes(P, [P.length - 1]);
     return agree(item, h[0]);

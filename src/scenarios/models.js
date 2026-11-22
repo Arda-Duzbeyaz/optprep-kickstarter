@@ -1,4 +1,6 @@
 import { solve, bruteForceBest } from '../sections/ob/solver.js';
+import { Q } from '../core/rational.js';
+import { bayesWork, commonDenominator } from '../sections/bto/lib.js';
 
 const total = values => values.reduce((sum,x)=>sum+x,0);
 const rounded = x => Number(x.toFixed(4));
@@ -7,51 +9,105 @@ const ons='https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigr
 const nasa='https://science.nasa.gov/';
 const pick=(rng,level,easy,hard)=>rng.pick(level===1?easy:level===2?[...easy,...hard]:hard);
 
-function probability(rng,level) {
-  const n=rng.int(5,11), r=rng.int(2,n-2), k=rng.int(2,4), pay=rng.int(3,11);
-  const mode=pick(rng,level,['any','shown','until'],['exactly','posterior','predict','covariance','payoff','separated','one-run','alarm','remaining']);
-  const m=rng.pick(Array.from({length:n-1},(_,i)=>i+1).filter(x=>x!==r)), p=r/n, q=m/n, w=rng.pick([.25,.5,.75]);
-  const prefix=`An urn contains ${r} red and ${n-r} blue tokens. Draw two without replacement. `;
-  const both=p*(r-1)/(n-1), any=1-(1-p)*(n-r-1)/(n-1);
-  const a=`A device is type A with probability ${w}, otherwise B. On each trial its red-light probability is ${r}/${n} for A and ${m}/${n} for B. Trials are independent given its fixed type. `;
-  const likelihood=w*p+(1-w)*q, joint=w*p*p+(1-w)*q*q;
-  const seats=rng.int(6,11), marked=rng.int(2,Math.floor(seats/2)), previous=rng.chance(.5);
-  const choose=(a,b)=>Array.from({length:b},(_,i)=>(a-i)/(i+1)).reduce((v,x)=>v*x,1);
-  const order=`Arrange ${marked} marked and ${seats-marked} plain identical counters in a line. Every choice of marked positions is equally likely. `;
-  const run=`Each independent test succeeds with probability ${r}/${n}. Two consecutive successes trigger an alarm. The previous test ${previous?'succeeded':'failed'} and the alarm has not yet triggered. `;
-  let clear=previous?0:1, primed=previous?1:0;
-  for(let step=0;step<k;step++) [clear,primed]=[(clear+primed)*(1-p),clear*p];
-  const def={
-    separated:[order+'What is the probability no two marked counters are adjacent?',choose(seats-marked+1,marked)/choose(seats,marked),'Each plain counter creates a gap, with one extra gap at the end. Choose distinct gaps for the marked counters.'],
-    'one-run':[order+'What is the probability all marked counters form a single consecutive block?',(seats-marked+1)/choose(seats,marked),'Count possible starting positions of the block, then divide by all equally likely marked-position sets.'],
-    alarm:[run+`What is the probability the alarm triggers within the next ${k} tests?`,1-clear-primed,'Track the two surviving states after each test. Subtract their final total from one.'],
-    remaining:[run+'How many additional tests are expected until the alarm?',(1+p)/p**2-(previous?1/p:0),'Write one first-step equation starting clear and another starting after one success. A failure resets either state.'],
-    any:[prefix+'A sensor reports at least one red. What is the chance both are red?',both/any,'Keep pairs containing red and divide the two-red probability by their total probability.'],
-    shown:[prefix+'One draw position is chosen uniformly and displayed. It is red. What is the chance the hidden token is red?',(r-1)/(n-1),'Exchangeability lets you remove the displayed red, leaving one fewer red token and one fewer token in total.'],
-    exactly:[prefix+'A sensor reports exactly one red. You draw a third token. What is its chance of being red?',(r-1)/(n-2),'The report removes one red and one blue regardless of their order.'],
-    until:[`Each independent attempt succeeds with probability ${r}/${n}. Stop at the first success or after ${k} attempts. How many attempts do you expect to make?`,total(Array.from({length:k},(_,i)=>(1-p)**i)),'Sum the chances of reaching each attempt, beginning with one for the first.'],
-    posterior:[a+'The first light is red. What is the probability the device is type A?',w*p/likelihood,'Weight each type by its chance of producing the observation, then normalise.'],
-    predict:[a+'The first light is red. What is the probability the second is red?',joint/likelihood,'Divide the probability of two red lights by the marginal probability of the observed light.'],
-    covariance:[a+'Let X and Y be the 0/1 red indicators on trials one and two. What is their covariance?',joint-likelihood**2,'Compute E[XY] by conditioning on the type. Subtract the product of the two marginal red rates.'],
-    payoff:[`A game allows up to ${k} independent attempts, stopping at the first success. Success chance per try is ${r}/${n}. Each attempt costs £1 and the first success pays £${pay}. What is the expected net gain in pounds?`,pay*(1-(1-p)**k)-total(Array.from({length:k},(_,i)=>(1-p)**i)),'Weight the one-off prize by the chance of any success. Subtract the expected number of paid attempts.'],
+const BTO_OBSERVATIONS = {
+  1: ['shown', 'exactly'],
+  2: ['any', 'posterior', 'predict'],
+  3: ['predict-after-two', 'covariance'],
+};
+
+function probability(rng, level) {
+  const n = rng.int(5, 11), r = rng.int(2, n - 2);
+  const mode = rng.pick(BTO_OBSERVATIONS[level]);
+  const m = rng.pick(Array.from({ length: n - 1 }, (_, i) => i + 1).filter((x) => x !== r));
+  const p = r / n, q = m / n, w = rng.pick([.25, .5, .75]);
+  const oldPrefix = `An urn contains ${r} red and ${n-r} blue tokens. Draw two without replacement. `;
+  const prefix = `A bag contains ${r} red and ${n-r} blue tokens. Draw two uniformly without replacement. `;
+  const both = p * (r - 1) / (n - 1), any = 1 - (1 - p) * (n - r - 1) / (n - 1);
+  const device = `A device is type A with probability ${w}, otherwise B. On each trial its red-light probability is ${r}/${n} for A and ${m}/${n} for B. Trials are independent given its fixed type. `;
+  const likelihood = w * p + (1 - w) * q, joint = w * p * p + (1 - w) * q * q;
+  const definitions = {
+    shown: [prefix + 'One of the two drawn tokens is chosen uniformly and shown to you. It is red. What is the probability the other token is red?',
+      (r - 1) / (n - 1), `Remove the revealed red, leaving ${r-1} red among ${n-1} tokens.`],
+    exactly: [prefix + 'A report says exactly one drawn token is red. What is the probability a third uniform draw from the remaining tokens is red?',
+      (r - 1) / (n - 2), `Exactly one of each colour is out, leaving ${r-1} red among ${n-2} tokens.`],
+    any: [prefix + 'A report says at least one of the two tokens is red. What is the probability both are red?',
+      both / any, 'Among the pairs with at least one red, count only the pairs with two reds.'],
+    posterior: [device + 'The first light is red. What is the probability the device is type A?',
+      w * p / likelihood, 'Weight each device type by the chance of producing the observed red.'],
+    predict: [device + 'The first light is red. What is the probability the second is red?',
+      joint / likelihood, 'Divide the probability of two red lights by the probability of one red light.'],
+    'predict-after-two': [device + 'The first two trials both show a red light. What is the probability the third also shows red?',
+      (w * p ** 3 + (1 - w) * q ** 3) / joint, 'Divide the probability of three red lights by the probability of the first two being red.'],
+    covariance: [device + 'Let X and Y be 1 if the corresponding trial (first or second) shows red, and 0 otherwise. What is their covariance?',
+      joint - likelihood ** 2, `Compute E[XY] = ${rounded(joint)} across the two types and subtract E[X]E[Y] = ${rounded(likelihood ** 2)}.`],
   };
-  const [text,value,method]=def[mode];
-  const jointText=rounded(joint), marginal=rounded(likelihood);
-  const working={
-    separated:`Favourable sets = C(${seats-marked+1}, ${marked}). All position sets = C(${seats}, ${marked}).`,
-    'one-run':`There are ${seats-marked+1} possible starts and C(${seats}, ${marked}) position sets.`,
-    alarm:`Start at (clear, one success) = ${previous?'(0,1)':'(1,0)'}. Update (a,b) to ((a+b) × ${n-r}/${n}, a × ${r}/${n}). After ${k} steps the surviving mass is ${rounded(clear+primed)}.`,
-    remaining:`With p = ${r}/${n}, let C = 1 + pS + (1−p)C and S = 1 + (1−p)C. These give C = (1+p)/p² and S = 1/p². Use ${previous?'S':'C'} for the observed start.`,
-    any:`P(RR) = ${r}/${n} × ${r-1}/${n-1}. P(any R) = 1 − ${n-r}/${n} × ${n-r-1}/${n-1}. Divide the first by the second.`,
-    shown:`One identified red is out, leaving ${r-1} red among ${n-1}.`,
-    exactly:`Exactly one of each colour is out, leaving ${r-1} red among ${n-2}.`,
-    posterior:`P(red) = ${w} × ${r}/${n} + ${1-w} × ${m}/${n} ≈ ${marginal}. The numerator for type A is ${w} × ${r}/${n}.`,
-    predict:`P(two reds) = ${w} × (${r}/${n})² + ${1-w} × (${m}/${n})² ≈ ${jointText}. Divide by P(first red) ≈ ${marginal}.`,
-    covariance:`E[XY] ≈ ${jointText}. E[X] = E[Y] ≈ ${marginal}. Subtract E[X] × E[Y] from E[XY].`,
-    until:`Add ${k} survival terms, starting with 1 and multiplying each successive term by ${n-r}/${n}.`,
-    payoff:`Expected prize = ${pay} × (1 − (${n-r}/${n})^${k}). Expected cost = ${rounded(total(Array.from({length:k},(_,i)=>(1-p)**i)))} pounds.`
-  };
-  return {mode,text,value,method,working:working[mode],params:{n,r,k,m,w,pay,seats,marked,previous},prob:['any','shown','exactly','posterior','predict','separated','one-run','alarm'].includes(mode)};
+  const [text, value, method] = definitions[mode];
+  let steps, exact;
+  if (mode === 'any') {
+    exact = Q.of(r-1,2*n-r-1).toString();
+    steps = [
+      {say:method,why:'Two reds always satisfy the report. The report also allows one red in either order.',
+        math:`P(both | at least one) = (${r} × ${r-1}/(${n} × ${n-1})) / ((${r} × ${r-1} + 2 × ${r} × ${n-r})/(${n} × ${n-1}))`},
+      {say:`Cancel the common denominator, then factor ${r} out of the top and bottom.`,why:'Each qualifying pair includes at least one red.',
+        math:`${r-1} / (${r-1} + 2 × ${n-r}) = ${exact}`},
+    ];
+  } else if (mode === 'posterior' || mode.startsWith('predict')) {
+    const priorA=Q.of(w*4,4),priorB=Q.of(1).sub(priorA), first=Q.of(r,n), second=Q.of(m,n);
+    if (mode === 'posterior') {
+      const work=bayesWork(priorA,first,second,[`${r}/${n}`,`${m}/${n}`]);
+      exact=work.correct.toString();
+      steps=[
+        {say:method,why:'A red light can come from either device. Keep both paths below the division bar.',math:`P(A | red) = ${work.setup}`},
+        {say:`Scale both paths to a common denominator of ${work.denominator}, then cancel it.`,why:'Divide the weight of A by the sum of the two weights.',math:work.reduced},
+      ];
+    } else {
+      const seen=mode==='predict'?1:2;
+      const weightA=priorA.mul(seen===1?first:first.mul(first)),weightB=priorB.mul(seen===1?second:second.mul(second));
+      const {left,right,denominator}=commonDenominator(weightA,weightB);
+      const pA=`(${r}/${n})`,pB=`(${m}/${n})`, power=seen===1?'':'²';
+      exact=Q.of(left*BigInt(r)+right*BigInt(m),(left+right)*BigInt(n)).toString();
+      steps=[
+        {say:method,why:'Each product keeps one device type fixed for the entire sequence.',
+          math:`(${priorA} × ${pA}^${seen+1} + ${priorB} × ${pB}^${seen+1}) / (${priorA} × ${pA}${power} + ${priorB} × ${pB}${power})`},
+        {say:`Use ${left} and ${right} as the weights of A and B after the observed reds.`,why:`The history weights share a denominator of ${denominator}. Cancel it before averaging the next-red rates.`,
+          math:`(${left} × ${r} + ${right} × ${m}) / ((${left} + ${right}) × ${n}) = ${exact}`},
+      ];
+    }
+  }
+  const oldText={
+    shown:oldPrefix+'One draw position is chosen uniformly and displayed. It is red. What is the chance the hidden token is red?',
+    exactly:oldPrefix+'A sensor reports exactly one red. You draw a third token. What is its chance of being red?',
+    any:oldPrefix+'A sensor reports at least one red. What is the chance both are red?',
+    covariance:device+'Let X and Y be the 0/1 red indicators on trials one and two. What is their covariance?',
+  }[mode];
+  const choice = (value, misconception) => ({ value, misconception });
+  const common = [
+    choice(p, 'Used the original red rate for type A or the whole urn.'),
+    choice(likelihood, 'Used the overall rate before seeing the observation.'),
+  ];
+  const distractors = {
+    shown: [choice((r - 1) / n, 'Removed a red from the numerator but left the original total.'),
+      choice(r / (n - 1), 'Removed one token from the denominator but kept all the reds.'),
+      choice(both, 'Used the chance both draws are red before seeing one of them.')],
+    exactly: [choice((r - 1) / (n - 1), 'Removed the red but left the reported blue in the urn.'),
+      choice((r - 2) / (n - 2), 'Removed two reds instead of one of each colour.'),
+      choice(r / (n - 2), 'Removed two tokens but kept all the reds.')],
+    any: [choice(both, 'Used the unconditional two-red probability.'),
+      choice((r - 1) / (n - 1), 'Treated the report as showing a particular red draw.'),
+      choice(any, 'Answered the probability of getting the report.')],
+    posterior: [choice(w, 'Kept the prior Type A probability.'),
+      choice(w * p, 'Computed the joint chance of Type A and red without dividing by the evidence.')],
+    predict: [choice(joint, 'Computed the joint chance of two reds without dividing by the evidence.'),
+      choice(q, 'Assumed the first report identifies Type B.')],
+    'predict-after-two': [choice(joint / likelihood, 'Updated from only one red light.'),
+      choice(w * p ** 3 + (1 - w) * q ** 3, 'Computed the joint chance of three reds before seeing the first two.'),
+      choice(q, 'Assumed the observations identify Type B exactly.')],
+    covariance: [choice(0, 'Treated the trials as independent even after averaging over the shared type.'),
+      choice(joint, 'Used the joint probability without subtracting the product of the marginals.'),
+      choice(likelihood * (1 - likelihood), 'Computed the variance of a single trial.')],
+  }[mode];
+  return { mode, text, oldText, value, method, steps, exact, params: { n, r, m, w }, prob: true,
+    distractors: [...distractors, ...common] };
 }
 
 function numeric(rng,level) {
@@ -62,7 +118,7 @@ function numeric(rng,level) {
   const output=a*x+b*y, final=price*(1+rise/100)*(1-cut/100);
   const shifts=table(['Shift','Worker-hours','Completed jobs'],[['Early',a,a*x],['Late',b,b*y]]);
   const def={
-    ratio:[`A batch contains ${a+b} equal crates for every ${a} sent by rail. There are ${(a+b)*x} crates in total. How many travel by another route?`,b*x,'Find how many groups of crates there are. Each group sends the remaining crates by another route.'],
+    ratio:[`Of every ${a+b} crates sent, ${a} travel by rail. If ${(a+b)*x} crates are sent in total, how many travel by other routes?`,b*x,'Divide the total by the group size. Count the non-rail crates in each group.'],
     convert:[`A pump fills ${x} litres every ${a} seconds. How many cubic metres does it deliver in ${b} minutes? One cubic metre is 1,000 litres.`,x*60*b/a/1000,'Convert minutes to seconds before multiplying by the rate. Convert litres to cubic metres last.'],
     change:[`A £${price} fee rises by ${rise}% and the new fee then falls by ${cut}%. What is the final fee in pounds?`,final,'Apply both percentage multipliers in sequence.'],
     reverse:[`A shop marked its price up by ${rise}% and then reduced the result by ${cut}%. The final price was £${final.toFixed(2)}. What was the initial price in pounds?`,price,'Undo the discount and the markup by dividing by their multipliers.'],
@@ -72,13 +128,25 @@ function numeric(rng,level) {
     target:[`You have ${a*10} litres of a ${x}% solution. How many litres of a ${x+(baseGap+addGap)*b}% solution must you add to reach ${x+baseGap*b}%? Assume volumes add.`,a*10*baseGap/addGap,'Balance the solute shortfall in the initial volume against the surplus per litre of added liquid.']
   };
   const [text,value,method,visual]=def[mode];
+  const oldText=mode==='ratio'?`A batch contains ${a+b} equal crates for every ${a} sent by rail. There are ${(a+b)*x} crates in total. How many travel by another route?`:undefined;
   const calculations={
     ratio:`(${(a+b)*x} ÷ ${a+b}) × ${b}`,convert:`${x} × (${b} × 60) ÷ ${a} ÷ 1,000`,
     change:`${price} × ${1+rise/100} × ${1-cut/100}`,reverse:`${final.toFixed(2)} ÷ ${1-cut/100} ÷ ${1+rise/100}`,
     weighted:`(${a*x} + ${b*y}) ÷ (${a} + ${b})`,missing:`(${output} − ${a} × ${x}) ÷ ${b}`,
     capacity:`(${x} + ${y}) × ${a} × ${efficiency}`,target:`${a*10} × ${baseGap*b} ÷ ${addGap*b}`
   };
-  return {mode,text,value,method,working:calculations[mode],visual,params:{a,b,x,y,price,rise,cut,efficiency,baseGap,addGap}};
+  const mistakes={
+    ratio:[[a*x,'Counted the crates that travelled by rail.'],[(a+b)*x,'Counted all crates.'],[x,'Found the number of groups, not the number of crates sent by other routes.'],[b,'Counted the non-rail crates in one group only.']],
+    convert:[[value*60,'Used the seconds-per-minute conversion twice.'],[value/60,'Used minutes as if they were seconds.'],[value*1000,'Gave the result in litres.'],[value/1000,'Converted litres to cubic metres twice.']],
+    change:[[price*(1+(rise-cut)/100),'Subtracted percentages as though both changes applied to the starting fee.'],[price*(1+rise/100),'Stopped after the increase.'],[price*(1-cut/100),'Applied only the discount.'],[price,'Kept the original fee.']],
+    reverse:[[final*(1+rise/100)*(1-cut/100),'Applied both changes again to the final price.'],[final/(1+rise/100),'Undid the markup but kept the discount.'],[final/(1-cut/100),'Undid the discount but kept the markup.'],[final/(1+(rise-cut)/100),'Used the difference between the two percentages as a single change.']],
+    weighted:[[(x+y)/2,'Averaged shift rates as if their hours were equal.'],[x,'Used the early shift rate only.'],[y,'Used the late shift rate only.'],[output,'Gave total jobs without dividing by worker-hours.']],
+    missing:[[output/b,'Assigned every job to the late shift.'],[(output-x)/b,'Subtracted one worker-hour of early output.'],[output/(a+b),'Gave the combined rate for both shifts.'],[output-a*x,'Gave the late job count without dividing by hours.']],
+    capacity:[[(x+y)*a,'Counted output including rejects.'],[(x+y)*efficiency,'Counted good output in one hour only.'],[x*a*efficiency,'Left out the second line.'],[(x+y)*a*(1-efficiency),'Counted rejected parts instead of good parts.']],
+    target:[[a*10,'Assumed the starting and added volumes had to be equal.'],[a*10*addGap/baseGap,'Swapped the required and available concentration gaps.'],[a*10+value,'Gave the final volume instead of the amount added.'],[a*10*baseGap/(addGap+baseGap),'Used the gap between the two starting concentrations instead of the gap above target.']],
+  }[mode];
+  return {mode,text,oldText,value,method,working:calculations[mode],visual,params:{a,b,x,y,price,rise,cut,efficiency,baseGap,addGap},
+    distractors:mistakes.map(([value,misconception])=>({value,misconception}))};
 }
 
 function likelihood(rng,level) {
@@ -88,32 +156,32 @@ function likelihood(rng,level) {
   let text,statements,method,visual,operations;
   if(mode==='draws'){
     text=`An urn starts with ${r} red tokens among ${n}. Rank the chance that the next token is red under each procedure.`;
-    statements=[['Remove a known red first',(r-1)/(n-1)],['Replace the first draw before sampling',r/n],['Remove a known non-red first',r/(n-1)]];
+    statements=[['Remove a known red first',(r-1)/(n-1),`Both counts fall by one: ${r-1}/${n-1}.`],['Replace the first token before drawing again',r/n,`The original mix is restored: ${r}/${n}.`],['Remove a known non-red first',r/(n-1),`The red count stays the same: ${r}/${n-1}.`]];
     method='Write the remaining red count over the remaining total for each procedure.';
   }else if(mode==='pool'){
     text='Rank the probability of a defect for the three sampling procedures.';
     visual=table(['Line','Units','Defects'],[['West',100,lo],['East',100*ratio,hi*ratio]]);
-    statements=[['Choose a line uniformly, then a unit',(lo+hi)/200],['Choose uniformly from all units',(lo+hi*ratio)/(100*(ratio+1))],['Choose uniformly from West',lo/100]];
+    statements=[['Choose a line uniformly, then a unit uniformly from that line',(lo+hi)/200,`Average the line rates: (${lo}% + ${hi}%)/2.`],['Choose uniformly from all units',(lo+hi*ratio)/(100*(ratio+1)),`Divide all defects by all units: ${lo+hi*ratio}/${100*(ratio+1)}.`],['Choose uniformly from West',lo/100,`Use only the West row: ${lo} defects in 100 units.`]];
     method='The equal-line rule averages rates equally. Pooling units instead weights each rate by output.';
   }else if(mode==='observed'){
     text=`Two tokens are drawn without replacement from ${r} red and ${n-r} blue tokens. Rank the probability both are red after each report.`;
-    statements=[['A uniformly selected draw position was red',(r-1)/(n-1)],['At least one draw was red',(r-1)/(2*n-r-1)],['No report was made',r*(r-1)/(n*(n-1))]];
+    statements=[['A uniformly selected one of the two draws was red',(r-1)/(n-1),`One red is known. Find the chance the other token is red: ${r-1}/${n-1}.`],['At least one draw was red',(r-1)/(2*n-r-1),'Divide the chance of two reds by the chance of at least one red.'],['No report was made',r*(r-1)/(n*(n-1)),`Multiply the unconditional draw probabilities: ${r}/${n} × ${r-1}/${n-1}.`]];
     method='Compare the unconditional pair probability with conditioning on a red position or on the union of the two red events.';
   }else if(mode==='density'){
     text='Rank the probability mass in each bin of this frequency-density histogram.';
     let start=0;const rows=counts.map((c,i)=>{const left=start;start+=widths[i];return [`[${left}, ${start})`,c/widths[i]];});
     visual=table(['Bin','Count per unit width'],rows);
-    statements=rows.map(([label],i)=>[label,counts[i]/total(counts)]);method='Multiply bin width by height and compare the resulting counts.';
+    statements=rows.map(([label,density],i)=>[label,counts[i]/total(counts),`${widths[i]} × ${density} gives ${counts[i]} of ${total(counts)} observations.`]);method='Multiply bin width by height and compare the resulting counts.';
   }else if(mode==='experiments'){
     const p=r/n,cut=ratio;
-    text=`An urn contains ${r} red and ${n-r} blue tokens. A separate die is fair and six-sided. Rank the following events; each experiment starts fresh.`;
+    text=`An urn contains ${r} red and ${n-r} blue tokens. Each draw is uniform among the remaining tokens. A fair six-sided die is rolled independently of any draw. Rank these events, starting afresh for each one.`;
     const options=[
-      ['pair','Two reds without replacement',p*(r-1)/(n-1)],
-      ['split','Exactly one red in two independent draws with replacement',2*p*(1-p)],
-      ['union','At least one red in two draws with replacement',1-(1-p)**2],
-      ['report','Hidden token red after a random one of two draw positions is revealed red, without replacement',(r-1)/(n-1)],
-      ['product',`One red draw and a die roll of at most ${cut}`,p*cut/6],
-      ['die-tail',`Both of two independent die rolls exceed ${cut}`,((6-cut)/6)**2],
+      ['pair','Two reds without replacement',p*(r-1)/(n-1),`Use ${r}/${n} for the first red and ${r-1}/${n-1} for the second.`],
+      ['split','Exactly one red in two independent draws with replacement',2*p*(1-p),`Either order works: 2 × ${r}/${n} × ${n-r}/${n}.`],
+      ['union','At least one red in two draws with replacement',1-(1-p)**2,`Subtract two blues from one: 1 − (${n-r}/${n})².`],
+      ['report','Hidden token is red after two draws without replacement and a uniformly chosen one is shown to be red',(r-1)/(n-1),`The revealed red accounts for one token, leaving ${r-1} reds among ${n-1} possible tokens for the hidden draw.`],
+      ['product',`One red draw and a die roll of at most ${cut}`,p*cut/6,`Multiply the independent chances: ${r}/${n} × ${cut}/6.`],
+      ['die-tail',`Both of two independent die rolls exceed ${cut}`,((6-cut)/6)**2,`Square the upper-tail chance (${6-cut}/6).`],
     ];
     const chosen=[];
     for(const entry of rng.shuffle(options))if(chosen.every(old=>Math.abs(old[2]-entry[2])>.00011)){chosen.push(entry);if(chosen.length===3)break;}
@@ -122,10 +190,10 @@ function likelihood(rng,level) {
   }else{
     const groups=rng.shuffle([100,200,400]),delta=rng.pick([-1,1]);
     const rows=groups.map((g,i)=>['ABC'[i],g*lo/100+delta,g]);visual=table(['Team','Successes','Tries'],rows);
-    text='Rank success rates from highest to lowest.';statements=rows.map(([label,hit,trials])=>[label,hit/trials]);
+    text='Rank success rates from highest to lowest.';statements=rows.map(([label,hit,trials])=>[label,hit/trials,`${hit}/${trials} = ${lo}/100 ${delta<0?'−':'+'} 1/${trials}.`]);
     method='Each rate differs from the same base rate by one event. Compare the signed size of that change.';
   }
-  return {mode,operations,text,statements:rng.shuffle(statements).map(([text,p])=>({text,p})),method,visual,params:{n,r,ratio,lo,hi}};
+  return {mode,operations,text,statements:rng.shuffle(statements).map(([text,p,how])=>({text,p,how})),method,visual,params:{n,r,ratio,lo,hi}};
 }
 
 function interval(rng,level){
@@ -144,7 +212,7 @@ function interval(rng,level){
       const sample=rng.shuffle(values).slice(0,4);
       rows.push(['ABC'[i],slots,sample.join(', ')]);truth+=total(values);estimate+=slots*total(sample)/4;
     }
-    text='Estimate the total passenger boardings across all simulated services. Four trips were sampled at random within each route.';
+    text='Four trips were sampled uniformly without replacement from each route. Estimate total passenger boardings across all trips, including the sample.';
     visual=table(['Route','Trips','Sample boardings'],rows);unit='boardings';
     method=`Multiply each sample average by that route’s trip count, then add. This estimates ${rounded(estimate)}. The complete simulated log contains ${truth}.`;
   }else if(mode==='population'||mode==='production'){
@@ -159,7 +227,7 @@ function interval(rng,level){
     method=`The operator lists 14,000 MW installed. Multiply 14 GW by ${24*days} hours and ${speed}/100 to get GWh.`;
   }else if(mode==='bridge'){
     source='https://www.transport.gov.scot/news/135-years-of-the-forth-bridge/';unit='seconds';
-    text=`A ${k*10}-metre train crosses Scotland’s Forth rail bridge at a constant ${speed} km/h. Estimate the time from its front entering until its rear clears the bridge.`;
+    text=`A ${k*10}-metre train crosses Scotland’s Forth railway bridge, including the approach viaducts, at ${speed} km/h. Estimate the time from the front entering until the rear clears the full bridge.`;
     truth=(2467+k*10)/(speed/3.6);
     method=`Transport Scotland gives a bridge length of 2,467 m. Add the ${k*10} m train, then divide by speed in m/s (${speed} ÷ 3.6).`;
   }else if(mode==='surface'){

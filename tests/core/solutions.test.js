@@ -40,7 +40,7 @@ function agrees(it) {
     if (first.length !== full.length || first.some((v, i) => Math.abs(v - full[i]) > 1e-9)) return `picture terms ${first} differ from the sequence ${full}`;
   }
   if (it.kind === 'rank' && p.diagram === 'bar') {
-    const want = it.answerOrder.map((i) => Math.round(it.statements[i].p * 1000) / 1000);
+    const want = it.answerOrder.map((i) => it.statements[i].p);
     if (JSON.stringify(sp.series[0].values) !== JSON.stringify(want)) return `bars ${sp.series[0].values}, statements ${want}`;
   }
   if (it.kind === 'rank' && p.diagram === 'venn') {

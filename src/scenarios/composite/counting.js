@@ -1,7 +1,8 @@
 const C=(n,r)=> r<0||r>n?0:Array.from({length:r},(_,i)=>(n-i)/(i+1)).reduce((a,b)=>a*b,1);
 export default function counting(rng,level){
-  const seats=rng.int(6,level===1?8:11),red=rng.int(2,Math.floor(seats/2)),circle=rng.chance(.5);
-  const event=rng.pick(['separate','single-block']),report=level===1?'none':rng.pick(['none','first-red','first-plain','ends-differ']);
+  const seats=rng.int(6,level===1?8:level===2?9:11),red=rng.int(2,Math.floor(seats/2)),circle=rng.chance(.5);
+  const event=level===1 && red>2?'single-block':rng.pick(['separate','single-block']);
+  const report=level===1?'none':rng.pick(level===2?['first-red','first-plain']:['first-red','first-plain','ends-differ']);
   const askCount=level>1 && rng.chance(.4);
   // Count binary strings incrementally by red count, start/end colours and run count.
   let states=[{used:0,runs:0,first:-1,last:-1,n:1}];
@@ -23,7 +24,10 @@ export default function counting(rng,level){
   }
   const clue={none:'', 'first-red':'Position 1 is marked.', 'first-plain':'Position 1 is plain.', 'ends-differ':`Exactly one of positions 1 and ${seats} is marked.`}[report];
   const goal=event==='separate'?'no two marked positions touch':'all marked positions form one connected block';
-  const text=`Exactly ${red} of ${seats} numbered positions are uniformly selected and marked. ${circle?'The numbered positions form a ring, so the last touches the first.':'The numbered positions form a line with two distinct ends.'} ${clue} ${askCount?'Among the placements consistent with this information, in how many is the following true? '+goal.charAt(0).toUpperCase()+goal.slice(1)+'.':'Given the stated information, what is the chance that '+goal+'?' }`;
+  const oldText=`Exactly ${red} of ${seats} numbered positions are uniformly selected and marked. ${circle?'The numbered positions form a ring, so the last touches the first.':'The numbered positions form a line with two distinct ends.'} ${clue} ${askCount?'Among the placements consistent with this information, in how many is the following true? '+goal.charAt(0).toUpperCase()+goal.slice(1)+'.':'Given the stated information, what is the chance that '+goal+'?' }`;
+  const layout=circle?`on a ring, where positions 1 and ${seats} touch`:'in a line';
+  const ask=askCount?(event==='separate'?'How many allowed selections have no adjacent marks?':'How many allowed selections have all marks in one block?'):`What is the probability that ${goal}?`;
+  const text=[`Choose ${red} of ${seats} numbered positions ${layout}, with every subset equally likely. Mark the chosen positions.`,clue?'You learn that '+clue[0].toLowerCase()+clue.slice(1):'',ask].filter(Boolean).join(' ');
   // A run of marks can wrap around the seam. Use independent small counts in
   // the displayed solution so the learner need not implement the state machine.
   const gapCount=circle?seats/(seats-red)*C(seats-red,red):C(seats-red+1,red);
@@ -40,6 +44,19 @@ export default function counting(rng,level){
     'Exactly one contiguous block starts at the first position. All other starts leave that position plain.';
   const method=event==='separate'?'Place marked tokens into distinct gaps between plain tokens. For a ring also check the join between the last and first positions.':'Choose the start of the contiguous block. On a ring it may wrap past the last position.';
   return {mode:'restricted-arrangements',operations:[circle?'cycle':'line',report,event,askCount?'count':'condition'],params:{seats,red,circle,event,report,askCount},
-    text,value:askCount?num:num/den,prob:!askCount,working:`Before the report, ${Math.round(raw)} arrangements meet the adjacency rule. Keeping only patterns consistent with the disclosed positions leaves ${num} favourable among ${den} possible.`,
-    method:method+' '+conditionMethod,rivals:[raw,C(seats,red),num/den,den,num,1-num/den]};
+    text,oldText,value:askCount?num:num/den,prob:!askCount,integer:askCount,bounds:askCount?[0,den]:undefined,
+    working:`Before the report, ${Math.round(raw)} arrangements meet the adjacency rule. Keeping only patterns consistent with the disclosed positions leaves ${num} favourable among ${den} possible.`,
+    method:method+' '+conditionMethod,
+    distractors: (askCount?[
+      [raw,'Counted qualifying placements before taking account of the report.'],
+      [den,'Counted all placements consistent with the report, including ones that fail the adjacency rule.'],
+      [den-num,'Counted the allowed placements that fail the adjacency rule.'],
+      [num*red,'Counted the same set of positions once for each mark it contains.'],
+    ]:[
+      [raw/C(seats,red),'Computed the probability before the report.'],
+      [num/C(seats,red),'Filtered the numerator by the report but used the full sample space.'],
+      [1-num/den,'Found the probability the adjacency rule fails.'],
+      [event==='separate'?num/red/den:num*red/den,'Used the number of marks to change the count of each placement.'],
+    ]).map(([value,misconception])=>({value,misconception})),
+  };
 }

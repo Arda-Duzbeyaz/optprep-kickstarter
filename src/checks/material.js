@@ -1,5 +1,6 @@
-import { positionOutcome, intervalScore } from '../core/check.js';
+import { positionOutcome, intervalScore, validTrades } from '../core/check.js';
 import { solve } from '../sections/ob/solver.js';
+import { orderbookPrompt, MAX_TRADES } from '../sections/ob/lib.js';
 
 export function number(text, answer, explanation, options = {}) {
   return { kind: 'number', text, answer, explanation, unit: '', tolerance: 1e-8, ...options };
@@ -22,9 +23,9 @@ export function estimate(text, truth, unit, explanation, options = {}) {
 export function board(products, quotes, explanation, skill) {
   const instruments = quotes.map(([name, legs, bid, ask], i) => ({ id: 'q' + i, name, legs, bid, ask }));
   const book = { products, instruments };
-  const best = solve(book, 6);
-  return { kind: 'orderbook', text: 'Build a flat position with a positive cash balance using up to six unit trades. If no such position exists, choose “No opportunity”.',
-    board: book, best, explanation, skill };
+  const best = solve(book, MAX_TRADES);
+  return { kind: 'orderbook', text: orderbookPrompt(MAX_TRADES,true),
+    board: book, best, tradeLimit:MAX_TRADES, explanation, skill };
 }
 
 // Open entry removes multiple-choice cues. A percent sign always has its usual meaning.
@@ -44,8 +45,7 @@ export function validAnswer(item, a) {
     new Set(a.order).size === 3 && a.order.every(v => Number.isInteger(v) && v >= 0 && v < 3);
   if (item.kind === 'interval') return Number.isFinite(Number(a.lower)) && Number(a.lower) > 0 &&
     Number.isFinite(Number(a.upper)) && Number(a.lower) <= Number(a.upper);
-  return a.pass === true || (Array.isArray(a.trades) && a.trades.length > 0 && a.trades.length <= 6 &&
-    a.trades.every(t => ['buy', 'sell'].includes(t.side) && item.board.instruments.some(q => q.id === t.id)));
+  return a.pass === true || validTrades(item.board, a.trades, item.tradeLimit ?? MAX_TRADES);
 }
 
 export function grade(item, a) {

@@ -2,10 +2,9 @@
 //   generate(rng, {difficulty}) -> item satisfying src/core/contract.js
 //   verify(item)                -> recomputes the answer by a different method
 //   lesson                      -> the Learn-mode card (learner-profile cycle)
-import { buildMcq } from '../../../core/options.js';
 import { fmtP } from '../../../core/format.js';
 import { Q } from '../../../core/rational.js';
-import { askFrom, diceGrid, withMath } from '../lib.js';
+import { askFrom, btoChoices, diceGrid, withMath } from '../lib.js';
 
 const ways = (s) => (s < 2 || s > 12 ? 0 : 6 - Math.abs(s - 7)); // ordered pairs summing to s
 export const SUM_PAIRS = Array.from({ length: 11 }, (_, i) => i + 2)
@@ -53,7 +52,7 @@ export default {
     ];
     if (ev.kind === 'atLeast') distractors.push({ value: range(ev.k + 1, 12).reduce((n, s) => n + ways(s), 0) / 36, misconception: `Read "at least ${ev.k}" as "more than ${ev.k}" and dropped the sum ${ev.k} itself.` });
     if (ev.kind === 'atMost') distractors.push({ value: range(2, ev.k - 1).reduce((n, s) => n + ways(s), 0) / 36, misconception: `Read "at most ${ev.k}" as "less than ${ev.k}" and dropped the sum ${ev.k} itself.` });
-    const mcq = buildMcq(rng, { correct: p, distractors, format: fmtP });
+    const mcq = btoChoices(rng, { correct: p, distractors, format: fmtP });
     const tally = ev.sums.filter((s) => ways(s) > 0).map((s) => `${s}: ${ways(s)}`).join(', ');
     return {
       id: `bto:two-dice-sum:${rng.seed}`,

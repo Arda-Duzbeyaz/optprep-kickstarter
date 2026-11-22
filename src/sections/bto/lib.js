@@ -3,6 +3,7 @@
 import { buildMcq } from '../../core/options.js';
 import { fmtP, fmtNum } from '../../core/format.js';
 import { Q } from '../../core/rational.js';
+import { questionKey } from '../../core/questions.js';
 
 export const q = (n, d = 1) => Q.of(n, d);
 export const qpow = (x, k) => new Q(x.n ** BigInt(k), x.d ** BigInt(k));
@@ -10,14 +11,47 @@ export const num = (x) => (x instanceof Q ? x.toNumber() : typeof x === 'bigint'
 export const range = (a, b) => { const out = []; for (let i = a; i <= b; i++) out.push(i); return out; };
 export const harmonic = (n) => { let s = q(0); for (let i = 1; i <= n; i++) s = s.add(q(1, i)); return s; };
 
+// Keep the two weights on one scale so the common denominator can cancel.
+export function commonDenominator(first, second) {
+  const denominator = first.d * q(second.d, first.d).n;
+  return { denominator, left: first.n * (denominator / first.d), right: second.n * (denominator / second.d) };
+}
+
+export function bayesWork(prior, likelihood, alternative, [first = String(likelihood), second = String(alternative)] = []) {
+  const other = q(1).sub(prior);
+  const { left, right, denominator } = commonDenominator(prior.mul(likelihood), other.mul(alternative));
+  const correct = q(left, left + right);
+  return {
+    setup: `(${prior} × ${first}) / (${prior} × ${first} + ${other} × ${second})`,
+    reduced: `${left} / (${left} + ${right}) = ${correct}`,
+    denominator,
+    correct,
+  };
+}
+
 // Probabilities below 0.01 keep two significant digits so 0.002 and 0.0005 stay distinct.
 export function fmtAuto(v) {
   if (v !== 0 && Math.abs(v) < 0.01) return String(Number(v.toPrecision(2)));
   return v >= 0 && v <= 1 ? fmtP(v) : fmtNum(v);
 }
 
-// Closest-value spacing: relative for tiny answers, otherwise the core default.
-const gap = (c) => { const a = Math.abs(c); return a > 0 && a < 0.04 ? Math.max(a * 0.3, 1e-6) : Math.max(0.012, a * 0.07); };
+// Common values should be distinguishable with a rough calculation. For a rare
+// probability, keep the gaps proportional so the other choices are still plausible.
+const probabilityGap = (p) => p === 0 ? 0.035 : Math.min(0.035, p * 0.24);
+const numericGap = (c) => Math.max(0.012, Math.abs(c) * 0.07);
+
+export function btoChoices(rng, { correct, prob = true, minGap, format = fmtAuto, fillers, ...options }) {
+  const rare = correct > 0 && correct < .05 ? [correct / 4, correct / 2, correct * 1.5, correct * 2] : [];
+  const fallback = [...rare, .5, .25, .75, .1, .9, .2, .4, .6, .8, .05, .95, 0, 1].map(value => ({ value }));
+  return buildMcq(rng, {
+    ...options,
+    correct,
+    format,
+    fillers: prob ? [...(fillers ?? []), ...fallback] : fillers,
+    numberFromLabel: (label) => Number(label.replaceAll(',', '')),
+    minGap: (c) => prob ? Math.max(probabilityGap(c), minGap?.(c) ?? 0) : (minGap ?? numericGap)(c),
+  });
+}
 
 // ---------------------------------------------------------------- worked-solution helpers
 // The question sentence restated as what we want: "What is the probability that X?" -> "We want P(X)."
@@ -97,13 +131,13 @@ export function mcqItem(family, rng, difficulty, o) {
     .map((d) => ({ value: num(d.value), misconception: d.misconception }))
     .filter((d) => Number.isFinite(d.value) && (!prob || (d.value >= 0 && d.value <= 1)));
   const format = o.format || fmtAuto;
-  const mcq = buildMcq(rng, { correct, distractors, format, minGap: o.minGap || gap, fillers: o.fillers });
+  const mcq = btoChoices(rng, { correct, distractors, format, prob, minGap: o.minGap, fillers: o.fillers });
   // Which solution step a false belief breaks (counted from 1), where the family names it.
   for (const opt of mcq.options) {
     const d = o.distractors.find((x) => x.step && x.misconception === opt.misconception);
     if (d) opt.step = d.step;
   }
-  return {
+  const item = {
     id: `bto:${family}:${rng.seed}`,
     section: 'bto',
     family,
@@ -117,6 +151,8 @@ export function mcqItem(family, rng, difficulty, o) {
     // Structured inputs, sufficient to recompute the answer without reading the prompt text.
     params: plain({ family, ...(o.params ?? o.data) }),
   };
+  if (o.oldText) item.meta={previousPromptKey:questionKey({...item,prompt:o.oldVisual?{text:o.oldText,visual:o.oldVisual}:{text:o.oldText}})};
+  return item;
 }
 
 // Plain-JSON copy (no Q objects, functions or undefined); throws on non-finite numbers.

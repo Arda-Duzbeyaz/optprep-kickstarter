@@ -19,13 +19,13 @@ const fam = {
         posterior: { text: 'Select one person uniformly from all people who passed. That person is in group A.', p: q(successes[0], successes[0] + successes[1]), how: `${successes[0]} of all ${successes[0] + successes[1]} passes belong to A.` },
         weighted: { text: `Choose A with probability ${q(weights[0], weights[0] + weights[1])}, otherwise B, then a person uniformly from that group. That person passed.`, p: weighted, how: `Use group-choice weights ${weights[0]}:${weights[1]}, not group sizes.` },
         joint: { text: 'Select one person uniformly from everyone in the table. That person is in group A and passed.', p: q(successes[0], sizes[0] + sizes[1]), how: 'A passes divided by the whole population.' },
-        independent: { text: 'On each of two independent selections, choose a group with equal probability then a person uniformly in it. Both passed; selections are with replacement.', p: equal.mul(equal), how: 'Independent new group choices: square the average pass probability.' },
-        shared: { text: 'Choose a group with equal probability once, then select two people independently with replacement from that same group. Both passed.', p: ps[0].mul(ps[0]).add(ps[1].mul(ps[1])).div(q(2)), how: 'Square within each group, then average. The group is shared by the draws.' },
+        independent: { text: 'Choose A or B equally, then a person uniformly. Repeat with replacement and a fresh group choice. Both draws yield a pass.', p: equal.mul(equal), how: `Square the average pass probability: ((${ps[0]} + ${ps[1]})/2)². The second group choice is independent of the first.` },
+        shared: { text: 'Choose A or B with equal probability once. Draw twice uniformly from that group with replacement. Both draws yield a pass.', p: ps[0].mul(ps[0]).add(ps[1].mul(ps[1])).div(q(2)), how: `Both draws use the same group. Square each group’s rate before averaging: ((${ps[0]})² + (${ps[1]})²)/2.` },
       };
       const comparator = task === 'repeated' ? rng.pick(['pooled', 'equal', 'posterior', 'joint', 'weighted']) : null;
       const keys = rng.shuffle(task === 'population' ? ['pooled', 'equal', 'posterior'] : task === 'weighted' ? ['pooled', 'weighted', 'joint'] : [comparator, 'independent', 'shared']);
       const item = rankItem(ID, rng, difficulty, {
-        text: 'The table gives complete group sizes and pass counts. Each statement specifies its own random selection procedure. Rank the probabilities from most to least likely.',
+        text: 'Rank these events from most to least likely. Start with the full table for each event.',
         visual: { type: 'table', caption: 'Group sizes and observed passes', columns: ['Group', 'People', 'Passed'], rows: sizes.map((n, i) => [i ? 'B' : 'A', n, successes[i]]) },
         statements: keys.map((key) => pool[key]),
         compare: 'Use the selection procedure to choose weights; uniform people and uniform groups are different experiments.',

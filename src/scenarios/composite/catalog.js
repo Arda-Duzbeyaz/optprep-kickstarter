@@ -1,7 +1,7 @@
 const definitions={
   bto:[
-    ['box-experiment','Learning from observations','Weight each possible source by the probability it would produce the report.'],
-    ['stopped-process','Counters and stopping rules','Track the chance of still playing and the progress carried into the next attempt.'],
+    ['box-experiment','Learning from observations','Weight each possible source by the probability it would produce the report.',[2,3,4]],
+    ['stopped-process','Counters and stopping rules','Track the chance of still playing and the progress carried into the next attempt.',[2,3,4]],
     ['restricted-arrangements','Arrangements and partial information','Count allowable placements after accounting for the boundary and any disclosed positions.']],
   nl:[
     ['production-network','Production rates and schedules','Translate the schedule into hours, apply each yield, then reconstruct the requested quantity.'],
@@ -62,5 +62,5 @@ export const modelHints = {
   ],
 };
 export const modelCatalog = Object.fromEntries(Object.entries(definitions).map(([section, entries]) => [
-  section, entries.map(([id, title, skill]) => ({id, title, skill, levels: [1, 2, 3]})),
+  section, entries.map(([id, title, skill, levels = [1, 2, 3]]) => ({id, title, skill, levels})),
 ]));

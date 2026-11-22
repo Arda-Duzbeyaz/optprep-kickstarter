@@ -30,34 +30,42 @@ const fam = {
     });
     const { s, mean, sd } = stats(values);
     const kind = rng.pick(difficulty === 3 ? ['median', 'above', 'mean'] : ['pct', 'pct', 'above', 'median']);
-    let text, truth, bsd, how, extra = {};
+    let text, truth, bsd, how, why, hints, extra = {};
     if (kind === 'median') {
       truth = (s[99] + s[100]) / 2; text = Q_TEXT.median; bsd = 1 + 0.15 * sd;
-      how = 'Guess a value, count scores below it in a few rows, scale up to 200, and adjust the guess until about half fall below.';
+      how = 'Try a score. Tally how many entries are at or below it in a few sampled rows. Adjust the trial score until the fraction is near one half.';
+      why = 'The median comes from the two middle ranks. A sample estimates the fraction below a trial score.';
+      hints = ['Look for a score close to the middle of the grid.', 'Count at or below that score in a sample of rows. Aim for about half.'];
     } else if (kind === 'pct') {
       const p = rng.pick([10, 20, 25, 75, 80, 90]);
       truth = s[Math.ceil((p / 100) * N) - 1]; text = Q_TEXT.pct(p); bsd = 1.5 + 0.2 * sd; extra = { p };
-      how = `Rank ${Math.ceil((p / 100) * N)} of 200: scan for the ${p < 50 ? 'low' : 'high'} tail and count how many exceed a trial value.`;
+      how = `Find the smallest score where about ${p}% are at or below it. In the full grid this is the score at rank ${Math.ceil((p / 100) * N)}.`;
+      why = `Equivalently, about ${100-p}% should be strictly above a trial value. Ties may put slightly more than ${p}% at or below the target.`;
+      hints = [`Try a score and count entries at or below it in several rows.`,`Move your trial score up if the fraction is below ${p}%, and down if it is above.`];
     } else if (kind === 'above') {
       const t = Math.round(mu + rng.float(0.3, 1.3) * sig);
       truth = values.filter((v) => v >= t).length;
       if (truth < 8) return fam.generate(rng.fork('retry'), { difficulty });
       text = Q_TEXT.above(t); bsd = Math.max(3, 0.12 * truth); extra = { threshold: t };
-      how = `Count the scores ≥ ${t} row by row; there are 20 rows of 10.`;
+      how = `Count scores at or above ${t} in a few rows. Multiply the count by 20 divided by the number of rows you checked.`;
+      why = 'All rows have ten scores, so each scanned row represents the same fraction of the grid.';
+      hints = [`Include scores equal to ${t}.`,'Tally a few rows and scale by the total number of rows.'];
     } else {
       truth = mean; text = Q_TEXT.mean; bsd = 0.5 + 0.1 * sd;
-      how = 'Average a few rows (each row mean is a noisy estimate) and combine; the typical value sits near the middle of the grid\'s range.';
+      how = 'Take a few equal-length rows. Use a convenient round score as an anchor, sum the deviations, then divide by the number of scores checked and add the anchor back.';
+      why = 'Averaging small deviations is quicker than adding the full scores. Include rows from several parts of the grid.';
+      hints = ['Estimate a typical score as an anchor.', 'Find the average deviation from the anchor in a few rows, then add it to the anchor.'];
     }
     bsd = Number(bsd.toPrecision(2));
     return ivItem(fam, rng, difficulty, {
       text, truth, unit: kind === 'above' ? 'scores' : 'points',
       visual: { type: 'valuegrid', cols: COLS, values, caption: '200 test scores', label: 'A grid of 200 test scores' },
-      coach: { exact: false, belief: { kind: 'normal', sd: bsd }, note: 'Sorting 200 numbers is impossible in 60 seconds; a sampled estimate is good to a few points.' },
+      coach: { exact: false, belief: { kind: 'normal', sd: bsd }, note: 'Estimate from a sample of rows, then leave room for sampling error.' },
       steps: [
-        { say: how, why: 'Order statistics are found by counting against a trial value, which needs no sorting.' },
+        { say: how, why },
         { say: `Exact value: ${Number.isInteger(truth) ? truth : truth.toFixed(3)} (spread of the scores: sd ≈ ${sd.toFixed(1)}).`, why: 'Computed from all 200 values with the stated definition.' },
       ],
-      hints: ['Do not sort. Pick a trial value and count how many are below it in a few rows.', 'Scale the sample count up to 200 rows-worth and adjust.'],
+      hints,
       params: { scenario: kind, values, ...extra },
     });
   },

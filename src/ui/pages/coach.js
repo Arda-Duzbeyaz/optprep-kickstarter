@@ -1,8 +1,9 @@
 import { h, mount } from '../dom.js';
 import { SECTIONS } from '../../../config/sections.js';
 import { repairEvidence, intervalTrend } from '../../core/coach-evidence.js';
-import { sessionPlan, examEvidence, debrief, scoreLabel, moreGames, zapSampler, drillTitle } from '../../core/assessment-coach.js';
+import { sessionPlan, examEvidence, debrief, btoMasteryBreakdown, scoreLabel, moreGames, zapSampler, drillTitle } from '../../core/assessment-coach.js';
 import { CHECK_SECTIONS, CHECK_LENGTH, FORM_NAMES, calibration, checkTotal, paperDone } from '../../core/check-sessions.js';
+import { practiceFamilyTitle } from '../../practice/catalog.js';
 
 const link=(label,href,primary=false)=>h('a',{class:'btn'+(primary?' primary':''),href},label);
 const date=t=>new Date(t).toLocaleDateString('en-GB',{timeZone:'Europe/London',day:'numeric',month:'short'});
@@ -62,6 +63,7 @@ export function debriefPanel(id,run,store) {
   const fix=d.repair;
   const slipNote=h('span',{role:'status'});
   const evidence=store && fix && repairEvidence(store.state,id,fix.id,run,Date.now());
+  const mastery = id === 'bto' ? btoMasteryBreakdown(run) : null;
   const slip=store && fix && d.wrong ? h('button',{class:'btn',type:'button',onclick:()=>{
     store.setSetting('executionSlips',{...store.settings().executionSlips,[id+':'+fix.id]:Date.now()});
     slipNote.textContent='Saved for your next recommendation.';
@@ -69,6 +71,14 @@ export function debriefPanel(id,run,store) {
   return h('section',{class:'panel coach-debrief'},h('h2',{},'What to work on'),
     evidence?h('p',{},evidence.why):null,slip,slipNote,
     metrics.length ? h('div',{class:'coach-metrics'},metrics) : null,
+    mastery ? h('details', { class: 'level-guide' },
+      h('summary', {}, `Mastery by topic · ${mastery.credited} credited · ${mastery.verified} checkpoint${mastery.verified === 1 ? '' : 's'} verified`),
+      h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Topic'), h('th', {}, 'Correct'), h('th', {}, `Unaided within ${mastery.seconds} s`))),
+        h('tbody', {}, mastery.rows.map((row) => h('tr', {},
+          h('td', {}, h('a', { href: `#/run/bto/practice/${row.family}` }, practiceFamilyTitle(id, row.family)),
+            row.verified.length ? h('div', { class: 'small-note' }, `Verified difficulty ${row.verified.join(', ')}`) : null),
+          h('td', { class: 'num' }, `${row.right}/${row.seen}`),
+          h('td', { class: 'num' }, String(row.pacedRight))))))) : null,
     id==='iv' && d.hasOutcomes ? h('p',{class:'small-note'},d.above+' truths above your upper bound · '+d.below+' below your lower bound · '+d.wide+' hits with a score below 0.70.') : null,
     d.unreached && run.finishReason==='time' ? h('p',{},'The clock ran out with '+d.unreached+' questions still unseen. Practise moving on from a slow question in the next timed run.') : null,
     fix ? [h('p',{},h('strong',{},fix.title),'. ',fix.points>0?num(fix.points)+' points lost against full marks on the questions you reached.':fix.slow+' correct answers took more than the average time budget.'),

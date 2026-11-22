@@ -1,7 +1,8 @@
 // Shared builder for Intervals items: every family computes a truth and a coach object,
 // and this file turns them into a contract-valid item with a closing "choose the width" step.
 import { bestInterval } from './optimal.js';
-import { fmtNum } from '../../core/format.js';
+import { fmtNum, intervalNumber } from '../../core/format.js';
+import { intervalScore } from '../../core/check.js';
 
 // Rounded display with enough significant figures to be useful as an interval end.
 export function show(x) {
@@ -17,10 +18,19 @@ export function plain(x) {
   return String(Number(x.toFixed(a >= 1000 ? 0 : a >= 100 ? 1 : a >= 1 ? 2 : 4)));
 }
 
-// Two-decimal bracket around a non-terminating exact value, e.g. 41.666… -> [41.66, 41.67].
+// Round outwards, retaining extra places if a two-decimal lower bound would
+// round a small positive value to zero.
 export function bracket(x) {
-  const lo = Math.floor(x * 100 + 1e-9) / 100, hi = Math.ceil(x * 100 - 1e-9) / 100;
+  const scale = 10 ** Math.max(2, 2 - Math.floor(Math.log10(x)));
+  const lo = Math.floor(x * scale) / scale, hi = Math.ceil(x * scale) / scale;
   return [lo, hi];
+}
+
+export function exactInterval(truth) {
+  const rounded = Number(truth.toFixed(6));
+  const shortDecimal = rounded > 0 && Math.abs(truth - rounded) <= 4 * Number.EPSILON * truth;
+  const [lower, upper] = shortDecimal ? [rounded, rounded] : bracket(truth);
+  return { lower, upper, score: intervalScore(lower, upper, truth), shortDecimal };
 }
 
 const memo = new Map();
@@ -37,12 +47,12 @@ export function optimal(belief, center) {
 // The closing step every solution shares: how wide to go, and why.
 export function widthStep(coach, truth) {
   if (coach.exact && coach.belief.kind === 'point') {
-    const [lo, hi] = bracket(truth);
-    const terminating = Math.abs(truth * 1e6 - Math.round(truth * 1e6)) < 1e-6 * Math.max(1, truth);
+    const {lower,upper,score,shortDecimal}=exactInterval(truth);
+    const shownScore=shortDecimal?'1':score.toFixed(4);
     return {
-      say: terminating ? `Exact answer, so give a zero-width interval: [${+truth.toFixed(6)}, ${+truth.toFixed(6)}], score 1.` : `Exact but non-terminating (${truth.toPrecision(8)}…), so bracket it tightly: [${lo}, ${hi}], score ${(lo / hi).toFixed(4)}.`,
-      math: terminating ? `score = ${+truth.toFixed(6)} / ${+truth.toFixed(6)} = 1` : `score = ${lo} / ${hi} = ${(lo / hi).toFixed(4)}`,
-      why: 'Score = lower/upper when the truth is inside. With no uncertainty, any width only lowers the score.',
+      say: shortDecimal ? `Enter the exact value as both bounds [${lower}, ${upper}].` : `Bracket the computed value (about ${intervalNumber(truth)}) with [${lower}, ${upper}].`,
+      math: `score = ${lower} / ${upper} ${shortDecimal?'=':'≈'} ${shownScore}`,
+      why: 'The score is lower divided by upper if the interval contains the value. When you only have a rounded decimal, round each bound outwards.',
     };
   }
   const o = optimal(coach.belief, truth);
@@ -74,16 +84,16 @@ function ivExtras(fam, { text, truth, unit, coach, params, exact }) {
   const ask = `We want an interval [lower, upper] that contains the answer to: "${q.trim()}" The narrower it is while still containing it, the higher the score.`;
   const fast = fam.fast?.(params, truth) || (coach.belief.kind === 'point' ? fam.lesson.rule : `${fam.lesson.rule} ${coach.note || ''}`.trim());
   if (coach.exact && coach.belief.kind === 'point') {
-    const [lo, hi] = bracket(truth);
-    const terminating = Math.abs(truth * 1e6 - Math.round(truth * 1e6)) < 1e-6 * Math.max(1, truth);
-    const t = +truth.toFixed(6), wide = [r4(t * 0.99), r4(t * 1.01)];
+    const {lower,upper,score,shortDecimal}=exactInterval(truth);
+    const bounds=`[${lower}, ${upper}]`, wide = [r4(truth * 0.99), r4(truth * 1.01)];
+    const shownScore=shortDecimal?'1':score.toFixed(4);
     return {
       ask, fast,
-      check: `Exact means exact: ${terminating ? `[${t}, ${t}] scores 1` : `[${lo}, ${hi}] scores ${(lo / hi).toFixed(4)}`}, while a safety margin of 1% each side, [${wide[0]}, ${wide[1]}], scores only ${(wide[0] / wide[1]).toFixed(2)}.`,
+      check: `${bounds} scores ${shownScore}. A 1% margin on each side, [${wide[0]}, ${wide[1]}], scores about ${(wide[0] / wide[1]).toFixed(2)}.`,
       picture: fam.picture?.(params, truth) ?? {
         diagram: 'table',
-        spec: { columns: ['Exact value', 'Decimal', 'Interval to submit', 'Score'], rows: [[exact ? String(exact).split(' = ')[0] : `${t}${u}`, terminating ? `${t}${u}` : `${truth.toPrecision(8)}…${u}`, terminating ? `[${t}, ${t}]` : `[${lo}, ${hi}]`, terminating ? '1' : (lo / hi).toFixed(4)]] },
-        caption: terminating ? 'An exact answer that terminates: both ends on the value, full score.' : 'An exact answer that repeats: bracket it at the second decimal, which costs almost nothing.',
+        spec: { columns: ['Computed value', 'Decimal', 'Interval to submit', 'Score'], rows: [[exact ? String(exact).split(' = ')[0] : `${intervalNumber(truth)}${u}`, `${shortDecimal?'':'≈ '}${intervalNumber(truth)}${u}`, bounds, shownScore]] },
+        caption: shortDecimal ? 'Both bounds match the computed value.' : 'The two bounds round outwards so the computed value is inside.',
       },
     };
   }

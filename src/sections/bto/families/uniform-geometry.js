@@ -7,12 +7,18 @@ const par = (x) => (String(x).includes('/') ? `(${x})` : String(x));
 
 const ID = 'uniform-geometry';
 const TRIALS = 20000;
+export const uniformSumThresholds = [
+  [1, 2], [3, 4], [1, 1], [5, 4], [3, 2], [2, 3], [4, 3], [1, 4], [1, 3], [5, 3], [7, 4],
+  [1, 5], [2, 5], [3, 5], [4, 5], [6, 5], [7, 5], [8, 5], [9, 5], [3, 8], [5, 8], [11, 8], [13, 8],
+];
+export const meetingWaits = [5, 10, 12, 15, 20, 30];
+const TASKS = { 1: ['sum'], 2: ['ratio', 'meet', 'disc'], 3: ['triangle', 'asymmetricMeet'], 4: ['product', 'semicircle'] };
 
 // Each case: exact value, text, distractors, steps, and a one-trial simulator (for verify only).
 function build(kind, rng) {
   switch (kind) {
     case 'ratio': {
-      const k = rng.int(2, 5);
+      const k = rng.int(2, 8);
       return {
         value: q(2, k + 1), data: { kind, k },
         text: `A stick is broken at a uniformly random point. What is the probability that the longer piece is at least ${k} times as long as the shorter piece?`,
@@ -54,7 +60,7 @@ function build(kind, rng) {
         check: 'Each of the three pieces is too long with chance 1/4 and only one piece can be, so 1 − 3/4. Answers like 1/2 count breaks, not pieces.',
       };
     case 'meet': {
-      const w = rng.pick([5, 10, 12, 15, 20, 30]);
+      const w = rng.pick(meetingWaits);
       const f = w / 60;
       return {
         value: q(1).sub(q(60 - w, 60).mul(q(60 - w, 60))), data: { kind, w },
@@ -76,8 +82,36 @@ function build(kind, rng) {
         check: `At least ${w}/60 (the band is wider than that near the middle) and below 2 × ${w}/60 = ${((2 * w) / 60).toFixed(3)}, which counts the band's corners twice.`,
       };
     }
+    case 'asymmetricMeet': {
+      const w = rng.pick(meetingWaits);
+      const other = rng.pick(meetingWaits.filter((wait) => wait !== w));
+      const firstMiss = q(60 - w, 60), secondMiss = q(60 - other, 60);
+      const value = q(1).sub(firstMiss.mul(firstMiss).add(secondMiss.mul(secondMiss)).div(q(2)));
+      const f = w / 60, g = other / 60;
+      return {
+        value, data: { kind, w, other },
+        text: `Alex and Sam each arrive at a café at an independent uniformly random time between noon and 1 pm. Alex waits ${w} minutes, and Sam waits ${other} minutes. Each leaves after that wait if the other has not arrived. What is the probability that they meet?`,
+        distractors: [
+          { value: 1 - (1 - f) ** 2, misconception: 'Gave both friends the first waiting time.' },
+          { value: 1 - (1 - g) ** 2, misconception: 'Gave both friends the second waiting time.' },
+          { value: 1 - (1 - (f + g) / 2) ** 2, misconception: 'Averaged the two waiting times before calculating the two different triangle areas.' },
+          { value: 1 - value.toNumber(), misconception: 'Computed the chance they miss instead of the chance they meet.' },
+          { value: f + g, misconception: 'Added both waits as proportions of the hour, without accounting for the ends of the interval.' },
+        ],
+        steps: [
+          { say: `If Alex arrives earlier, they miss when Sam is over ${w} minutes later.`, why: 'Use the wait of the person who gets there first.' },
+          { say: `If Sam arrives earlier, they miss when Alex is over ${other} minutes later.`, why: 'The other corner uses a different cutoff.' },
+          { say: `P(meet) = 1 − [(${firstMiss})² + (${secondMiss})²]/2 = ${value}.`, why: 'Subtract both nonoverlapping corner triangles.' },
+        ],
+        sim: (rng) => { const difference = rng.next() - rng.next(); return difference >= -f && difference <= g; },
+        picture: sq([{ points: [[0, 0], [g, 0], [1, 1 - g], [1, 1], [1 - f, 1], [0, f]], label: 'meet', tone: 3 }],
+          'first arrival (hour)', 'second arrival (hour)', 'The two friends have different waits, so the missing corners have different areas.'),
+        fast: `Subtract the two corner triangles with legs ${firstMiss} and ${secondMiss}.`,
+        check: 'The chance lies between the two probabilities obtained by giving both friends the shorter or the longer wait.',
+      };
+    }
     case 'sum': {
-      const s = rng.pick([q(1, 2), q(3, 4), q(1, 1), q(5, 4), q(3, 2), q(2, 3), q(4, 3)]);
+      const s = rng.pick(uniformSumThresholds.map(([n, d]) => q(n, d)));
       const sv = s.toNumber();
       const v = sv <= 1 ? s.mul(s).div(q(2)) : q(1).sub(q(2).sub(s).mul(q(2).sub(s)).div(q(2)));
       return {
@@ -127,7 +161,8 @@ function build(kind, rng) {
     case 'semicircle':
       return {
         value: q(3, 4), data: { kind },
-        text: 'Three points are chosen independently and uniformly on a circle. What is the probability that all three lie on some semicircle?',
+        text: 'Choose three points independently and uniformly on the circumference of a circle. What is the probability that a single semicircular arc contains all three?',
+        oldText: 'Three points are chosen independently and uniformly on a circle. What is the probability that all three lie on some semicircle?',
         distractors: [
           { value: 0.5, misconception: 'Assumed a fixed semicircle; the semicircle may be chosen after seeing the points.' },
           { value: q(1, 4), misconception: 'Answered the complement: the triangle contains the centre.' },
@@ -175,13 +210,13 @@ export default {
   section: 'bto',
   title: 'Uniform geometry: sticks, meetings, areas',
   skill: 'Turn independent uniform choices into a point in a square (or on a line) and measure the favourable area',
-  levels: [2, 3, 4],
+  levels: [1, 2, 3, 4],
 
-  generate(rng, { difficulty = 2 } = {}) {
-    const kind = difficulty === 2 ? rng.pick(['ratio', 'sum', 'disc']) : difficulty === 3 ? rng.pick(['meet', 'triangle', 'sum']) : rng.pick(['product', 'semicircle', 'triangle', 'meet']);
+  generate(rng, { difficulty = 1 } = {}) {
+    const kind = rng.pick(TASKS[difficulty]);
     const b = build(kind, rng);
     return mcqItem(ID, rng, difficulty, {
-      value: b.value, exact: b.exact, text: b.text, distractors: b.distractors, steps: b.steps, picture: b.picture, fast: b.fast, check: b.check,
+      value: b.value, exact: b.exact, text: b.text, oldText: b.oldText, distractors: b.distractors, steps: b.steps, picture: b.picture, fast: b.fast, check: b.check,
       rule: 'Two independent uniforms = a uniform point in the unit square; probability = area. Triangle from a broken stick: 1/4. Semicircle, n points: n/2^(n−1).',
       anchor: 'A single uniform point on a line has P(in an interval) = its length. Two uniforms are the same idea with one change: a point in a square, so lengths become areas.',
       hints: ['Draw the sample space: a segment or a unit square.', 'Shade the favourable region.', 'Compute its length or area.'],
@@ -215,10 +250,12 @@ export default {
 // Minimal rng stand-in so build() reproduces the item's parameters from data (pick returns the stored value).
 function fixed(data) {
   const val = { ratio: data.k, meet: data.w, product: data.a, disc: data.r }[data.kind];
+  const waits = [data.w, data.other];
   return {
     int: () => val,
     pick: (arr) => {
       if (data.kind === 'sum') return arr.find((x) => Math.abs((x.toNumber ? x.toNumber() : x) - data.s) < 1e-12);
+      if (data.kind === 'asymmetricMeet') return waits.shift();
       return val;
     },
   };

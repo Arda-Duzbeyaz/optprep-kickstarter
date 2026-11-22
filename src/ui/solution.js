@@ -1,6 +1,8 @@
 import { h } from './dom.js';
-import { fmtNum, prose } from '../core/format.js';
-import { positionOutcome } from '../core/check.js';
+import { fmtNum, intervalNumber, prose } from '../core/format.js';
+import { INTERVAL_MASTERY_SCORE } from '../core/check.js';
+import { exactInterval } from '../sections/iv/lib.js';
+import { clarifyPrizeRule } from '../scenarios/composite/stopping.js';
 import { renderDiagram } from '../study/diagrams/index.js';
 import { lessonForFamily } from '../study/catalog.js';
 
@@ -8,7 +10,7 @@ import { lessonForFamily } from '../study/catalog.js';
 // first ("your reasoning broke here"), then let the solution unfold one step at a
 // time, then compress it into the rule.
 export function feedbackBanner(item, result, response) {
-  if (result.skipped) return h('div', { class: 'feedback' }, h('strong', {}, 'Skipped. '), 'Scores 0. Worth it when you are less than 50% sure under the −1 rule.');
+  if (result.skipped) return h('div', { class: 'feedback' }, h('strong', {}, 'Skipped. '), 'Scores 0.');
   if (result.correct && item.kind !== 'interval') return h('div', { class: 'feedback ok' }, h('strong', {}, 'Correct.'), item.kind === 'orderbook' && result.profit != null ? ` Locked in ${fmtNum(result.profit)}.` : null);
   const parts = [];
   if (item.kind === 'mcq') {
@@ -20,25 +22,27 @@ export function feedbackBanner(item, result, response) {
     const belief = typeof m === 'object' && m ? m.text : m;
     const at = picked?.step ?? (typeof m === 'object' && m ? m.step : null);
     const broken = Number.isInteger(at) ? item.solution?.steps?.[at - 1] : null;
-    if (belief) parts.push(h('div', {}, 'Your answer ', h('span', { class: 'num' }, picked.label), ' is what you get if you: ', h('em', {}, prose(belief))));
-    if (broken) parts.push(h('div', { class: 'small-note' }, `That belief breaks step ${at}: ${broken.say}`));
+    const generic = picked?.generic || /^(?:Magnitude guess|Recheck the (?:selected rule|scale)|Rebuild the equation)/.test(belief || '');
+    if (belief && !generic) parts.push(h('div', {}, h('strong', {}, 'Possible mistake. '), prose(belief)));
+    if (broken && !generic) parts.push(h('div', { class: 'small-note' }, `Review step ${at}. ${broken.say}`));
     parts.push(h('div', { class: 'muted' }, 'Correct answer: ', h('span', { class: 'num' }, item.options[item.answerIndex].label)));
   } else if (item.kind === 'rank') {
     parts.push(h('strong', {}, 'Order was off. '), 'One point needs all three in the exact order. The probabilities are shown next to each statement.');
   } else if (item.kind === 'interval') {
-    const r = response;
-    const inside = r && item.truth >= r.lower && item.truth <= r.upper;
+    const lower = Number(response?.lower), upper = Number(response?.upper);
     parts.push(h('strong', {}, result.score > 0 ? `Scored ${result.score.toFixed(2)}. ` : 'Scored 0. '));
-    parts.push(`True value: ${fmtNum(item.truth)}${item.unit ? ` ${item.unit}` : ''}. `);
-    if (r && !inside) parts.push(r.lower > item.truth ? 'Your lower bound was above the truth.' : 'Your upper bound was below the truth.');
-    else if (r && r.lower <= 0) parts.push('A lower bound of 0 always scores 0.');
-    else if (r) parts.push(`Width cost you ${(1 - result.score).toFixed(2)}.`);
-    return h('div', { class: `feedback ${result.score >= 0.7 ? 'ok' : 'no'}` }, parts, h('div', { class: 'coach-slot' }));
+    parts.push(`True value ${intervalNumber(item.truth)}${item.unit ? ` ${item.unit}` : ''}. `);
+    if (result.score > 0) parts.push(`Your interval contained the value. Score = ${lower} ÷ ${upper}.`);
+    else if (!Number.isFinite(lower) || !Number.isFinite(upper)) parts.push('Enter two numerical bounds.');
+    else if (lower <= 0 || upper <= 0) parts.push('Both bounds must be positive.');
+    else if (lower > upper) parts.push('The lower bound must be at or below the upper bound.');
+    else parts.push(lower > item.truth ? 'Your lower bound was above the true value.' : 'Your upper bound was below the true value.');
+    return h('div', { class: `feedback ${result.score >= INTERVAL_MASTERY_SCORE ? 'ok' : 'no'}` }, parts, h('div', { class: 'coach-slot' }));
   } else if (item.kind === 'orderbook') {
-    const out = response?.trades?.length ? positionOutcome(item.board, response.trades) : null;
     parts.push(h('strong', {}, response?.pass ? 'A profitable position was available. ' : 'Not a locked-in profit. '));
-    if (out && !out.flat) parts.push('Your position is not flat: some product is left long or short, so the profit is not locked in.');
-    else if (out) parts.push(`Your position is flat but makes ${fmtNum(out.profit)}: you crossed the spread the wrong way somewhere.`);
+    if (result.invalid) parts.push('Check that all trades use a listed quote and are within the trade limit.');
+    else if (result.flat === false) parts.push('At least one product has a non-zero net quantity. Balance each product before comparing cash flows.');
+    else if (result.flat) parts.push(`Your position is flat and the net cash is ${fmtNum(result.profit)}. Check which combination earns more from sales than it pays for purchases.`);
   }
   return h('div', { class: 'feedback no' }, parts);
 }
@@ -54,7 +58,7 @@ export function solutionPanel(item, { stepwise = true, actions = true } = {}) {
   const more = h('button', { class: 'btn small', type: 'button', onclick: () => { shown = Math.min(steps.length, shown + 1); render(); } }, 'Next step');
   const all = h('button', { class: 'btn small', type: 'button', onclick: () => { shown = steps.length; render(); } }, 'Show all');
   const sup = prose;
-  const ask = sol.ask ? h('p', { class: 'solution-ask' }, sup(sol.ask)) : null;
+  const ask = sol.ask ? h('p', { class: 'solution-ask' }, sup(item.family==='stopped-process'?clarifyPrizeRule(sol.ask):sol.ask)) : null;
   const picture = sol.picture ? pictureFigure(sol.picture) : null;
   const block = (cls, title, body) => h('div', { class: cls, hidden: true }, h('h4', {}, title), h('p', {}, sup(body)));
   const fast = sol.fast ? block('solution-fast', 'Exam-speed path', sol.fast) : null;
@@ -125,6 +129,11 @@ export function hintLadder(item, onUse, { initialUsed = 0 } = {}) {
 // Interval coach: the expected-score-optimal interval for a calibrated belief.
 export async function intervalCoach(item, slot) {
   if (!item.coach || !slot) return;
+  if (item.coach.belief?.kind === 'point') {
+    const {lower,upper,score}=exactInterval(item.truth);
+    slot.append(h('div', { class: 'muted' }, `Computed-value example [${lower}, ${upper}] scores ${score.toFixed(4)}.`));
+    return;
+  }
   try {
     const mod = await import('../sections/iv/optimal.js');
     const fn = mod.bestInterval || mod.default;
@@ -133,9 +142,9 @@ export async function intervalCoach(item, slot) {
     if (!best) return;
     const lo = best.lower ?? best[0], hi = best.upper ?? best[1];
     slot.append(h('div', { class: 'muted' },
-      item.coach.belief?.kind === 'point' ? 'Exact-model illustration: an interval around the computed answer is ' : 'Illustrative error model, not measured candidate accuracy: the approximate best interval centred on the revealed answer is ',
+      'Under the assumed error model, centring your estimate on the revealed answer gives an illustrative interval of ',
       h('span', { class: 'num' }, `[${fmtNum(lo)}, ${fmtNum(hi)}]`),
       (best.expectedScore ?? best.score) != null ? ` for expected trainer score ${(best.expectedScore ?? best.score).toFixed(2)}.` : '.',
-      item.coach.belief?.kind === 'point' ? '' : ' Review your own misses and widths over many fresh questions. L/U scoring does not require a fixed 90% or 95% confidence interval.'));
+      ' Review your own misses and widths over fresh questions to calibrate your intervals.'));
   } catch { /* coach is optional */ }
 }

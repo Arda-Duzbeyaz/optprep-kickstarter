@@ -43,7 +43,7 @@ for (const family of PRACTICE_MODULES.bto.families) for (const difficulty of fam
       report.probabilityOptions++;
       assert.ok(item.options.every((o)=>o.value>=0&&o.value<=1),context);
     }
-    if (seed<4) { assert.ok((await family.verify(item,makeRng(`audit-verify:${context}`))).ok,context); report.verifierChecks++; }
+    if (seed<4 && family.verify) { assert.ok((await family.verify(item,makeRng(`audit-verify:${context}`))).ok,context); report.verifierChecks++; }
   }
 }
 for (const detail of Object.values(report.perFamily)) assert.ok(detail.answerPositions.every((n)=>n>0));

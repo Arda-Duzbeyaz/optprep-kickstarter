@@ -1,7 +1,7 @@
 import { question,task,q,qpow,sum,weightedMean,weightedVariance,wrong,table,steps,simpleLesson } from '../curriculum/common.js';
 import { verifyVariance } from '../curriculum/verify.js';
 const ID='variance-dependence';
-export const VARIANCE_TASKS={2:['single','affine'],3:['sum','reuse','covariance','sample'],4:['mixture','conditional-variance']};
+export const VARIANCE_TASKS={2:['single','affine','sum','reuse'],3:['covariance','sample'],4:['mixture','conditional-variance']};
 const family={id:ID,section:'bto',title:'Variance, covariance and shared risk',
   skill:'Measure spread; distinguish scaling, independent sums, reused randomness and a shared hidden source',levels:[2,3,4],
   generate(rng,{difficulty=2,variant}={}) {

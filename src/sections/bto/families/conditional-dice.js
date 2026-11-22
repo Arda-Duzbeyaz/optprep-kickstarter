@@ -80,7 +80,8 @@ export default {
         steps: [
           { say: 'Sample space (older, younger): BB, BG, GB, GG, each 1/4.', why: 'Order matters because the children are different people.' },
           { say: older ? 'Given the older is a boy: BB, BG remain.' : 'Given at least one boy: BB, BG, GB remain.', why: 'Remove outcomes that contradict the information.' },
-          { say: `P(BB | info) = ${older ? '1/2' : '1/3'}.`, why: 'The remaining outcomes stay equally likely.' },
+          { say: 'Divide the chance of two boys within the condition by the chance of the condition.', why: 'Each original outcome contributes 1/4 to both counts, so that factor cancels.',
+            math: `P(BB | information) = (1/4) / (${older?2:3}/4) = 1/${older?2:3}` },
         ],
         rule: 'Condition = delete the outcomes that contradict the information, then renormalise.',
         anchor: 'Counting equally likely outcomes, with one change: the information deletes some outcomes before you count.',
@@ -107,14 +108,15 @@ export default {
       steps: [
         { say: `Restrict to outcomes where ${c.cond}: ${c.A} of 36.`, why: c.why },
         { say: `Among them, ${c.ev}: ${c.AB}.`, why: 'Count inside the restricted space only.' },
-        { say: `P = ${c.AB}/${c.A} = ${v} ≈ ${v.toNumber().toFixed(3)}.`, why: 'Equally likely outcomes remain equally likely after conditioning.' },
+        { say: 'Divide the joint probability by the probability of the condition.', why: 'Both probabilities count outcomes out of 36. Cancel that common denominator and reduce the remaining fraction.',
+          math: `P(event | condition) = (${c.AB}/36) / (${c.A}/36) = ${c.AB}/${c.A}${v.toString()===`${c.AB}/${c.A}`?'':` = ${v}`}` },
       ],
       rule: 'P(B | A) = |A ∩ B| / |A| for equally likely outcomes.',
       anchor: 'Favourable over total, with one change: the total is only the outcomes consistent with what you were told.',
       hints: ['Which of the 36 outcomes are still possible?', 'Count the event inside that smaller set.', `${c.AB} of ${c.A}.`],
       picture: restricted(c),
       fast: `Count inside the condition only: ${c.AB} of ${c.A} = ${v}.`,
-      check: `Dividing by 36 instead of ${c.A} gives the unconditional ${q(c.AB, 36)}; the condition removes ${36 - c.A} outcomes, so the answer must be at least that.`,
+      check: `Dividing this numerator by 36 gives the joint probability ${q(c.AB, 36)}. Restricting to ${c.A} outcomes keeps the same numerator and makes the denominator smaller.`,
       params: { dice: 2, sides: 6, ...c.params },
     });
   },

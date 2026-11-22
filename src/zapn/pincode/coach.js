@@ -1,9 +1,9 @@
 export default {
   purpose: 'Measures working memory: how many items you can hold and manipulate at once, which is what lets you keep several prices and positions in your head while trading.',
   howItWorks: [
-    'A digit code appears, then disappears. Type it and press Enter.',
-    'Mode 1 types it as shown, mode 2 reversed, mode 3 sorted from low to high.',
-    'Start at 3 digits. Two correct at a length add a digit; two wrong at a length end the mode.',
+    'Read the full code while it is visible. After it disappears, type your answer and press Enter.',
+    'Forward uses the order shown. Reverse uses the opposite order. Sorted puts digits from lowest to highest. Keep every zero and repeated digit.',
+    'Each mode starts at 3 digits. At each length, two correct answers add a digit and two wrong answers end the mode.',
     'Type with the number keys or the on-screen keypad. Backspace corrects.',
   ],
   scoring: 'Forward span: the longest code you typed correctly in mode 1. Target: 9 digits. Reverse and sorted spans are recorded too.',

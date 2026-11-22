@@ -38,7 +38,8 @@ test('random and first reports agree while existence reports change the answer',
     const c = f.generate(makeRng(seed), { difficulty: 3, variant: 'any-red' });
     assert.equal(a.answer.value, b.answer.value); assert.notEqual(a.answer.value, c.answer.value);
     assert.deepEqual(a.params, { ...c.params, protocol: 'first-red' });
-    assert.match(a.solution.steps.at(-1).math, /\)\/\(/, 'fraction quotients are parenthesised');
+    assert.match(a.solution.steps[0].math, /\)\s*\/\s*\(/, 'the full fraction quotient is parenthesised');
+    assert.match(a.solution.steps[1].say, /Cancel/, 'the solution explains the simplification after the setup');
   }
 });
 test('history affects a fixed source but not a fresh source; corrupted keys are rejected', () => {

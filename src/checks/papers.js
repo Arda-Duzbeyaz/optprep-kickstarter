@@ -1,13 +1,13 @@
 // Original fixed forms. These items are deliberately absent from lessons, drills and mocks.
-// Keep published forms immutable so old first attempts and reviews stay reproducible.
+// Keep the order, experiments and answer keys stable so first attempts stay reproducible.
 import { number, probability, ranking, estimate, board } from './material.js';
 
 const table = (columns, rows) => ({ columns, rows });
 const percent = { unit: '%', tolerance: 0.0051 };
 const bto = {
   a: [
-    probability('A bag holds three gold tokens and two silver. A courier draws two without replacement, chooses one of the two uniformly at random and shows you a gold token. What is the probability that the other token is gold?',
-      1/2, 'Treat the displayed token as the first draw. After one gold is revealed, two of the four remaining tokens are gold.', 'information-protocols'),
+    probability('A bag holds three gold and two silver tokens. A courier draws two uniformly without replacement. They choose one of the two uniformly and show it to you. It is gold. What is the probability the other token is gold?',
+      1/2, 'The displayed position is uniform, so its colour has the same distribution as the first draw. P(both gold | shown gold) = (3/5 × 2/4) / (3/5). Cancel 3/5 to get 2/4 = 1/2.', 'information-protocols'),
     number('Roll a fair six-sided die. On a 1 or 2 you must roll once more and keep the second value. Otherwise keep the first value. What is the expected number you keep?',
       25/6, 'A forced reroll is worth 3.5. The six equally likely first faces are worth 3.5, 3.5, 3, 4, 5 and 6. Their mean is 25/6.', { tolerance: 0.000501, skill: 'dice-games-ev' }),
     probability('Exactly two of seven sealed parcels contain a refund slip. You open three different parcels chosen uniformly. What is the probability of finding at least one slip?',
@@ -15,11 +15,11 @@ const bto = {
     number('Three traders independently send one message each to a uniformly chosen one of four inboxes. How many inboxes are empty on average?',
       27/16, 'A particular inbox is empty with probability (3/4)³. Add this probability for each of the four inboxes.', { tolerance: 0.000501, skill: 'linearity' }),
     probability('One machine makes both samples. The machine is type H with probability 1/3, otherwise L. Defect probabilities are 1/2 for H and 1/4 for L, independently across samples given the machine. The first sample is defective. What is the chance the second is defective?',
-      3/8, 'The first defect is equally likely to have come from H or L: each prior times its defect rate is 1/6. Average 1/2 and 1/4 with these updated weights.', 'shared-source'),
+      3/8, 'P(second defect | first defect) = (1/3 × (1/2)² + 2/3 × (1/4)²) / (1/3 × 1/2 + 2/3 × 1/4). The two first-defect paths each have weight 1/6. Cancel 1/6 to get (1/2 + 1/4) / 2 = 3/8.', 'shared-source'),
   ],
   b: [
     probability('Six pins include four white and two black. Two are drawn uniformly without replacement. A scanner reports only whether any white pin is present. It says yes. What is the probability that both pins are white?',
-      3/7, 'There are 15 unordered pairs. Remove the one all-black pair. Six of the 14 eligible pairs are all white.', 'information-protocols'),
+      3/7, 'There are 15 equally likely unordered pairs. Six are all white and 14 have at least one white. P(both white | at least one) = (6/15) / (14/15) = 6/14 = 3/7.', 'information-protocols'),
     probability('Ada tries a lock first and succeeds with probability 1/3. Ben then tries with probability 1/2 if needed. They repeat in that order until someone succeeds. Every try is independent. What is Ada’s chance of being first to succeed?',
       1/2, 'A whole round fails with probability (2/3)(1/2) = 1/3. If p is Ada’s chance, p = 1/3 + p/3.', 'first-success'),
     number('Five different books A to E go on a shelf. C and D must be adjacent and A must be somewhere before B. How many orders are possible?',
@@ -40,7 +40,7 @@ const nl = {
       { table: table(['Shift','People','Hours each','Items'], [['Early',2,4,120],['Late',5,2,150]]) }),
     number('Continue the two interleaved patterns. 3, 5, 6, 8, 12, 12, 24, 17, 48, …', 23,
       'Odd positions double. Even positions are 5, 8, 12, 17, adding 3, 4, 5 and then 6.', { skill: 'interleaved' }),
-    number('In a batch, 3/8 of all entries are red. One fifth of those red entries are rejected. All 150 other entries are blue. How many red entries are accepted?', 72,
+    number('In a batch, 3/8 of the entries are red and the other 150 are blue. One fifth of the red entries are rejected. How many red entries are accepted?', 72,
       'Blue is 5/8 of the batch, so there are 240 entries. Of the 90 red entries, 4/5 are accepted.'),
     number('A device updates an integer by multiplying the previous value by two and applying an adjustment. The adjustments follow an arithmetic progression. Continue 4, 9, 21, 47, 101, …', 211,
       'Subtract twice each predecessor. The adjustments are 1, 3, 5 and 7. Next comes 2 × 101 + 9.', { skill: 'mixed-combo' }),
@@ -70,7 +70,7 @@ const ll = {
       [['You know the first die is odd',2/18],['You know at least one die is six',2/11],['You know the dice differ',4/30]],
       'There are four ordered ways to total nine. Restrict first to each stated sample space. The three probabilities are 2/18, 2/11 and 4/30.', { skill: 'dice-events' }),
     ranking('A parcel is sampled by the procedure in each statement. Rank the chances of selecting an express parcel.',
-      [['Choose a depot with equal chance, then a parcel',0.5],['Choose a parcel uniformly from the large depot',0.4],['Choose a parcel uniformly from both depots combined',42/100]],
+      [['Choose a depot with equal chance, then a parcel uniformly from it',0.5],['Choose a parcel uniformly from the large depot',0.4],['Choose a parcel uniformly from both depots combined',42/100]],
       'An equal-depot draw averages 60% and 40%. A uniform parcel draw weights those rates by 10 and 90 parcels.',
       { table: table(['Depot','Express','Parcels'], [['Small',6,10],['Large',36,90]]), skill: 'selection-weights' }),
     ranking('Each worker succeeds on one attempt with probability 0.3. Distinct workers’ outcomes are independent. Rank the events.',

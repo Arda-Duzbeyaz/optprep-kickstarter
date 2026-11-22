@@ -1,6 +1,6 @@
 // Running totals: P(the running sum ever equals n) and the expected number of throws to pass n.
 import { absorptionProbs, hittingTimes } from '../../../core/markov.js';
-import { mcqItem, agree, q, pic } from '../lib.js';
+import { mcqItem, agree, q, pic, range } from '../lib.js';
 
 const ID = 'running-sum';
 
@@ -30,18 +30,19 @@ export default {
   section: 'bto',
   title: 'Running totals',
   skill: 'Condition on the last step: p(n) = average of p(n − k); long-run hit chance = 1/(mean step)',
-  levels: [3, 4],
+  levels: [1, 2, 3, 4],
 
-  generate(rng, { difficulty = 3 } = {}) {
+  generate(rng, { difficulty = 1 } = {}) {
     const coin = rng.chance(0.3);
-    const steps = coin ? [1, 2] : [1, 2, 3, 4, 5, 6];
-    const mean = coin ? 1.5 : 3.5;
-    const expect = difficulty === 4 && rng.chance(0.5);
+    const sides = coin ? 2 : difficulty <= 2 ? rng.pick([4, 6, 8, 10, 12, 16, 20, 24]) : 6;
+    const steps = range(1, sides), mean = (sides + 1) / 2;
+    const expect = difficulty >= 3 && rng.chance(difficulty === 3 ? 0.25 : 0.5);
+    const die = sides === 6 ? 'a fair die' : `a fair ${sides}-sided die`;
     const setup = coin
       ? 'You flip a fair coin repeatedly, adding 1 point for heads and 2 points for tails.'
-      : 'You throw a fair die repeatedly and keep a running total of the faces.';
+      : `You throw ${die} repeatedly and keep a running total of the faces.`;
     if (expect) {
-      const n = coin ? rng.int(4, 12) : rng.int(5, 20);
+      const n = coin ? rng.int(4, difficulty === 3 ? 6 : 12) : rng.int(5, difficulty === 3 ? 8 : 20);
       const v = passTime(n, steps);
       return mcqItem(ID, rng, difficulty, {
         ev: true,
@@ -69,7 +70,8 @@ export default {
         params: { mode: 'pass', n, steps },
       });
     }
-    const n = difficulty === 3 ? rng.int(1, coin ? 6 : 8) : rng.int(coin ? 6 : 9, coin ? 15 : 30);
+    const n = difficulty === 1 ? rng.int(1, 2) : difficulty === 2 ? rng.int(3, 6)
+      : difficulty === 3 ? rng.int(coin ? 6 : 7, coin ? 9 : 12) : rng.int(coin ? 10 : 13, coin ? 15 : 30);
     const v = hitProb(n, steps);
     return mcqItem(ID, rng, difficulty, {
       value: v,
@@ -85,9 +87,9 @@ export default {
         { say: `Iterate up to ${n}: p(${n}) = ${v} ≈ ${v.toNumber().toFixed(4)}.`, why: 'Each value uses only smaller totals.' },
         { say: `For large totals p → 1/(mean step) = 1/${mean} ≈ ${(1 / mean).toFixed(4)}.`, why: 'In the long run the total lands on one integer per mean step.' },
       ],
-      rule: 'p(n) = average of the previous p values; limit 1/(mean step) (dice: 2/7).',
+      rule: `p(n) averages the previous ${sides} p values. The long-run limit is 1/(mean step) = 1/${mean}.`,
       anchor: 'The recursion for "number of ways to climb stairs", with one change: each way is weighted by its probability.',
-      hints: ['How can the total land exactly on n? What must it have been one step earlier?', 'p(n) averages p(n − 1), …, p(n − 6).', 'For large n the answer settles near 2/7 for a die.'],
+      hints: ['How can the total land exactly on n? What must it have been one step earlier?', `p(n) averages p(n − 1) through p(n − ${sides}).`, `For large n the answer settles near ${(1 / mean).toFixed(3)}.`],
       picture: pic('plot', { x: { min: 0, max: Math.max(n, 12), label: 'target total m' }, y: { min: 0, max: 1, label: 'P(total ever equals m)' }, curves: [{ label: 'p(m)', points: Array.from({ length: Math.max(n, 12) + 1 }, (_, m) => [m, hitProb(m, steps).toNumber()]) }], hlines: [{ y: 1 / mean, label: `limit 1/${mean}` }], markers: [{ x: n, y: v.toNumber(), label: `p(${n}) ≈ ${v.toNumber().toFixed(3)}` }] }, `Each p(m) averages the ${steps.length} values before it, so the curve wobbles and then settles at 1/${mean}, one landing per mean step.`),
       fast: n > 3 * steps.length ? `Far from the start, p ≈ 1/${mean} = ${(1 / mean).toFixed(4)}; exactly ${v.toNumber().toFixed(4)}.` : `Average the earlier values: p(${n}) = ${v} ≈ ${v.toNumber().toFixed(4)}.`,
       check: `A probability, so below 1, and for targets past the first few it stays close to 1/${mean} ≈ ${(1 / mean).toFixed(3)}; values far from that come from adding the step chances instead of averaging them.`,

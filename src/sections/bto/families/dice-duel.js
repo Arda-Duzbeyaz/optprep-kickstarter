@@ -4,6 +4,9 @@ import { mcqItem, agree, q, pic, table } from '../lib.js';
 const ID = 'dice-duel';
 const EFRON = { A: [4, 4, 4, 4, 0, 0], B: [3, 3, 3, 3, 3, 3], C: [6, 6, 2, 2, 2, 2], D: [5, 5, 5, 1, 1, 1] };
 const faces = (k) => Array.from({ length: k }, (_, i) => i + 1);
+export const symmetricDuelSizes = [4, 6, 8, 10, 12, 16, 18, 20];
+export const unequalDuelSizes = [[8, 6], [10, 6], [12, 6], [6, 4], [20, 6], [10, 8], [12, 8], [18, 12], [16, 8], [8, 4]]
+  .flatMap(([a, b]) => [[a, b], [b, a]]);
 
 // Distribution of one "player's roll" as [value, weight] pairs (weights are equal-probability counts).
 function dist(spec) {
@@ -26,15 +29,18 @@ export default {
   section: 'bto',
   title: 'Dice duels',
   skill: 'P(A > B) = (1 − P(tie))/2 for identical players; otherwise count the favourable pairs',
-  levels: [2, 3],
+  levels: [1, 2, 3],
 
-  generate(rng, { difficulty = 2 } = {}) {
+  generate(rng, { difficulty = 1 } = {}) {
     let A, B, reroll = false;
-    if (difficulty === 2) {
-      const pair = rng.pick(['same6', 'sizes', 'reroll']);
-      if (pair === 'same6') { A = { type: 'die', k: rng.pick([4, 6, 8, 10, 12]) }; B = { ...A }; }
-      else if (pair === 'reroll') { A = { type: 'die', k: rng.pick([6, 8, 10]) }; B = { ...A }; reroll = true; }
-      else { const [a, b] = rng.pick([[8, 6], [6, 8], [10, 6], [12, 6], [6, 4], [4, 6], [20, 6], [10, 8]]); A = { type: 'die', k: a }; B = { type: 'die', k: b }; }
+    if (difficulty === 1) {
+      A = { type: 'die', k: rng.pick(symmetricDuelSizes) };
+      B = { ...A };
+      reroll = rng.chance(0.5);
+    } else if (difficulty === 2) {
+      const [a, b] = rng.pick(unequalDuelSizes);
+      A = { type: 'die', k: a };
+      B = { type: 'die', k: b };
     } else {
       const pair = rng.pick(['sum', 'max', 'efron']);
       if (pair === 'sum') { A = { type: 'sum2' }; B = { type: 'sum2' }; }

@@ -3,7 +3,7 @@ export default {
   howItWorks: [
     'Every round shows both blocks: a sum or difference on top, two arrow sets below. One block is highlighted.',
     'Top highlighted: is the result odd? Bottom highlighted: do both arrow sets point the same way?',
-    'Answer Yes with the right arrow or Y, No with the left arrow or N. 35 rounds, 4 s per answer.',
+    'Answer Yes with the right arrow or Y, and No with the left arrow or N. There are 35 rounds. A timeout after 4 seconds counts as a wrong answer.',
     'The highlight moves unpredictably, about half the time.',
   ],
   scoring: 'Accuracy is the tracked metric (target 95%). The game score weighs accuracy and speed equally. Switch cost (mean time on switch rounds minus repeat rounds) is recorded so you can see the price of each switch.',

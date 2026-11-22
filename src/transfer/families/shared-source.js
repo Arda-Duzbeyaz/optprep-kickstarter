@@ -1,6 +1,6 @@
 import { nCr } from '../../core/combinatorics.js';
 import { Q } from '../../core/rational.js';
-import { mcqItem, agree, q, qpow, table } from '../../sections/bto/lib.js';
+import { mcqItem, agree, q, qpow, table, bayesWork } from '../../sections/bto/lib.js';
 export const SOURCE_TASKS = ['all', 'count', 'next', 'source'];
 const ID = 'shared-source';
 const likelihood = (p, h, b) => qpow(p, h).mul(qpow(q(1).sub(p), b));
@@ -17,7 +17,8 @@ const fam = {
     const h = rng.int(1, difficulty === 5 ? 3 : 2), blue = difficulty === 5 ? rng.int(1, 2) : rng.int(0, 1);
     const marginal = prior.mul(pa).add(q(1).sub(prior).mul(pb));
     const la = likelihood(pa, h, blue), lb = likelihood(pb, h, blue);
-    const evidence = prior.mul(la).add(q(1).sub(prior).mul(lb)), posterior = prior.mul(la).div(evidence);
+    const evidence = bayesWork(prior, la, lb);
+    const posterior = evidence.correct;
     let value;
     if (task === 'all' || task === 'count') {
       const oneOrder = shared ? prior.mul(likelihood(pa, k, n - k)).add(q(1).sub(prior).mul(likelihood(pb, k, n - k))) : likelihood(marginal, k, n - k);
@@ -29,9 +30,18 @@ const fam = {
     const steps = task === 'all' || task === 'count' ? [
       { say: shared ? 'Compute the requested event within each bag, then weight the two probabilities.' : `Each draw has red probability ${marginal} and independent bag choices.`, why: shared ? 'Averaging before taking powers erases dependence through the shared bag.' : 'Fresh independent sources do not link different draws.' },
       { say: `P = ${value}.`, why: task === 'count' ? `Include C(${n},${k}) possible colour orders.` : 'All requested draws must be red.' },
+    ] : shared ? [
+      { say: `Find the likelihood of the exact colour order ${history} within each bag.`, why: 'The bag is picked once. With replacement, colours are independent given that bag.',
+        math: `A: (${pa})^${h}${blue?` × (${q(1).sub(pa)})^${blue}`:''} = ${la}. B: (${pb})^${h}${blue?` × (${q(1).sub(pb)})^${blue}`:''} = ${lb}.` },
+      { say: 'Weight both likelihoods by the original bag probabilities.', why: 'The top path uses A. Either bag can produce the history, so both paths go below.',
+        math: `P(A | ${history}) = ${evidence.setup}` },
+      { say: `Write the two weighted paths over ${evidence.denominator} and cancel it.`, why: 'The numerator is A’s share of the weight of the observed history.', math: evidence.reduced },
+      ...(task === 'next' ? [{ say: 'Use the updated bag probabilities for the next red draw.', why: 'The history changes the odds of which bag was chosen. Its red fraction stays the same.',
+        math: `P(next red | ${history}) = ${posterior} × ${pa} + ${q(1).sub(posterior)} × ${pb} = ${value}` }] : []),
     ] : [
-      { say: shared ? `Likelihood of ${history}: A ${la}; B ${lb}. Posterior weight of A = ${posterior}.` : 'The earlier colours concern earlier independent bag choices.', why: shared ? 'Use prior times likelihood, then normalise.' : 'Earlier choices do not update the source of the next independent choice.' },
-      { say: `Requested probability = ${value}.`, why: task === 'source' ? 'The requested answer is the posterior weight.' : shared ? 'Average next-draw red probabilities with posterior weights.' : 'Use the original mixture for a new bag choice.' },
+      { say: 'The earlier colours concern earlier independent bag choices.', why: 'Earlier choices do not update the source of the next independent choice.' },
+      { say: 'Use the original bag probabilities to predict the next colour.', why: 'There are two ways to draw red, one through each bag.',
+        math: `P(next red) = ${prior} × ${pa} + ${q(1).sub(prior)} × ${pb} = ${value}` },
     ];
     const item = mcqItem(ID, rng, difficulty, {
       text: `${setup} ${question}`, value,

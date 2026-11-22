@@ -9,6 +9,12 @@ export const PRODUCTS = ['A', 'B', 'C', 'D'];
 export const MAX_TRADES = 6;
 const MINUS = '−';
 
+export function orderbookPrompt(maxTrades, allowPass) {
+  const limit = Number.isFinite(maxTrades) ? ` in at most ${maxTrades} trades` : '';
+  const pass = allowPass ? ' Choose “No opportunity” if no such position exists.' : '';
+  return `Find trades that leave zero units of every product and give positive cash${limit}.${pass}`;
+}
+
 // Fair values: distinct multiples of 0.5 in [lo, hi].
 export function fairs(rng, n, lo = 20, hi = 150) {
   const out = [];

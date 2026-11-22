@@ -13,7 +13,7 @@ const { runFeedbackSession } = await import('../src/ui/runner.js');
 const { progressPage } = await import('../src/ui/pages/progress.js');
 const { finiteVariants } = await import('../src/practice/finite-variants.js');
 const { PRACTICE_MODULES } = await import('../src/practice/index.js');
-const { recognitionStep } = await import('../src/core/recognition.js');
+const { BTO_CHECKPOINT_MS, recognitionStep } = await import('../src/core/recognition.js');
 const { questionKey } = await import('../src/core/questions.js');
 const { activatePreset } = await import('../config/presets.js');
 activatePreset({id:'kickstarter'});
@@ -35,9 +35,9 @@ try {
     if(i===1)button('Used outside help').click();
     if(i===3){const prompt=root.querySelector('.prompt').textContent,turn=store.mixedTraining('bto').turn;stop();stop=()=>{};store=makeStore(backend);start(store);eq(root.querySelector('.prompt').textContent,prompt);eq(store.mixedTraining('bto').turn,turn);}
     if(i===4)[...root.querySelectorAll('button')].find((b)=>b.textContent.startsWith('Hint (')).click();
-    answer(store,i===2?90001:3000);
+    answer(store,i===2?BTO_CHECKPOINT_MS+1:3000);
     const row=store.practiceSession('bto').log.at(-1);eq(row.evidenceVersion,1);eq(row.key,key);eq(row.difficulty,item.difficulty);ok(Array.isArray(row.operations));
-    eq(row.aided,i===1);eq(row.interrupted,i===3);eq(row.budgetMs,90000);next(i);
+    eq(row.aided,i===1);eq(row.interrupted,i===3);eq(row.budgetMs,BTO_CHECKPOINT_MS);next(i);
   }
   eq(store.mixedTraining('bto').turn,10);ok(root.textContent.includes('6/10 independent within training pace'));ok(root.textContent.includes('2 helped'));
   const run=store.runs('bto','practice').at(-1);eq(run.items.length,10);eq(run.score,10);eq(run.completed,true);

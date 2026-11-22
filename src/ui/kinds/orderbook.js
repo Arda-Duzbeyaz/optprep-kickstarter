@@ -17,7 +17,7 @@ export function orderbookView(item, { onChange, maxTrades = Infinity, allowPass 
     onclick: () => { if (locked || trades.length >= maxTrades) return; if(pass) pass.checked=false; trades.push({ id: ins.id, side }); render(); onChange?.(); },
   }, fmtNum(side === 'buy' ? ins.ask : ins.bid));
   const table = h('table', { class: 'ob-table' },
-    h('thead', {}, h('tr', {}, h('th', {}, 'Instrument'), h('th', {}, 'Contains'), h('th', { style: { textAlign: 'right' } }, 'Bid (you sell)'), h('th', { style: { textAlign: 'right' } }, 'Ask (you buy)'))),
+    h('thead', {}, h('tr', {}, h('th', {}, 'Instrument'), h('th', {}, 'Position when bought'), h('th', { style: { textAlign: 'right' } }, 'Bid (you sell)'), h('th', { style: { textAlign: 'right' } }, 'Ask (you buy)'))),
     h('tbody', {}, board.instruments.map((ins) => h('tr', {},
       h('td', {}, h('strong', {}, ins.name || ins.id)),
       h('td', { class: 'muted' }, legsText(board, ins)),
@@ -38,7 +38,9 @@ export function orderbookView(item, { onChange, maxTrades = Infinity, allowPass 
     netRow.textContent = `Net: ${board.products.map((p, k) => `${p} ${net[k] > 0 ? '+' : ''}${net[k]}`).join('  ')}   Cash: ${profit >= 0 ? '+' : ''}${fmtNum(profit)}`;
   }
   render();
-  const el = h('div', { class: 'ob' }, table, h('h3', {}, 'Your position'), tradeList, netRow, pass ? h('label',{class:'check-line'},pass,'No opportunity') : null,
+  const el = h('div', { class: 'ob' },
+    h('p', {class:'muted small-note'}, 'Each click trades one unit. A buy adds the listed position and subtracts the ask from cash. A sale reverses the position and adds the bid. A quote may be used more than once.'),
+    table, h('h3', {}, 'Your position'), tradeList, netRow, pass ? h('label',{class:'check-line'},pass,'No opportunity') : null,
     h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn small', type: 'button', onclick: () => { if (!locked) { trades = []; if(pass) pass.checked=false; render(); onChange?.(); } } }, 'Clear')));
   return {
     el,

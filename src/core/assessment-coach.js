@@ -37,7 +37,7 @@ export function scoreLabel(id, r) {
 }
 
 export function debrief(id, run) {
-  const cfg=SECTIONS[id], t=run.timing || cfg.exam, budget=Math.min(t.perItemSeconds || Infinity,(t.totalSeconds || Infinity)/t.count)*1000;
+  const cfg=SECTIONS[id], t=run.timing || cfg.exam, budget=run.checkpointBudgetMs ?? Math.min(t.perItemSeconds || Infinity,(t.totalSeconds || Infinity)/t.count)*1000;
   const kinds = { wrong:0, skipped:0, unreached:0, wide:0, below:0, above:0, slow:0 };
   const skills = new Map();
   for (const item of (run.items || [])) {
@@ -46,7 +46,7 @@ export function debrief(id, run) {
     if (item.outcome==='unreached') { kinds.unreached++; continue; }
     if (!item.outcome && !item.ms && !item.score) continue;
     const result = item.outcome || (item.score <= 0 ? 'unresolved' : id==='iv' && item.score<0.7 ? 'wide' : 'right');
-    const slow = result==='right' && item.ms > budget;
+    const slow = result==='right' && (item.checkpoint === 'pace' || item.ms > budget);
     if (Object.hasOwn(kinds,result)) kinds[result]++;
     if (slow) kinds.slow++;
     const loss = Math.max(0,1-item.score);
@@ -58,6 +58,26 @@ export function debrief(id, run) {
   }
   const repair=[...skills.values()].sort((a,b)=>b.points-a.points || b.slow-a.slow || b.examples-a.examples)[0];
   return { ...kinds, repair, hasOutcomes:run.items?.some(i=>i?.outcome) || false };
+}
+
+export function btoMasteryBreakdown(run) {
+  if (!run.checkpointBudgetMs || !Array.isArray(run.items)) return null;
+  const topics = new Map();
+  for (const item of run.items) {
+    if (!item?.checkpoint) continue;
+    const { family, outcome, checkpoint, difficulty } = item;
+    const topic = topics.get(family) || { family, seen: 0, right: 0, pacedRight: 0, credited: 0, verified: [] };
+    const credit = checkpoint === 'qualifying' || checkpoint === 'passed';
+    topic.seen++;
+    topic.right += Number(outcome === 'right');
+    topic.pacedRight += Number(credit || checkpoint === 'maintained');
+    topic.credited += Number(credit);
+    if (checkpoint === 'passed') topic.verified.push(difficulty);
+    topics.set(family, topic);
+  }
+  const rows = [...topics.values()];
+  return { rows, credited: rows.reduce((n, row) => n + row.credited, 0),
+    verified: rows.reduce((n, row) => n + row.verified.length, 0), seconds: run.checkpointBudgetMs / 1000 };
 }
 
 const drillTitles = { bto:'Conditional probability and expected value', nl:'Numerical reasoning', ll:'Close probability rankings', iv:'Estimate and calibrate', ob:'Trade or pass' };

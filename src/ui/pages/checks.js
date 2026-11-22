@@ -9,6 +9,7 @@ import { PAPERS } from '../../checks/papers.js';
 import { drillItem } from '../../checks/drills.js';
 import { intervalView } from '../kinds/interval.js';
 import { orderbookView } from '../kinds/orderbook.js';
+import { MAX_TRADES } from '../../sections/ob/lib.js';
 import { rankView } from '../kinds/rank.js';
 import renderTable from '../visuals/table.js';
 import { calibrationPanel } from './coach.js';
@@ -35,17 +36,14 @@ const validationMessage = {
 function answerView(item, onChange) {
   if (item.kind==='number') {
     const input=h('input',{type:'text',class:'big',maxlength:60,autocomplete:'off',spellcheck:'false',oninput:onChange});
-    const help=item.unit==='probability'?'Enter a fraction, decimal or percentage. Round decimals to at least three places.' :
-      'Fractions are accepted. For a recurring decimal, give at least three places unless the question asks for rounding.';
+    const help=item.unit==='probability'?'Enter a fraction, a decimal to at least three places, or a percentage to at least one decimal place.':
+      'Follow the question’s rounding instructions. You can enter an exact fraction for a recurring decimal.';
     return { el:h('div',{},h('label',{class:'field-inline'},'Your answer'+(item.unit && item.unit!=='probability'?' ('+item.unit+')':''),input),h('p',{class:'small-note muted'},help)),
       response:()=>({value:input.value}),setResponse:r=>{input.value=r?.value??'';} };
   }
   if (item.kind==='interval') return intervalView(item,{onChange,showPreview:false});
   if (item.kind==='rank') return rankView(item,{onChange});
-  const pass=h('input',{type:'checkbox',onchange:()=>{if(pass.checked) book.clear();onChange();}});
-  const book=orderbookView(item,{maxTrades:6,onChange:()=>{pass.checked=false;onChange();}});
-  return { el:h('div',{},book.el,h('label',{class:'check-line'},pass,'No opportunity')),response:()=>pass.checked?{pass:true}:book.response(),
-    setResponse:r=>{book.setResponse(r);pass.checked=r?.pass===true;} };
+  return orderbookView(item,{maxTrades:item.tradeLimit ?? MAX_TRADES,allowPass:true,onChange});
 }
 
 function responseText(item, response) {
@@ -98,7 +96,7 @@ export function checksPage(root,{store,id,form}) {
       h('section',{class:'panel'},h('h2',{},drill?'Five-question workshop':'First attempt'),
         drill?h('p',{},'Work at your own pace. Each answer is saved, with a worked explanation.'):h('p',{},'You have '+clockLabel(duration*multiplier*1000)+' for the whole paper'+(multiplier>1?' with extra time ×'+multiplier:'')+'. The clock continues if you leave or reload. Submit each answer before the deadline.'),
         !drill && id==='iv'?h('p',{},'Set bounds you expect to cover about 8 references in 10. '+(form==='c'?'The complete simulated totals appear in the review.':'Estimate without looking anything up. Sources appear in the review.')):null,
-        !drill && id==='ob'?h('p',{},'You can pass when no combination produces a profit. Each submitted decision is final.'):null,
+        !drill && id==='ob'?h('p',{},'Choose No opportunity when no trade combination within the limit can produce a flat profit. Each submitted decision is final.'):null,
         h('button',{type:'button',class:'btn primary',onclick:begin},drill?'Start workshop':'Start first attempt')),
       id==='iv'?calibrationPanel(store):null);
   }

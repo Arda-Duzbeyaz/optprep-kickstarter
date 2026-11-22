@@ -7,6 +7,9 @@ import { validCheckSessions } from './check-sessions.js';
 import { validMixedTraining } from './mixed-training.js';
 
 export const VERSION = 2;
+const BTO_DIFFICULTY_VERSION = 1;
+const RETIERED_BTO_TOPICS = ['box-experiment', 'stopped-process'];
+const moveBtoLevel = (level) => [1, 2, 3].includes(level) ? level + 1 : level;
 
 export const blankV2 = () => ({
   version: VERSION, runs: [], stats: {}, srs: {}, zapn: {}, settings: {}, sets: {}, calibration: [],
@@ -14,8 +17,36 @@ export const blankV2 = () => ({
   recentQuestions: {}, recentStructures: {}, transferRuns: [], practiceRuleVersion: 1,
   activePractice: {}, mixedEvidence: {},
   learningCoverage: {}, recognition: {}, learningCompletionVersion: 1,
-  mixedTraining: {}, checkSessions: {},
+  mixedTraining: {}, checkSessions: {}, btoDifficultyVersion: BTO_DIFFICULTY_VERSION,
 });
+
+function retierBtoProgress(state) {
+  const recognition = { ...state.recognition };
+  const mixed = state.mixedTraining.bto;
+  const families = { ...mixed?.families };
+  for (const family of RETIERED_BTO_TOPICS) {
+    const key = `bto:${family}`;
+    const row = recognition[key];
+    if (row) {
+      recognition[key] = { ...row,
+        passed: row.passed?.map(moveBtoLevel), review: row.review?.map(moveBtoLevel),
+        target: moveBtoLevel(row.target), lastPassedDifficulty: moveBtoLevel(row.lastPassedDifficulty),
+        proofs: row.proofs?.map((proof) => ({ ...proof, difficulty: moveBtoLevel(proof.difficulty) })),
+        ...(row.streaks ? { streaks: Object.fromEntries(Object.entries(row.streaks).map(([level, keys]) => [moveBtoLevel(Number(level)), keys])) } : {}),
+      };
+    }
+    if (families[family]) families[family] = { ...families[family], difficulty: moveBtoLevel(families[family].difficulty) };
+  }
+  state.recognition = recognition;
+  if (mixed) state.mixedTraining = { ...state.mixedTraining, bto: { ...mixed, families } };
+  // Keep the same visible questions, drafts and answers when a block is resumed.
+  state.activePractice = Object.fromEntries(Object.entries(state.activePractice).map(([key, snapshot]) => {
+    if (snapshot?.section !== 'bto' || !RETIERED_BTO_TOPICS.includes(snapshot.current?.item?.family)) return [key, snapshot];
+    return [key, { ...snapshot, difficulty: moveBtoLevel(snapshot.difficulty), current: {
+      ...snapshot.current, item: { ...snapshot.current.item, difficulty: moveBtoLevel(snapshot.current.item.difficulty) },
+    } }];
+  }));
+}
 
 // The exam formats v1 runs were taken under, so readiness can tell a 60 s run from a 45 s one.
 const V1_EXAM = {
@@ -76,6 +107,9 @@ function shapeOk(raw) {
     if (kind(row) !== 'object') return false;
     for (const name of ['passed','review']) if (row[name] !== undefined && (!Array.isArray(row[name]) || row[name].some((n) => !Number.isInteger(n) || n < 1 || n > 5))) return false;
     for (const name of ['keys','streakKeys']) if (row[name] !== undefined && (!Array.isArray(row[name]) || row[name].some((key) => typeof key !== 'string'))) return false;
+    if (row.streaks !== undefined && (kind(row.streaks) !== 'object' ||
+      Object.entries(row.streaks).some(([level, keys]) => !/^[1-5]$/.test(level) || !Array.isArray(keys) ||
+        keys.length > 2 || new Set(keys).size !== keys.length || keys.some((key) => typeof key !== 'string' || !key)))) return false;
     if (row.proofs !== undefined && (!Array.isArray(row.proofs) || !records(row.proofs))) return false;
     if (row.run !== undefined && (!Number.isInteger(row.run) || row.run < 0 || row.run > 2)) return false;
     if (row.target !== undefined && (!Number.isInteger(row.target) || row.target < 1 || row.target > 5)) return false;
@@ -91,6 +125,7 @@ export function migrate(raw, now = Date.now()) {
   if (kind(raw) !== 'object' || !Array.isArray(raw.runs) || !shapeOk(raw)) return null;
   if (raw.version === VERSION) {
     const state = { ...blankV2(), ...raw };
+    if (raw.btoDifficultyVersion === undefined) retierBtoProgress(state);
     if (raw.learningCompletionVersion !== 1) {
       state.learningCoverage = recoverLearningBlocks(state);
       state.learningCompletionVersion = 1;

@@ -4,7 +4,7 @@
 import { blankV2, migrate, VERSION } from './migrate.js';
 import { trendStep } from './patterns.js';
 import { xpFor, MAX_FREEZES } from './progression.js';
-import { recognitionStep, coverageInfo } from './recognition.js';
+import { BTO_CHECKPOINT_MS, recognitionStep, coverageInfo } from './recognition.js';
 import { validPractice, practiceSlot, practiceMatches } from './practice.js';
 import { upsertMistake } from './mistakes.js';
 import { dayKey, streak, applyFreezes } from './activity.js';
@@ -82,6 +82,18 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
   const day = () => (state.activity.days[today()] = state.activity.days[today()] || { ms: 0, xp: 0 });
   const addXp = (n) => { if (n > 0) day().xp += n; };
 
+  function recordCheckpoint(section, family, attempt, now) {
+    if (!attempt.key || !attempt.levels?.includes(attempt.difficulty)) return 'unrated';
+    const key = `${section}:${family}`;
+    const previous = state.recognition[key];
+    const next = recognitionStep(previous, {
+      ...attempt, ...(section === 'bto' ? { perDifficulty: true, budgetMs: BTO_CHECKPOINT_MS } : {}),
+    }, now);
+    if (next === previous) return 'repeat';
+    state.recognition[key] = next;
+    return next.lastReason;
+  }
+
   function rawPractice(section, family, scope = 'all') {
     const key = practiceSlot(section, family, scope);
     if (Object.hasOwn(state.activePractice, key)) return state.activePractice[key];
@@ -133,7 +145,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
     },
     // One answer from any mode. Updates stats, the recency trend, the skill level, XP and
     // the mistake log, then saves once.
-    recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, mode = 'practice', fresh = true, budgetMs, miss, mixed = false, key, practiceSnapshot, nextSrs, uninterrupted = true, levels, standardTime = true, aided = false } = {}) {
+    recordAnswer(section, family, { correct, covered = correct, ms = 0, confidence, difficulty, score, hints = 0, skipped = false, mode = 'practice', fresh = true, budgetMs, miss, mixed = false, key, practiceSnapshot, nextSrs, uninterrupted = true, levels, standardTime = true, aided = false } = {}) {
       // Commit the answered phase and progress together: reopening feedback must
       // never record the same answer a second time.
       if (practiceSnapshot) {
@@ -157,14 +169,17 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       // Old mastery/mixed fields remain unchanged as historical evidence. The
       // new checkpoint cannot be earned through a named topic or aided learning.
       if (mode !== 'exam' && !mixed) state.learningCoverage[k] = { ...state.learningCoverage[k], at: now, attempts: (state.learningCoverage[k]?.attempts || 0) + 1 };
-      if (mixed && ['practice', 'drill'].includes(mode)) state.learningCoverage[k] = { ...state.learningCoverage[k],
-        mixedAttempts: (state.learningCoverage[k]?.mixedAttempts || 0) + 1,
-        revisionAttempts: (state.learningCoverage[k]?.revisionAttempts || 0) + Number(!fresh) };
-      if (mixed && fresh && standardTime && levels?.length && ['practice', 'drill'].includes(mode))
-        state.recognition[k] = recognitionStep(state.recognition[k], { key, correct, hints, ms, budgetMs, uninterrupted, difficulty, levels, aided }, now);
-      if (mixed && levels?.includes(difficulty) && key && ['practice', 'drill'].includes(mode))
-        state.mixedTraining[section] = recordMixedAttempt(state.mixedTraining[section], family,
-          { key, correct, hints, ms, budgetMs, uninterrupted, difficulty, aided, fresh, standardTime });
+      if (mixed && ['practice', 'drill'].includes(mode)) {
+        const attempt = { key, correct, hints, skipped, ms, budgetMs: section === 'bto' ? BTO_CHECKPOINT_MS : budgetMs,
+          uninterrupted, difficulty, levels, aided, fresh, standardTime };
+        state.learningCoverage[k] = { ...state.learningCoverage[k],
+          mixedAttempts: (state.learningCoverage[k]?.mixedAttempts || 0) + 1,
+          revisionAttempts: (state.learningCoverage[k]?.revisionAttempts || 0) + Number(!fresh) };
+        if (levels?.includes(difficulty) && key) {
+          if (fresh && standardTime) recordCheckpoint(section, family, attempt, now);
+          state.mixedTraining[section] = recordMixedAttempt(state.mixedTraining[section], family, attempt);
+        }
+      }
       addXp(xpFor({ type: 'answer', mode, correct, hints, ms }));
       if (!correct && miss) upsertMistake(state.mistakes, miss);
       if (confidence != null) {
@@ -222,8 +237,17 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       state.learningCoverage[key] = { ...state.learningCoverage[key], covered: !!covered, coveredBy: 'manual', at: clock() }; save();
     },
     recordXp(n) { addXp(n); save(); },
-    recordRun(run) {
+    recordRun(run, { checkpointAttempts } = {}) {
       const r = { finishedAt: clock(), ...run };
+      if (run.section === 'bto' && run.mode === 'exam' && run.completePaper && run.repeatCount === 0 && checkpointAttempts) {
+        r.checkpointBudgetMs = BTO_CHECKPOINT_MS;
+        r.items = run.items.map((item, i) => {
+          const attempt = checkpointAttempts[i];
+          if (!attempt) return item;
+          const checkpoint = recordCheckpoint('bto', item.family, attempt, r.finishedAt);
+          return { ...item, checkpoint };
+        });
+      }
       state.runs.push(r);
       state.runs = boundMixedDetails(state.runs);
       if (run.mode === 'exam' || run.mode === 'set') {
@@ -232,6 +256,7 @@ export function makeStore(backend = defaultBackend(), hooks = {}, { clock = () =
       }
       hooks.run?.(r);
       save();
+      return r;
     },
     runs(section, mode) {
       return state.runs.filter((r) => r.section === section && (!mode || r.mode === mode));

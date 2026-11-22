@@ -11,6 +11,21 @@ export function fmtNum(x) {
   return x.toFixed(dp).replace(/0+$/, '').replace(/\.$/, '');
 }
 export const fmtFrac = (q) => q.toString();
+
+// Keep close but distinct probabilities distinguishable throughout the review.
+export function rankDecimals(statements) {
+  const values = statements.map(({p}) => p);
+  const distinct = new Set(values).size;
+  let labels = values.map(fmtP);
+  for (let precision = 4; new Set(labels).size < distinct && precision <= 17; precision++) {
+    labels = values.map(value => String(Number(value.toPrecision(precision))));
+  }
+  return labels;
+}
+
+export function intervalNumber(x) {
+  return Number.isInteger(x) ? fmtNum(x) : String(Number(x.toPrecision(12)));
+}
 // European division sign: items always store ÷; the view shows : when the learner asks for it.
 // Caret exponents print as superscripts: 2^6 reads 2⁶, 2^n reads 2ⁿ. Grouped exponents like 2^(n-1) stay as written.
 const SUP = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', n: 'ⁿ', k: 'ᵏ', m: 'ᵐ' };

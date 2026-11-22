@@ -36,10 +36,21 @@ export default function estimate(rng,level){
     excess:'Subtract the cap from each reading and floor each excess at zero before summing.', 'shift-savings':'Take the smaller of the day reading and the shift limit at each meter.'}[rule];
   if(rule==='excess' && groups.every(g=>g.meters.every(pair=>pair.every(x=>x<=cap))))return estimate(rng,level);
   const truth=stationMetric(groups,rule,cap),sampleEstimate=stationMetric(groups,rule,cap,true);
-  const visual={type:'table',columns:['District','Total meters','Random sample (day / night, kWh)'],rows:groups.map((g,i)=>['AB'[i],g.meters.length,g.sample.map(pair=>pair.join(' / ')).join('; ')])};
+  const visual={type:'table',columns:['District','Meters in district','Sample pairs (day, night), kWh'],rows:groups.map((g,i)=>['AB'[i],g.meters.length,g.sample.map(([day,night])=>`(${day}, ${night})`).join('  ')] )};
+  const working=groups.map((g,i)=>{
+    const n=g.sample.length,N=g.meters.length,pieces=g.sample.map(pair=>contributions(pair,rule,cap));
+    const total=sum(pieces.map(([a])=>a)), bottom=sum(pieces.map(([,b])=>b));
+    const fraction=rule==='night-share'||rule==='average';
+    return `${'AB'[i]}: ${N}/${n} × ${total}${fraction?` for the numerator, ${N}/${n} × ${bottom} for the denominator`:''}`;
+  }).join('. ');
   return {mode:'finite-meter-survey',operations:[groups.length===1?'simple':'stratified',rule],params:{groups,rule,cap},visual,
-    text:'Simulated network. Meter pairs were sampled uniformly without replacement within each district. '+asks[rule],
+    text:'In each district, meters were sampled uniformly without replacement. Each pair gives one meter’s day and night readings. '+asks[rule],
     unit:rule==='night-share'?'percent':rule==='shift-savings'?'pounds':'kWh',truth,
-    working:op+' Weight each sampled meter by its district size divided by its sample size.',
-    method:`The sample-based estimate is ${display(sampleEstimate)}. Unobserved meters can differ from the sample. The full simulated network gives ${display(truth)}.`};
+    hints:[op,'Scale each district’s sample totals by its population divided by its sample size.'],
+    steps:[
+      {say:op,why:'Each pair belongs to one sampled meter. Apply any per-meter rule before scaling the sample.'},
+      {say:'Expand each district’s totals using its meter count.',why:'A sample of the same size represents more meters in the larger district.',math:working},
+      {say:`The sample gives about ${display(sampleEstimate)}. The full simulated network gives about ${display(truth)}.`,why:'Meters outside the sample can differ. Allow more width when few meters were sampled.'},
+    ],
+    method:'Apply the requested calculation to each pair. Expand from the sample to its district, then combine the district estimates.'};
 }

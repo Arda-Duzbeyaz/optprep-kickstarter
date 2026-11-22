@@ -4,6 +4,7 @@ import { activePreset, presetSections } from '../../../config/presets.js';
 import { SECTION_MODULES } from '../../sections/index.js';
 import { runExam } from '../runner.js';
 import { moreGames, zapSampler } from '../../core/assessment-coach.js';
+import { BTO_CHECKPOINT_MS } from '../../core/recognition.js';
 import { formatLine } from './format.js';
 
 // Full mock: the scored sections in portal order, each on its own clock,
@@ -29,6 +30,7 @@ export function mockPage(root, { store }) {
       h('h2', { style: { marginTop: 0 } }, `Next: ${SECTIONS[id].title}`),
       h('p', {}, formatLine(SECTIONS[id])),
       h('p', { class: 'muted' }, SECTIONS[id].blurb),
+      id === 'bto' && !(Number(store.settings().extraTime) > 1) ? h('p', { class: 'small-note' }, `Fresh, correct, unaided answers within ${BTO_CHECKPOINT_MS / 1000} seconds count towards mastery when the section ends.`) : null,
       h('button', { class: 'btn primary', type: 'button', onclick: () => {
         const box = h('div', {});
         const cont = h('div', { class: 'row', style: { marginTop: '12px' } });

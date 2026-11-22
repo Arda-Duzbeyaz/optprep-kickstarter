@@ -2,8 +2,8 @@ export default {
   purpose: 'Measures deduction under feedback: whether every guess extracts all the information it can, instead of testing one idea at a time.',
   howItWorks: [
     'A hidden figure has 3 to 6 properties, such as shape, colour, fill, size, count and border.',
-    'Pick one value for every property and submit. Each property is marked right or wrong.',
-    'The round ends when every property is right. 5 rounds, each with more properties or values.',
+    'Pick one value for every property and submit one complete guess. The game marks each property right or wrong.',
+    'The round ends when one guess has every property right. There are 5 rounds with more properties or choices in later rounds.',
     'Keyboard: up and down pick the property, left and right change its value, Enter submits.',
   ],
   scoring: 'Guesses above the optimum, averaged over the 5 rounds. The optimum is the expected guess count of a perfect strategy (3.25 in round 1, about 4.07 in round 5). Target: at most 1 above.',
